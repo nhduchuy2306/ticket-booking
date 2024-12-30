@@ -1,4 +1,4 @@
-package com.example.authservice.exception;
+package com.example.ticket.authservice.exception;
 
 import com.example.common.dto.ApiResponse;
 import com.example.common.dto.ErrorCode;

@@ -1,4 +1,4 @@
-package com.example.authservice.validator;
+package com.example.ticket.authservice.validator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
