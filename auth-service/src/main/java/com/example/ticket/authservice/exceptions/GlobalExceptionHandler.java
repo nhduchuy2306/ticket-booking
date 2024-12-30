@@ -1,0 +1,34 @@
+package com.example.ticket.authservice.exceptions;
+
+import com.example.common.dtos.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+@Slf4j
+@ControllerAdvice
+public class GlobalExceptionHandler {
+	@ExceptionHandler(value = AccessDeniedException.class)
+	ResponseEntity<ApiResponse> handlingAccessDenied(AccessDeniedException exception) {
+		log.error("Exception: ", exception);
+		ApiResponse apiResponse = new ApiResponse();
+
+		apiResponse.setCode(HttpStatus.FORBIDDEN.value());
+		apiResponse.setMessage(HttpStatus.FORBIDDEN.getReasonPhrase());
+
+		return ResponseEntity.badRequest().body(apiResponse);
+	}
+
+	@ExceptionHandler(value = UnAuthorizationException.class)
+	ResponseEntity<ApiResponse> handlingUnAuthorization(UnAuthorizationException exception) {
+		log.error("Exception: ", exception);
+		ApiResponse apiResponse = new ApiResponse();
+
+		apiResponse.setCode(HttpStatus.UNAUTHORIZED.value());
+		apiResponse.setMessage(HttpStatus.UNAUTHORIZED.getReasonPhrase());
+
+		return ResponseEntity.badRequest().body(apiResponse);
+	}
+}

@@ -1,4 +1,4 @@
-package com.example.ticket.authservice.validator;
+package com.example.ticket.authservice.validators;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;

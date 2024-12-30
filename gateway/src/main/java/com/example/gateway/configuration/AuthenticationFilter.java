@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.example.common.constants.AppConstants;
-import com.example.common.dto.ApiResponse;
+import com.example.common.dtos.ApiResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

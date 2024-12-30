@@ -1,4 +1,4 @@
-package com.example.common.dto;
+package com.example.ticket.authservice.dtos.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class ApiResponse<T> {
-	private int code;
-	private String message;
-	private T result;
+@NoArgsConstructor
+public class LoginResponseDto {
+	private String token;
 }
