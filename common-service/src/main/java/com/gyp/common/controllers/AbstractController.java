@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 public abstract class AbstractController {
 	protected static final String INTERNAL_API = "/internal";
+	protected static final String ID_PARAM = "/{id}";
 
 	protected String getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

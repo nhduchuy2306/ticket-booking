@@ -22,11 +22,12 @@ public class OrganizerConsumer {
 	@KafkaListener(topics = TopicConstants.SYNC_USER_ACCOUNT_TOPIC)
 	public void syncOrganizer(String accountResponseString) {
 		try {
-
 			List<UserAccountModel> userAccountModels = Serialization.deserializeFromString(
 					accountResponseString, new TypeReference<>() {}
 			);
-			userAccountModels.forEach(item -> log.info("Receive event: {}", item));
+			log.info("Receive event: {}", userAccountModels.size());
+			organizerService.syncOrganizer(userAccountModels);
+			log.info("Sync Successfully");
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
