@@ -84,4 +84,9 @@ public class EventEntity extends AbstractEntity {
 			inverseJoinColumns = @JoinColumn(name = "category_id")
 	)
 	private List<CategoryEntity> categoryEntityList = new ArrayList<>();
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "eventEntity", cascade = CascadeType.ALL)
+	private List<SeatMapEntity> seatMapEntityList = new ArrayList<>();
+
 }

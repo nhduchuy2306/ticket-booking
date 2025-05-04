@@ -36,7 +36,7 @@ public class ApplicationInitConfiguration {
 					"ROOT",
 					"This is Admin role",
 					true,
-					"{\"usergrouppermissions\":{}}"
+					"{}"
 			);
 
 			createAndSaveUser(repository, ADMIN_NAME, ADMIN_NAME, adminGroup);
@@ -45,7 +45,7 @@ public class ApplicationInitConfiguration {
 
 	private void createNormalUserIfNotExists(UserAccountRepository repository) {
 		if(repository.findByName(NORMAL_NAME).isEmpty()) {
-			String normalPermissions = "{\"usergrouppermissions\":{\"permissionItems\":[{\"permissionitem\":{\"applicationId\":\"app.user\",\"actions\":[\"READ\"],\"uuid\":\"70ac16be-aeae-4ded-b7db-79d20e9ffe24\"}}]}}";
+			String normalPermissions = "{\"permissionItems\":[{\"applicationId\":\"app.user\",\"actions\":[\"READ\"],\"uuid\":\"70ac16be-aeae-4ded-b7db-79d20e9ffe24\"}]}";
 
 			UserGroupEntity normalGroup = createUserGroup(
 					"normal",
@@ -60,7 +60,7 @@ public class ApplicationInitConfiguration {
 
 	private void createOrganizerIfNotExists(UserAccountRepository repository) {
 		if(repository.findByName(ORGANIZER_NAME).isEmpty()) {
-			String organizerPermissions = "{\"usergrouppermissions\":{\"permissionItems\":[{\"permissionitem\":{\"applicationId\":\"app.user\",\"actions\":[\"READ\"],\"uuid\":\"70ac16be-aeae-4ded-b7db-79d20e9ffe24\"}},{\"permissionitem\":{\"applicationId\":\"app.event\",\"actions\":[\"CREATE\",\"READ\",\"UPDATE\",\"DELETE\"],\"uuid\":\"70ac16be-aeae-4ded-b7db-79d20e9ffe25\"}}]}}";
+			String organizerPermissions = "{\"permissionItems\":[{\"applicationId\":\"app.user\",\"actions\":[\"READ\"],\"uuid\":\"70ac16be-aeae-4ded-b7db-79d20e9ffe24\"},{\"applicationId\":\"app.event\",\"actions\":[\"CREATE\", \"READ\", \"UPDATE\", \"DELETE\"],\"uuid\":\"70ac16be-aeae-4ded-b7db-79d20e9ffe25\"}]}";
 
 			UserGroupEntity organizerGroup = createUserGroup(
 					"organizer",

@@ -1,0 +1,21 @@
+Template JSON Instructions:
+
+1. venueType:
+   - Type of venue layout. Options: RECTANGLE, CIRCLE, POINT, CUSTOM.
+
+2. seatTypeColors:
+   - Mapping between seat types and the color used to display them.
+
+3. seatMap:
+   - type: Layout type. Must match one of the expected types used in the backend.
+   - totalRows / seatsPerRow: Used for RECTANGLE type only.
+   - sections: Groups of seats by area. Each section has rows, and each row has seats.
+
+4. seats:
+   - seatId: Unique identifier of the seat (e.g., A1, B2).
+   - x / y: Coordinates or positions of the seat.
+   - ticketTypeId: The ID of the ticket type this seat is linked to (must exist in your system).
+   - price: Price of the seat. Optional if linked to a ticket type that already defines price.
+
+5. stageConfig:
+   - Describes the stage dimensions, orientation, and shape.

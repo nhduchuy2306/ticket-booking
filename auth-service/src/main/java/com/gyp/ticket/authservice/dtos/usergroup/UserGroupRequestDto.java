@@ -4,10 +4,6 @@ import java.io.Serial;
 
 import jakarta.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.gyp.common.types.PropertyLength;
 import com.gyp.ticket.authservice.dtos.AbstractDto;
 import lombok.AllArgsConstructor;
@@ -19,8 +15,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@JsonTypeName("usergrouprequest")
-@JsonTypeInfo(use = Id.NAME, include = As.WRAPPER_OBJECT)
 public class UserGroupRequestDto extends AbstractDto {
 	@Serial
 	private static final long serialVersionUID = 5697492069064319966L;

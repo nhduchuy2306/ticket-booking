@@ -5,13 +5,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-
-@JsonTypeName("usergrouppermissions")
-@JsonTypeInfo(use = Id.NAME, include = As.WRAPPER_OBJECT)
 public class UserGroupPermissions implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1755542096600116308L;

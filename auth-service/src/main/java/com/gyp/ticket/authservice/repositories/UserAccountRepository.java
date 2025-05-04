@@ -21,10 +21,10 @@ public interface UserAccountRepository extends JpaRepository<UserAccountEntity, 
 			JOIN userpermissions up ON ua.id = up.user_account_id
 			JOIN usergroup ug ON ug.id = up.user_group_id
 			JOIN JSON_TABLE(
-			    ug.user_group_permissions -> '$.usergrouppermissions.permissionItems',
+			    ug.user_group_permissions -> '$.permissionItems',
 			    '$[*]' COLUMNS (
-			        applicationId VARCHAR(255) PATH '$.permissionitem.applicationId',
-			        actions JSON PATH '$.permissionitem.actions'
+			        applicationId VARCHAR(255) PATH '$.applicationId',
+			        actions JSON PATH '$.actions'
 			    )
 			) AS perms ON TRUE
 			WHERE perms.applicationId = 'app.event'

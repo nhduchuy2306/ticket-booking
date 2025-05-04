@@ -1,0 +1,33 @@
+package com.gyp.ticket.eventservice.dtos.templateseatmap;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+public class SeatDto {
+	/**
+	 * Unique ID of the seat
+	 */
+	private String seatId;
+
+	/**
+	 * X-coordinate of the seat on the canvas
+	 */
+	private int x;
+
+	/**
+	 * Y-coordinate of the seat on the canvas
+	 */
+	private int y;
+
+	/**
+	 * Ticket type assigned to this seat (must match existing TicketType)
+	 */
+	private String ticketType;
+
+	/**
+	 * Price for the seat (overrides row default if provided)
+	 */
+	private double price;
+}

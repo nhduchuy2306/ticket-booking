@@ -1,0 +1,42 @@
+{
+  "venueType": "RECTANGLE",
+  "seatTypeColors": {
+    "VIP": "#FFD700",
+    "STANDARD": "#87CEEB"
+  },
+  "seatMap": {
+    "type": "RectangleSeatMap",
+    "totalRows": 3,
+    "seatsPerRow": 5,
+    "sections": [
+      {
+        "name": "Section A",
+        "rows": [
+          {
+            "rowName": "A",
+            "seatCount": 5,
+            "seats": [
+              {
+                "seatId": "A1",
+                "x": 1,
+                "y": 1,
+                "ticketTypeId": "TICKET-VIP",
+                "price": 150.0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "stageConfig": {
+    "label": "Main Stage",
+    "stageX": 0,
+    "stageY": 0,
+    "stageWidth": 200,
+    "stageHeight": 40,
+    "shape": "RECTANGLE",
+    "orientation": "TOP",
+    "svgPath": null
+  }
+}
