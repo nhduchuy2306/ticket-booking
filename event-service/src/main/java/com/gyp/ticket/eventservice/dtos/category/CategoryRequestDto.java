@@ -1,14 +1,15 @@
-package com.gyp.ticket.eventservice.dtos;
+package com.gyp.ticket.eventservice.dtos.category;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
-public class CategoryDto {
-	private String id;
+@AllArgsConstructor
+public class CategoryRequestDto {
 	private String name;
 	private String description;
 }

@@ -7,7 +7,7 @@ Template JSON Instructions:
    - Mapping between seat types and the color used to display them.
 
 3. seatMap:
-   - type: Layout type. Must match one of the expected types used in the backend.
+   - type: Layout type. Must match one of the expected types (RectangleSeatMap, CircleSeatMap).
    - totalRows / seatsPerRow: Used for RECTANGLE type only.
    - sections: Groups of seats by area. Each section has rows, and each row has seats.
 

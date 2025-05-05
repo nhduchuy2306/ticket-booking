@@ -1,5 +1,6 @@
 package com.gyp.ticket.eventservice.dtos.seatmap;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +15,9 @@ public class StageConfig {
 	private Integer stageY;
 	private Integer stageWidth;
 	private Integer stageHeight;
+	@JsonProperty("shape")
 	private StageShape shape;
+	@JsonProperty("orientation")
 	private StageOrientation orientation;
 	private String svgPath; // In case Shape = custom
 }

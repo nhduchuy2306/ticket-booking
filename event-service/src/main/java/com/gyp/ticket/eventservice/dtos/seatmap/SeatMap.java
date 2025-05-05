@@ -1,7 +1,5 @@
 package com.gyp.ticket.eventservice.dtos.seatmap;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 

@@ -10,7 +10,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 @EnableKafka
 @EnableDiscoveryClient
 @EnableAspectJAutoProxy
-@ComponentScan(basePackages = { "com.gyp.common.*", "com.gyp.ticket.eventservice.*" })
+//@ComponentScan(basePackages = { "com.gyp.common.*", "com.gyp.ticket.eventservice.*" })
 @SpringBootApplication
 public class EventServiceApplication {
 

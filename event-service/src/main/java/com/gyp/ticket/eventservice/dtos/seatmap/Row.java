@@ -2,14 +2,16 @@ package com.gyp.ticket.eventservice.dtos.seatmap;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Row {
 	private String rowName;
-	private List<Seat> seats;
 	private Integer seatCount;
-	private Integer price;
+	private double price;
+	private List<Seat> seats;
 }

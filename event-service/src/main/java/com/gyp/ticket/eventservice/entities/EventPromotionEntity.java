@@ -1,7 +1,6 @@
 package com.gyp.ticket.eventservice.entities;
 
 import java.io.Serial;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -39,7 +38,7 @@ public class EventPromotionEntity extends AbstractEntity {
 	private String code;
 
 	@Column(name = "discount_amount")
-	private BigDecimal discountAmount;
+	private double discountAmount;
 
 	@Column(name = "valid_from")
 	private LocalDateTime validFrom;

@@ -29,6 +29,16 @@ const rectangle = {
                 ]
             }
         ]
+    },
+    'stage': {
+        'label': 'Artistic Center Stage',
+        'stageX': 100,
+        'stageY': 75,
+        'stageWidth': 250,
+        'stageHeight': 120,
+        'shape': 'CUSTOM',
+        'orientation': 'DOWN',
+        'svgPath': 'M10 10 H 90 V 90 H 10 L 10 10'
     }
 };
 
@@ -65,6 +75,16 @@ const circle = {
                 ]
             }
         ]
+    },
+    'stage': {
+        'label': 'Artistic Center Stage',
+        'stageX': 100,
+        'stageY': 75,
+        'stageWidth': 250,
+        'stageHeight': 120,
+        'shape': 'CUSTOM',
+        'orientation': 'DOWN',
+        'svgPath': 'M10 10 H 90 V 90 H 10 L 10 10'
     }
 };
 
@@ -107,6 +127,16 @@ const point = {
                 ]
             }
         ]
+    },
+    'stage': {
+        'label': 'Artistic Center Stage',
+        'stageX': 100,
+        'stageY': 75,
+        'stageWidth': 250,
+        'stageHeight': 120,
+        'shape': 'CUSTOM',
+        'orientation': 'DOWN',
+        'svgPath': 'M10 10 H 90 V 90 H 10 L 10 10'
     }
 };
 
@@ -150,16 +180,15 @@ const custom = {
                 }
             }
         ],
+    },
+    'stage': {
+        'label': 'Artistic Center Stage',
+        'stageX': 100,
+        'stageY': 75,
+        'stageWidth': 250,
+        'stageHeight': 120,
+        'shape': 'CUSTOM',
+        'orientation': 'DOWN',
+        'svgPath': 'M10 10 H 90 V 90 H 10 L 10 10'
     }
-};
-
-const stage = {
-    'label': 'Artistic Center Stage',
-    'stageX': 100,
-    'stageY': 75,
-    'stageWidth': 250,
-    'stageHeight': 120,
-    'shape': 'CUSTOM',
-    'orientation': 'DOWN',
-    'svgPath': 'M10 10 H 90 V 90 H 10 L 10 10'
 };

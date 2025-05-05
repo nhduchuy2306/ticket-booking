@@ -88,5 +88,4 @@ public class EventEntity extends AbstractEntity {
 	@JsonIgnore
 	@OneToMany(mappedBy = "eventEntity", cascade = CascadeType.ALL)
 	private List<SeatMapEntity> seatMapEntityList = new ArrayList<>();
-
 }

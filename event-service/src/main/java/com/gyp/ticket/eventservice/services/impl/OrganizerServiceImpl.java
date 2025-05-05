@@ -18,6 +18,8 @@ import org.springframework.util.CollectionUtils;
 public class OrganizerServiceImpl implements OrganizerService {
 	private final OrganizerRepository organizerRepository;
 
+	private final OrganizerMapper organizerMapper;
+
 	@Override
 	public void syncOrganizer(List<UserAccountModel> modelList) {
 		if(CollectionUtils.isEmpty(modelList)) {
@@ -36,7 +38,7 @@ public class OrganizerServiceImpl implements OrganizerService {
 
 		if(!CollectionUtils.isEmpty(newModels)) {
 			List<OrganizerEntity> organizerEntityList = modelList.stream()
-					.map(OrganizerMapper.INSTANCE::toEntity)
+					.map(organizerMapper::toEntity)
 					.toList();
 			organizerRepository.saveAll(organizerEntityList);
 		}

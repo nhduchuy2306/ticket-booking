@@ -6,8 +6,11 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class ZipTemplateGenerator {
-	public static void createTemplateZip(File outputZipFile) throws IOException {
+	public void createTemplateZip(File outputZipFile) throws IOException {
 		try(FileOutputStream fos = new FileOutputStream(outputZipFile);
 				ZipOutputStream zipOut = new ZipOutputStream(fos)) {
 

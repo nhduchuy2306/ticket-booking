@@ -1,19 +1,19 @@
-package com.gyp.ticket.eventservice.dtos;
+package com.gyp.ticket.eventservice.dtos.eventpromotion;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
-public class EventPromotionDto {
-	private String id;
+@AllArgsConstructor
+public class EventPromotionRequestDto {
 	private String code;
-	private BigDecimal discountAmount;
+	private double discountAmount;
 	private LocalDateTime validFrom;
 	private LocalDateTime validTo;
 	private String eventId;

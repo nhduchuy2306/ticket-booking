@@ -1,15 +1,17 @@
-package com.gyp.ticket.eventservice.dtos;
+package com.gyp.ticket.eventservice.dtos.organizer;
 
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
-public class OrganizerDto {
+@AllArgsConstructor
+public class OrganizerRequestDto {
 	private String id;
 	private String name;
 	private String username;
