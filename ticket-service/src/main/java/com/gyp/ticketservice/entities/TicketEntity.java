@@ -1,5 +1,6 @@
 package com.gyp.ticketservice.entities;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -18,7 +19,10 @@ import lombok.NoArgsConstructor;
 @Table(name = "TICKET")
 @AllArgsConstructor
 @NoArgsConstructor
-public class TicketEntity {
+public class TicketEntity extends AbstractEntity {
+	@Serial
+	private static final long serialVersionUID = -5630442615915968220L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "id")

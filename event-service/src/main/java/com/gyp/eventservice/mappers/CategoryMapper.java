@@ -24,13 +24,12 @@ public interface CategoryMapper extends AbstractMapper {
 	List<CategoryResponseDto> toResponseDtoList(List<CategoryEntity> entities);
 
 	// Create new entity from request
-	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "id", expression = "java(generateUuid())")
 	@Mapping(target = "eventEntityList", ignore = true)
-	@Named("toEntity")
 	CategoryEntity toEntity(CategoryRequestDto dto);
 
 	// Update existing entity from request
-	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "id", expression = "java(generateUuid())")
 	@Mapping(target = "eventEntityList", ignore = true)
 	@Named("updateEntityFromDto")
 	void updateEntityFromDto(CategoryRequestDto dto, @MappingTarget CategoryEntity entity);

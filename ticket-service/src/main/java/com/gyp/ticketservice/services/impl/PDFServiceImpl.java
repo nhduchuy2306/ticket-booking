@@ -3,7 +3,7 @@ package com.gyp.ticketservice.services.impl;
 import java.io.ByteArrayOutputStream;
 import java.time.format.DateTimeFormatter;
 
-import com.gyp.ticketservice.dtos.TicketDto;
+import com.gyp.ticketservice.dtos.ticket.TicketRequestDto;
 import com.gyp.ticketservice.services.PDFService;
 import com.gyp.ticketservice.services.QRCodeService;
 import com.itextpdf.text.BaseColor;
@@ -24,7 +24,7 @@ public class PDFServiceImpl implements PDFService {
 	private final QRCodeService qrCodeService;
 
 	@Override
-	public byte[] generateTicketPDF(TicketDto ticket) {
+	public byte[] generateTicketPDF(TicketRequestDto ticket) {
 		try {
 			Document document = new Document();
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

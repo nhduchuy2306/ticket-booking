@@ -1,4 +1,4 @@
-package com.gyp.ticketservice.dtos;
+package com.gyp.ticketservice.dtos.ticket;
 
 import java.time.LocalDateTime;
 
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TicketDto {
+public class TicketResponseDto {
 	private String id;
 	private String eventName;
 	private String attendeeName;

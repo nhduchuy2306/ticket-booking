@@ -2,10 +2,10 @@ package com.gyp.ticketservice.services;
 
 import java.awt.image.BufferedImage;
 
-import com.gyp.ticketservice.dtos.TicketDto;
+import com.gyp.ticketservice.dtos.ticket.TicketRequestDto;
 
 public interface TicketDeliveryService {
-	void sendByEmail(TicketDto ticket);
-	byte[] generatePdf(TicketDto ticket);
-	BufferedImage generateQrCode(TicketDto ticket);
+	void sendByEmail(TicketRequestDto ticket);
+	byte[] generatePdf(TicketRequestDto ticket);
+	BufferedImage generateQrCode(TicketRequestDto ticket);
 }

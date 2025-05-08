@@ -1,16 +1,14 @@
-package com.gyp.eventservice.mappers;
+package com.gyp.ticketservice.mappers;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import com.gyp.eventservice.dtos.AbstractDto;
-import com.gyp.eventservice.entities.AbstractEntity;
+import com.gyp.ticketservice.dtos.AbstractDto;
+import com.gyp.ticketservice.entities.AbstractEntity;
 import org.apache.commons.lang3.ObjectUtils;
-import org.mapstruct.Mapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-@Mapper(componentModel = "spring")
 public interface AbstractMapper {
 	default void mapAbstractFields(AbstractEntity source, AbstractDto target) {
 		if(source == null || target == null) {

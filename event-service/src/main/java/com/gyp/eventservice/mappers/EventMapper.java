@@ -42,7 +42,7 @@ public interface EventMapper extends AbstractMapper {
 	List<EventResponseDto> toResponseDtoList(List<EventEntity> entities);
 
 	// Create new entity from request
-	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "id", expression = "java(generateUuid())")
 	@Mapping(target = "time.startTime", source = "startTime")
 	@Mapping(target = "time.endTime", source = "endTime")
 	@Mapping(target = "time.doorOpenTime", source = "doorOpenTime")
@@ -58,7 +58,7 @@ public interface EventMapper extends AbstractMapper {
 	EventEntity toEntity(EventRequestDto dto);
 
 	// Update existing entity from request
-	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "id", expression = "java(generateUuid())")
 	@Mapping(target = "time.startTime", source = "startTime")
 	@Mapping(target = "time.endTime", source = "endTime")
 	@Mapping(target = "time.doorOpenTime", source = "doorOpenTime")

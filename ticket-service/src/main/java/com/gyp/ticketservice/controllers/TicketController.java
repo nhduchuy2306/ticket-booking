@@ -1,6 +1,7 @@
 package com.gyp.ticketservice.controllers;
 
-import com.gyp.ticketservice.dtos.TicketDto;
+import com.gyp.ticketservice.dtos.ticket.TicketRequestDto;
+import com.gyp.ticketservice.mappers.TicketMapper;
 import com.gyp.ticketservice.services.PDFService;
 import com.gyp.ticketservice.services.QRCodeService;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +26,12 @@ public class TicketController extends AbstractController {
 	private final QRCodeService qrCodeService;
 	private final PDFService pdfService;
 
+	private final TicketMapper ticketMapper;
+
 	@GetMapping(ID_PARAM + QR_CODE_PATH)
 	public ResponseEntity<byte[]> getQRCode(@PathVariable String id) {
 		// In a real application, you would fetch the ticket from a database
-		TicketDto ticket = getDummyTicket(id);
+		TicketRequestDto ticket = getDummyTicket(id);
 
 		String qrContent = "TICKET:" + ticket.getTicketNumber() +
 						   ",EVENT:" + ticket.getEventName() +
@@ -46,7 +49,7 @@ public class TicketController extends AbstractController {
 	@GetMapping(ID_PARAM + TICKET_PDF_PATH)
 	public ResponseEntity<byte[]> getTicketPDF(@PathVariable String id) {
 		// In a real application, you would fetch the ticket from a database
-		TicketDto ticket = getDummyTicket(id);
+		TicketRequestDto ticket = getDummyTicket(id);
 
 		byte[] pdfBytes = pdfService.generateTicketPDF(ticket);
 
@@ -58,9 +61,8 @@ public class TicketController extends AbstractController {
 		return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
 	}
 
-	private TicketDto getDummyTicket(String id) {
-		TicketDto ticket = new TicketDto();
-		ticket.setId(id);
+	private TicketRequestDto getDummyTicket(String id) {
+		TicketRequestDto ticket = new TicketRequestDto();
 		ticket.setTicketNumber("TKT-" + id + "-" + System.currentTimeMillis());
 		ticket.setEventName("Spring Conference 2025");
 		ticket.setAttendeeName("John Doe");

@@ -26,14 +26,14 @@ public interface VenueMapper extends AbstractMapper {
 	List<VenueResponseDto> toResponseDtoList(List<VenueEntity> entities);
 
 	// Create new entity from request
-	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "id", expression = "java(generateUuid())")
 	@Mapping(target = "eventEntityList", ignore = true)
 	@Mapping(target = "seatMapEntityList", ignore = true)
 	@Named("toEntity")
 	VenueEntity toEntity(VenueRequestDto dto);
 
 	// Update existing entity from request
-	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "id", expression = "java(generateUuid())")
 	@Mapping(target = "eventEntityList", ignore = true)
 	@Mapping(target = "seatMapEntityList", ignore = true)
 	@Named("updateEntityFromDto")

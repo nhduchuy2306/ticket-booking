@@ -1,7 +1,7 @@
 package com.gyp.ticketservice.services;
 
-import com.gyp.ticketservice.dtos.TicketDto;
+import com.gyp.ticketservice.dtos.ticket.TicketRequestDto;
 
 public interface PDFService {
-	byte[] generateTicketPDF(TicketDto ticket);
+	byte[] generateTicketPDF(TicketRequestDto ticket);
 }

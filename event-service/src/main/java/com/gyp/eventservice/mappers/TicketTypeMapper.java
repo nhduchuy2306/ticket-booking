@@ -28,13 +28,13 @@ public interface TicketTypeMapper extends AbstractMapper {
 	List<TicketTypeResponseDto> toResponseDtoList(List<TicketTypeEntity> entities);
 
 	// Create new entity from request
-	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "id", expression = "java(generateUuid())")
 	@Mapping(target = "eventEntity", source = "eventId", qualifiedByName = "eventIdToEntity")
 	@Named("toEntity")
 	TicketTypeEntity toEntity(TicketTypeRequestDto dto);
 
 	// Update existing entity from request
-	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "id", expression = "java(generateUuid())")
 	@Mapping(target = "eventEntity", source = "eventId", qualifiedByName = "eventIdToEntity")
 	@Named("updateEntityFromDto")
 	void updateEntityFromDto(TicketTypeRequestDto dto, @MappingTarget TicketTypeEntity entity);
