@@ -1,19 +1,25 @@
 **Microservice Architecture for a Ticketing System**
 
+**Description**
+This is a GYP(TicketBox) this support to Organizer to register to buy ticket, user can choose seat, buy ticket, generate
+to PDF, QR code and use this at the event.
+
 ### 1. Core Services
 
 #### 1.1. Event Service
 
 - Manage event information (create, update, view details)
 - List events by criteria (location, time, category)
+- Setup SeatMap
 - Approve events (if required)
 
 #### 1.2. Ticket Service
 
 - Manage ticket information (ticket type, price, quantity)
 - Check ticket availability
+- Create Type of Ticket
 - Manage inventory (remaining ticket quantity)
-- Export Pdf
+- Export Pdf, QR Code
 
 #### 1.3. Order Service
 
@@ -75,12 +81,12 @@
 
 ### 4. Main Data Flow
 
-1. Organizer creates event → Event Service
-2. Organizer adds ticket types → Ticket Service
+1. Organizer creates event, setup seat map → Event Service
+2. Organizer adds ticket types → Ticket Service → Generate total of Ticket, time to sale ticket
 3. Customer views event list → Event Service
-4. Customer selects ticket → Ticket Service (check availability)
+4. Customer selects ticket → Ticket Service (check availability) check the remain unavailable ticket
 5. Customer creates order → Order Service
 6. Customer makes payment → Payment Service
-7. System sends confirmation → Notification Service
+7. System sends confirmation → Notification Service → Send QR code and PDF ticket to user when payment successfully
 
 ---

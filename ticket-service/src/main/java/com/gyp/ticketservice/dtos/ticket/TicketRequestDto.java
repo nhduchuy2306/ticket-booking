@@ -10,11 +10,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TicketRequestDto {
+	private String eventId;
 	private String eventName;
+	private String seatInfo;
+	private String ticketTypeId;
+	private String ticketNumber;
 	private String attendeeName;
 	private String attendeeEmail;
 	private LocalDateTime eventDateTime;
-	private String ticketType;
-	private String seatInfo;
-	private String ticketNumber;
+	private LocalDateTime reservedDateTime;
 }

@@ -19,37 +19,26 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Builder
-@Table(name = "TICKETTYPE")
+@Table(name = "TICKETORDERLINK")
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class TicketTypeEntity extends AbstractEntity {
+public class TicketOrderLinkEntity extends AbstractEntity {
 	@Serial
-	private static final long serialVersionUID = 4789466346277152613L;
+	private static final long serialVersionUID = -5610487937942484351L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "id")
 	private String id;
 
-	@Column(name = "event_id", nullable = false)
-	private String eventId;
+	@Column(name = "ticket_id", nullable = false)
+	private String ticketId;
 
-	@Column(name = "name")
-	private String name;
+	@Column(name = "order_id", nullable = false)
+	private String orderId;
 
-	@Column(name = "description")
-	private String description;
-
-	@Column(name = "price")
-	private double price;
-
-	@Column(name = "quantity_available")
-	private Integer quantityAvailable;
-
-	@Column(name = "sale_start_date")
-	private LocalDateTime saleStartDate;
-
-	@Column(name = "sale_end_date")
-	private LocalDateTime saleEndDate;
+	@Column(name = "purchase_time")
+	private LocalDateTime purchaseTime;
 }
+

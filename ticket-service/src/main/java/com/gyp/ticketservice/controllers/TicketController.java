@@ -68,7 +68,6 @@ public class TicketController extends AbstractController {
 		ticket.setAttendeeName("John Doe");
 		ticket.setAttendeeEmail("john.doe@example.com");
 		ticket.setEventDateTime(java.time.LocalDateTime.now().plusDays(30));
-		ticket.setTicketType("VIP");
 		ticket.setSeatInfo("Section A, Row 1, Seat 5");
 		return ticket;
 	}

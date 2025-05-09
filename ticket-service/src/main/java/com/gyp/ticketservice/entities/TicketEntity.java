@@ -5,20 +5,27 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import com.gyp.common.enums.event.TicketStatus;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@Builder
 @Table(name = "TICKET")
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class TicketEntity extends AbstractEntity {
 	@Serial
 	private static final long serialVersionUID = -5630442615915968220L;
@@ -28,8 +35,20 @@ public class TicketEntity extends AbstractEntity {
 	@Column(name = "id")
 	private String id;
 
+	@Column(name = "event_id", nullable = false)
+	private String eventId;
+
 	@Column(name = "event_name")
 	private String eventName;
+
+	@Column(name = "seat_info", nullable = false)
+	private String seatInfo;
+
+	@Column(name = "ticket_type_id", nullable = false)
+	private String ticketTypeId;
+
+	@Column(name = "ticket_number", unique = true)
+	private String ticketNumber;
 
 	@Column(name = "attendee_name")
 	private String attendeeName;
@@ -40,12 +59,10 @@ public class TicketEntity extends AbstractEntity {
 	@Column(name = "event_date_time")
 	private LocalDateTime eventDateTime;
 
-	@Column(name = "ticket_type")
-	private String ticketType;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	private TicketStatus status;
 
-	@Column(name = "seat_info")
-	private String seatInfo;
-
-	@Column(name = "ticket_number")
-	private String ticketNumber;
+	@Column(name = "reserved_date")
+	private LocalDateTime reservedDateTime;
 }

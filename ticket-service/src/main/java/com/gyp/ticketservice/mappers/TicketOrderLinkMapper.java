@@ -1,9 +1,9 @@
 package com.gyp.ticketservice.mappers;
 
-import com.gyp.ticketservice.dtos.tickettype.TicketTypeRequestDto;
-import com.gyp.ticketservice.dtos.tickettype.TicketTypeResponseDto;
+import com.gyp.ticketservice.dtos.ticketorderlink.TicketOrderLinkRequestDto;
+import com.gyp.ticketservice.dtos.ticketorderlink.TicketOrderLinkResponseDto;
 import com.gyp.ticketservice.entities.TicketEntity;
-import com.gyp.ticketservice.entities.TicketTypeEntity;
+import com.gyp.ticketservice.entities.TicketOrderLinkEntity;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -11,12 +11,12 @@ import org.mapstruct.MappingInheritanceStrategy;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring", mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG)
-public interface TicketTypeMapper extends AbstractMapper {
-	@Mapping(target = "eventId", source = "dto.eventId")
-	@Mapping(target = "id", expression = "java(generateUuid())")
-	TicketTypeEntity toEntity(TicketTypeRequestDto dto);
+public interface TicketOrderLinkMapper extends AbstractMapper {
 
-	TicketTypeResponseDto toResponse(TicketTypeEntity entity);
+	@Mapping(target = "id", expression = "java(generateUuid())")
+	TicketOrderLinkEntity toEntity(TicketOrderLinkRequestDto dto);
+
+	TicketOrderLinkResponseDto toResponse(TicketOrderLinkEntity entity);
 
 	@AfterMapping
 	default void afterMapping(@MappingTarget TicketEntity entity) {

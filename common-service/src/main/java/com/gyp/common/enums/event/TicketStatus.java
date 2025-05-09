@@ -4,5 +4,6 @@ public enum TicketStatus {
 	AVAILABLE,
 	SOLD_OUT,
 	COMING_SOON,
-	OFF_SALE
+	OFF_SALE,
+	CANCELLED
 }

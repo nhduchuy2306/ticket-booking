@@ -45,7 +45,7 @@ public class PDFServiceImpl implements PDFService {
 			document.add(new Paragraph("Date & Time: " +
 									   ticket.getEventDateTime()
 											   .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))));
-			document.add(new Paragraph("Type: " + ticket.getTicketType()));
+//			document.add(new Paragraph("Type: " + ticket.getTicketType()));
 
 			if(ticket.getSeatInfo() != null && !ticket.getSeatInfo().isEmpty()) {
 				document.add(new Paragraph("Seat: " + ticket.getSeatInfo()));

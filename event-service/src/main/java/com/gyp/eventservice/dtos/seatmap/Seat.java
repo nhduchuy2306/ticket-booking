@@ -11,6 +11,8 @@ public class Seat {
 	private String seatId;
 	private int x;
 	private int y;
+	private double angle;
 	private String ticketTypeId;
 	private double price;
+	private String status;
 }
