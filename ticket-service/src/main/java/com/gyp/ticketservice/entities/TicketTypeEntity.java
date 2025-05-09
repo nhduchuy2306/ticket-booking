@@ -2,14 +2,19 @@ package com.gyp.ticketservice.entities;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -52,4 +57,8 @@ public class TicketTypeEntity extends AbstractEntity {
 
 	@Column(name = "sale_end_date")
 	private LocalDateTime saleEndDate;
+
+	@OneToMany(mappedBy = "ticketTypeEntity", fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<TicketEntity> ticketEntityList = new ArrayList<>();
 }

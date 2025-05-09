@@ -3,6 +3,7 @@ package com.gyp.ticketservice.dtos.ticket;
 import java.time.LocalDateTime;
 
 import com.gyp.ticketservice.dtos.AbstractDto;
+import com.gyp.ticketservice.dtos.tickettype.TicketTypeSummaryDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,4 +25,5 @@ public class TicketResponseDto extends AbstractDto {
 	private LocalDateTime eventDateTime;
 	private String status;
 	private LocalDateTime reservedDateTime;
+	private TicketTypeSummaryDto ticketTypeSummaryDto;
 }

@@ -2,6 +2,7 @@ package com.gyp.ticketservice.services;
 
 import com.gyp.ticketservice.dtos.ticket.TicketResponseDto;
 
-public interface PDFService {
-	byte[] generateTicketPDF(TicketResponseDto ticket);
+public interface TicketService {
+	TicketResponseDto getTicketById(String id);
+
 }

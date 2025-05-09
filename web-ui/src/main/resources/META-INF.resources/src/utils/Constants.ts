@@ -1,1 +1,0 @@
-export const BASE_URL: string = "localhost:8888/"

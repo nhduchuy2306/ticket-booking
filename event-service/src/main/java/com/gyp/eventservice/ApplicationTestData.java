@@ -21,11 +21,11 @@ public class ApplicationTestData {
 
 	public static Object createExampleSeatConfig() throws IOException {
 		List<Seat> seats = List.of(
-				new Seat("A1", 0, 0, "VIP", 150.0),
-				new Seat("A2", 1, 0, "VIP", 150.0),
-				new Seat("A3", 2, 0, "VIP", 150.0),
-				new Seat("A4", 3, 0, "VIP", 150.0),
-				new Seat("A5", 4, 0, "VIP", 150.0)
+				new Seat("A1", 0, 0, 10.0, "VIP", 150.0, "Available"),
+				new Seat("A2", 1, 0, 10.0, "VIP", 150.0, "Available"),
+				new Seat("A3", 2, 0, 10.0, "VIP", 150.0, "Available"),
+				new Seat("A4", 3, 0, 10.0, "VIP", 150.0, "Available"),
+				new Seat("A5", 4, 0, 10.0, "VIP", 150.0, "Available")
 		);
 
 		List<Row> rows = List.of(

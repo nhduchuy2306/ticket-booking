@@ -10,6 +10,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import com.gyp.common.enums.event.TicketStatus;
@@ -44,9 +46,6 @@ public class TicketEntity extends AbstractEntity {
 	@Column(name = "seat_info", nullable = false)
 	private String seatInfo;
 
-	@Column(name = "ticket_type_id", nullable = false)
-	private String ticketTypeId;
-
 	@Column(name = "ticket_number", unique = true)
 	private String ticketNumber;
 
@@ -65,4 +64,8 @@ public class TicketEntity extends AbstractEntity {
 
 	@Column(name = "reserved_date")
 	private LocalDateTime reservedDateTime;
+
+	@ManyToOne
+	@JoinColumn(name = "ticket_type_id", nullable = false)
+	private TicketTypeEntity ticketTypeEntity;
 }

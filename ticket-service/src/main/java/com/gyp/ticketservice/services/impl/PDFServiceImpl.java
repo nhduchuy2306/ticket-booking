@@ -3,7 +3,7 @@ package com.gyp.ticketservice.services.impl;
 import java.io.ByteArrayOutputStream;
 import java.time.format.DateTimeFormatter;
 
-import com.gyp.ticketservice.dtos.ticket.TicketRequestDto;
+import com.gyp.ticketservice.dtos.ticket.TicketResponseDto;
 import com.gyp.ticketservice.services.PDFService;
 import com.gyp.ticketservice.services.QRCodeService;
 import com.itextpdf.text.BaseColor;
@@ -24,7 +24,7 @@ public class PDFServiceImpl implements PDFService {
 	private final QRCodeService qrCodeService;
 
 	@Override
-	public byte[] generateTicketPDF(TicketRequestDto ticket) {
+	public byte[] generateTicketPDF(TicketResponseDto ticket) {
 		try {
 			Document document = new Document();
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -37,7 +37,7 @@ public class PDFServiceImpl implements PDFService {
 			Paragraph title = new Paragraph(ticket.getEventName() + " - TICKET", titleFont);
 			title.setAlignment(Element.ALIGN_CENTER);
 			document.add(title);
-			document.add(new Paragraph(" ")); // Add some space
+			document.add(new Paragraph(" "));
 
 			// Add ticket info
 			document.add(new Paragraph("Ticket #: " + ticket.getTicketNumber()));
@@ -45,7 +45,7 @@ public class PDFServiceImpl implements PDFService {
 			document.add(new Paragraph("Date & Time: " +
 									   ticket.getEventDateTime()
 											   .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))));
-//			document.add(new Paragraph("Type: " + ticket.getTicketType()));
+			document.add(new Paragraph("Type: " + ticket.getTicketTypeSummaryDto().getName()));
 
 			if(ticket.getSeatInfo() != null && !ticket.getSeatInfo().isEmpty()) {
 				document.add(new Paragraph("Seat: " + ticket.getSeatInfo()));
@@ -54,9 +54,10 @@ public class PDFServiceImpl implements PDFService {
 			document.add(new Paragraph(" "));
 
 			// Generate and add QR code
-			String qrContent = "TICKET:" + ticket.getTicketNumber() +
-							   ",EVENT:" + ticket.getEventName() +
-							   ",ATTENDEE:" + ticket.getAttendeeName();
+			//			String qrContent = "TICKET:" + ticket.getTicketNumber() +
+			//							   ",EVENT:" + ticket.getEventName() +
+			//							   ",ATTENDEE:" + ticket.getAttendeeName();
+			String qrContent = "https://www.youtube.com/";
 
 			byte[] qrCodeBytes = qrCodeService.generateQRCode(qrContent, 200, 200);
 			Image qrCodeImage = Image.getInstance(qrCodeBytes);

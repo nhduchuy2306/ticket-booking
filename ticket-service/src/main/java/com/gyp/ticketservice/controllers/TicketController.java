@@ -1,9 +1,9 @@
 package com.gyp.ticketservice.controllers;
 
-import com.gyp.ticketservice.dtos.ticket.TicketRequestDto;
-import com.gyp.ticketservice.mappers.TicketMapper;
+import com.gyp.ticketservice.dtos.ticket.TicketResponseDto;
 import com.gyp.ticketservice.services.PDFService;
 import com.gyp.ticketservice.services.QRCodeService;
+import com.gyp.ticketservice.services.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,22 +20,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class TicketController extends AbstractController {
 	public static final String TICKET_CONTROLLER_PATH = "/tickets";
 
-	private static final String QR_CODE_PATH = "/qrcode";
-	private static final String TICKET_PDF_PATH = "/pdf";
+	private static final String QR_CODE_PATH = "qrcode";
+	private static final String TICKET_PDF_PATH = "pdf";
 
 	private final QRCodeService qrCodeService;
 	private final PDFService pdfService;
+	private final TicketService ticketService;
 
-	private final TicketMapper ticketMapper;
+	@GetMapping("/{" + ID_PARAM + "}/" + QR_CODE_PATH)
+	public ResponseEntity<byte[]> getQRCode(@PathVariable(ID_PARAM) String id) {
+		TicketResponseDto dto = ticketService.getTicketById(id);
 
-	@GetMapping(ID_PARAM + QR_CODE_PATH)
-	public ResponseEntity<byte[]> getQRCode(@PathVariable String id) {
-		// In a real application, you would fetch the ticket from a database
-		TicketRequestDto ticket = getDummyTicket(id);
-
-		String qrContent = "TICKET:" + ticket.getTicketNumber() +
-						   ",EVENT:" + ticket.getEventName() +
-						   ",ATTENDEE:" + ticket.getAttendeeName();
+		String qrContent = "TICKET:" + dto.getTicketNumber() +
+						   ",EVENT:" + dto.getEventName() +
+						   ",ATTENDEE:" + dto.getAttendeeName();
 
 		byte[] qrCodeImage = qrCodeService.generateQRCode(qrContent, 250, 250);
 
@@ -46,10 +44,9 @@ public class TicketController extends AbstractController {
 		return new ResponseEntity<>(qrCodeImage, headers, HttpStatus.OK);
 	}
 
-	@GetMapping(ID_PARAM + TICKET_PDF_PATH)
-	public ResponseEntity<byte[]> getTicketPDF(@PathVariable String id) {
-		// In a real application, you would fetch the ticket from a database
-		TicketRequestDto ticket = getDummyTicket(id);
+	@GetMapping("/{" + ID_PARAM + "}/" + TICKET_PDF_PATH)
+	public ResponseEntity<byte[]> getTicketPDF(@PathVariable(ID_PARAM) String id) {
+		TicketResponseDto ticket = ticketService.getTicketById(id);
 
 		byte[] pdfBytes = pdfService.generateTicketPDF(ticket);
 
@@ -59,16 +56,5 @@ public class TicketController extends AbstractController {
 		headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 
 		return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
-	}
-
-	private TicketRequestDto getDummyTicket(String id) {
-		TicketRequestDto ticket = new TicketRequestDto();
-		ticket.setTicketNumber("TKT-" + id + "-" + System.currentTimeMillis());
-		ticket.setEventName("Spring Conference 2025");
-		ticket.setAttendeeName("John Doe");
-		ticket.setAttendeeEmail("john.doe@example.com");
-		ticket.setEventDateTime(java.time.LocalDateTime.now().plusDays(30));
-		ticket.setSeatInfo("Section A, Row 1, Seat 5");
-		return ticket;
 	}
 }
