@@ -40,16 +40,16 @@ public class PDFServiceImpl implements PDFService {
 			document.add(new Paragraph(" "));
 
 			// Add ticket info
-			document.add(new Paragraph("Ticket #: " + ticket.getTicketNumber()));
-			document.add(new Paragraph("Attendee: " + ticket.getAttendeeName()));
-			document.add(new Paragraph("Date & Time: " +
-									   ticket.getEventDateTime()
-											   .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))));
-			document.add(new Paragraph("Type: " + ticket.getTicketTypeSummaryDto().getName()));
-
-			if(ticket.getSeatInfo() != null && !ticket.getSeatInfo().isEmpty()) {
-				document.add(new Paragraph("Seat: " + ticket.getSeatInfo()));
-			}
+//			document.add(new Paragraph("Ticket #: " + ticket.getTicketNumber()));
+//			document.add(new Paragraph("Attendee: " + ticket.getAttendeeName()));
+//			document.add(new Paragraph("Date & Time: " +
+//									   ticket.getEventDateTime()
+//											   .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))));
+//			document.add(new Paragraph("Type: " + ticket.getTicketTypeSummaryDto().getName()));
+//
+//			if(ticket.getSeatInfo() != null && !ticket.getSeatInfo().isEmpty()) {
+//				document.add(new Paragraph("Seat: " + ticket.getSeatInfo()));
+//			}
 
 			document.add(new Paragraph(" "));
 

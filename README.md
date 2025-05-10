@@ -30,9 +30,6 @@ to PDF, QR code and use this at the event.
 - Revenue reports by event
 - Ticket sales trend analysis
 - Attendee analytics
-
-#### 1.4. Payment Service
-
 - Handle different payment methods
 - Integrate with third-party payment gateways
 - Manage invoices
@@ -88,5 +85,18 @@ to PDF, QR code and use this at the event.
 5. Customer creates order → Order Service
 6. Customer makes payment → Payment Service
 7. System sends confirmation → Notification Service → Send QR code and PDF ticket to user when payment successfully
+
+---
+
+### 5. Setup port for each service
+- AuthService -> port:9000
+- DiscoveryService -> port:9761
+- EventService -> port:9001
+- TicketService -> port:9002
+- SaleChannelService -> port:9003
+- OrderService -> 9004
+- NotificationService -> 9005
+- ConfigService -> 9090
+- ApiGateway -> 9999
 
 ---

@@ -31,11 +31,11 @@ public class TicketController extends AbstractController {
 	public ResponseEntity<byte[]> getQRCode(@PathVariable(ID_PARAM) String id) {
 		TicketResponseDto dto = ticketService.getTicketById(id);
 
-		String qrContent = "TICKET:" + dto.getTicketNumber() +
-						   ",EVENT:" + dto.getEventName() +
-						   ",ATTENDEE:" + dto.getAttendeeName();
+//		String qrContent = "TICKET:" + dto.getTicketNumber() +
+//						   ",EVENT:" + dto.getEventName() +
+//						   ",ATTENDEE:" + dto.getAttendeeName();
 
-		byte[] qrCodeImage = qrCodeService.generateQRCode(qrContent, 250, 250);
+		byte[] qrCodeImage = qrCodeService.generateQRCode("", 250, 250);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.IMAGE_PNG);
@@ -52,7 +52,8 @@ public class TicketController extends AbstractController {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_PDF);
-		headers.setContentDispositionFormData("filename", "ticket-" + ticket.getTicketNumber() + ".pdf");
+//		headers.setContentDispositionFormData("filename", "ticket-" + ticket.getTicketNumber() + ".pdf");
+		headers.setContentDispositionFormData("filename", "ticket-" + 1 + ".pdf");
 		headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 
 		return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);

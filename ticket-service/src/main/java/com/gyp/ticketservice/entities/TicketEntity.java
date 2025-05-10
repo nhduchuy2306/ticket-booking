@@ -2,19 +2,21 @@ package com.gyp.ticketservice.entities;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-import com.gyp.common.enums.event.TicketStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -43,24 +45,8 @@ public class TicketEntity extends AbstractEntity {
 	@Column(name = "event_name")
 	private String eventName;
 
-	@Column(name = "seat_info", nullable = false)
-	private String seatInfo;
-
-	@Column(name = "ticket_number", unique = true)
-	private String ticketNumber;
-
-	@Column(name = "attendee_name")
-	private String attendeeName;
-
-	@Column(name = "attendee_email")
-	private String attendeeEmail;
-
 	@Column(name = "event_date_time")
 	private LocalDateTime eventDateTime;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "status")
-	private TicketStatus status;
 
 	@Column(name = "reserved_date")
 	private LocalDateTime reservedDateTime;
@@ -68,4 +54,8 @@ public class TicketEntity extends AbstractEntity {
 	@ManyToOne
 	@JoinColumn(name = "ticket_type_id", nullable = false)
 	private TicketTypeEntity ticketTypeEntity;
+
+	@OneToMany(mappedBy = "ticketEntity", fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<TicketGenerationEntity> ticketGenerationEntityList = new ArrayList<>();
 }
