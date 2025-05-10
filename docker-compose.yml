@@ -7,7 +7,7 @@ services:
     ports:
       - "9411:9411"
     networks:
-      - microservices-net
+      - gyp-net
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.9.0
@@ -19,7 +19,7 @@ services:
     ports:
       - "22181:2181"
     networks:
-      - microservices-net
+      - gyp-net
 
   kafka:
     image: confluentinc/cp-kafka:7.9.0
@@ -36,7 +36,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
     networks:
-      - microservices-net
+      - gyp-net
 
   kafka-ui:
     container_name: kafka-ui
@@ -48,7 +48,7 @@ services:
     environment:
       KAFKA_BROKERS: kafka:9092
     networks:
-      - microservices-net
+      - gyp-net
 
   mail-dev:
     container_name: ms-mail-dev
@@ -56,7 +56,58 @@ services:
     ports:
       - 1080:1080
       - 1025:1025
+    networks:
+      - gyp-net
+
+  mysql:
+    image: mysql:8.0.21
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=12345
+    ports:
+      - 13306:3306
+    networks:
+      - gyp-net
+
+  discovery-service:
+    build: ./discovery-service
+    ports:
+      - "9761:9761"
+    networks:
+      - gyp-net
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "9000:9000"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/auth_service?useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=12345
+    depends_on:
+      - discovery-service
+      - mysql
+    networks:
+      - gyp-net
+
+  event-service:
+    build: ./event-service
+    ports:
+      - "9001:9001"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/event-service?useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=12345
+    depends_on:
+      - discovery-service
+      - mysql
+    networks:
+      - gyp-net
 
 networks:
-  microservices-net:
+  gyp-net:
     driver: bridge

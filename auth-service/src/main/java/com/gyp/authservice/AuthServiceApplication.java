@@ -10,7 +10,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 @EnableKafka
 @EnableDiscoveryClient
 @EnableAspectJAutoProxy
-@ComponentScan(basePackages = { "com.gyp.common.*", "com.gyp.ticket.authservice" })
+@ComponentScan(basePackages = { "com.gyp.common.*", "com.gyp.authservice" })
 @SpringBootApplication
 public class AuthServiceApplication {
 
