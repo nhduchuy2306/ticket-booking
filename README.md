@@ -96,7 +96,6 @@ to PDF, QR code and use this at the event.
 - SaleChannelService -> port:9003
 - OrderService -> 9004
 - NotificationService -> 9005
-- ConfigService -> 9090
 - ApiGateway -> 9999
 
 ---
