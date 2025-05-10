@@ -8,11 +8,17 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfiguration {
+	private static final String[] PUBLIC_ENDPOINTS = {
+			"/v3/api-docs/**", "/v3/api-docs**", "/swagger-ui/**",
+			"/swagger-ui.html", "/swagger-resources/**", "/webjars/**"
+	};
+
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable);
 		http.authorizeHttpRequests(request ->
-				request.anyRequest().permitAll()
+				request.requestMatchers(PUBLIC_ENDPOINTS).permitAll()
+						.anyRequest().permitAll()
 		);
 
 		return http.build();

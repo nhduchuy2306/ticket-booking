@@ -29,6 +29,7 @@
         <lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
         <jwt.token.version>0.12.5</jwt.token.version>
         <querydsl.version>5.0.0</querydsl.version>
+        <common.lang.version>3.17.0</common.lang.version>
     </properties>
 
     <modules>

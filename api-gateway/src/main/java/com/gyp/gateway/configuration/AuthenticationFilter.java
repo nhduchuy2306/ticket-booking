@@ -33,7 +33,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
 	private final ObjectMapper objectMapper;
 
-	private String[] publicEndpoints = { "/auths/login", "/auths/logout" };
+	private String[] publicEndpoints = { "/auths/login", "/auths/logout", "^/[^/]+/v3/api-docs$"};
 
 	@Value("${jwt.secret.token}")
 	private String jwtSecretKey;
@@ -41,7 +41,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 		try {
-			if(isPublicEndpoint(exchange.getRequest())) {
+			if(isMatchPublicEndpoint(exchange.getRequest())) {
 				return chain.filter(exchange);
 			}
 
@@ -76,9 +76,14 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 		return -1;
 	}
 
-	private boolean isPublicEndpoint(ServerHttpRequest request) {
+	private boolean isMatchPublicEndpoint(ServerHttpRequest request) {
 		return Arrays.stream(publicEndpoints)
 				.anyMatch(s -> request.getURI().getPath().matches(s));
+	}
+
+	private boolean isContainPublicEndpoint(ServerHttpRequest request) {
+		return Arrays.stream(publicEndpoints)
+				.anyMatch(s -> request.getURI().getPath().contains(s));
 	}
 
 	private Mono<Void> unauthenticated(ServerHttpResponse response) {

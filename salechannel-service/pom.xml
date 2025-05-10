@@ -54,7 +54,7 @@
         <dependency>
             <groupId>com.gyp</groupId>
             <artifactId>common-service</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
     <dependencyManagement>
