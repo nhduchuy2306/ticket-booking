@@ -19,6 +19,8 @@ public class AuthServiceImpl implements AuthService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
 
+	private final UserAccountMapper userAccountMapper;
+
 	@Override
 	public LoginResponseDto login(LoginRequestDto loginRequestDto) {
 		UserAccountEntity userAccountEntity = userAccountRepository.findByUsername(loginRequestDto.getUsername())
@@ -26,7 +28,7 @@ public class AuthServiceImpl implements AuthService {
 		if(userAccountEntity != null) {
 			String password = userAccountEntity.getPassword();
 			if(passwordEncoder.matches(loginRequestDto.getPassword(), password)) {
-				UserAccountResponseDto dto = UserAccountMapper.INSTANCE.toDto(userAccountEntity);
+				UserAccountResponseDto dto = userAccountMapper.toDto(userAccountEntity);
 				String token = jwtTokenProvider.generateToken(dto);
 				return LoginResponseDto.builder().token(token).build();
 			}

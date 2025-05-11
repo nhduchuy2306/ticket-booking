@@ -1,20 +1,17 @@
 package com.gyp.authservice.mappers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.gyp.authservice.entities.UserGroupEntity;
-import com.gyp.common.converters.Serialization;
 import com.gyp.authservice.dtos.usergroup.UserGroupPermissions;
 import com.gyp.authservice.dtos.usergroup.UserGroupRequestDto;
 import com.gyp.authservice.dtos.usergroup.UserGroupResponseDto;
+import com.gyp.authservice.entities.UserGroupEntity;
+import com.gyp.common.converters.Serialization;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface UserGroupMapper {
-	UserGroupMapper INSTANCE = Mappers.getMapper(UserGroupMapper.class);
-
 	@Mapping(target = "userAccountEntityList", ignore = true)
 	@Mapping(target = "userGroupPermissionsRaw", source = "userGroupPermissions",
 			qualifiedByName = "mapUserGroupPermissionsRaw")

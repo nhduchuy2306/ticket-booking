@@ -3,13 +3,13 @@ package com.gyp.authservice.services.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.gyp.authservice.dtos.useraccount.UserAccountResponseDto;
 import com.gyp.authservice.entities.CustomUserDetails;
 import com.gyp.authservice.entities.UserAccountEntity;
 import com.gyp.authservice.mappers.UserAccountMapper;
 import com.gyp.authservice.repositories.UserAccountRepository;
-import com.gyp.common.models.UserAccountModel;
-import com.gyp.authservice.dtos.useraccount.UserAccountResponseDto;
 import com.gyp.authservice.services.UserAccountService;
+import com.gyp.common.models.UserAccountModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserAccountServiceImpl implements UserAccountService {
 	private final UserAccountRepository userAccountRepository;
+	private final UserAccountMapper userAccountMapper;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -38,7 +39,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Override
 	public List<UserAccountResponseDto> getUserAccountList() {
 		return userAccountRepository.findAll().stream()
-				.map(UserAccountMapper.INSTANCE::toDto)
+				.map(userAccountMapper::toDto)
 				.collect(Collectors.toList());
 	}
 
@@ -46,7 +47,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	public UserAccountResponseDto getUserAccountByUserName(String username) {
 		UserAccountEntity userAccountEntity = userAccountRepository.findByUsername(username).orElse(null);
 		if(userAccountEntity != null) {
-			return UserAccountMapper.INSTANCE.toDto(userAccountEntity);
+			return userAccountMapper.toDto(userAccountEntity);
 		}
 		return null;
 	}
@@ -55,7 +56,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	public UserAccountResponseDto getUserAccountById(String id) {
 		UserAccountEntity userAccountEntity = userAccountRepository.findById(id).orElse(null);
 		if(userAccountEntity != null) {
-			return UserAccountMapper.INSTANCE.toDto(userAccountEntity);
+			return userAccountMapper.toDto(userAccountEntity);
 		}
 		return null;
 	}
@@ -63,6 +64,6 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Override
 	public List<UserAccountModel> getOrganizerAccounts() {
 		List<UserAccountEntity> userAccountEntityList = userAccountRepository.findAllWithAppEventCrudPermissions();
-		return userAccountEntityList.stream().map(UserAccountMapper.INSTANCE::toModel).collect(Collectors.toList());
+		return userAccountEntityList.stream().map(userAccountMapper::toModel).collect(Collectors.toList());
 	}
 }

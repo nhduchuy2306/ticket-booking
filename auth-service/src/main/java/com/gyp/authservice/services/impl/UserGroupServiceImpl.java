@@ -3,14 +3,14 @@ package com.gyp.authservice.services.impl;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.gyp.authservice.entities.UserGroupEntity;
-import com.gyp.authservice.repositories.UserGroupRepository;
-import com.gyp.common.converters.Serialization;
 import com.gyp.authservice.dtos.usergroup.UserGroupPermissions;
 import com.gyp.authservice.dtos.usergroup.UserGroupRequestDto;
 import com.gyp.authservice.dtos.usergroup.UserGroupResponseDto;
+import com.gyp.authservice.entities.UserGroupEntity;
 import com.gyp.authservice.mappers.UserGroupMapper;
+import com.gyp.authservice.repositories.UserGroupRepository;
 import com.gyp.authservice.services.UserGroupService;
+import com.gyp.common.converters.Serialization;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,18 +18,19 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserGroupServiceImpl implements UserGroupService {
 	private final UserGroupRepository userGroupRepository;
+	private final UserGroupMapper userGroupMapper;
 
 	@Override
 	public List<UserGroupResponseDto> getListUserGroups() {
 		List<UserGroupEntity> userGroupEntities = userGroupRepository.findAll();
-		return userGroupEntities.stream().map(UserGroupMapper.INSTANCE::toDto).toList();
+		return userGroupEntities.stream().map(userGroupMapper::toDto).toList();
 	}
 
 	@Override
 	public UserGroupResponseDto getUserGroupById(String id) {
 		UserGroupEntity userGroupEntity = userGroupRepository.findById(id).orElse(null);
 		if(userGroupEntity != null) {
-			return UserGroupMapper.INSTANCE.toDto(userGroupEntity);
+			return userGroupMapper.toDto(userGroupEntity);
 		}
 		return null;
 	}
@@ -37,7 +38,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 	@Override
 	public void createUserGroup(UserGroupRequestDto userGroupRequestDto) {
 		try {
-			UserGroupEntity userGroupEntity = UserGroupMapper.INSTANCE.toEntity(userGroupRequestDto);
+			UserGroupEntity userGroupEntity = userGroupMapper.toEntity(userGroupRequestDto);
 			UserGroupPermissions userGroupPermissions = userGroupRequestDto.getUserGroupPermissions();
 			String userPermissionString = Serialization.serializeToString(userGroupPermissions);
 			userGroupEntity.setUserGroupPermissionsRaw(userPermissionString);
