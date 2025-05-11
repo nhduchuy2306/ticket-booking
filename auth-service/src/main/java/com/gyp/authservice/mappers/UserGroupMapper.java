@@ -6,12 +6,15 @@ import com.gyp.authservice.dtos.usergroup.UserGroupRequestDto;
 import com.gyp.authservice.dtos.usergroup.UserGroupResponseDto;
 import com.gyp.authservice.entities.UserGroupEntity;
 import com.gyp.common.converters.Serialization;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
-public interface UserGroupMapper {
+public interface UserGroupMapper extends AbstractMapper {
+	@Mapping(target = "id", expression = "java(generateUuid())")
 	@Mapping(target = "userAccountEntityList", ignore = true)
 	@Mapping(target = "userGroupPermissionsRaw", source = "userGroupPermissions",
 			qualifiedByName = "mapUserGroupPermissionsRaw")
@@ -37,5 +40,10 @@ public interface UserGroupMapper {
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@AfterMapping
+	default void afterMapping(@MappingTarget UserGroupEntity entity) {
+		mapAbstractFieldsToEntity(entity);
 	}
 }

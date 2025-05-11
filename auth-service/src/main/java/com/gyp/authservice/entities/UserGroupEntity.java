@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
@@ -25,6 +26,7 @@ import lombok.Setter;
 @Entity
 @Builder
 @Table(name = "USERGROUP")
+@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class UserGroupEntity extends AbstractEntity {
@@ -52,8 +54,4 @@ public class UserGroupEntity extends AbstractEntity {
 	@JsonIgnore
 	@ManyToMany(mappedBy = "userGroupEntityList", fetch = FetchType.LAZY)
 	private List<UserAccountEntity> userAccountEntityList;
-
-	public UserGroupEntity() {
-		super();
-	}
 }

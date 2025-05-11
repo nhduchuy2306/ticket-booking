@@ -13,9 +13,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 @ComponentScan(basePackages = { "com.gyp.common", "com.gyp.authservice" })
 @SpringBootApplication
 public class AuthServiceApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(AuthServiceApplication.class, args);
 	}
-
 }

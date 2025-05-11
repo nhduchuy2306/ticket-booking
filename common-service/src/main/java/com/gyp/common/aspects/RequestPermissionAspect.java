@@ -11,9 +11,9 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import com.gyp.common.annotations.RequestPermission;
 import com.gyp.common.converters.Serialization;
+import com.gyp.common.enums.permission.ApplicationPermission;
 import com.gyp.common.exceptions.AccessDeniedException;
 import com.gyp.common.jwt.JwtTokenProvider;
-import com.gyp.common.enums.permission.ApplicationPermission;
 import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -84,7 +84,7 @@ public class RequestPermissionAspect {
 
 			for(Method method : methods) {
 				if(method.getName().equals(methodName) &&
-						method.getParameterCount() == joinPoint.getArgs().length) {
+				   method.getParameterCount() == joinPoint.getArgs().length) {
 					return method;
 				}
 			}

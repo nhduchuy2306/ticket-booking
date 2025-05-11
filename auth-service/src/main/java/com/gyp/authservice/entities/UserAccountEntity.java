@@ -20,14 +20,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "USERACCOUNT")
+@NoArgsConstructor
 @AllArgsConstructor
 public class UserAccountEntity extends AbstractEntity {
 	@Serial
@@ -60,8 +60,4 @@ public class UserAccountEntity extends AbstractEntity {
 			inverseJoinColumns = @JoinColumn(name = "user_group_id")
 	)
 	private List<UserGroupEntity> userGroupEntityList;
-
-	public UserAccountEntity() {
-		super();
-	}
 }

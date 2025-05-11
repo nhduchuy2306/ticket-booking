@@ -1,10 +1,10 @@
 package com.gyp.authservice.controllers;
 
+import com.gyp.authservice.services.UserGroupService;
 import com.gyp.common.annotations.RequestPermission;
 import com.gyp.common.controllers.AbstractController;
 import com.gyp.common.enums.permission.ActionPermission;
 import com.gyp.common.enums.permission.ApplicationPermission;
-import com.gyp.authservice.services.UserGroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

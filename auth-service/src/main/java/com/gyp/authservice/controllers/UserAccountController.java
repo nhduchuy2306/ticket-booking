@@ -1,11 +1,11 @@
 package com.gyp.authservice.controllers;
 
+import com.gyp.authservice.messages.producers.UserAccountProducer;
+import com.gyp.authservice.services.UserAccountService;
 import com.gyp.common.annotations.RequestPermission;
 import com.gyp.common.controllers.AbstractController;
 import com.gyp.common.enums.permission.ActionPermission;
 import com.gyp.common.enums.permission.ApplicationPermission;
-import com.gyp.authservice.messages.producers.UserAccountProducer;
-import com.gyp.authservice.services.UserAccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

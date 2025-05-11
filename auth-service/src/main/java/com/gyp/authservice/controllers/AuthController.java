@@ -2,10 +2,10 @@ package com.gyp.authservice.controllers;
 
 import java.util.Objects;
 
-import com.gyp.common.controllers.AbstractController;
 import com.gyp.authservice.dtos.auth.LoginRequestDto;
 import com.gyp.authservice.dtos.auth.LoginResponseDto;
 import com.gyp.authservice.services.AuthService;
+import com.gyp.common.controllers.AbstractController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
