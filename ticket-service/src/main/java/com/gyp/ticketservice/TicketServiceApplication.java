@@ -11,7 +11,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableAspectJAutoProxy
-@ComponentScan(basePackages = { "com.gyp.common.*", "com.gyp.ticketservice.*" })
+@ComponentScan(basePackages = { "com.gyp.common", "com.gyp.ticketservice" })
 public class TicketServiceApplication {
 
 	public static void main(String[] args) {

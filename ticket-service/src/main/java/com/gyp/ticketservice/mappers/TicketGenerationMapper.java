@@ -2,6 +2,7 @@ package com.gyp.ticketservice.mappers;
 
 import com.gyp.ticketservice.dtos.ticketgeneration.TicketGenerationRequestDto;
 import com.gyp.ticketservice.dtos.ticketgeneration.TicketGenerationResponseDto;
+import com.gyp.ticketservice.dtos.ticketgeneration.TicketGenerationSummaryDto;
 import com.gyp.ticketservice.entities.TicketEntity;
 import com.gyp.ticketservice.entities.TicketGenerationEntity;
 import org.mapstruct.AfterMapping;
@@ -18,8 +19,11 @@ public interface TicketGenerationMapper extends AbstractMapper {
 
 	TicketGenerationResponseDto toResponse(TicketGenerationEntity entity);
 
+	TicketGenerationSummaryDto toSummary(TicketGenerationEntity ticketGenerationEntity);
+
 	@AfterMapping
 	default void afterMapping(@MappingTarget TicketEntity entity) {
 		mapAbstractFieldsToEntity(entity);
 	}
+
 }
