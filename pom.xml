@@ -17,7 +17,6 @@
     <description>This is a parent project about ticket booking (Get Your Pass)</description>
 
     <properties>
-        <gyp.version>1.0-SNAPSHOT</gyp.version>
         <revision>1.0-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>

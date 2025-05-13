@@ -9,7 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>event-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${revision}</version>
     <name>event-service</name>
     <description>event-service</description>
 

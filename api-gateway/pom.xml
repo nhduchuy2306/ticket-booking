@@ -9,7 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>api-gateway</artifactId>
-    <version>${gyp.version}</version>
+    <version>${revision}</version>
     <name>api-gateway</name>
     <description>api gateway</description>
 
@@ -42,7 +42,7 @@
         <dependency>
             <groupId>com.gyp</groupId>
             <artifactId>common-service</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${revision}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
