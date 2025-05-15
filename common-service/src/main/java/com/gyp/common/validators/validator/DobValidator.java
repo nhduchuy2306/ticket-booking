@@ -1,4 +1,4 @@
-package com.gyp.common.validators;
+package com.gyp.common.validators.validator;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -6,6 +6,8 @@ import java.util.Objects;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+
+import com.gyp.common.validators.anotations.DobConstraint;
 
 public class DobValidator implements ConstraintValidator<DobConstraint, LocalDate> {
 

@@ -34,6 +34,8 @@ to PDF, QR code and use this at the event.
 - Integrate with third-party payment gateways
 - Manage invoices
 
+#### 1.3. SaleChannel Service
+
 ---
 
 ### 2. Supporting Services
