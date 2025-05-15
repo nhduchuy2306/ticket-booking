@@ -101,3 +101,13 @@ to PDF, QR code and use this at the event.
 - ApiGateway -> 9999
 
 ---
+
+### 6. Swagger
+- Api Gateway: http://localhost:{port}/webjars/swagger-ui/index.html
+- Other Service: http://localhost:{port}/swagger-ui/index.html
+
+---
+
+## 7. Note
+- Use profile "no-kafka" to not use kafka
+- Use profile "no-cache" to not use cache

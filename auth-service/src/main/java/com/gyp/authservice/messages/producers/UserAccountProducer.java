@@ -1,6 +1,7 @@
 package com.gyp.authservice.messages.producers;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gyp.authservice.services.UserAccountService;
@@ -18,26 +19,30 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserAccountProducer {
-	private final KafkaTemplate<String, String> kafkaTemplate;
+	private final Optional<KafkaTemplate<String, String>> kafkaTemplate;
 	private final UserAccountService userAccountService;
 
 	public void syncUserAccount() {
-		try {
-			List<UserAccountModel> accountResponses = userAccountService.getOrganizerAccounts();
-			String dataString = Serialization.serializeToString(accountResponses);
-			kafkaTemplate.send(TopicConstants.SYNC_USER_ACCOUNT_TOPIC, dataString);
-		} catch(JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		kafkaTemplate.ifPresent(template -> {
+			try {
+				List<UserAccountModel> accountResponses = userAccountService.getOrganizerAccounts();
+				String dataString = Serialization.serializeToString(accountResponses);
+				template.send(TopicConstants.SYNC_USER_ACCOUNT_TOPIC, dataString);
+			} catch(JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
+		});
 	}
 
 	public void createOrganizer(UserAccountModel model) {
-		try {
-			String dataString = Serialization.serializeToString(model);
-			kafkaTemplate.send(TopicConstants.CREATE_ORGANIZER, dataString);
-		} catch(JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		kafkaTemplate.ifPresent(template -> {
+			try {
+				String dataString = Serialization.serializeToString(model);
+				template.send(TopicConstants.CREATE_ORGANIZER, dataString);
+			} catch(JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
+		});
 	}
 
 	@EventListener(ApplicationReadyEvent.class)
