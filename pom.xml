@@ -16,21 +16,6 @@
     <name>gyp</name>
     <description>This is a parent project about ticket booking (Get Your Pass)</description>
 
-    <properties>
-        <revision>1.0-SNAPSHOT</revision>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>21</java.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <spring-cloud.version>2024.0.0</spring-cloud.version>
-        <mapstruct.version>1.6.3</mapstruct.version>
-        <lombok.version>1.18.34</lombok.version>
-        <lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
-        <jwt.token.version>0.12.5</jwt.token.version>
-        <querydsl.version>5.0.0</querydsl.version>
-        <common.lang.version>3.17.0</common.lang.version>
-    </properties>
-
     <modules>
         <module>common-service</module>
         <module>api-gateway</module>
@@ -43,6 +28,66 @@
         <module>salechannel-service</module>
     </modules>
 
+    <properties>
+        <!-- Basic Project Properties -->
+        <revision>1.0-SNAPSHOT</revision>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+
+        <!-- Spring Boot Versions -->
+        <spring.boot.starter.web.version>3.4.5</spring.boot.starter.web.version>
+        <spring.boot.starter.data.jpa.version>3.4.5</spring.boot.starter.data.jpa.version>
+        <spring.boot.starter.test.version>3.4.5</spring.boot.starter.test.version>
+        <spring.boot.starter.actuator.version>3.4.5</spring.boot.starter.actuator.version>
+        <spring.boot.starter.oauth2.resource.server.version>3.4.5</spring.boot.starter.oauth2.resource.server.version>
+        <spring.boot.starter.validation.version>3.4.5</spring.boot.starter.validation.version>
+        <spring.boot.starter.data.redis.version>3.4.5</spring.boot.starter.data.redis.version>
+        <spring.security.core.version>6.4.5</spring.security.core.version>
+        <spring.boot.starter.aop.version>3.4.5</spring.boot.starter.aop.version>
+
+        <!-- Spring Cloud Versions -->
+        <spring-cloud.version>2024.0.0</spring-cloud.version>
+        <spring.cloud.starter.netfilx.eureka.client.version>4.2.1</spring.cloud.starter.netfilx.eureka.client.version>
+        <spring.cloud.starter.gateway.version>4.2.1</spring.cloud.starter.gateway.version>
+        <spring.cloud.starter.netflix.eureka.server.version>4.2.1</spring.cloud.starter.netflix.eureka.server.version>
+        <spring.kafka.version>4.0.0-M2</spring.kafka.version>
+        <spring.cloud.starter.openfeign.version>4.2.0</spring.cloud.starter.openfeign.version>
+
+        <!-- Utility Libraries -->
+        <lombok.version>1.18.34</lombok.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
+        <lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
+        <common.lang.version>3.17.0</common.lang.version>
+        <querydsl.version>5.0.0</querydsl.version>
+        <reflections.version>0.10.2</reflections.version>
+        <jackson.databind.version>2.18.2</jackson.databind.version>
+        <jackson.annotations.version>2.18.2</jackson.annotations.version>
+        <jackson.core.version>2.18.2</jackson.core.version>
+
+        <!-- Security -->
+        <jwt.token.version>0.12.5</jwt.token.version>
+        <nimbus.jose.jwt.version>10.2</nimbus.jose.jwt.version>
+
+        <!-- Database -->
+        <spring.flyway.core.version>11.8.2</spring.flyway.core.version>
+        <spring.flyway.mysql.version>11.8.2</spring.flyway.mysql.version>
+        <spring.mysql.connector.j.version>9.3.0</spring.mysql.connector.j.version>
+
+        <!-- Documentation -->
+        <springdoc.openapi.starter.webflux.ui.version>2.1.0</springdoc.openapi.starter.webflux.ui.version>
+        <springdoc.openapi.starter.webmvc.ui.version>2.7.0</springdoc.openapi.starter.webmvc.ui.version>
+
+        <!-- QR Code Generation -->
+        <com.google.zxing.core.version>3.5.3</com.google.zxing.core.version>
+        <com.google.zxing.javase.version>3.5.3</com.google.zxing.javase.version>
+
+        <!-- PDF Generation -->
+        <com.itextpdf.version>5.5.13.3</com.itextpdf.version>
+    </properties>
+
+    <!-- Profiles -->
     <profiles>
         <profile>
             <id>dev</id>
@@ -57,5 +102,4 @@
             </properties>
         </profile>
     </profiles>
-
 </project>
