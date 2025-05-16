@@ -1,6 +1,7 @@
-version: '1.0'
-
 services:
+  #  -----------------------------------------------------
+  #  Infrastructure Service
+  #  -----------------------------------------------------
   zipkin:
     container_name: zipkin
     image: openzipkin/zipkin
@@ -23,7 +24,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.9.0
-    container_name: ms_kafka
+    container_name: kafka
     ports:
       - 9092:9092
     depends_on:
@@ -33,14 +34,15 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
     networks:
       - gyp-net
 
   kafka-ui:
-    container_name: kafka-ui
     image: redpandadata/console:v3.1.0
+    container_name: kafka-ui
     ports:
       - 9090:8080
     depends_on:
@@ -51,8 +53,8 @@ services:
       - gyp-net
 
   mail-dev:
-    container_name: ms-mail-dev
     image: maildev/maildev
+    container_name: mail-dev
     ports:
       - 1080:1080
       - 1025:1025
@@ -71,6 +73,7 @@ services:
 
   mysql:
     image: mysql:8.0.21
+    container_name: mysql
     volumes:
       - ./mysql_data:/var/lib/mysql
     environment:
@@ -81,35 +84,69 @@ services:
     networks:
       - gyp-net
 
+  #  -----------------------------------------------------
+  #  Internal Service
+  #  -----------------------------------------------------
   discovery-service:
     build: ../../discovery-service
+    container_name: discovery-service
     ports:
       - 9761:9761
     networks:
       - gyp-net
 
+  api-gateway:
+    build: ../../api-gateway
+    container_name: api-gateway
+    ports:
+      - 9999:9999
+    depends_on:
+      - discovery-service
+    networks:
+      - gyp-net
+
   auth-service:
     build: ../../auth-service
+    container_name: auth-service
     ports:
       - 9000:9000
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/auth_service?useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/auth_service?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=12345
     depends_on:
       - discovery-service
       - mysql
+      - kafka
     networks:
       - gyp-net
 
   event-service:
     build: ../../event-service
+    container_name: event-service
     ports:
       - 9001:9001
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/event-service?useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/event_service?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=12345
+    depends_on:
+      - discovery-service
+      - mysql
+      - kafka
+    networks:
+      - gyp-net
+
+  ticket-service:
+    build: ../../ticket-service
+    container_name: ticket-service
+    ports:
+      - 9002:9002
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/ticket_service?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=12345
     depends_on:
@@ -121,3 +158,5 @@ services:
 networks:
   gyp-net:
     driver: bridge
+    name: gyp-net
+    attachable: true
