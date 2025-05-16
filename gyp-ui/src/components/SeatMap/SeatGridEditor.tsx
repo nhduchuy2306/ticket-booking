@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { SeatModel } from "./SeatMapModel.ts";
+import { SeatModel } from "./SeatMapModel";
 
 const SeatGridEditor: React.FC = () => {
     const [gridSize, setGridSize] = useState({rows: 5, cols: 10});
