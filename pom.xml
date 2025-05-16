@@ -27,6 +27,8 @@
         <module>order-service</module>
         <module>salechannel-service</module>
         <module>search-service</module>
+        <module>configuration-service</module>
+        <module>observability-service</module>
     </modules>
 
     <properties>

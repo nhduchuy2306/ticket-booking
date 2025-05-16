@@ -82,14 +82,14 @@ services:
       - gyp-net
 
   discovery-service:
-    build: ./discovery-service
+    build: ../../discovery-service
     ports:
       - 9761:9761
     networks:
       - gyp-net
 
   auth-service:
-    build: ./auth-service
+    build: ../../auth-service
     ports:
       - 9000:9000
     environment:
@@ -104,7 +104,7 @@ services:
       - gyp-net
 
   event-service:
-    build: ./event-service
+    build: ../../event-service
     ports:
       - 9001:9001
     environment:
