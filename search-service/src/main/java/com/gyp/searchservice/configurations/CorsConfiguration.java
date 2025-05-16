@@ -1,4 +1,4 @@
-package com.gyp.orderservice.configurations;
+package com.gyp.searchservice.configurations;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
