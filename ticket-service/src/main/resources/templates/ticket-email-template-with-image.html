@@ -40,21 +40,34 @@
         footer {
             margin-top: 20px;
         }
+
+        .qr-code-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <header>
-        <h1>Thông Báo</h1>
+        <h1>Notification</h1>
     </header>
     <section>
-        <p>Xin chào <span th:text="${name}"></span>,</p>
-        <p>Chúng tôi xin gửi thông báo quan trọng cho bạn:</p>
+        <p>Hello <span th:text="${name}"></span>,</p>
+        <p>Thank you for using our product, this is your ticket:</p>
         <p th:utext="${content}"></p>
+        <div class="qr-code-container">
+            <img class="qr-code" th:src="${qrCode}" alt="QR Code"/>
+        </div>
     </section>
     <footer>
-        <p>Trân trọng,</p>
-        <p>Đội ngũ của chúng tôi</p>
+        <p>Best Regard,</p>
+        <p>GYP</p>
     </footer>
 </div>
 </body>
