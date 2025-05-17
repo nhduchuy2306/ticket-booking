@@ -2,6 +2,7 @@ package com.gyp.authservice.services.impl;
 
 import com.gyp.authservice.dtos.auth.LoginRequestDto;
 import com.gyp.authservice.dtos.auth.LoginResponseDto;
+import com.gyp.authservice.dtos.auth.RegisterRequestDto;
 import com.gyp.authservice.dtos.useraccount.UserAccountResponseDto;
 import com.gyp.authservice.entities.UserAccountEntity;
 import com.gyp.authservice.mappers.UserAccountMapper;
@@ -28,10 +29,21 @@ public class AuthServiceImpl implements AuthService {
 		if(userAccountEntity != null) {
 			String password = userAccountEntity.getPassword();
 			if(passwordEncoder.matches(loginRequestDto.getPassword(), password)) {
-				UserAccountResponseDto dto = userAccountMapper.toDto(userAccountEntity);
+				UserAccountResponseDto dto = userAccountMapper.toResponseDto(userAccountEntity);
 				String token = jwtTokenProvider.generateToken(dto);
 				return LoginResponseDto.builder().token(token).build();
 			}
+		}
+		return null;
+	}
+
+	@Override
+	public UserAccountResponseDto register(RegisterRequestDto registerRequestDto) {
+		if(registerRequestDto.getPassword().equals(registerRequestDto.getConfirmPassword())) {
+			UserAccountEntity userAccountEntity = userAccountMapper.toEntity(registerRequestDto);
+			userAccountEntity.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
+			userAccountEntity = userAccountRepository.save(userAccountEntity);
+			return userAccountMapper.toResponseDto(userAccountEntity);
 		}
 		return null;
 	}

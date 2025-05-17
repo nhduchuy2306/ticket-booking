@@ -27,13 +27,13 @@ public interface EventApprovalMapper extends AbstractMapper {
 	List<EventApprovalResponseDto> toResponseDtoList(List<EventApprovalEntity> entities);
 
 	// Create new entity from request
-	@Mapping(target = "id", expression = "java(generateUuid())")
+	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "eventEntity", source = "eventId", qualifiedByName = "eventIdToEntity")
 	@Named("toEntity")
 	EventApprovalEntity toEntity(EventApprovalRequestDto dto);
 
 	// Update existing entity from request
-	@Mapping(target = "id", expression = "java(generateUuid())")
+	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "eventEntity", source = "eventId", qualifiedByName = "eventIdToEntity")
 	@Named("updateEntityFromDto")
 	void updateEntityFromDto(EventApprovalRequestDto dto, @MappingTarget EventApprovalEntity entity);

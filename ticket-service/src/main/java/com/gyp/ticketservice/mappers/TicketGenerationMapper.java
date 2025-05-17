@@ -14,7 +14,7 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring", mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG)
 public interface TicketGenerationMapper extends AbstractMapper {
 
-	@Mapping(target = "id", expression = "java(generateUuid())")
+	@Mapping(target = "id", ignore = true)
 	TicketGenerationEntity toEntity(TicketGenerationRequestDto dto);
 
 	TicketGenerationResponseDto toResponse(TicketGenerationEntity entity);

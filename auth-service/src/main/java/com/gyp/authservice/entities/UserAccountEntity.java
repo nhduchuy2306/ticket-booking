@@ -18,17 +18,17 @@ import jakarta.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@Builder
-@EqualsAndHashCode(callSuper = true)
+@Data
 @Entity
+@Builder
 @Table(name = "USERACCOUNT")
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class UserAccountEntity extends AbstractEntity {
 	@Serial
 	private static final long serialVersionUID = 5877294560019573626L;
@@ -41,7 +41,7 @@ public class UserAccountEntity extends AbstractEntity {
 	@Column(name = "name")
 	private String name;
 
-	@Column(name = "user_name")
+	@Column(name = "user_name", unique = true)
 	private String username;
 
 	@Column(name = "password")
@@ -52,6 +52,9 @@ public class UserAccountEntity extends AbstractEntity {
 
 	@Column(name = "phone_number")
 	private String phoneNumber;
+
+	@Column(name = "email", unique = true)
+	private String email;
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(

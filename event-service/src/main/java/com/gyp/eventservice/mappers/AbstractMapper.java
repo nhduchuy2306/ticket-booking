@@ -52,8 +52,4 @@ public interface AbstractMapper {
 
 		return "system";
 	}
-
-	default String generateUuid() {
-		return UUID.randomUUID().toString();
-	}
 }

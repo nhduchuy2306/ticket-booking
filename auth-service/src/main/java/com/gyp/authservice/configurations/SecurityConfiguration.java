@@ -24,8 +24,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 	private static final String[] PUBLIC_ENDPOINTS = {
-			"/login", "/logout", "/useraccounts/**", "/v3/api-docs/**", "/v3/api-docs**", "/swagger-ui/**",
-			"/swagger-ui.html", "/swagger-resources/**", "/webjars/**"
+			"/login", "/register", "/useraccounts/**", "/v3/api-docs/**", "/v3/api-docs**",
+			"/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**"
 	};
 
 	@Value("${jwt.secret.token}")

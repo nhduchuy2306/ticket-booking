@@ -39,7 +39,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Override
 	public List<UserAccountResponseDto> getUserAccountList() {
 		return userAccountRepository.findAll().stream()
-				.map(userAccountMapper::toDto)
+				.map(userAccountMapper::toResponseDto)
 				.collect(Collectors.toList());
 	}
 
@@ -47,7 +47,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	public UserAccountResponseDto getUserAccountByUserName(String username) {
 		UserAccountEntity userAccountEntity = userAccountRepository.findByUsername(username).orElse(null);
 		if(userAccountEntity != null) {
-			return userAccountMapper.toDto(userAccountEntity);
+			return userAccountMapper.toResponseDto(userAccountEntity);
 		}
 		return null;
 	}
@@ -56,7 +56,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	public UserAccountResponseDto getUserAccountById(String id) {
 		UserAccountEntity userAccountEntity = userAccountRepository.findById(id).orElse(null);
 		if(userAccountEntity != null) {
-			return userAccountMapper.toDto(userAccountEntity);
+			return userAccountMapper.toResponseDto(userAccountEntity);
 		}
 		return null;
 	}

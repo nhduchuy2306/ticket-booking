@@ -14,7 +14,7 @@ import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface UserGroupMapper extends AbstractMapper {
-	@Mapping(target = "id", expression = "java(generateUuid())")
+	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "userAccountEntityList", ignore = true)
 	@Mapping(target = "userGroupPermissionsRaw", source = "userGroupPermissions",
 			qualifiedByName = "mapUserGroupPermissionsRaw")

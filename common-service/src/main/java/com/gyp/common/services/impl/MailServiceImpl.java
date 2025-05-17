@@ -9,6 +9,7 @@ import jakarta.mail.internet.MimeMessage;
 import com.gyp.common.services.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -19,6 +20,7 @@ import org.thymeleaf.context.Context;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@ConditionalOnBean({ JavaMailSender.class, TemplateEngine.class })
 public class MailServiceImpl implements MailService {
 	private final JavaMailSender mailSender;
 	private final TemplateEngine templateEngine;

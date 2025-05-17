@@ -4,6 +4,8 @@ import java.util.Objects;
 
 import com.gyp.authservice.dtos.auth.LoginRequestDto;
 import com.gyp.authservice.dtos.auth.LoginResponseDto;
+import com.gyp.authservice.dtos.auth.RegisterRequestDto;
+import com.gyp.authservice.dtos.useraccount.UserAccountResponseDto;
 import com.gyp.authservice.services.AuthService;
 import com.gyp.common.controllers.AbstractController;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class AuthController extends AbstractController {
-
 	private static final String LOGIN_PATH = "login";
-	private static final String LOGOUT_PATH = "logout";
 	private static final String REGISTER_PATH = "register";
 
 	private final AuthService authService;
@@ -28,13 +28,9 @@ public class AuthController extends AbstractController {
 		return createResponseOk(Objects.requireNonNullElse(loginResponseDto, "Invalid username or password"));
 	}
 
-	@PostMapping(AuthController.LOGOUT_PATH)
-	public ResponseEntity<?> logout() {
-		return ResponseEntity.ok("Logout");
-	}
-
 	@PostMapping(AuthController.REGISTER_PATH)
-	public ResponseEntity<?> register() {
-		return ResponseEntity.ok("Register");
+	public ResponseEntity<?> register(@RequestBody RegisterRequestDto registerRequestDto) {
+		UserAccountResponseDto dto = authService.register(registerRequestDto);
+		return createResponseOk(Objects.requireNonNullElse(dto, "Something wrong"));
 	}
 }

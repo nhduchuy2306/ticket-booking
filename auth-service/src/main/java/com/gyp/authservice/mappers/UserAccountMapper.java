@@ -1,5 +1,6 @@
 package com.gyp.authservice.mappers;
 
+import com.gyp.authservice.dtos.auth.RegisterRequestDto;
 import com.gyp.authservice.dtos.useraccount.UserAccountRequestDto;
 import com.gyp.authservice.dtos.useraccount.UserAccountResponseDto;
 import com.gyp.authservice.entities.UserAccountEntity;
@@ -11,15 +12,20 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring", uses = { UserGroupMapper.class })
 public interface UserAccountMapper extends AbstractMapper {
-	@Mapping(target = "id", expression = "java(generateUuid())")
+	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "userGroupEntityList", source = "userGroupRequestDtoList")
 	UserAccountEntity toEntity(UserAccountRequestDto dto);
 
 	@Mapping(target = "userGroupResponseDtoList", source = "userGroupEntityList")
-	UserAccountResponseDto toDto(UserAccountEntity entity);
+	UserAccountResponseDto toResponseDto(UserAccountEntity entity);
 
 	@Mapping(target = "actions", ignore = true)
 	UserAccountModel toModel(UserAccountEntity entity);
+
+
+	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "userGroupEntityList", ignore = true)
+	UserAccountEntity toEntity(RegisterRequestDto dto);
 
 	@AfterMapping
 	default void afterMapping(@MappingTarget UserAccountEntity entity) {

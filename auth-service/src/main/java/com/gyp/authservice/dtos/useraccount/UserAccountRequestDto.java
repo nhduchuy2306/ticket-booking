@@ -24,5 +24,6 @@ public class UserAccountRequestDto extends AbstractDto {
 	private String password;
 	private LocalDateTime dob;
 	private String phoneNumber;
+	private String email;
 	private List<UserGroupRequestDto> userGroupRequestDtoList;
 }

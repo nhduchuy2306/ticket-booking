@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS useraccount
     phone_number     VARCHAR(255),
     user_name        VARCHAR(255) UNIQUE,
     password         VARCHAR(255),
+    email            VARCHAR(255) UNIQUE,
     create_user      VARCHAR(255),
     change_user      VARCHAR(255),
     create_timestamp DATETIME,

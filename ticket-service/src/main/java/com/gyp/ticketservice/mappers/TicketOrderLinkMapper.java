@@ -13,7 +13,7 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring", mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG)
 public interface TicketOrderLinkMapper extends AbstractMapper {
 
-	@Mapping(target = "id", expression = "java(generateUuid())")
+	@Mapping(target = "id", ignore = true)
 	TicketOrderLinkEntity toEntity(TicketOrderLinkRequestDto dto);
 
 	TicketOrderLinkResponseDto toResponse(TicketOrderLinkEntity entity);

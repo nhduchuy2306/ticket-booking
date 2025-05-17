@@ -13,7 +13,8 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring", mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG)
 public interface TicketTypeMapper extends AbstractMapper {
 	@Mapping(target = "eventId", source = "dto.eventId")
-	@Mapping(target = "id", expression = "java(generateUuid())")
+	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "ticketEntityList", ignore = true)
 	TicketTypeEntity toEntity(TicketTypeRequestDto dto);
 
 	TicketTypeResponseDto toResponse(TicketTypeEntity entity);

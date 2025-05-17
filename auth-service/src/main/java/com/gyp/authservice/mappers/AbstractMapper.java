@@ -1,7 +1,6 @@
 package com.gyp.authservice.mappers;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import com.gyp.authservice.dtos.AbstractDto;
 import com.gyp.authservice.entities.AbstractEntity;
@@ -51,9 +50,5 @@ public interface AbstractMapper {
 		}
 
 		return "system";
-	}
-
-	default String generateUuid() {
-		return UUID.randomUUID().toString();
 	}
 }

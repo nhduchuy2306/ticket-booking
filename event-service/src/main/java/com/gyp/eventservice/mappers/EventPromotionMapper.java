@@ -29,13 +29,13 @@ public interface EventPromotionMapper extends AbstractMapper {
 	List<EventPromotionResponseDto> toResponseDtoList(List<EventPromotionEntity> entities);
 
 	// Create new entity from request
-	@Mapping(target = "id", expression = "java(generateUuid())")
+	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "eventEntity", source = "eventId", qualifiedByName = "eventIdToEntity")
 	@Named("toEntity")
 	EventPromotionEntity toEntity(EventPromotionRequestDto dto);
 
 	// Update existing entity from request
-	@Mapping(target = "id", expression = "java(generateUuid())")
+	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "eventEntity", source = "eventId", qualifiedByName = "eventIdToEntity")
 	@Named("updateEntityFromDto")
 	void updateEntityFromDto(EventPromotionRequestDto dto, @MappingTarget EventPromotionEntity entity);

@@ -28,6 +28,7 @@ public class UserAccountProducer {
 				List<UserAccountModel> accountResponses = userAccountService.getOrganizerAccounts();
 				String dataString = Serialization.serializeToString(accountResponses);
 				template.send(TopicConstants.SYNC_USER_ACCOUNT_TOPIC, dataString);
+				log.info("Sent sync user account");
 			} catch(JsonProcessingException e) {
 				throw new RuntimeException(e);
 			}

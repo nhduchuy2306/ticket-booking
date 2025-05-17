@@ -1,7 +1,6 @@
 package com.gyp.ticketservice.mappers;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import com.gyp.ticketservice.dtos.AbstractDto;
 import com.gyp.ticketservice.entities.AbstractEntity;
@@ -49,9 +48,5 @@ public interface AbstractMapper {
 		}
 
 		return "system";
-	}
-
-	default String generateUuid() {
-		return UUID.randomUUID().toString();
 	}
 }
