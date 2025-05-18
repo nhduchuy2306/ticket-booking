@@ -31,4 +31,15 @@ public class GlobalExceptionHandler {
 
 		return ResponseEntity.badRequest().body(apiResponse);
 	}
+
+	@ExceptionHandler(value = ResourceNotFoundException.class)
+	ResponseEntity<ApiResponse> handlingResourceNotFoundException(ResourceNotFoundException exception) {
+		log.error("Exception: ", exception);
+		ApiResponse apiResponse = new ApiResponse();
+
+		apiResponse.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+		apiResponse.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+
+		return ResponseEntity.badRequest().body(apiResponse);
+	}
 }

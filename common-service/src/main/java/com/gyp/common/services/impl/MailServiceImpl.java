@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -24,8 +25,6 @@ import org.thymeleaf.context.Context;
 public class MailServiceImpl implements MailService {
 	private final JavaMailSender mailSender;
 	private final TemplateEngine templateEngine;
-
-	private static final String DEFAULT_FROM = "no-reply@gmail.com";
 
 	@Override
 	public void sendEmail(String to, String subject, Map<String, Object> model, String templateName) {
@@ -44,7 +43,7 @@ public class MailServiceImpl implements MailService {
 		try {
 			MimeMessage message = mailSender.createMimeMessage();
 			MimeMessageHelper helper = createMimeMessageHelper(message, to, subject, model, templateName);
-			addAttachment(helper, attachmentBytes, fileName);
+			addPDFAttachment(helper, attachmentBytes, fileName);
 			mailSender.send(message);
 		} catch(MessagingException e) {
 			log.error("Failed to send email with attachment", e);
@@ -53,19 +52,17 @@ public class MailServiceImpl implements MailService {
 
 	private MimeMessageHelper createMimeMessageHelper(MimeMessage message, String to, String subject,
 			Map<String, Object> model, String templateName) throws MessagingException {
+		String content = templateEngine.process(templateName, new Context(Locale.getDefault(), model));
+
 		MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-		helper.setFrom(DEFAULT_FROM);
+		helper.setFrom("no-reply@gmail.com");
 		helper.setTo(to);
 		helper.setSubject(subject);
-		helper.setText(generateEmailContent(model, templateName), true);
+		helper.setText(content, true);
 		return helper;
 	}
 
-	private String generateEmailContent(Map<String, Object> model, String templateName) {
-		return templateEngine.process(templateName, new Context(Locale.getDefault(), model));
-	}
-
-	private void addAttachment(MimeMessageHelper helper, byte[] attachmentBytes, String fileName)
+	private void addPDFAttachment(MimeMessageHelper helper, byte[] attachmentBytes, String fileName)
 			throws MessagingException {
 		if(attachmentBytes != null && attachmentBytes.length > 0) {
 			try {
@@ -75,7 +72,7 @@ public class MailServiceImpl implements MailService {
 						return fileName;
 					}
 				};
-				helper.addAttachment(fileName, dataSource, "application/pdf");
+				helper.addAttachment(fileName, dataSource, MediaType.APPLICATION_PDF_VALUE);
 				log.debug("Attachment added successfully: {}", fileName);
 			} catch(MessagingException e) {
 				log.error("Error adding attachment: {}", fileName, e);

@@ -1,0 +1,24 @@
+package com.gyp.common.models;
+
+import java.time.LocalDateTime;
+
+import com.gyp.common.enums.event.EventStatus;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class EventEventModel {
+	private String id;
+	private String name;
+	private String description;
+	private EventStatus status;
+	private LocalDateTime startTime;
+	private LocalDateTime endTime;
+	private LocalDateTime doorOpenTime;
+	private LocalDateTime doorCloseTime;
+	private String organizer;
+	private String venue;
+}

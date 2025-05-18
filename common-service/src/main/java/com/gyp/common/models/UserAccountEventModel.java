@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserAccountModel {
+public class UserAccountEventModel {
 	private String id;
 	private String name;
 	private String username;

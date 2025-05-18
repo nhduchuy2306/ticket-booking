@@ -1,11 +1,19 @@
 package com.gyp.ticketservice.services;
 
-import java.awt.image.BufferedImage;
+import java.io.IOException;
 
-import com.gyp.ticketservice.dtos.ticket.TicketRequestDto;
+import com.gyp.ticketservice.dtos.mail.TicketMailConfirmRequestDto;
+import com.gyp.ticketservice.dtos.ticketgeneration.TicketGenerationResponseDto;
+import com.nimbusds.jose.util.Pair;
 
 public interface TicketDeliveryService {
-	void sendByEmail(TicketRequestDto ticket);
-	byte[] generatePdf(TicketRequestDto ticket);
-	BufferedImage generateQrCode(TicketRequestDto ticket);
+	void sendByEmail(TicketMailConfirmRequestDto ticketMailConfirmRequestDto) throws IOException;
+
+	void sendByEmailWithAttachment(TicketMailConfirmRequestDto ticketMailConfirmRequestDto);
+
+	Pair<byte[], TicketGenerationResponseDto> createTicketPDF(String id);
+
+	Pair<byte[], TicketGenerationResponseDto> createTicketQR(String id, boolean hasLogoImage) throws IOException;
+
+	Pair<byte[], TicketGenerationResponseDto> createTicketQRWithCustomImage(String id, byte[] logoBytes);
 }

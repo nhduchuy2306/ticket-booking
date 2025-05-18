@@ -4,7 +4,7 @@ import com.gyp.authservice.dtos.auth.RegisterRequestDto;
 import com.gyp.authservice.dtos.useraccount.UserAccountRequestDto;
 import com.gyp.authservice.dtos.useraccount.UserAccountResponseDto;
 import com.gyp.authservice.entities.UserAccountEntity;
-import com.gyp.common.models.UserAccountModel;
+import com.gyp.common.models.UserAccountEventModel;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,7 +20,7 @@ public interface UserAccountMapper extends AbstractMapper {
 	UserAccountResponseDto toResponseDto(UserAccountEntity entity);
 
 	@Mapping(target = "actions", ignore = true)
-	UserAccountModel toModel(UserAccountEntity entity);
+	UserAccountEventModel toModel(UserAccountEntity entity);
 
 
 	@Mapping(target = "id", ignore = true)

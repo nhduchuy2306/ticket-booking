@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.gyp.common.models.UserAccountModel;
+import com.gyp.common.models.UserAccountEventModel;
 import com.gyp.eventservice.entities.OrganizerEntity;
 import com.gyp.eventservice.mappers.OrganizerMapper;
 import com.gyp.eventservice.repositories.OrganizerRepository;
@@ -21,18 +21,18 @@ public class OrganizerServiceImpl implements OrganizerService {
 	private final OrganizerMapper organizerMapper;
 
 	@Override
-	public void syncOrganizer(List<UserAccountModel> modelList) {
+	public void syncOrganizer(List<UserAccountEventModel> modelList) {
 		if(CollectionUtils.isEmpty(modelList)) {
 			return;
 		}
 
-		Set<String> incomingIds = modelList.stream().map(UserAccountModel::getId).collect(Collectors.toSet());
+		Set<String> incomingIds = modelList.stream().map(UserAccountEventModel::getId).collect(Collectors.toSet());
 		Set<String> existingIds = organizerRepository.findAllById(incomingIds)
 				.stream()
 				.map(OrganizerEntity::getId)
 				.collect(Collectors.toSet());
 
-		List<UserAccountModel> newModels = modelList.stream()
+		List<UserAccountEventModel> newModels = modelList.stream()
 				.filter(model -> !existingIds.contains(model.getId()))
 				.toList();
 

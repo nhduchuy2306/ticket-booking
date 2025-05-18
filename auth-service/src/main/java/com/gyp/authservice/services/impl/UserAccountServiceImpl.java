@@ -9,7 +9,7 @@ import com.gyp.authservice.entities.UserAccountEntity;
 import com.gyp.authservice.mappers.UserAccountMapper;
 import com.gyp.authservice.repositories.UserAccountRepository;
 import com.gyp.authservice.services.UserAccountService;
-import com.gyp.common.models.UserAccountModel;
+import com.gyp.common.models.UserAccountEventModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -62,7 +62,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	}
 
 	@Override
-	public List<UserAccountModel> getOrganizerAccounts() {
+	public List<UserAccountEventModel> getOrganizerAccounts() {
 		List<UserAccountEntity> userAccountEntityList = userAccountRepository.findAllWithAppEventCrudPermissions();
 		return userAccountEntityList.stream().map(userAccountMapper::toModel).collect(Collectors.toList());
 	}

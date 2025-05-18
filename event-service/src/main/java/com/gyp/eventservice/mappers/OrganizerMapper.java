@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 
-import com.gyp.common.models.UserAccountModel;
+import com.gyp.common.models.UserAccountEventModel;
 import com.gyp.eventservice.dtos.organizer.OrganizerRequestDto;
 import com.gyp.eventservice.dtos.organizer.OrganizerResponseDto;
 import com.gyp.eventservice.entities.OrganizerEntity;
@@ -34,7 +34,7 @@ public interface OrganizerMapper extends AbstractMapper {
 
 	@Mapping(target = "eventEntityList", ignore = true)
 	@Named("toEntity")
-	OrganizerEntity toEntity(UserAccountModel userAccountModel);
+	OrganizerEntity toEntity(UserAccountEventModel userAccountEventModel);
 
 	// Update existing entity from request
 	@Mapping(target = "eventEntityList", ignore = true)

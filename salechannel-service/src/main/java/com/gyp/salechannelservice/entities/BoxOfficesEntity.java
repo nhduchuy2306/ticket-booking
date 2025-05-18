@@ -1,0 +1,56 @@
+package com.gyp.salechannelservice.entities;
+
+import java.io.Serial;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+// Entity for BoxOffice - extends the base SaleChannel concept
+@Data
+@Entity
+@Table(name = "BOXOFFICES")
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class BoxOfficesEntity extends AbstractEntity {
+	@Serial
+	private static final long serialVersionUID = 7274240468414096444L;
+
+	@Id
+	@Column(name = "id")
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private String id;
+
+	@Column(name = "location_name")
+	private String locationName;
+
+	@Column(name = "location_address")
+	private String locationAddress;
+
+	@Column(name = "opening_hours")
+	private String openingHours;
+
+	@OneToOne
+	@JoinColumn(name = "sale_channel_id", nullable = false)
+	private SaleChannelEntity saleChannelEntity;
+
+	// TODO: We need to check if we need staff to manage this BoxOffice
+	//	@ManyToMany
+	//	@JoinTable(
+	//			name = "box_office_staff",
+	//			joinColumns = @JoinColumn(name = "box_office_id"),
+	//			inverseJoinColumns = @JoinColumn(name = "user_id")
+	//	)
+	//	private Set<String> staffMembers = new HashSet<>();
+}

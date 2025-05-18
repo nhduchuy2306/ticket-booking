@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.gyp.common.models.EventEventModel;
 import com.gyp.eventservice.dtos.event.EventRequestDto;
 import com.gyp.eventservice.dtos.event.EventResponseDto;
 import com.gyp.eventservice.entities.CategoryEntity;
@@ -12,6 +13,7 @@ import com.gyp.eventservice.entities.EventEntity;
 import com.gyp.eventservice.entities.OrganizerEntity;
 import com.gyp.eventservice.entities.VenueEntity;
 import org.mapstruct.AfterMapping;
+import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingInheritanceStrategy;
@@ -72,6 +74,16 @@ public interface EventMapper extends AbstractMapper {
 	@Mapping(target = "seatMapEntityList", ignore = true)
 	@Named("updateEntityFromDto")
 	void updateEntityFromDto(EventRequestDto dto, @MappingTarget EventEntity entity);
+
+	@Mapping(target = "organizer", source = "entity.organizerEntity.name")
+	@Mapping(target = "venue", source = "entity.venueEntity.name")
+	@Mapping(target = "endTime", source = "entity.time.endTime")
+	@Mapping(target = "startTime", source = "entity.time.startTime")
+	@Mapping(target = "doorCloseTime", source = "entity.time.doorCloseTime")
+	@Mapping(target = "doorOpenTime", source = "entity.time.doorOpenTime")
+	EventEventModel toEventModel(EventEntity entity);
+
+	List<EventEventModel> toModelList(List<EventEntity> entities);
 
 	// Helper methods for calculated fields
 	default long calculateTicketsSold(EventEntity event) {

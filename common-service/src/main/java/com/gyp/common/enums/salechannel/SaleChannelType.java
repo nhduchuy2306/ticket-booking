@@ -1,7 +1,8 @@
 package com.gyp.common.enums.salechannel;
 
 public enum SaleChannelType {
-	INTERNAL,
-	EXTERNAL,
-	AGENT
+	BOX_OFFICE,
+	TICKET_SHOP,
+	API_PARTNER,
+	MOBILE_APP
 }
