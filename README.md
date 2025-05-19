@@ -91,15 +91,26 @@ to PDF, QR code and use this at the event.
 ---
 
 ### 5. Setup port for each service
+# Internal Service
 - AuthService -> port:9000
-- DiscoveryService -> port:9761
 - EventService -> port:9001
 - TicketService -> port:9002
-- SaleChannelService -> port:9003
-- OrderService -> 9004
+- OrderService -> 9003
+- SaleChannelService -> port:9004
 - NotificationService -> 9005
+- SearchService -> 9006
+- Observability -> 9007
+- Configuration -> 9008
+- DiscoveryService -> port:9761
 - ApiGateway -> 9999
-
+# Other Service
+- Keycloak -> 9091
+- Zipkin -> 9411
+- Kafka -> 9092
+- Kafka-ui -> 9090
+- Mail-dev -> 1080
+- redis -> 6379
+- mysql -> 13306
 ---
 
 ### 6. Swagger

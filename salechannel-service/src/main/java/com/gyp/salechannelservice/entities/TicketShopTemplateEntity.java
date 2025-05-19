@@ -55,5 +55,5 @@ public class TicketShopTemplateEntity extends AbstractEntity {
 	private String thumbnailUrl;
 
 	@Column(name = "is_default")
-	private boolean isDefault;
+	private Boolean defaultData;
 }

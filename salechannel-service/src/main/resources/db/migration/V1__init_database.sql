@@ -1,133 +1,148 @@
--- Create categories table
-CREATE TABLE IF NOT EXISTS category
+create table if not exists CHANELSALES
 (
-    id               VARCHAR(255) NOT NULL PRIMARY KEY,
-    name             VARCHAR(255) NOT NULL,
-    description      TEXT,
-    create_user      VARCHAR(255),
-    change_user      VARCHAR(255),
-    create_timestamp DATETIME,
-    change_timestamp DATETIME
+    id                 varchar(255) not null primary key,
+    change_timestamp   datetime(6)  null,
+    change_user        varchar(255) null,
+    create_timestamp   datetime(6)  null,
+    create_user        varchar(255) null,
+    channel_id         varchar(255) not null,
+    commission_earned  double       null,
+    event_id           varchar(255) not null,
+    sale_date          datetime(6)  null,
+    total_revenue      double       null,
+    total_tickets_sold int          null
 );
 
--- Create venues table
-CREATE TABLE IF NOT EXISTS venue
+create table if not exists CHANNELPRICING
 (
-    id               VARCHAR(255) NOT NULL PRIMARY KEY,
-    name             VARCHAR(255) NOT NULL,
-    address          TEXT         NOT NULL,
-    city             VARCHAR(255) NOT NULL,
-    country          VARCHAR(255) NOT NULL,
-    capacity         INT,
-    latitude         DECIMAL(10, 8),
-    longitude        DECIMAL(11, 8),
-    create_user      VARCHAR(255),
-    change_user      VARCHAR(255),
-    create_timestamp DATETIME,
-    change_timestamp DATETIME
+    id                varchar(255) not null
+        primary key,
+    change_timestamp  datetime(6)  null,
+    change_user       varchar(255) null,
+    create_timestamp  datetime(6)  null,
+    create_user       varchar(255) null,
+    channel_id        varchar(255) not null,
+    is_active         bit          null,
+    markup_percentage double       null,
+    special_price     double       null,
+    ticket_type_id    varchar(255) not null,
+    valid_from        datetime(6)  null,
+    valid_until       datetime(6)  null
 );
 
--- Create organizers table
-CREATE TABLE IF NOT EXISTS organizer
+create table if not exists EVENTINFO
 (
-    id               VARCHAR(255)       NOT NULL PRIMARY KEY,
-    name             VARCHAR(255)       NOT NULL,
-    user_name        VARCHAR(50) UNIQUE NOT NULL,
-    dob              TIMESTAMP,
-    phone_number     VARCHAR(255),
-    create_user      VARCHAR(255),
-    change_user      VARCHAR(255),
-    create_timestamp DATETIME,
-    change_timestamp DATETIME
+    id               varchar(255)                                                                           not null primary key,
+    change_timestamp datetime(6)                                                                            null,
+    change_user      varchar(255)                                                                           null,
+    create_timestamp datetime(6)                                                                            null,
+    create_user      varchar(255)                                                                           null,
+    description      varchar(255)                                                                           null,
+    door_close_time  datetime(6)                                                                            null,
+    door_open_time   datetime(6)                                                                            null,
+    end_time         datetime(6)                                                                            null,
+    name             varchar(255)                                                                           null,
+    organizer        varchar(255)                                                                           null,
+    start_time       datetime(6)                                                                            null,
+    status           enum ('CANCELLED', 'COMPLETED', 'DRAFT', 'PENDING_APPROVAL', 'POSTPONED', 'PUBLISHED') null,
+    venue            varchar(255)                                                                           null
 );
 
--- Create events table
-CREATE TABLE IF NOT EXISTS event
+create table if not exists SALECHANNEL
 (
-    id               VARCHAR(255) NOT NULL PRIMARY KEY,
-    name             VARCHAR(255) NOT NULL,
-    description      TEXT,
-    status           VARCHAR(255) NOT NULL,
-    start_time       TIMESTAMP    NOT NULL,
-    end_time         TIMESTAMP    NOT NULL,
-    door_open_time   TIMESTAMP,
-    door_close_time  TIMESTAMP,
-    organizer_id     VARCHAR(255) NOT NULL,
-    venue_id         VARCHAR(255) NOT NULL,
-    create_user      VARCHAR(255),
-    change_user      VARCHAR(255),
-    create_timestamp DATETIME,
-    change_timestamp DATETIME,
-    FOREIGN KEY (organizer_id) REFERENCES organizer (id),
-    FOREIGN KEY (venue_id) REFERENCES venue (id)
+    id               varchar(255)                                                    not null primary key,
+    change_timestamp datetime(6)                                                     null,
+    change_user      varchar(255)                                                    null,
+    create_timestamp datetime(6)                                                     null,
+    create_user      varchar(255)                                                    null,
+    channel_name     varchar(255)                                                    null,
+    channel_type     enum ('API_PARTNER', 'BOX_OFFICE', 'MOBILE_APP', 'TICKET_SHOP') null,
+    commission_rate  double                                                          null,
+    description      varchar(255)                                                    null,
+    is_active        bit                                                             null
 );
 
--- Create junction table for event-categories
-CREATE TABLE IF NOT EXISTS eventcategories
+create table if not exists BOXOFFICES
 (
-    event_id    VARCHAR(255) NOT NULL,
-    category_id VARCHAR(255) NOT NULL,
-    PRIMARY KEY (event_id, category_id),
-    FOREIGN KEY (event_id) REFERENCES event (id) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE
+    id               varchar(255) not null primary key,
+    change_timestamp datetime(6)  null,
+    change_user      varchar(255) null,
+    create_timestamp datetime(6)  null,
+    create_user      varchar(255) null,
+    location_address varchar(255) null,
+    location_name    varchar(255) null,
+    opening_hours    varchar(255) null,
+    sale_channel_id  varchar(255) not null unique,
+    foreign key (sale_channel_id) references salechannel (id)
 );
 
--- Create ticket types table
-CREATE TABLE IF NOT EXISTS tickettype
+create table if not exists CHANNELEVENT
 (
-    id                 VARCHAR(255)   NOT NULL PRIMARY KEY,
-    name               VARCHAR(255)   NOT NULL,
-    description        TEXT,
-    price              DECIMAL(19, 2) NOT NULL,
-    quantity_available INT            NOT NULL,
-    status             VARCHAR(255)   NOT NULL,
-    sale_start_date    TIMESTAMP,
-    sale_end_date      TIMESTAMP,
-    event_id           VARCHAR(255)   NOT NULL,
-    create_user        VARCHAR(255),
-    change_user        VARCHAR(255),
-    create_timestamp   DATETIME,
-    change_timestamp   DATETIME,
-    FOREIGN KEY (event_id) REFERENCES event (id) ON DELETE CASCADE
+    channel_id varchar(255) not null,
+    event_id   varchar(255) not null,
+    foreign key (event_id) references eventinfo (id),
+    foreign key (channel_id) references salechannel (id)
 );
 
--- Create event promotions table
-CREATE TABLE IF NOT EXISTS eventpromotion
+create table if not exists EVENTSALECHANNEL
 (
-    id               VARCHAR(255)        NOT NULL PRIMARY KEY,
-    code             VARCHAR(255) UNIQUE NOT NULL,
-    discount_amount  DECIMAL(19, 2)      NOT NULL,
-    valid_from       TIMESTAMP           NOT NULL,
-    valid_to         TIMESTAMP           NOT NULL,
-    event_id         VARCHAR(255)        NOT NULL,
-    create_user      VARCHAR(255),
-    change_user      VARCHAR(255),
-    create_timestamp DATETIME,
-    change_timestamp DATETIME,
-    FOREIGN KEY (event_id) REFERENCES event (id) ON DELETE CASCADE
+    id               varchar(255) not null primary key,
+    change_timestamp datetime(6)  null,
+    change_user      varchar(255) null,
+    create_timestamp datetime(6)  null,
+    create_user      varchar(255) null,
+    custom_url       varchar(255) null,
+    event_id         bigint       null,
+    is_published     bit          null,
+    sale_channel_id  varchar(255) null,
+    foreign key (sale_channel_id) references salechannel (id)
 );
 
--- Create event approvals table
-CREATE TABLE IF NOT EXISTS eventapproval
+create table if not exists TICKETSHOP
 (
-    id               VARCHAR(255) NOT NULL PRIMARY KEY,
-    status           VARCHAR(255) NOT NULL,
-    approved_by      VARCHAR(255),
-    approval_date    TIMESTAMP,
-    rejection_reason TEXT,
-    event_id         VARCHAR(255) NOT NULL,
-    create_user      VARCHAR(255),
-    change_user      VARCHAR(255),
-    create_timestamp DATETIME,
-    change_timestamp DATETIME,
-    FOREIGN KEY (event_id) REFERENCES event (id) ON DELETE CASCADE
+    id                   varchar(255) not null
+        primary key,
+    change_timestamp     datetime(6)  null,
+    change_user          varchar(255) null,
+    create_timestamp     datetime(6)  null,
+    create_user          varchar(255) null,
+    allow_guest_checkout bit          null,
+    banner_url           varchar(255) null,
+    contact_email        varchar(255) null,
+    contact_phone        varchar(255) null,
+    custom_domain        varchar(255) null,
+    facebook_url         varchar(255) null,
+    instagram_url        varchar(255) null,
+    logo_url             varchar(255) null,
+    meta_description     varchar(500) null,
+    meta_title           varchar(255) null,
+    organizer_id         varchar(255) not null,
+    primary_color        varchar(255) null,
+    privacy_url          varchar(255) null,
+    require_account      bit          null,
+    secondary_color      varchar(255) null,
+    show_sold_out_events bit          null,
+    subdomain            varchar(255) not null unique,
+    terms_url            varchar(255) null,
+    twitter_url          varchar(255) null,
+    sale_channel_id      varchar(255) not null unique,
+    foreign key (sale_channel_id) references salechannel (id)
 );
 
--- Create indexes
-CREATE INDEX idx_event_organizer ON event (organizer_id);
-CREATE INDEX idx_event_venue ON event (venue_id);
-CREATE INDEX idx_event_status ON event (status);
-CREATE INDEX idx_ticket_type_event ON tickettype (event_id);
-CREATE INDEX idx_ticket_type_status ON tickettype (status);
-CREATE INDEX idx_event_promotion_event ON eventpromotion (event_id);
-CREATE INDEX idx_event_promotion_code ON eventpromotion (code);
+create table if not exists TICKETSHOPTEMPLATES
+(
+    id               varchar(255)  not null primary key,
+    change_timestamp datetime(6)   null,
+    change_user      varchar(255)  null,
+    create_timestamp datetime(6)   null,
+    create_user      varchar(255)  null,
+    description      varchar(1000) null,
+    event_card_style varchar(255)  null,
+    footer_style     varchar(255)  null,
+    header_style     varchar(255)  null,
+    is_default       bit           null,
+    name             varchar(255)  not null,
+    primary_color    varchar(255)  null,
+    secondary_color  varchar(255)  null,
+    thumbnail        varchar(255)  null
+);

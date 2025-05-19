@@ -44,13 +44,4 @@ public class BoxOfficesEntity extends AbstractEntity {
 	@OneToOne
 	@JoinColumn(name = "sale_channel_id", nullable = false)
 	private SaleChannelEntity saleChannelEntity;
-
-	// TODO: We need to check if we need staff to manage this BoxOffice
-	//	@ManyToMany
-	//	@JoinTable(
-	//			name = "box_office_staff",
-	//			joinColumns = @JoinColumn(name = "box_office_id"),
-	//			inverseJoinColumns = @JoinColumn(name = "user_id")
-	//	)
-	//	private Set<String> staffMembers = new HashSet<>();
 }

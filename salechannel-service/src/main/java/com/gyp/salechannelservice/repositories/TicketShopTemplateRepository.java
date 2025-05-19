@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TicketShopTemplateRepository extends JpaRepository<TicketShopTemplateEntity, String> {
-	List<TicketShopTemplateEntity> findByDefaultTrue();
+	List<TicketShopTemplateEntity> findByDefaultDataTrue();
 
 	List<TicketShopTemplateEntity> findByNameContainingIgnoreCase(String name);
 }
