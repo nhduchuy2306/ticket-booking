@@ -32,6 +32,7 @@ public class EventProducer {
 			kafkaTemplate.send(EventServiceTopic.EVENT_SYNC, dataString);
 			log.info("Sent sync Event data");
 		} catch(JsonProcessingException e) {
+			log.info("Sent sync fail", e);
 			throw new RuntimeException(e);
 		}
 	}

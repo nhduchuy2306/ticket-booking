@@ -1,4 +1,4 @@
-create table if not exists CHANELSALES
+create table if not exists channelsales
 (
     id                 varchar(255) not null primary key,
     change_timestamp   datetime(6)  null,
@@ -13,7 +13,7 @@ create table if not exists CHANELSALES
     total_tickets_sold int          null
 );
 
-create table if not exists CHANNELPRICING
+create table if not exists channelpricing
 (
     id                varchar(255) not null
         primary key,
@@ -30,7 +30,7 @@ create table if not exists CHANNELPRICING
     valid_until       datetime(6)  null
 );
 
-create table if not exists EVENTINFO
+create table if not exists eventinfo
 (
     id               varchar(255)                                                                           not null primary key,
     change_timestamp datetime(6)                                                                            null,
@@ -48,7 +48,7 @@ create table if not exists EVENTINFO
     venue            varchar(255)                                                                           null
 );
 
-create table if not exists SALECHANNEL
+create table if not exists salechannel
 (
     id               varchar(255)                                                    not null primary key,
     change_timestamp datetime(6)                                                     null,
@@ -62,7 +62,7 @@ create table if not exists SALECHANNEL
     is_active        bit                                                             null
 );
 
-create table if not exists BOXOFFICES
+create table if not exists boxoffices
 (
     id               varchar(255) not null primary key,
     change_timestamp datetime(6)  null,
@@ -76,7 +76,7 @@ create table if not exists BOXOFFICES
     foreign key (sale_channel_id) references salechannel (id)
 );
 
-create table if not exists CHANNELEVENT
+create table if not exists channelevent
 (
     channel_id varchar(255) not null,
     event_id   varchar(255) not null,
@@ -84,7 +84,7 @@ create table if not exists CHANNELEVENT
     foreign key (channel_id) references salechannel (id)
 );
 
-create table if not exists EVENTSALECHANNEL
+create table if not exists eventsalechannel
 (
     id               varchar(255) not null primary key,
     change_timestamp datetime(6)  null,
@@ -98,7 +98,7 @@ create table if not exists EVENTSALECHANNEL
     foreign key (sale_channel_id) references salechannel (id)
 );
 
-create table if not exists TICKETSHOP
+create table if not exists ticketshop
 (
     id                   varchar(255) not null
         primary key,
@@ -129,7 +129,7 @@ create table if not exists TICKETSHOP
     foreign key (sale_channel_id) references salechannel (id)
 );
 
-create table if not exists TICKETSHOPTEMPLATES
+create table if not exists ticketshoptemplates
 (
     id               varchar(255)  not null primary key,
     change_timestamp datetime(6)   null,

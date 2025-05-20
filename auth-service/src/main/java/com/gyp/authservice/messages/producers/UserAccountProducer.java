@@ -32,6 +32,7 @@ public class UserAccountProducer {
 			kafkaTemplate.send(AuthServiceTopic.USER_ACCOUNT_SYNC, dataString);
 			log.info("Sent sync user account");
 		} catch(JsonProcessingException e) {
+			log.error("Fail", e);
 			throw new RuntimeException(e);
 		}
 	}

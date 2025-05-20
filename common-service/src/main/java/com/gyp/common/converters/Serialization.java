@@ -3,6 +3,7 @@ package com.gyp.common.converters;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public final class Serialization {
 	private Serialization() {
@@ -10,6 +11,7 @@ public final class Serialization {
 
 	public static <T> String serializeToString(T object) throws JsonProcessingException {
 		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JavaTimeModule());
 		if(object == null) {
 			throw new IllegalArgumentException("Object to serialize cannot be null");
 		}
