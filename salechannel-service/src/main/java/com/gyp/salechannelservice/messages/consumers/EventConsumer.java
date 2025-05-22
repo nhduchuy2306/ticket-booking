@@ -11,19 +11,22 @@ import com.gyp.salechannelservice.services.EventInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 @Slf4j
-@Component
+@Service
 @RequiredArgsConstructor
 public class EventConsumer {
 	private final EventInfoService eventInfoService;
 
-	@KafkaListener(topics = EventServiceTopic.EVENT_SYNC)
-	public void syncEvent(String EventResponseString) {
+	@KafkaListener(
+			id = EventServiceTopic.EVENT_SYNC,
+			topics = EventServiceTopic.EVENT_SYNC,
+			groupId = "sale-channel-service-group")
+	public void syncEvent(String eventResponseString) {
 		try {
 			List<EventEventModel> eventEventModels = Serialization.deserializeFromString(
-					EventResponseString, new TypeReference<>() {}
+					eventResponseString, new TypeReference<>() {}
 			);
 			log.info("Receive event: {}", eventEventModels.size());
 			eventInfoService.syncEvent(eventEventModels);

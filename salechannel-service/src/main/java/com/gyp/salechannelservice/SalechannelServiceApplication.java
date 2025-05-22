@@ -10,7 +10,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 @EnableKafka
 @EnableDiscoveryClient
 @EnableAspectJAutoProxy
-@ComponentScan(basePackages = { "com.gyp.common.*", "com.gyp.salechannelservice.*" })
+@ComponentScan(basePackages = { "com.gyp.salechannelservice", "com.gyp.common" })
 @SpringBootApplication
 public class SalechannelServiceApplication {
 

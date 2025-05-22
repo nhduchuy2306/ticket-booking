@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(SyncDataController.SYNC_DATA_CONTROLLER_PATH)
 public class SyncDataController extends AbstractController {
 	public static final String SYNC_DATA_CONTROLLER_PATH = "syncdatas";
-	private static final String SYNC_USER_ACCOUNT_PATH = "syncuseraccount";
+	private static final String SYNC_EVENT_PATH = "syncevent";
 
 	private final EventProducer eventProducer;
 
-	@GetMapping(SYNC_USER_ACCOUNT_PATH)
-	public ResponseEntity<?> syncUserAccount() {
+	@GetMapping(SYNC_EVENT_PATH)
+	public ResponseEntity<?> syncEvent() {
 		eventProducer.syncEvent();
 		return ResponseEntity.ok("Sync event data successfully");
 	}
