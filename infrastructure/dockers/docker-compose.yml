@@ -26,6 +26,7 @@ services:
     container_name: kafka
     ports:
       - "9092:9092"
+      - "29092:29092"
     depends_on:
       - zookeeper
     environment:
@@ -116,7 +117,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/auth_service?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=12345
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     depends_on:
       - discovery-service
       - mysql
@@ -134,7 +135,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/event_service?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=12345
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     depends_on:
       - discovery-service
       - mysql
@@ -158,23 +159,23 @@ services:
     networks:
       - gyp-net
 
-#  salechannel-service:
-#    build: ../../salechannel-service
-#    container_name: salechannel-service
-#    ports:
-#      - "9002:9002"
-#    environment:
-#      - SPRING_PROFILES_ACTIVE=prod
-#      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/salechannel_service?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-#      - SPRING_DATASOURCE_USERNAME=root
-#      - SPRING_DATASOURCE_PASSWORD=12345
-#      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-#    depends_on:
-#      - discovery-service
-#      - mysql
-#      - kafka
-#    networks:
-#      - gyp-net
+  salechannel-service:
+    build: ../../salechannel-service
+    container_name: salechannel-service
+    ports:
+      - "9004:9004"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/salechannel_service?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=12345
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+    depends_on:
+      - discovery-service
+      - mysql
+      - kafka
+    networks:
+      - gyp-net
 
 networks:
   gyp-net:
