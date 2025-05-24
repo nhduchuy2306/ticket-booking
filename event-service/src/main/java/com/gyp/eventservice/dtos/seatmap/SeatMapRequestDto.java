@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SeatMapRequestDto {
-	private String id;
 	private String name;
 	private String venueType;
 	private SeatConfig seatConfig;

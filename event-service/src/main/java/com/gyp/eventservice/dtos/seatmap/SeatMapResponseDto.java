@@ -18,4 +18,5 @@ public class SeatMapResponseDto extends AbstractDto {
 	private String venueType;
 	private SeatConfig seatConfig;
 	private StageConfig stageConfig;
+	private String venueId;
 }

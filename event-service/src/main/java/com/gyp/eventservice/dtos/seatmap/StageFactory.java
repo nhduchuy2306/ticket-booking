@@ -10,20 +10,24 @@ public final class StageFactory {
 	 * Tạo sân khấu hình chữ nhật cơ bản
 	 */
 	public static StageConfig createRectangleStage(String name, Position position, Dimension dimensions,
-			StageOrientation orientation) {
-		StageConfig stageConfig = new StageConfig();
-		stageConfig.setName(name);
-		stageConfig.setPosition(position);
-		stageConfig.setDimensions(dimensions);
-		stageConfig.setShape(StageShape.RECTANGLE);
-		stageConfig.setOrientation(orientation);
-		return stageConfig;
+			StageOrientation orientation, String description, boolean isActive, String svgPath) {
+		return StageConfig.builder()
+				.name(name)
+				.position(position)
+				.description(description)
+				.dimensions(dimensions)
+				.shape(StageShape.RECTANGLE)
+				.orientation(orientation)
+				.isActive(isActive)
+				.svgPath(svgPath)
+				.build();
 	}
 
 	/**
 	 * Tạo sân khấu tròn
 	 */
-	public static StageConfig createCircularStage(String name, Position center, double radius, StageOrientation orientation) {
+	public static StageConfig createCircularStage(String name, Position center, double radius,
+			StageOrientation orientation) {
 		StageConfig stageConfig = new StageConfig();
 		stageConfig.setName(name);
 		stageConfig.setPosition(new Position(center.getX() - radius, center.getY() - radius));
