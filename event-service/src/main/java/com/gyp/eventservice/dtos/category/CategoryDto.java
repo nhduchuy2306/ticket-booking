@@ -1,4 +1,4 @@
-package com.gyp.eventservice.dtos.seatmap;
+package com.gyp.eventservice.dtos.category;
 
 import com.gyp.eventservice.dtos.AbstractDto;
 import lombok.AllArgsConstructor;
@@ -12,10 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class SeatMapResponseDto extends AbstractDto {
+public class CategoryDto extends AbstractDto {
 	private String id;
 	private String name;
-	private String venueType;
-	private SeatConfig seatConfig;
-	private StageConfig stageConfig;
+	private String description;
 }

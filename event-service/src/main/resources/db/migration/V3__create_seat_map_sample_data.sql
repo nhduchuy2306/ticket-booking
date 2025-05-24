@@ -3,59 +3,36 @@ CREATE TABLE IF NOT EXISTS seatmap
     id               VARCHAR(255) NOT NULL PRIMARY KEY,
     name             VARCHAR(255) NOT NULL,
     venue_type       VARCHAR(255) NOT NULL,
-    event_no         INT          NOT NULL,
     seat_config      TEXT         NOT NULL,
     stage_config     TEXT         NOT NULL,
-    event_id         VARCHAR(255) NOT NULL,
     venue_id         VARCHAR(255) NOT NULL,
     create_user      VARCHAR(255),
     change_user      VARCHAR(255),
     create_timestamp DATETIME,
     change_timestamp DATETIME,
-    FOREIGN KEY (event_id) REFERENCES event (id) ON DELETE CASCADE,
-    FOREIGN KEY (venue_id) REFERENCES venue (id)
+    FOREIGN KEY (venue_id) REFERENCES venue (id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_seat_config_venue_type ON seatmap (venue_type);
 
 -- Sample 1: Rectangular venue (concert hall)
-INSERT INTO seatmap (id, name, venue_type, event_no, seat_config, stage_config, event_id, venue_id, create_user,
-                     create_timestamp)
-VALUES ('sm_rect_001',
+INSERT INTO seatmap (id, name, venue_type, seat_config, stage_config, venue_id, create_user, create_timestamp)
+VALUES ('c143797f-4b03-4d21-aa4a-02a21f195b55',
         'Main Hall Seating',
         'RECTANGLE',
-        1,
-        '{"venueType":"RECTANGLE","seatTypeColors":{"VIP":"#FFD700","REGULAR":"#90EE90","ECONOMY":"#ADD8E6"},"seatMap":{"@type":"RectangleSeatMap","totalRows":3,"seatsPerRow":5,"sections":[{"name":"Main Section","seatType":"VIP","rows":[{"rowName":"A","seatCount":5,"price":150.0,"seats":[{"seatId":"A1","x":0,"y":0,"ticketTypeId":"VIP","price":150.0},{"seatId":"A2","x":1,"y":0,"ticketTypeId":"VIP","price":150.0},{"seatId":"A3","x":2,"y":0,"ticketTypeId":"VIP","price":150.0},{"seatId":"A4","x":3,"y":0,"ticketTypeId":"VIP","price":150.0},{"seatId":"A5","x":4,"y":0,"ticketTypeId":"VIP","price":150.0}]}]}]}}',
-        '{"label":"Artistic Center Stage","stageX":100,"stageY":75,"stageWidth":250,"stageHeight":120,"shape":"CUSTOM","orientation":"DOWN","svgPath":"M10 10 H 90 V 90 H 10 L 10 10"}',
-        'evt1',
-        'ven1',
+        '{"id":"9c9c6f4a-8834-46b8-a373-35dc1dea945f","name":"My dinh","type":"SEATED","position":{"x":10.0,"y":10.0},"dimensions":null,"rotation":0.0,"capacity":0,"priceCategory":null,"rows":[{"id":"40cb9c94-357b-41e2-ab4f-6ac257b7ebdd","name":"A","position":{"x":0.0,"y":0.0},"seats":[{"id":"f446cf1b-3d77-42d9-9283-e6e78507e471","name":"1","position":{"x":0.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"adc3adf9-fd95-4d60-b137-d78248d728ed","name":"2","position":{"x":5.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"be4c322e-7aaa-4314-b94b-57d59c76b24f","name":"3","position":{"x":10.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null}],"arcProperties":null,"arc":false,"capacity":3},{"id":"69f4722f-d3ea-4363-b5dc-5b4f87b7cb8f","name":"B","position":{"x":0.0,"y":5.0},"seats":[{"id":"1b85b4d9-d85f-4231-8f07-af3c117769fd","name":"1","position":{"x":0.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"0696b382-02bb-4b0c-b2a0-512b9415ba1f","name":"2","position":{"x":5.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"dc5347a8-e30d-4cd1-bd17-67bbdbec8569","name":"3","position":{"x":10.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null}],"arcProperties":null,"arc":false,"capacity":3},{"id":"0a2cfe9f-90f0-4072-bc3f-98467e343cde","name":"C","position":{"x":0.0,"y":10.0},"seats":[{"id":"22194980-fd14-4a26-b3f7-94314614df8b","name":"1","position":{"x":0.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"7050c745-4d5f-44c6-9925-bb5d05200622","name":"2","position":{"x":5.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"a990b372-3bf1-4e7b-9776-52d448e8d662","name":"3","position":{"x":10.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null}],"arcProperties":null,"arc":false,"capacity":3},{"id":"f0d3023b-39f4-4dc3-9912-dd659d13577d","name":"D","position":{"x":0.0,"y":15.0},"seats":[{"id":"3998167d-7982-45d0-a614-632ccc5fa4f8","name":"1","position":{"x":0.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"667fe704-e26e-4808-9cc8-dc9b565fe377","name":"2","position":{"x":5.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"998f5464-dc6f-4284-9866-1b93a2cebcf0","name":"3","position":{"x":10.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null}],"arcProperties":null,"arc":false,"capacity":3},{"id":"eb70495c-b852-4811-b595-626f9f5669be","name":"E","position":{"x":0.0,"y":20.0},"seats":[{"id":"4dbc6a68-c348-4b3b-95f3-88df46f804cc","name":"1","position":{"x":0.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"260be55b-a685-4e87-af2e-b3eb138e4e68","name":"2","position":{"x":5.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"3153fa77-e7cb-4563-8fc9-eecaa5b4186a","name":"3","position":{"x":10.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null}],"arcProperties":null,"arc":false,"capacity":3}],"tables":[],"arcProperties":null,"arc":false}',
+        '{"id":"5361d1c9-3da4-44b7-82f4-aa8500b58112","name":"Stage1","position":{"x":0.0,"y":0.0},"dimensions":{"width":20.0,"height":10.0},"rotation":0.0,"shape":"SEMICIRCLE","orientation":"NORTH","description":null,"customVertices":[],"elevation":0.0,"active":true,"centerPosition":{"x":10.0,"y":5.0},"boundaryPoints":[{"x":15.0,"y":10.0},{"x":14.92403876506104,"y":9.131759111665348},{"x":14.698463103929543,"y":8.289899283371657},{"x":14.330127018922195,"y":7.5},{"x":13.83022221559489,"y":6.786061951567303},{"x":13.213938048432697,"y":6.16977778440511},{"x":12.5,"y":5.669872981077807},{"x":11.710100716628345,"y":5.301536896070458},{"x":10.868240888334652,"y":5.07596123493896},{"x":10.0,"y":5.0},{"x":9.131759111665348,"y":5.07596123493896},{"x":8.289899283371657,"y":5.301536896070457},{"x":7.500000000000001,"y":5.669872981077806},{"x":6.786061951567303,"y":6.16977778440511},{"x":6.1697777844051105,"y":6.786061951567302},{"x":5.669872981077806,"y":7.5},{"x":5.301536896070458,"y":8.289899283371655},{"x":5.07596123493896,"y":9.131759111665348},{"x":5.0,"y":10.0}]}',
+        '24743759-bc98-45b2-9f3d-63fb2e467fd9',
         'admin_user',
         NOW());
 
 -- Sample 2: Round venue (theater in the round)
-INSERT INTO seatmap (id, name, venue_type, event_no, seat_config, stage_config, event_id, venue_id, create_user,
-                     create_timestamp)
-VALUES ('sm_round_001',
+INSERT INTO seatmap (id, name, venue_type, seat_config, stage_config, venue_id, create_user, create_timestamp)
+VALUES ('346c98b0-e754-4d34-9235-37e4099b6e43',
         'Circular Theater',
         'ROUND',
-        1,
-        '{"venueType":"RECTANGLE","seatTypeColors":{"VIP":"#FFD700","REGULAR":"#90EE90","ECONOMY":"#ADD8E6"},"seatMap":{"@type":"RectangleSeatMap","totalRows":3,"seatsPerRow":5,"sections":[{"name":"Main Section","seatType":"VIP","rows":[{"rowName":"A","seatCount":5,"price":150.0,"seats":[{"seatId":"A1","x":0,"y":0,"ticketTypeId":"VIP","price":150.0},{"seatId":"A2","x":1,"y":0,"ticketTypeId":"VIP","price":150.0},{"seatId":"A3","x":2,"y":0,"ticketTypeId":"VIP","price":150.0},{"seatId":"A4","x":3,"y":0,"ticketTypeId":"VIP","price":150.0},{"seatId":"A5","x":4,"y":0,"ticketTypeId":"VIP","price":150.0}]}]}]}}',
-        '{"label":"Artistic Center Stage","stageX":100,"stageY":75,"stageWidth":250,"stageHeight":120,"shape":"CUSTOM","orientation":"DOWN","svgPath":"M10 10 H 90 V 90 H 10 L 10 10"}',
-        'evt3',
-        'ven3',
-        'admin_user',
-        NOW());
-
--- Sample 3: Custom venue (mixed layout) - FIXED JSON SYNTAX
-INSERT INTO seatmap (id, name, venue_type, event_no, seat_config, stage_config, event_id, venue_id, create_user,
-                     create_timestamp)
-VALUES ('sm_custom_001',
-        'Festival Mixed Layout',
-        'CUSTOM',
-        1,
-        '{"venueType":"RECTANGLE","seatTypeColors":{"VIP":"#FFD700","REGULAR":"#90EE90","ECONOMY":"#ADD8E6"},"seatMap":{"@type":"RectangleSeatMap","totalRows":3,"seatsPerRow":5,"sections":[{"name":"Main Section","seatType":"VIP","rows":[{"rowName":"A","seatCount":5,"price":150.0,"seats":[{"seatId":"A1","x":0,"y":0,"ticketTypeId":"VIP","price":150.0},{"seatId":"A2","x":1,"y":0,"ticketTypeId":"VIP","price":150.0},{"seatId":"A3","x":2,"y":0,"ticketTypeId":"VIP","price":150.0},{"seatId":"A4","x":3,"y":0,"ticketTypeId":"VIP","price":150.0},{"seatId":"A5","x":4,"y":0,"ticketTypeId":"VIP","price":150.0}]}]}]}}',
-        '{"label":"Artistic Center Stage","stageX":100,"stageY":75,"stageWidth":250,"stageHeight":120,"shape":"CUSTOM","orientation":"DOWN","svgPath":"M10 10 H 90 V 90 H 10 L 10 10"}',
-        'evt2',
-        'ven2',
+        '{"id":"9c9c6f4a-8834-46b8-a373-35dc1dea945f","name":"My dinh","type":"SEATED","position":{"x":10.0,"y":10.0},"dimensions":null,"rotation":0.0,"capacity":0,"priceCategory":null,"rows":[{"id":"40cb9c94-357b-41e2-ab4f-6ac257b7ebdd","name":"A","position":{"x":0.0,"y":0.0},"seats":[{"id":"f446cf1b-3d77-42d9-9283-e6e78507e471","name":"1","position":{"x":0.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"adc3adf9-fd95-4d60-b137-d78248d728ed","name":"2","position":{"x":5.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"be4c322e-7aaa-4314-b94b-57d59c76b24f","name":"3","position":{"x":10.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null}],"arcProperties":null,"arc":false,"capacity":3},{"id":"69f4722f-d3ea-4363-b5dc-5b4f87b7cb8f","name":"B","position":{"x":0.0,"y":5.0},"seats":[{"id":"1b85b4d9-d85f-4231-8f07-af3c117769fd","name":"1","position":{"x":0.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"0696b382-02bb-4b0c-b2a0-512b9415ba1f","name":"2","position":{"x":5.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"dc5347a8-e30d-4cd1-bd17-67bbdbec8569","name":"3","position":{"x":10.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null}],"arcProperties":null,"arc":false,"capacity":3},{"id":"0a2cfe9f-90f0-4072-bc3f-98467e343cde","name":"C","position":{"x":0.0,"y":10.0},"seats":[{"id":"22194980-fd14-4a26-b3f7-94314614df8b","name":"1","position":{"x":0.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"7050c745-4d5f-44c6-9925-bb5d05200622","name":"2","position":{"x":5.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"a990b372-3bf1-4e7b-9776-52d448e8d662","name":"3","position":{"x":10.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null}],"arcProperties":null,"arc":false,"capacity":3},{"id":"f0d3023b-39f4-4dc3-9912-dd659d13577d","name":"D","position":{"x":0.0,"y":15.0},"seats":[{"id":"3998167d-7982-45d0-a614-632ccc5fa4f8","name":"1","position":{"x":0.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"667fe704-e26e-4808-9cc8-dc9b565fe377","name":"2","position":{"x":5.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"998f5464-dc6f-4284-9866-1b93a2cebcf0","name":"3","position":{"x":10.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null}],"arcProperties":null,"arc":false,"capacity":3},{"id":"eb70495c-b852-4811-b595-626f9f5669be","name":"E","position":{"x":0.0,"y":20.0},"seats":[{"id":"4dbc6a68-c348-4b3b-95f3-88df46f804cc","name":"1","position":{"x":0.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"260be55b-a685-4e87-af2e-b3eb138e4e68","name":"2","position":{"x":5.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null},{"id":"3153fa77-e7cb-4563-8fc9-eecaa5b4186a","name":"3","position":{"x":10.0,"y":0.0},"status":null,"attributes":{},"useAbsolutePosition":false,"absolutePosition":null}],"arcProperties":null,"arc":false,"capacity":3}],"tables":[],"arcProperties":null,"arc":false}',
+        '{"id":"5361d1c9-3da4-44b7-82f4-aa8500b58112","name":"Stage1","position":{"x":0.0,"y":0.0},"dimensions":{"width":20.0,"height":10.0},"rotation":0.0,"shape":"SEMICIRCLE","orientation":"NORTH","description":null,"customVertices":[],"elevation":0.0,"active":true,"centerPosition":{"x":10.0,"y":5.0},"boundaryPoints":[{"x":15.0,"y":10.0},{"x":14.92403876506104,"y":9.131759111665348},{"x":14.698463103929543,"y":8.289899283371657},{"x":14.330127018922195,"y":7.5},{"x":13.83022221559489,"y":6.786061951567303},{"x":13.213938048432697,"y":6.16977778440511},{"x":12.5,"y":5.669872981077807},{"x":11.710100716628345,"y":5.301536896070458},{"x":10.868240888334652,"y":5.07596123493896},{"x":10.0,"y":5.0},{"x":9.131759111665348,"y":5.07596123493896},{"x":8.289899283371657,"y":5.301536896070457},{"x":7.500000000000001,"y":5.669872981077806},{"x":6.786061951567303,"y":6.16977778440511},{"x":6.1697777844051105,"y":6.786061951567302},{"x":5.669872981077806,"y":7.5},{"x":5.301536896070458,"y":8.289899283371655},{"x":5.07596123493896,"y":9.131759111665348},{"x":5.0,"y":10.0}]}',
+        '23884001-0cc9-46e9-95d2-82f5e64dcf68',
         'admin_user',
         NOW());

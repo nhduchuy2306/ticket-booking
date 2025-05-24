@@ -21,7 +21,4 @@ public class OrganizerResponseDto extends AbstractDto {
 	private LocalDateTime dob;
 	private String phoneNumber;
 	private Integer age;
-
-	// Optional
-	//	private List<EventSummaryDto> events;
 }

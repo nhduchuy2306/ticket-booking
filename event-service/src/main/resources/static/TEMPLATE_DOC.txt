@@ -18,4 +18,4 @@ Template JSON Instructions:
    - price: Price of the seat. Optional if linked to a ticket type that already defines price.
 
 5. stageConfig:
-   - Describes the stage dimensions, orientation, and shape.
+   - Describes the stageConfig dimensions, orientation, and shape.

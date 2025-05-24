@@ -1,4 +1,6 @@
-package com.gyp.eventservice.dtos.seatmap;
+package com.gyp.eventservice.dtos.organizer;
+
+import java.time.LocalDateTime;
 
 import com.gyp.eventservice.dtos.AbstractDto;
 import lombok.AllArgsConstructor;
@@ -12,10 +14,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class SeatMapResponseDto extends AbstractDto {
+public class OrganizerDto extends AbstractDto {
 	private String id;
 	private String name;
-	private String venueType;
-	private SeatConfig seatConfig;
-	private StageConfig stageConfig;
+	private String username;
+	private LocalDateTime dob;
+	private String phoneNumber;
+	private Integer age;
 }

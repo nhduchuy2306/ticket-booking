@@ -5,12 +5,14 @@ import java.util.List;
 
 import com.gyp.common.enums.event.EventStatus;
 import com.gyp.eventservice.dtos.AbstractDto;
+import com.gyp.eventservice.dtos.category.CategoryDto;
 import com.gyp.eventservice.dtos.category.CategoryResponseDto;
 import com.gyp.eventservice.dtos.eventapproval.EventApprovalResponseDto;
 import com.gyp.eventservice.dtos.eventpromotion.EventPromotionResponseDto;
-import com.gyp.eventservice.dtos.organizer.OrganizerResponseDto;
+import com.gyp.eventservice.dtos.organizer.OrganizerDto;
+import com.gyp.eventservice.dtos.tickettype.TicketTypeDto;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeResponseDto;
-import com.gyp.eventservice.dtos.venue.VenueResponseDto;
+import com.gyp.eventservice.dtos.venue.VenueDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +24,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class EventResponseDto extends AbstractDto {
+public class EventDto extends AbstractDto {
 	private String id;
 	private String name;
 	private String description;
@@ -35,17 +37,8 @@ public class EventResponseDto extends AbstractDto {
 	private LocalDateTime doorCloseTime;
 
 	// Related entities - more detailed information
-	private OrganizerResponseDto organizer;
-	private VenueResponseDto venue;
-	private List<CategoryResponseDto> categories;
-
-	// Associated collections - depending on use case, these might be included
-	private List<TicketTypeResponseDto> ticketTypes;
-	private List<EventPromotionResponseDto> promotions;
-	private List<EventApprovalResponseDto> approvals;
-
-	// Additional useful information for the UI
-	private long ticketsSold;
-	private boolean isEventInProgress;
-	private boolean isEventCompleted;
+	private OrganizerDto organizer;
+	private VenueDto venue;
+	private List<CategoryDto> categories;
+	private List<TicketTypeDto> ticketTypes;
 }

@@ -15,6 +15,5 @@ public class SeatMapRequestDto {
 	private String venueType;
 	private SeatConfig seatConfig;
 	private StageConfig stageConfig;
-	private String eventId;
 	private String venueId;
 }

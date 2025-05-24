@@ -79,6 +79,7 @@ CREATE TABLE IF NOT EXISTS tickettype
     name               VARCHAR(255)   NOT NULL,
     description        TEXT,
     price              DECIMAL(19, 2) NOT NULL,
+    color              VARCHAR(255),
     quantity_available INT            NOT NULL,
     status             VARCHAR(255)   NOT NULL,
     sale_start_date    TIMESTAMP,

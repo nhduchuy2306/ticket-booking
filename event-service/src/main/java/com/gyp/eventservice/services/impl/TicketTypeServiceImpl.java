@@ -14,9 +14,6 @@ public class TicketTypeServiceImpl implements TicketTypeService {
 
 	@Override
 	public double getEffectivePrice(Seat seat) {
-		if(seat.getPrice() > 0) {
-			return seat.getPrice();
-		}
 		TicketTypeEntity ticketType = ticketTypeRepository.findById(seat.getTicketTypeId())
 				.orElseThrow(() -> new RuntimeException("TicketType not found"));
 		return ticketType.getPrice();

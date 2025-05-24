@@ -21,7 +21,7 @@ VOLUME /tmp
 # The application's jar file
 ARG JAR_FILE=target/api-gateway-1.0-SNAPSHOT.jar
 
-# Copy the jar file from the build stage to the final image
+# Copy the jar file from the build stageConfig to the final image
 COPY --from=build /app/${JAR_FILE} app.jar
 
 # Run the jar file

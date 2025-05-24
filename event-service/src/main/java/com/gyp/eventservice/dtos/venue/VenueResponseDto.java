@@ -21,8 +21,4 @@ public class VenueResponseDto extends AbstractDto {
 	private Integer capacity;
 	private Double latitude;
 	private Double longitude;
-
-	// Optional
-	//	private List<EventSummaryDto> events;
-	//	private List<SeatMapSummaryDto> seatMaps;
 }

@@ -1,7 +1,7 @@
 # INSERT INTO category (id, name, description, create_user, create_timestamp)
 # VALUES ('cat1', 'Music Concerts', 'Live music performances', 'admin', NOW()),
 #        ('cat2', 'Sports', 'Sporting events and competitions', 'admin', NOW()),
-#        ('cat3', 'Theater', 'Drama and stage performances', 'admin', NOW()),
+#        ('cat3', 'Theater', 'Drama and stageConfig performances', 'admin', NOW()),
 #        ('cat4', 'Conferences', 'Business and professional events', 'admin', NOW());
 #
 # INSERT INTO venue (id, name, address, city, country, capacity, latitude, longitude, create_user, create_timestamp)

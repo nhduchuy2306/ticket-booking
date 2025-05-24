@@ -13,7 +13,6 @@ import com.gyp.eventservice.entities.EventEntity;
 import com.gyp.eventservice.entities.OrganizerEntity;
 import com.gyp.eventservice.entities.VenueEntity;
 import org.mapstruct.AfterMapping;
-import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingInheritanceStrategy;
@@ -34,7 +33,6 @@ public interface EventMapper extends AbstractMapper {
 	@Mapping(target = "ticketTypes", source = "ticketTypeEntityList")
 	@Mapping(target = "promotions", source = "eventPromotionEntityList")
 	@Mapping(target = "approvals", source = "eventApprovalEntityList")
-	@Mapping(target = "seatMaps", source = "seatMapEntityList")
 	@Mapping(target = "ticketsSold", expression = "java(calculateTicketsSold(event))")
 	@Mapping(target = "isEventInProgress", expression = "java(isEventInProgress(event))")
 	@Mapping(target = "isEventCompleted", expression = "java(isEventCompleted(event))")
@@ -55,7 +53,6 @@ public interface EventMapper extends AbstractMapper {
 	@Mapping(target = "ticketTypeEntityList", ignore = true)
 	@Mapping(target = "eventPromotionEntityList", ignore = true)
 	@Mapping(target = "eventApprovalEntityList", ignore = true)
-	@Mapping(target = "seatMapEntityList", ignore = true)
 	@Named("toEntity")
 	EventEntity toEntity(EventRequestDto dto);
 
@@ -71,7 +68,6 @@ public interface EventMapper extends AbstractMapper {
 	@Mapping(target = "ticketTypeEntityList", ignore = true)
 	@Mapping(target = "eventPromotionEntityList", ignore = true)
 	@Mapping(target = "eventApprovalEntityList", ignore = true)
-	@Mapping(target = "seatMapEntityList", ignore = true)
 	@Named("updateEntityFromDto")
 	void updateEntityFromDto(EventRequestDto dto, @MappingTarget EventEntity entity);
 
@@ -99,12 +95,12 @@ public interface EventMapper extends AbstractMapper {
 
 	default boolean isEventInProgress(EventEntity event) {
 		if(event.getTime() == null || event.getTime().getStartTime() == null ||
-		   event.getTime().getEndTime() == null) {
+				event.getTime().getEndTime() == null) {
 			return false;
 		}
 		LocalDateTime now = LocalDateTime.now();
 		return event.getTime().getStartTime().isBefore(now) &&
-			   event.getTime().getEndTime().isAfter(now);
+				event.getTime().getEndTime().isAfter(now);
 	}
 
 	default boolean isEventCompleted(EventEntity event) {
