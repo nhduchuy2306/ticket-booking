@@ -30,4 +30,8 @@ public enum ApplicationPermission {
 	private static List<ActionPermission> actions(ActionPermission... actions) {
 		return Arrays.asList(actions);
 	}
+
+	public static List<ApplicationPermission> getApplicationPermissions() {
+		return Arrays.asList(ApplicationPermission.values());
+	}
 }

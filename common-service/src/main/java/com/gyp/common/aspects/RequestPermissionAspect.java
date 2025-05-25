@@ -49,9 +49,9 @@ public class RequestPermissionAspect {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Method method = getMethodFromJoinPoint(joinPoint);
 		RequestPermission[] annotations = method.getAnnotationsByType(RequestPermission.class);
-		if(annotations != null) {
+		if(annotations.length > 0) {
 			Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-			String role = authorities.stream().toList().get(0).getAuthority().substring(6);
+			String role = authorities.stream().toList().getFirst().getAuthority().substring(6);
 			if(ApplicationPermission.ADMIN.getApplicationId().equals(role)) {
 				return joinPoint.proceed();
 			}

@@ -3,6 +3,7 @@ package com.gyp.authservice.services.impl;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.gyp.authservice.dtos.usergroup.ApplicationPermissionDto;
 import com.gyp.authservice.dtos.usergroup.UserGroupPermissions;
 import com.gyp.authservice.dtos.usergroup.UserGroupRequestDto;
 import com.gyp.authservice.dtos.usergroup.UserGroupResponseDto;
@@ -11,6 +12,7 @@ import com.gyp.authservice.mappers.UserGroupMapper;
 import com.gyp.authservice.repositories.UserGroupRepository;
 import com.gyp.authservice.services.UserGroupService;
 import com.gyp.common.converters.Serialization;
+import com.gyp.common.enums.permission.ApplicationPermission;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -46,5 +48,14 @@ public class UserGroupServiceImpl implements UserGroupService {
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public List<ApplicationPermissionDto> getListApplicationPermissions() {
+		List<ApplicationPermission> applicationPermissions = ApplicationPermission.getApplicationPermissions();
+		return applicationPermissions.stream().map(item -> ApplicationPermissionDto.builder()
+				.applicationId(item.getApplicationId())
+				.actionPermissions(item.getActionPermissions())
+				.build()).toList();
 	}
 }

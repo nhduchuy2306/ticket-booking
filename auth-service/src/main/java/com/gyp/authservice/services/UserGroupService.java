@@ -2,6 +2,7 @@ package com.gyp.authservice.services;
 
 import java.util.List;
 
+import com.gyp.authservice.dtos.usergroup.ApplicationPermissionDto;
 import com.gyp.authservice.dtos.usergroup.UserGroupRequestDto;
 import com.gyp.authservice.dtos.usergroup.UserGroupResponseDto;
 
@@ -11,4 +12,6 @@ public interface UserGroupService {
 	UserGroupResponseDto getUserGroupById(String id);
 
 	void createUserGroup(UserGroupRequestDto userGroupRequestDto);
+
+	List<ApplicationPermissionDto> getListApplicationPermissions();
 }

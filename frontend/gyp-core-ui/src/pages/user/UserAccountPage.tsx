@@ -75,7 +75,7 @@ const getRandomuserParams = (params: TableParams) => {
     return result;
 };
 
-const UserAccount: React.FC = () => {
+const UserAccountPage: React.FC = () => {
     const [data, setData] = useState<DataType[]>();
     const [loading, setLoading] = useState(false);
     const [tableParams, setTableParams] = useState<TableParams>({
@@ -99,8 +99,6 @@ const UserAccount: React.FC = () => {
                         pagination: {
                             ...tableParams.pagination,
                             total: 100,
-                            // 100 is mock data, you should read it from server
-                            // total: data.totalCount,
                         },
                     });
                 });
@@ -139,4 +137,4 @@ const UserAccount: React.FC = () => {
     );
 };
 
-export default UserAccount;
+export default UserAccountPage;
