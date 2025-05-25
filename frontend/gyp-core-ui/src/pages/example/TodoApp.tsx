@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addTodo, removeTodo, Todo, toggleTodo } from "../states/reducers/todoSlice.ts";
-import { AppDispatch, RootState } from "../states/store.ts";
+import { addTodo, removeTodo, Todo, toggleTodo } from "../../states/reducers/todoSlice.ts";
+import { AppDispatch, RootState } from "../../states/store.ts";
 
 const TodoApp: React.FC = () => {
     const [input, setInput] = useState('');
