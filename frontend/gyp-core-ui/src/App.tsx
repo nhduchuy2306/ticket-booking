@@ -8,10 +8,9 @@ import { CiLocationOn, CiShop } from "react-icons/ci";
 import { IoIosLogOut } from "react-icons/io";
 import { PiSeat } from "react-icons/pi";
 import { Outlet, useNavigate } from "react-router-dom";
-import { DateUtils } from "./utils/DateUtils.ts";
 import "./app.scss";
 
-const {Content, Footer, Sider} = Layout;
+const {Content, Sider} = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -74,9 +73,6 @@ const App: React.FC = () => {
                     <Content style={{margin: '24px 16px 0', overflow: 'auto'}}>
                         <Outlet/>
                     </Content>
-                    <Footer style={{textAlign: 'center'}}>
-                        GYP @{DateUtils.getCurrentYear()}
-                    </Footer>
                 </Layout>
             </Layout>
     );

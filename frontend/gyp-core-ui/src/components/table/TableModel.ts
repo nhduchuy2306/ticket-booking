@@ -9,3 +9,12 @@ export interface TableParams {
     sortOrder?: SorterResult<any>['order'];
     filters?: Parameters<GetProp<TableProps, 'onChange'>>[1];
 }
+
+export interface DataTableProps<T extends object> {
+    data: T[];
+    columns: TableProps<T>["columns"];
+    loading?: boolean;
+    rowKey: (record: T) => string | number;
+    onRowDoubleClick?: (record: T) => void;
+    onRowClick?: (record: T) => void;
+}

@@ -1,27 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { UserGroupPermissionModel } from "../../models/AuthService/UserGroupModel.ts";
-import { UserGroupService } from "../../services/Auth/UserGroupService.ts";
+import React, { useState } from "react";
+import { UserGroupModel } from "../../models/AuthService/UserGroupModel.ts";
+import UserGroupForm from "./UserGroupForm.tsx";
+import UserGroupTable from "./UserGroupTable.tsx";
+import './user-group.scss';
 
 const UserGroupPage: React.FC = () => {
-    const [data, setData] = useState<UserGroupPermissionModel[]>([]);
+    const USER_GROUP_CONTAINER_CLASS = "user-group-container";
 
-    useEffect(() => {
-        UserGroupService.getApplicationPermissions().then((item) => {
-            console.log(item)
-            setData(item)
-        });
-    }, []);
+    const [selectedUserGroup, setSelectedUserGroup] = useState<UserGroupModel | null>(null);
 
     return (
-            <>
-                <div>This is usergroup</div>
-                {data.map(item => {
-                    return `
-                        <p>${item.applicationId}</p>
-                        <p>${item.actionPermissions}</p>
-                    `
-                })}
-            </>
+            <div className={USER_GROUP_CONTAINER_CLASS}>
+                <div style={{flex: 1}}>
+                    <UserGroupTable setSelectedUserGroup={setSelectedUserGroup}/>
+                </div>
+                <div style={{flex: 1}}>
+                    {selectedUserGroup ? <UserGroupForm selectedUserGroup={selectedUserGroup}/> : <h1>Never</h1>}
+                </div>
+            </div>
     );
 }
 
