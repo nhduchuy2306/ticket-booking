@@ -1,4 +1,4 @@
-package com.gyp.salechannelservice.configurations;
+package com.gyp.orderservice.configurations;
 
 import java.util.List;
 
@@ -13,8 +13,8 @@ public class SwaggerConfiguration {
 	@Bean
 	public OpenAPI customOpenAPI() {
 		return new OpenAPI()
-				.servers(List.of(new Server().url("https://localhost:9004").description("Salechannel Service")))
-				.info(new Info().title("SaleChannel Service API")
+				.servers(List.of(new Server().url("http://localhost:9003").description("Order Service")))
+				.info(new Info().title("Event Service API")
 						.version("1.0")
 						.description("API Documentation"));
 	}

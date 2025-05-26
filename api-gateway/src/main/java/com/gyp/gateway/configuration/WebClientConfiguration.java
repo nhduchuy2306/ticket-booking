@@ -1,5 +1,6 @@
 package com.gyp.gateway.configuration;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.gyp.common.constants.AppConstants;
@@ -22,13 +23,16 @@ import reactor.core.publisher.Mono;
 public class WebClientConfiguration {
 	@Bean
 	public CorsWebFilter corsWebFilter() {
-		CorsConfiguration corsConfig = new CorsConfiguration();
-		corsConfig.setAllowedOrigins(List.of("*"));
-		corsConfig.setAllowedHeaders(List.of("*"));
-		corsConfig.setAllowedMethods(List.of("*"));
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(List.of("*"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		configuration.setAllowedHeaders(List.of("*"));
+		configuration.setAllowedMethods(List.of("*"));
+		configuration.setAllowCredentials(false);
+		configuration.setMaxAge(3600L);
 
 		UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-		urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfig);
+		urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", configuration);
 
 		return new CorsWebFilter(urlBasedCorsConfigurationSource);
 	}

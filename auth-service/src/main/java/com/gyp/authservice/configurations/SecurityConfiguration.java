@@ -42,7 +42,7 @@ public class SecurityConfiguration {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable);
-		http.cors(Customizer.withDefaults());
+		http.cors(cors -> corsConfigurationSource());
 		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.authorizeHttpRequests(request ->
 				request.requestMatchers(PUBLIC_ENDPOINTS).permitAll()
@@ -56,19 +56,19 @@ public class SecurityConfiguration {
 		return http.build();
 	}
 
-//	@Bean
-//	public CorsConfigurationSource corsConfigurationSource() {
-//		CorsConfiguration configuration = new CorsConfiguration();
-//		configuration.setAllowedOrigins(List.of("*"));
-//		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//		configuration.setAllowedHeaders(List.of("*"));
-//		configuration.setAllowCredentials(false);
-//		configuration.setMaxAge(3600L);
-//
-//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//		source.registerCorsConfiguration("/**", configuration);
-//		return source;
-//	}
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(List.of("*"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		configuration.setAllowedHeaders(List.of("*"));
+		configuration.setAllowCredentials(false);
+		configuration.setMaxAge(3600L);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
+	}
 
 	@Bean
 	public JwtDecoder jwtDecoder() {
