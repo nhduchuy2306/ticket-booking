@@ -1,6 +1,8 @@
-import { TableProps } from "antd";
+import { Button, Flex, TableProps, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
+import { BiPlus } from "react-icons/bi";
 import DataTable from "../../components/table/DataTable.tsx";
+import { Mode } from "../../configs/Constants.ts";
 import { UserGroupModel } from "../../models/AuthService/UserGroupModel.ts";
 import { UserGroupService } from "../../services/Auth/UserGroupService.ts";
 
@@ -33,9 +35,10 @@ const columns: ColumnsType<UserGroupModel> = [
 
 export interface UserGroupTableProps {
     setSelectedUserGroup?: (record: UserGroupModel) => void;
+    setMode?: (value: string) => void;
 }
 
-const UserGroupTable: React.FC<UserGroupTableProps> = ({setSelectedUserGroup}) => {
+const UserGroupTable: React.FC<UserGroupTableProps> = (userGroupProps) => {
     const [data, setData] = useState<UserGroupModel[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -48,28 +51,44 @@ const UserGroupTable: React.FC<UserGroupTableProps> = ({setSelectedUserGroup}) =
 
     const handleRowDoubleClick = (record: UserGroupModel, index?: number) => {
         console.log('Double-clicked row:', record, index);
-        alert(`Double-clicked on: ${record.name} (ID: ${record.id})`);
-        if (setSelectedUserGroup) {
-            setSelectedUserGroup(record);
+        if (userGroupProps.setSelectedUserGroup) {
+            userGroupProps.setSelectedUserGroup(record);
+        }
+        if (userGroupProps.setMode) {
+            userGroupProps.setMode(Mode.EDIT.key);
         }
     };
 
     const handleRowClick = (record: UserGroupModel, index?: number) => {
         console.log('Clicked row:', record, index);
-        if (setSelectedUserGroup) {
-            setSelectedUserGroup(record);
+        if (userGroupProps.setSelectedUserGroup) {
+            userGroupProps.setSelectedUserGroup(record);
+        }
+        if (userGroupProps.setMode) {
+            userGroupProps.setMode(Mode.READ_ONLY.key);
         }
     };
 
+    const handleCreateClick = () => {
+        if (userGroupProps.setMode) {
+            userGroupProps.setMode(Mode.CREATE.key);
+        }
+    }
+
     return (
-            <DataTable<UserGroupModel>
-                    data={data}
-                    columns={columns}
-                    loading={loading}
-                    rowKey={(record) => record.id}
-                    onRowDoubleClick={handleRowDoubleClick}
-                    onRowClick={handleRowClick}
-            />
+            <Flex gap="middle" vertical align="flex-end">
+                <Tooltip title="Add new User Group">
+                    <Button type="default" icon={<BiPlus/>} onClick={handleCreateClick}/>
+                </Tooltip>
+                <DataTable<UserGroupModel>
+                        data={data}
+                        columns={columns}
+                        loading={loading}
+                        rowKey={(record) => record.id}
+                        onRowDoubleClick={handleRowDoubleClick}
+                        onRowClick={handleRowClick}
+                />
+            </Flex>
     );
 }
 
