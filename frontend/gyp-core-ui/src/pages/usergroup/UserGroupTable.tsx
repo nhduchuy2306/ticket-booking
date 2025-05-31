@@ -1,7 +1,6 @@
-import { Button, Flex, TableProps, Tooltip } from "antd";
+import { Button, Dropdown, Flex, Modal, notification, Table, TableProps, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import { BiPlus } from "react-icons/bi";
-import DataTable from "../../components/table/DataTable.tsx";
 import { Mode } from "../../configs/Constants.ts";
 import { UserGroupModel } from "../../models/AuthService/UserGroupModel.ts";
 import { UserGroupService } from "../../services/Auth/UserGroupService.ts";
@@ -10,7 +9,7 @@ type ColumnsType<T extends object = object> = TableProps<T>['columns'];
 
 const columns: ColumnsType<UserGroupModel> = [
     {
-        title: 'Id',
+        title: 'ID',
         dataIndex: 'id',
         width: '20%',
     },
@@ -29,67 +28,159 @@ const columns: ColumnsType<UserGroupModel> = [
         title: 'Administrator',
         dataIndex: 'administrator',
         width: '20%',
-        render: (value: boolean) => value ? "Yes" : "No"
+        render: (value: boolean) => value ? "TRUE" : "FALSE"
     },
 ];
 
-export interface UserGroupTableProps {
-    setSelectedUserGroup?: (record: UserGroupModel) => void;
-    setMode?: (value: string) => void;
+interface UserGroupTableProps {
+    onSelectUserGroup: (userGroup: UserGroupModel | null, mode: string) => void;
+    reload: boolean;
+    onReloadComplete?: () => void;
 }
 
-const UserGroupTable: React.FC<UserGroupTableProps> = (userGroupProps) => {
+const UserGroupTable: React.FC<UserGroupTableProps> = ({onSelectUserGroup, reload, onReloadComplete}) => {
+    const [modal, modalContextHolder] = Modal.useModal();
     const [data, setData] = useState<UserGroupModel[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 5,
+        total: 0,
+    });
 
     useEffect(() => {
-        setLoading(true);
-        UserGroupService.getAllUserGroups().then((item) => {
-            setData(item);
-        }).finally(() => setLoading(false));
+        void fetchUserGroups();
     }, []);
 
-    const handleRowDoubleClick = (record: UserGroupModel, index?: number) => {
-        console.log('Double-clicked row:', record, index);
-        if (userGroupProps.setSelectedUserGroup) {
-            userGroupProps.setSelectedUserGroup(record);
+    useEffect(() => {
+        if (reload) {
+            void (async () => {
+                await fetchUserGroups();
+                onReloadComplete?.();
+            })();
         }
-        if (userGroupProps.setMode) {
-            userGroupProps.setMode(Mode.EDIT.key);
+    }, [reload]);
+
+    const fetchUserGroups = async () => {
+        setIsLoading(true);
+        try {
+            const userGroups = await UserGroupService.getAllUserGroups();
+            setData(userGroups);
+        } catch (error) {
+            console.error('Failed to fetch user groups:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    const handleRowClick = (record: UserGroupModel, index?: number) => {
-        console.log('Clicked row:', record, index);
-        if (userGroupProps.setSelectedUserGroup) {
-            userGroupProps.setSelectedUserGroup(record);
-        }
-        if (userGroupProps.setMode) {
-            userGroupProps.setMode(Mode.READ_ONLY.key);
-        }
-    };
-
-    const handleCreateClick = () => {
-        if (userGroupProps.setMode) {
-            userGroupProps.setMode(Mode.CREATE.key);
+    const deleteUserGroup = async (id: string) => {
+        try {
+            const res = await UserGroupService.deleteUserGroup(id);
+            if(res) {
+                await new Promise(resolve => setTimeout(resolve, 300));
+                void fetchUserGroups();
+                notification.success({
+                    message: "Delete successfully",
+                    placement: "bottomRight"
+                })
+            }
+        } catch (error: any) {
+            modal.error({
+                title: "Error",
+                content: error.response.data,
+            });
         }
     }
 
+    const buildColumn = () => {
+        return [
+            ...columns,
+            {
+                title: 'Actions',
+                width: '10%',
+                render: (_: any, record: UserGroupModel) => (
+                        <Dropdown menu={{
+                            items: [
+                                {
+                                    key: 'delete',
+                                    label: 'Delete',
+                                    danger: true,
+                                    onClick: (e) => {
+                                        e.domEvent.stopPropagation();
+                                        modal.confirm({
+                                            title: 'Confirm',
+                                            content: 'Do you want to remove this record?',
+                                            "onOk": () => {
+                                                void deleteUserGroup(record.id);
+                                            },
+                                            "footer": (_, {OkBtn, CancelBtn}) => (
+                                                    <>
+                                                        <CancelBtn/>
+                                                        <OkBtn/>
+                                                    </>
+                                            ),
+                                        });
+                                    }
+                                }
+                            ]
+                        }}>
+                            <Button type="text" onClick={(e) => e.stopPropagation()}>⋮</Button>
+                        </Dropdown>
+                )
+            }
+        ]
+    }
+
+    const handleRowClick = (record: UserGroupModel) => {
+        onSelectUserGroup(record, Mode.READ_ONLY.key);
+    };
+
+    const handleRowDoubleClick = (record: UserGroupModel) => {
+        onSelectUserGroup(record, Mode.EDIT.key);
+    };
+
+    const handleCreateClick = () => {
+        onSelectUserGroup(null, Mode.CREATE.key);
+    };
+
+    const handleTableChange = (newPagination: any) => {
+        setPagination({
+            ...pagination,
+            current: newPagination.current,
+        });
+    };
+
+    const rowProps = (record: UserGroupModel): React.HTMLAttributes<HTMLElement> => {
+        return {
+            "onDoubleClick": () => handleRowDoubleClick?.(record),
+            "onClick": () => handleRowClick?.(record),
+            style: {cursor: "pointer"},
+        };
+    };
+
     return (
-            <Flex gap="middle" vertical align="flex-end">
-                <Tooltip title="Add new User Group">
-                    <Button type="default" icon={<BiPlus/>} onClick={handleCreateClick}/>
-                </Tooltip>
-                <DataTable<UserGroupModel>
-                        data={data}
-                        columns={columns}
-                        loading={loading}
-                        rowKey={(record) => record.id}
-                        onRowDoubleClick={handleRowDoubleClick}
-                        onRowClick={handleRowClick}
-                />
-            </Flex>
+            <>
+                <Flex gap="middle" vertical align="flex-end">
+                    <Tooltip title="Add new User Group">
+                        <Button type="default" icon={<BiPlus/>} onClick={handleCreateClick}/>
+                    </Tooltip>
+                    <Table<UserGroupModel>
+                            columns={buildColumn()}
+                            dataSource={data}
+                            loading={isLoading}
+                            rowKey={(record) => record.id}
+                            onRow={rowProps}
+                            pagination={{
+                                ...pagination,
+                                showSizeChanger: false,
+                                "showTotal": (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                            }}
+                            onChange={handleTableChange}
+                    />
+                </Flex>
+                {modalContextHolder}
+            </>
     );
-}
+};
 
 export default UserGroupTable;

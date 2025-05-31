@@ -15,6 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApplicationPermissionDto {
+	private String name;
 	private String applicationId;
 	private List<ActionPermission> actionPermissions;
 }

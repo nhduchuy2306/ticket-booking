@@ -7,10 +7,12 @@ import java.util.Set;
 
 import com.gyp.common.enums.permission.ActionPermission;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class PermissionItem implements Serializable {
@@ -19,5 +21,4 @@ public class PermissionItem implements Serializable {
 
 	private Set<ActionPermission> actions = new HashSet<>();
 	private String applicationId;
-	private String uuid;
 }

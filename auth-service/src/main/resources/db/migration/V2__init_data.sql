@@ -12,13 +12,13 @@ VALUES ('9caedd6b-0898-4921-ba2a-2c8149bd45d2', 'John Doe', '1985-05-15 08:00:00
 INSERT INTO usergroup (id, name, description, administrator, user_group_permissions, create_user,
                        change_user, create_timestamp, change_timestamp)
 VALUES ('cb2f0983-5b96-4d4d-8e61-12286d75ac54', 'UserGroup1', 'Viewer', FALSE,
-        '{"permissionItems":[{"applicationId":"app.user","actions":["CREATE","UPDATE","READ","DELETE"],"uuid":"70ac16be-aeae-4ded-b7db-79d20e9ffe24"}]}',
+        '{"permissionItems":[{"applicationId":"app.user.group","actions":["CREATE","UPDATE","READ","DELETE"]}]}',
         'system', 'system', NOW(), NOW()),
        ('0f044715-1926-4f3c-9e7b-563200c4d9cc', 'UserGroup2', 'Editors group with limited permissions', FALSE,
-        '{"permissionItems":[{"applicationId":"app.user","actions":["READ"],"uuid":"70ac16be-aeae-4ded-b7db-79d20e9ffe24"}]}',
+        '{"permissionItems":[{"applicationId":"app.user.group","actions":["READ"]}]}',
         'system', 'system', NOW(), NOW()),
        ('7ac08049-1709-4757-9250-bcf16c32f57a', 'UserGroup3', 'Viewers group with view-only permissions', FALSE,
-        '{"permissionItems":[{"applicationId":"app.user","actions":["READ"],"uuid":"70ac16be-aeae-4ded-b7db-79d20e9ffe24"},{"applicationId":"app.movie","actions":["READ","CREATE"],"uuid":"70ac16be-aeae-4ded-b7db-79d20e9ffe24"}]}',
+        '{"permissionItems":[{"applicationId":"app.user.group","actions":["READ"]},{"applicationId":"app.user.account","actions":["READ","CREATE"]}]}',
         'system', 'system', NOW(), NOW());
 
 -- Establish relationships between user accounts and user groups

@@ -34,10 +34,10 @@ public class UserAccountController extends AbstractController {
 		return createResponseOk(userAccountService.getUserAccountList());
 	}
 
-	@GetMapping(ID_PARAM)
+	@GetMapping("/{" + ID_PARAM + "}")
 	@RequestPermission(application = ApplicationPermission.USER_ACCOUNT, actions = { ActionPermission.READ })
 	@RequestPermission(application = ApplicationPermission.USER_GROUP, actions = { ActionPermission.READ })
-	public ResponseEntity<?> getUserAccountById(@PathVariable("id") String id) {
+	public ResponseEntity<?> getUserAccountById(@PathVariable(ID_PARAM) String id) {
 		if(StringUtils.isEmpty(id)) {
 			return ResponseEntity.badRequest().body("Id is required");
 		}

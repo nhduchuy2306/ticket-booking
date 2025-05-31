@@ -1,6 +1,7 @@
 package com.gyp.common.controllers;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 public abstract class AbstractController {
 	protected static final String INTERNAL_API = "/internal";
-	protected static final String ID_PARAM = "/{id}";
+	protected static final String ID_PARAM = "id";
 
 	protected String getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

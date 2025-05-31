@@ -9,15 +9,15 @@ import com.gyp.authservice.dtos.AbstractDto;
 import com.gyp.common.intefaces.Request;
 import com.gyp.common.types.PropertyLength;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @JsonTypeName("usergrouprequest")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class UserGroupRequestDto extends AbstractDto implements Request {
 	@Serial
 	private static final long serialVersionUID = 5697492069064319966L;

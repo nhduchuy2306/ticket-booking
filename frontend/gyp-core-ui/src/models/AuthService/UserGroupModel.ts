@@ -1,4 +1,5 @@
 export interface UserGroupPermissionModel {
+    name: string;
     applicationId: string;
     actionPermissions: string[];
 }
@@ -15,6 +16,13 @@ export interface UserGroupModel {
     userGroupPermissions: UserGroupPermissions
 }
 
+export interface CreateUserGroupModel {
+    name: string
+    description: string
+    administrator: boolean
+    userGroupPermissions: UserGroupPermissions
+}
+
 export interface UserGroupPermissions {
     permissionItems: PermissionItem[]
 }
@@ -22,5 +30,4 @@ export interface UserGroupPermissions {
 export interface PermissionItem {
     actions: string[]
     applicationId: string
-    uuid: string
 }

@@ -20,10 +20,10 @@ const LoginPage: React.FC = () => {
             const response = await AuthService.login(values);
             if (response.token) {
                 localStorage.setItem('token', response.token);
-                navigate('/test');
+                navigate('/user-account');
             }
         } catch (error) {
-            setLoginErrors(['LoginPage failed. Please try again.']);
+            setLoginErrors(['Login failed. Please try again.']);
         } finally {
             setLoading(false);
         }
@@ -51,7 +51,7 @@ const LoginPage: React.FC = () => {
                                 layout="vertical"
                         >
                             {loginErrors.length > 0 && (
-                                    <Form.Item>
+                                    <Form.Item style={{color: "red"}}>
                                         <Form.ErrorList errors={loginErrors}/>
                                     </Form.Item>
                             )}

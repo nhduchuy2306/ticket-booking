@@ -1,36 +1,19 @@
-import type { MenuProps } from 'antd';
 import { Layout, Menu } from 'antd';
 import { SelectInfo } from "rc-menu/lib/interface";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AiOutlineUser, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { BsCalendar3 } from "react-icons/bs";
 import { CiLocationOn, CiShop } from "react-icons/ci";
 import { IoIosLogOut } from "react-icons/io";
 import { PiSeat } from "react-icons/pi";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "./app.scss";
+import { findMenuPath, getItem, MenuItem } from "./services/AppService.ts";
 
 const {Content, Sider} = Layout;
 
-type MenuItem = Required<MenuProps>['items'][number];
-
-const siderStyle: React.CSSProperties = {
-    overflow: 'auto',
-    height: '100vh',
-    position: 'sticky',
-    insetInlineStart: 0,
-    top: 0,
-    bottom: 0,
-    scrollbarWidth: 'thin',
-    scrollbarGutter: 'stable',
-};
-
-function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
-    return {key, icon, children, label} as MenuItem;
-}
-
 const items: MenuItem[] = [
-    getItem('User Account', 'user-account', <AiOutlineUser/>, [
+    getItem('User', 'user', <AiOutlineUser/>, [
         getItem('User Account', 'user-account', <AiOutlineUser/>),
         getItem('User Group', 'user-group', <AiOutlineUsergroupAdd/>)
     ]),
@@ -43,7 +26,19 @@ const items: MenuItem[] = [
 
 const App: React.FC = () => {
     const navigate = useNavigate();
-    const [key, setKey] = useState<string>('user-account');
+    const location = useLocation();
+    const [selectedKey, setSelectedKey] = useState<string>('');
+    const [openKeys, setOpenKeys] = useState<string[]>([]);
+
+    useEffect(() => {
+        const path = location.pathname.substring(1); // remove the leading "/"
+        setSelectedKey(path);
+
+        const menuPath = findMenuPath(items, path);
+        if (menuPath && menuPath.length > 1) {
+            setOpenKeys(menuPath.slice(0, -1));
+        }
+    }, [location.pathname]);
 
     const handleMenuItemSelect = (info: SelectInfo) => {
         if (info.key === 'logout') {
@@ -51,20 +46,20 @@ const App: React.FC = () => {
             navigate('/login');
         } else {
             navigate(`/${info.key}`)
-            setKey(info.key);
         }
     }
 
     return (
             <Layout hasSider className="layout-container">
-                <Sider collapsible style={siderStyle} width={280} theme="light">
+                <Sider collapsible className="app-side" width={280} theme="light">
                     <div className="logo-vertical"/>
                     <Menu
                             style={{height: '100%', width: '100%'}}
                             theme="light"
                             mode="inline"
-                            defaultSelectedKeys={['user-account']}
-                            selectedKeys={[key]}
+                            selectedKeys={[selectedKey]}
+                            openKeys={openKeys}
+                            onOpenChange={(keys) => setOpenKeys(keys)}
                             items={items}
                             onSelect={handleMenuItemSelect}
                     />

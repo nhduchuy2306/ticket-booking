@@ -11,7 +11,11 @@ public interface UserGroupService {
 
 	UserGroupResponseDto getUserGroupById(String id);
 
-	void createUserGroup(UserGroupRequestDto userGroupRequestDto);
+	UserGroupResponseDto createUserGroup(UserGroupRequestDto userGroupRequestDto);
+
+	UserGroupResponseDto updateUserGroup(UserGroupRequestDto userGroupRequestDto, String id);
+
+	UserGroupResponseDto deleteUserGroup(String id);
 
 	List<ApplicationPermissionDto> getListApplicationPermissions();
 }
