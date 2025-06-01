@@ -3,6 +3,7 @@ package com.gyp.eventservice.services.impl;
 import java.util.List;
 
 import com.gyp.common.models.EventEventModel;
+import com.gyp.eventservice.dtos.event.EventResponseDto;
 import com.gyp.eventservice.entities.EventEntity;
 import com.gyp.eventservice.mappers.EventMapper;
 import com.gyp.eventservice.repositories.EventRepository;
@@ -20,5 +21,14 @@ public class EventServiceImpl implements EventService {
 	public List<EventEventModel> getListEventModel() {
 		List<EventEntity> entities = eventRepository.findAll();
 		return eventMapper.toModelList(entities);
+	}
+
+	@Override
+	public List<EventResponseDto> getAllEvents() {
+		List<EventEntity> entities = eventRepository.findAll();
+		if(!entities.isEmpty()) {
+			return eventMapper.toResponseDtoList(entities);
+		}
+		return null;
 	}
 }
