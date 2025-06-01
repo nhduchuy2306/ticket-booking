@@ -28,3 +28,14 @@ export const findMenuPath = (items: MenuItem[], key: string, path: string[] = []
     return null;
 };
 
+export const getLabelByKey = (key: string, items: MenuItem[]): string | null => {
+    for (const item of items) {
+        if (item.key === key) return String(item.label);
+        if (item.children) {
+            const found = getLabelByKey(key, item.children);
+            if (found) return found;
+        }
+    }
+    return null;
+};
+

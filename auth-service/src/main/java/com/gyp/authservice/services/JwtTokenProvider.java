@@ -73,15 +73,15 @@ public class JwtTokenProvider {
 	}
 
 	private String buildAuthoritiesScope(UserAccountResponseDto dto) {
-		if(dto.getUserGroupResponseDtoList().size() == 1) {
-			var firstElement = dto.getUserGroupResponseDtoList().get(0);
+		if(dto.getUserGroupList().size() == 1) {
+			var firstElement = dto.getUserGroupList().getFirst();
 			if(BooleanUtils.isTrue(firstElement.getAdministrator())) {
 				return ApplicationPermission.ADMIN.getApplicationId();
 			}
 		}
 
 		Map<String, List<String>> appIdAndActions = new HashMap<>();
-		var userGroupList = dto.getUserGroupResponseDtoList();
+		var userGroupList = dto.getUserGroupList();
 		userGroupList.forEach(userGroup -> {
 			var permissionItems = userGroup.getUserGroupPermissions().getPermissionItems();
 			permissionItems.forEach(permissionItem -> {

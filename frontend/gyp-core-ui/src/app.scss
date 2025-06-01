@@ -5,6 +5,31 @@
       position: unset !important;
     }
   }
+
+  .ant-menu.ant-menu-inline-collapsed {
+    width: 80px !important;
+
+    .ant-menu-submenu-arrow {
+      transform: none !important;
+      position: unset !important;
+    }
+
+    .ant-menu-item, .ant-menu-submenu-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 20px !important;
+      }
+    }
+  }
+
+  .ant-menu:not(.ant-menu-inline-collapsed) {
+    width: 280px !important;
+  }
 }
 
 .app-side {

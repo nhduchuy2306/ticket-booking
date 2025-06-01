@@ -1,14 +1,14 @@
-import { Layout, Menu } from 'antd';
+import { Breadcrumb, Layout, Menu } from 'antd';
 import { SelectInfo } from "rc-menu/lib/interface";
 import React, { useEffect, useState } from 'react';
 import { AiOutlineUser, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { BsCalendar3 } from "react-icons/bs";
-import { CiLocationOn, CiShop } from "react-icons/ci";
+import { CiLocationOn, CiSettings, CiShop } from "react-icons/ci";
 import { IoIosLogOut } from "react-icons/io";
 import { PiSeat } from "react-icons/pi";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "./app.scss";
-import { findMenuPath, getItem, MenuItem } from "./services/AppService.ts";
+import { findMenuPath, getItem, getLabelByKey, MenuItem } from "./services/AppService.ts";
 
 const {Content, Sider} = Layout;
 
@@ -20,7 +20,8 @@ const items: MenuItem[] = [
     getItem('Event', 'event', <BsCalendar3/>),
     getItem('Venue', 'venue', <CiLocationOn/>),
     getItem('Seat Map', 'seat-map', <PiSeat/>),
-    getItem('Sale', 'sale', <CiShop/>),
+    getItem('Sale Channel', 'sale-channel', <CiShop/>),
+    getItem('Configuration', 'configuration', <CiSettings/>),
     getItem('Logout', 'logout', <IoIosLogOut/>)
 ];
 
@@ -40,7 +41,13 @@ const App: React.FC = () => {
         }
     }, [location.pathname]);
 
+    const menuPath = findMenuPath(items, selectedKey);
+    const breadcrumbItems = menuPath
+            ? menuPath.map(key => getLabelByKey(key, items)).filter(Boolean)
+            : [selectedKey.replace('-', ' ')];
+
     const handleMenuItemSelect = (info: SelectInfo) => {
+        console.log("Selected menu item:", info);
         if (info.key === 'logout') {
             localStorage.removeItem("token");
             navigate('/login');
@@ -54,7 +61,7 @@ const App: React.FC = () => {
                 <Sider collapsible className="app-side" width={280} theme="light">
                     <div className="logo-vertical"/>
                     <Menu
-                            style={{height: '100%', width: '100%'}}
+                            className="w-full h-full"
                             theme="light"
                             mode="inline"
                             selectedKeys={[selectedKey]}
@@ -66,6 +73,12 @@ const App: React.FC = () => {
                 </Sider>
                 <Layout>
                     <Content style={{margin: '24px 16px 0', overflow: 'auto'}}>
+                        <Breadcrumb className="breadcrumb">
+                            <Breadcrumb.Item key="home">Home</Breadcrumb.Item>
+                            {breadcrumbItems.map((label, idx) => (
+                                    <Breadcrumb.Item key={idx}>{label}</Breadcrumb.Item>
+                            ))}
+                        </Breadcrumb>
                         <Outlet/>
                     </Content>
                 </Layout>

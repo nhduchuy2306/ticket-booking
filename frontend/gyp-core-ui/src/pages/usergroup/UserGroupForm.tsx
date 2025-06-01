@@ -59,6 +59,7 @@ const UserGroupForm: React.FC<UserGroupFormProps> = ({
             const initialPermissions = extractPermissionKeys();
 
             form.setFieldsValue({administrator, name, description});
+            form.setFieldsValue({userGroupPermissions: initialPermissions});
             setSelectedPermissions(initialPermissions);
         }
     };

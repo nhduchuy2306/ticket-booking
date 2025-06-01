@@ -1,3 +1,1 @@
-export class EventService {
-
-}
+export const EventService = {}

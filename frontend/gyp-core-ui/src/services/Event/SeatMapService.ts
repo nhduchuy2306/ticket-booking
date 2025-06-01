@@ -1,3 +1,1 @@
-export class SeatMapService {
-
-}
+export const SeatMapService = {}

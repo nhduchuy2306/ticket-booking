@@ -13,10 +13,10 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring", uses = { UserGroupMapper.class })
 public interface UserAccountMapper extends AbstractMapper {
 	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "userGroupEntityList", source = "userGroupRequestDtoList")
+	@Mapping(target = "userGroupEntityList", ignore = true)
 	UserAccountEntity toEntity(UserAccountRequestDto dto);
 
-	@Mapping(target = "userGroupResponseDtoList", source = "userGroupEntityList")
+	@Mapping(target = "userGroupList", source = "userGroupEntityList")
 	UserAccountResponseDto toResponseDto(UserAccountEntity entity);
 
 	@Mapping(target = "actions", ignore = true)

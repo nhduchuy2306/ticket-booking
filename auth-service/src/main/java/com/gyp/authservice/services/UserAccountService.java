@@ -2,6 +2,7 @@ package com.gyp.authservice.services;
 
 import java.util.List;
 
+import com.gyp.authservice.dtos.useraccount.UserAccountRequestDto;
 import com.gyp.authservice.dtos.useraccount.UserAccountResponseDto;
 import com.gyp.common.models.UserAccountEventModel;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,5 +14,11 @@ public interface UserAccountService extends UserDetailsService {
 
 	UserAccountResponseDto getUserAccountById(String id);
 
+	UserAccountResponseDto createUserAccount(UserAccountRequestDto request);
+
 	List<UserAccountEventModel> getOrganizerAccounts();
+
+	UserAccountResponseDto updateUserAccount(String id, UserAccountRequestDto request);
+
+	UserAccountResponseDto deleteUserAccount(String id);
 }

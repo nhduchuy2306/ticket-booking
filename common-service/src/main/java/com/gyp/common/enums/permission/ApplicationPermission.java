@@ -13,7 +13,7 @@ public enum ApplicationPermission {
 			actions(ActionPermission.CREATE, ActionPermission.READ, ActionPermission.UPDATE, ActionPermission.DELETE)),
 	USER_ACCOUNT("User Account", "app.user.account",
 			actions(ActionPermission.CREATE, ActionPermission.READ, ActionPermission.UPDATE, ActionPermission.DELETE,
-					ActionPermission.LOGIN, ActionPermission.LOGOUT)),
+					ActionPermission.LOGIN, ActionPermission.LOGOUT, ActionPermission.SYNC)),
 	EVENT("Event", "app.event",
 			actions(ActionPermission.CREATE, ActionPermission.READ, ActionPermission.UPDATE, ActionPermission.DELETE)),
 	CONFIGURATION("Configuration", "app.configuration",

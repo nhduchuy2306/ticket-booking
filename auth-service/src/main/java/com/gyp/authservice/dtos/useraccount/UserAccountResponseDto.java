@@ -24,5 +24,5 @@ public class UserAccountResponseDto extends AbstractDto {
 	private LocalDateTime dob;
 	private String phoneNumber;
 	private String email;
-	private List<UserGroupResponseDto> userGroupResponseDtoList;
+	private List<UserGroupResponseDto> userGroupList;
 }

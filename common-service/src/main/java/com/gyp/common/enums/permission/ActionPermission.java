@@ -11,7 +11,8 @@ public enum ActionPermission {
 	EXPORT("export"),
 	IMPORT("import"),
 	LOGIN("login"),
-	LOGOUT("logout");
+	LOGOUT("logout"),
+	SYNC("sync");
 
 	private final String actionName;
 

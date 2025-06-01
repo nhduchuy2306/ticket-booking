@@ -161,7 +161,7 @@ const UserGroupTable: React.FC<UserGroupTableProps> = ({onSelectUserGroup, reloa
     return (
             <>
                 <Flex gap="middle" vertical align="flex-end">
-                    <Tooltip title="Add new User Group">
+                    <Tooltip title="Add New User Group">
                         <Button type="default" icon={<BiPlus/>} onClick={handleCreateClick}/>
                     </Tooltip>
                     <Table<UserGroupModel>
