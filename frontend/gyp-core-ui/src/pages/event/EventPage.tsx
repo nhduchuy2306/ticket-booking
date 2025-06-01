@@ -58,8 +58,8 @@ const EventPage: React.FC<EventPageProps> = () => {
         try {
             setIsLoading(true);
             const res = await EventService.getAllEvents();
-            if (res && res.data) {
-                setData(res.data);
+            if (res) {
+                setData(res);
             } else {
                 console.error("No data received from EventService");
             }
