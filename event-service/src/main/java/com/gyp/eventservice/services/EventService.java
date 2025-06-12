@@ -9,4 +9,6 @@ public interface EventService {
 	List<EventEventModel> getListEventModel();
 
 	List<EventResponseDto> getAllEvents();
+
+	EventResponseDto getEventById(String id);
 }

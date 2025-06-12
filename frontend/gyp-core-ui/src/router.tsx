@@ -6,6 +6,7 @@ import RegisterPage from "./pages/auth/RegisterPage.tsx";
 import ConfigurationPage from "./pages/configuration/ConfigurationPage.tsx";
 import ErrorPage from "./pages/error/ErrorPage.tsx";
 import EventPage from "./pages/event/EventPage.tsx";
+import EventPageForm from "./pages/event/EventPageForm.tsx";
 import OverviewPage from "./pages/OverviewPage.tsx";
 import ProtectRoute from "./pages/ProtectRoute.tsx";
 import SaleChannelPage from "./pages/salechannel/SaleChannelPage.tsx";
@@ -58,19 +59,74 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'event',
-                element: <EventPage/>
+                children: [
+                    {
+                        index: true,
+                        element: <EventPage/>
+                    },
+                    {
+                        path: 'new',
+                        element: <EventPageForm mode={Mode.CREATE.key}/>
+                    },
+                    {
+                        path: ':id',
+                        element: <EventPageForm mode={Mode.EDIT.key}/>
+                    }
+                ],
             },
             {
                 path: 'venue',
-                element: <VenuePage/>
+                element: <VenuePage/>,
+                children: [
+                    {
+                        index: true,
+                        element: <VenuePage/>
+                    },
+                    {
+                        path: 'new',
+                        element: <VenuePage/>
+                    },
+                    {
+                        path: ':id',
+                        element: <VenuePage/>
+                    }
+                ]
             },
             {
                 path: 'sale-channel',
-                element: <SaleChannelPage/>
+                element: <SaleChannelPage/>,
+                children: [
+                    {
+                        index: true,
+                        element: <SaleChannelPage/>
+                    },
+                    {
+                        path: 'new',
+                        element: <SaleChannelPage/>
+                    },
+                    {
+                        path: ':id',
+                        element: <SaleChannelPage/>
+                    }
+                ]
             },
             {
                 path: 'seat-map',
-                element: <SeatMapPage/>
+                element: <SeatMapPage/>,
+                children: [
+                    {
+                        index: true,
+                        element: <SeatMapPage/>
+                    },
+                    {
+                        path: 'new',
+                        element: <SeatMapPage/>
+                    },
+                    {
+                        path: ':id',
+                        element: <SeatMapPage/>
+                    }
+                ]
             },
             {
                 path: 'configuration',

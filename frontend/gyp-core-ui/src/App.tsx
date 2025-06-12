@@ -46,6 +46,17 @@ const App: React.FC = () => {
             ? menuPath.map(key => getLabelByKey(key, items)).filter(Boolean)
             : [selectedKey.replace('-', ' ')];
 
+    const breadCrumbItems = [
+        {
+            title: 'Home',
+            key: 'home',
+        },
+        ...breadcrumbItems.map((label, idx) => ({
+            title: label,
+            key: `breadcrumb-${idx}`,
+        }))
+    ];
+
     const handleMenuItemSelect = (info: SelectInfo) => {
         console.log("Selected menu item:", info);
         if (info.key === 'logout') {
@@ -73,12 +84,7 @@ const App: React.FC = () => {
                 </Sider>
                 <Layout>
                     <Content style={{margin: '24px 16px 0', overflow: 'auto'}}>
-                        <Breadcrumb className="breadcrumb">
-                            <Breadcrumb.Item key="home">Home</Breadcrumb.Item>
-                            {breadcrumbItems.map((label, idx) => (
-                                    <Breadcrumb.Item key={idx}>{label}</Breadcrumb.Item>
-                            ))}
-                        </Breadcrumb>
+                        <Breadcrumb items={breadCrumbItems}/>
                         <Outlet/>
                     </Content>
                 </Layout>

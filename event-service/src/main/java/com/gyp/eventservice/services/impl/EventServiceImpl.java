@@ -31,4 +31,13 @@ public class EventServiceImpl implements EventService {
 		}
 		return null;
 	}
+
+	@Override
+	public EventResponseDto getEventById(String id) {
+		EventEntity entity = eventRepository.findById(id).orElse(null);
+		if(entity != null) {
+			return eventMapper.toResponseDto(entity);
+		}
+		return null;
+	}
 }
