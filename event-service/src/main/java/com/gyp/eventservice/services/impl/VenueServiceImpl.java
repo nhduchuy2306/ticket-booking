@@ -1,6 +1,90 @@
 package com.gyp.eventservice.services.impl;
 
-import com.gyp.eventservice.services.VenueService;
+import java.util.List;
 
+import com.gyp.eventservice.dtos.venue.VenueRequestDto;
+import com.gyp.eventservice.dtos.venue.VenueResponseDto;
+import com.gyp.eventservice.entities.VenueEntity;
+import com.gyp.eventservice.mappers.VenueMapper;
+import com.gyp.eventservice.repositories.EventRepository;
+import com.gyp.eventservice.repositories.VenueRepository;
+import com.gyp.eventservice.services.VenueService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
 public class VenueServiceImpl implements VenueService {
+	private final VenueRepository venueRepository;
+	private final EventRepository eventRepository;
+	private final VenueMapper venueMapper;
+
+	@Override
+	public List<VenueResponseDto> getVenues() {
+		var venues = venueRepository.findAll();
+		if(venues.isEmpty()) {
+			throw new RuntimeException("No venues found");
+		}
+		return venueMapper.toResponseDtoList(venues);
+	}
+
+	@Override
+	public VenueResponseDto getVenueById(String venueId) {
+		return venueRepository.findById(venueId)
+				.map(venueMapper::toResponseDto)
+				.orElseThrow(() -> new RuntimeException("Venue not found with id: " + venueId));
+	}
+
+	@Override
+	public VenueResponseDto getVenueByName(String venueName) {
+		return venueRepository.findByName(venueName)
+				.map(venueMapper::toResponseDto)
+				.orElseThrow(() -> new RuntimeException("Venue not found with name: " + venueName));
+	}
+
+	@Override
+	public VenueResponseDto getVenueByLocation(Double latitude, Double longitude) {
+		return venueRepository.findByLongitudeAndLatitude(longitude, latitude)
+				.map(venueMapper::toResponseDto)
+				.orElseThrow(() -> new RuntimeException("Venue not found at location: " + latitude + ", " + longitude));
+	}
+
+	@Override
+	public VenueResponseDto createVenue(VenueRequestDto venueDto) {
+		VenueEntity venueEntity = venueMapper.toEntity(venueDto);
+
+		if(eventRepository.findEventByVenueEntity_Id(venueEntity.getId()).isPresent()) {
+			throw new RuntimeException("Venue already exists with address: " + venueDto.getAddress());
+		}
+
+		if(eventRepository.findEventByVenueEntity_Address(venueEntity.getAddress()).isPresent()) {
+			throw new RuntimeException("Venue already exists with address: " + venueDto.getAddress());
+		}
+
+		venueEntity = venueRepository.save(venueEntity);
+		return venueMapper.toResponseDto(venueEntity);
+	}
+
+	// TODO: Create validation framework to handle this better
+	@Override
+	public VenueResponseDto updateVenue(String venueId, VenueRequestDto venueDto) {
+		VenueEntity existingVenue = venueRepository.findById(venueId)
+				.orElseThrow(() -> new RuntimeException("Venue not found with id: " + venueId));
+		venueMapper.updateEntityFromDto(venueDto, existingVenue);
+		if(eventRepository.findEventByVenueEntity_Id(existingVenue.getId()).isPresent()) {
+			throw new RuntimeException("Venue already exists with address: " + venueDto.getAddress());
+		}
+		if(eventRepository.findEventByVenueEntity_Address(existingVenue.getAddress()).isPresent()) {
+			throw new RuntimeException("Venue already exists with address: " + venueDto.getAddress());
+		}
+		existingVenue = venueRepository.save(existingVenue);
+		return venueMapper.toResponseDto(existingVenue);
+	}
+
+	@Override
+	public void deleteVenue(String venueId) {
+		VenueEntity venueEntity = venueRepository.findById(venueId)
+				.orElseThrow(() -> new RuntimeException("Venue not found with id: " + venueId));
+		venueRepository.delete(venueEntity);
+	}
 }
