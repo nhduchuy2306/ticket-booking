@@ -52,13 +52,12 @@ public interface TicketTypeMapper extends AbstractMapper {
 		}
 		LocalDateTime now = LocalDateTime.now();
 		return ticketType.getSaleStartDate().isBefore(now) &&
-			   ticketType.getSaleEndDate().isAfter(now) &&
-			   TicketStatus.AVAILABLE.equals(ticketType.getStatus());
+				ticketType.getSaleEndDate().isAfter(now) &&
+				TicketStatus.AVAILABLE.equals(ticketType.getStatus());
 	}
 
 	default boolean isSoldOut(TicketTypeEntity ticketType) {
-		return ticketType.getQuantityAvailable() != null &&
-			   ticketType.getQuantityAvailable() <= 0;
+		return ticketType.getQuantityAvailable() != null && ticketType.getQuantityAvailable() <= 0;
 	}
 
 	@AfterMapping

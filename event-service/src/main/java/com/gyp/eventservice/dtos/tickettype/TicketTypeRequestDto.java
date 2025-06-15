@@ -16,6 +16,7 @@ public class TicketTypeRequestDto {
 	private String name;
 	private String description;
 	private double price;
+	private String color;
 	private Integer quantityAvailable;
 	private TicketStatus status;
 	private LocalDateTime saleStartDate;

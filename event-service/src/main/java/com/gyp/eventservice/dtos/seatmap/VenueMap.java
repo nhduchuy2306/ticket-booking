@@ -3,17 +3,17 @@ package com.gyp.eventservice.dtos.seatmap;
 import java.util.Objects;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /**
  * Class define for Venue Map
  */
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 public class VenueMap extends BaseSeatMap implements Dimensional {

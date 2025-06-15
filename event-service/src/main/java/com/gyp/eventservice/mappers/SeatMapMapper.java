@@ -28,13 +28,11 @@ public interface SeatMapMapper extends AbstractMapper {
 	List<SeatMapResponseDto> toResponseDtoList(List<SeatMapEntity> entities);
 
 	// Create new entity from request
-	@Mapping(target = "venueEntity", source = "venueId", qualifiedByName = "venueIdToEntity")
 	@Mapping(target = "seatConfigRaw", expression = "java(parseSeatConfigRaw(dto.getSeatConfig()))")
 	@Mapping(target = "stageConfigRaw", expression = "java(parseStageConfig(dto.getStageConfig()))")
 	SeatMapEntity toEntity(SeatMapRequestDto dto);
 
 	// Update existing entity from request
-	@Mapping(target = "venueEntity", source = "venueId", qualifiedByName = "venueIdToEntity")
 	@Mapping(target = "seatConfigRaw", expression = "java(parseSeatConfigRaw(dto.getSeatConfig()))")
 	@Mapping(target = "stageConfigRaw", expression = "java(parseStageConfig(dto.getStageConfig()))")
 	void updateEntityFromDto(SeatMapRequestDto dto, @MappingTarget SeatMapEntity entity);

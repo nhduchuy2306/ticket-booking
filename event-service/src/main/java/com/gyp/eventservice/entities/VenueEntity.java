@@ -62,5 +62,5 @@ public class VenueEntity extends AbstractEntity {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "venueEntity")
-	private List<SeatMapEntity> seatMapEntityList = new ArrayList<>();
+	private List<VenueMapEntity> venueMapEntityList = new ArrayList<>();
 }

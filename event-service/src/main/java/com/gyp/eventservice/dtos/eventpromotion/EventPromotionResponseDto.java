@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class EventPromotionResponseDto extends AbstractDto {
 	private String id;
 	private String code;
-	private double discountAmount;
+	private Double discountAmount;
 	private LocalDateTime validFrom;
 	private LocalDateTime validTo;
 

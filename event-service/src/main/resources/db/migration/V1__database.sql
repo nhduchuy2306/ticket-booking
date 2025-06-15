@@ -1,3 +1,5 @@
+-- This is old database schema
+
 -- Create categories table
 CREATE TABLE IF NOT EXISTS category
 (
@@ -27,6 +29,35 @@ CREATE TABLE IF NOT EXISTS venue
     change_timestamp DATETIME
 );
 
+CREATE TABLE IF NOT EXISTS venuemap
+(
+    id               VARCHAR(255) NOT NULL primary key,
+    name             VARCHAR(255) NOT NULL,
+    height           double       NOT NULL,
+    width            double       NOT NULL,
+    venue_id         VARCHAR(255) NOT NULL,
+    create_user      VARCHAR(255),
+    change_user      VARCHAR(255),
+    create_timestamp DATETIME,
+    change_timestamp DATETIME,
+    foreign key (venue_id) references venue (id)
+);
+
+CREATE TABLE IF NOT EXISTS seatmap
+(
+    id               VARCHAR(255) NOT NULL PRIMARY KEY,
+    name             VARCHAR(255) NOT NULL,
+    venue_type       VARCHAR(255) NOT NULL,
+    seat_config      TEXT         NOT NULL,
+    stage_config     TEXT         NOT NULL,
+    venue_map_id     VARCHAR(255) NOT NULL,
+    create_user      VARCHAR(255),
+    change_user      VARCHAR(255),
+    create_timestamp DATETIME,
+    change_timestamp DATETIME,
+    FOREIGN KEY (venue_map_id) REFERENCES venuemap (id) ON DELETE CASCADE
+);
+
 -- Create organizers table
 CREATE TABLE IF NOT EXISTS organizer
 (
@@ -35,6 +66,7 @@ CREATE TABLE IF NOT EXISTS organizer
     user_name        VARCHAR(50) UNIQUE NOT NULL,
     dob              TIMESTAMP,
     phone_number     VARCHAR(255),
+    email            VARCHAR(255) UNIQUE,
     create_user      VARCHAR(255),
     change_user      VARCHAR(255),
     create_timestamp DATETIME,
@@ -132,3 +164,4 @@ CREATE INDEX idx_ticket_type_event ON tickettype (event_id);
 CREATE INDEX idx_ticket_type_status ON tickettype (status);
 CREATE INDEX idx_event_promotion_event ON eventpromotion (event_id);
 CREATE INDEX idx_event_promotion_code ON eventpromotion (code);
+CREATE INDEX idx_seat_config_venue_type ON seatmap (venue_type);
