@@ -129,6 +129,42 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>cz.habarta.typescript-generator</groupId>
+                <artifactId>typescript-generator-maven-plugin</artifactId>
+                <version>${typescript.generator.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-ts-models</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <jsonLibrary>jackson2</jsonLibrary>
+                            <outputFile>${project.basedir}/../frontend/gyp-core-ui/src/models/generated/event-service-models.d.ts</outputFile>
+                            <classPatterns>
+                                <pattern>com.gyp.eventservice.dtos.**</pattern>
+                            </classPatterns>
+                            <mapClasses>asInterfaces</mapClasses>
+                            <mapEnum>asEnum</mapEnum>
+                            <mapDate>asDate</mapDate>
+                            <outputKind>module</outputKind>
+                            <excludeClassPatterns>
+                                <pattern>java.io.**</pattern>
+                                <pattern>java.lang.**</pattern>
+                            </excludeClassPatterns>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>cz.habarta.typescript-generator</groupId>
+                        <artifactId>typescript-generator-core</artifactId>
+                        <version>${typescript.generator.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
     </build>
 

@@ -65,6 +65,7 @@
         <common.lang.version>3.17.0</common.lang.version>
         <querydsl.version>5.0.0</querydsl.version>
         <reflections.version>0.10.2</reflections.version>
+        <typescript.generator.version>3.2.1263</typescript.generator.version>
         <jackson.databind.version>2.18.2</jackson.databind.version>
         <jackson.annotations.version>2.18.2</jackson.annotations.version>
         <jackson.core.version>2.18.2</jackson.core.version>
