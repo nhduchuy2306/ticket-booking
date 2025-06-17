@@ -2,6 +2,7 @@ package com.gyp.eventservice.controllers;
 
 import com.gyp.common.controllers.AbstractController;
 import com.gyp.eventservice.dtos.venue.VenueRequestDto;
+import com.gyp.eventservice.exceptions.VenueNotFoundException;
 import com.gyp.eventservice.services.VenueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,8 @@ public class VenueController extends AbstractController {
 			return ResponseEntity.ok(venueService.getVenueById(venueId));
 		} catch(RuntimeException e) {
 			return ResponseEntity.status(404).body(e.getMessage());
+		} catch(VenueNotFoundException e) {
+			throw new RuntimeException(e);
 		}
 	}
 

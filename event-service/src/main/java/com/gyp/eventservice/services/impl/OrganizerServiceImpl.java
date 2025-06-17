@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.gyp.common.models.UserAccountEventModel;
+import com.gyp.eventservice.dtos.organizer.OrganizerResponseDto;
 import com.gyp.eventservice.entities.OrganizerEntity;
 import com.gyp.eventservice.mappers.OrganizerMapper;
 import com.gyp.eventservice.repositories.OrganizerRepository;
@@ -42,5 +43,35 @@ public class OrganizerServiceImpl implements OrganizerService {
 					.toList();
 			organizerRepository.saveAll(organizerEntityList);
 		}
+	}
+
+	@Override
+	public void syncOrganizerFromAuth(String organizerId, UserAccountEventModel data) {
+
+	}
+
+	@Override
+	public void handleOrganizerUpdated(String organizerId) {
+
+	}
+
+	@Override
+	public void handleOrganizerDeleted(String organizerId) {
+
+	}
+
+	@Override
+	public List<OrganizerResponseDto> getOutOfSyncOrganizers() {
+		return List.of();
+	}
+
+	@Override
+	public void performFullSync() {
+
+	}
+
+	@Override
+	public OrganizerResponseDto getOrganizerById(String organizerId) {
+		return null;
 	}
 }

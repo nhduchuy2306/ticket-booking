@@ -21,4 +21,6 @@ public interface TicketTypeService {
 	TicketTypeResponseDto updateTicketType(String ticketTypeId, TicketTypeRequestDto ticketTypeDto);
 
 	void deleteTicketType(String ticketTypeId);
+
+	TicketTypeResponseDto toggleTicketTypeStatus(String ticketTypeId);
 }

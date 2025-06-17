@@ -75,4 +75,9 @@ public class TicketTypeServiceImpl implements TicketTypeService {
 		}
 		ticketTypeRepository.deleteById(ticketTypeId);
 	}
+
+	@Override
+	public TicketTypeResponseDto toggleTicketTypeStatus(String ticketTypeId) {
+		return null;
+	}
 }

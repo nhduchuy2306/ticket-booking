@@ -3,6 +3,8 @@ package com.gyp.eventservice.services;
 import java.util.List;
 
 import com.gyp.eventservice.dtos.seatmap.Seat;
+import com.gyp.eventservice.dtos.seatmap.SeatAvailability;
+import com.gyp.eventservice.dtos.seatmap.SeatConfig;
 import com.gyp.eventservice.dtos.seatmap.SeatStatus;
 import com.gyp.eventservice.dtos.seatmap.SeatWithScore;
 import com.gyp.eventservice.dtos.seatmap.VenueMap;
@@ -27,4 +29,8 @@ public interface SeatMapService {
 	boolean reserveSeat(String venueMapId, String seatId);
 
 	boolean confirmSeatReservation(String venueMapId, String seatId);
+
+	SeatAvailability checkSeatAvailability(String seatMapId, List<String> seatIds);
+
+	SeatConfig parseSeatConfig(String seatConfigJson);
 }

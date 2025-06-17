@@ -2,6 +2,8 @@ package com.gyp.eventservice.services.impl;
 
 import java.util.List;
 
+import com.gyp.eventservice.exceptions.VenueNotFoundException;
+import com.gyp.eventservice.services.criteria.VenueSearchCriteria;
 import com.gyp.eventservice.dtos.venue.VenueRequestDto;
 import com.gyp.eventservice.dtos.venue.VenueResponseDto;
 import com.gyp.eventservice.entities.VenueEntity;
@@ -29,10 +31,10 @@ public class VenueServiceImpl implements VenueService {
 	}
 
 	@Override
-	public VenueResponseDto getVenueById(String venueId) {
+	public VenueResponseDto getVenueById(String venueId) throws VenueNotFoundException {
 		return venueRepository.findById(venueId)
 				.map(venueMapper::toResponseDto)
-				.orElseThrow(() -> new RuntimeException("Venue not found with id: " + venueId));
+				.orElseThrow(() -> new VenueNotFoundException("Venue not found with id: " + venueId));
 	}
 
 	@Override
@@ -86,5 +88,20 @@ public class VenueServiceImpl implements VenueService {
 		VenueEntity venueEntity = venueRepository.findById(venueId)
 				.orElseThrow(() -> new RuntimeException("Venue not found with id: " + venueId));
 		venueRepository.delete(venueEntity);
+	}
+
+	@Override
+	public List<VenueResponseDto> searchVenues(VenueSearchCriteria criteria) {
+		return List.of();
+	}
+
+	@Override
+	public VenueResponseDto getVenueDetails(String venueId) {
+		return null;
+	}
+
+	@Override
+	public List<VenueResponseDto> getVenuesNearLocation(double lat, double lng, double radius) {
+		return List.of();
 	}
 }

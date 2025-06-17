@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gyp.eventservice.dtos.seatmap.Position;
 import com.gyp.eventservice.dtos.seatmap.Row;
 import com.gyp.eventservice.dtos.seatmap.Seat;
+import com.gyp.eventservice.dtos.seatmap.SeatAvailability;
 import com.gyp.eventservice.dtos.seatmap.SeatConfig;
 import com.gyp.eventservice.dtos.seatmap.SeatMapUtil;
 import com.gyp.eventservice.dtos.seatmap.SeatStatus;
@@ -157,6 +158,16 @@ public class SeatMapServiceImpl implements SeatMapService {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public SeatAvailability checkSeatAvailability(String seatMapId, List<String> seatIds) {
+		return null;
+	}
+
+	@Override
+	public SeatConfig parseSeatConfig(String seatConfigJson) {
+		return null;
 	}
 
 	private Seat findSeatById(VenueMap venueMap, String seatId) {

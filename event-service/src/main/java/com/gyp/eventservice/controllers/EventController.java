@@ -4,6 +4,7 @@ import com.gyp.common.annotations.RequestPermission;
 import com.gyp.common.controllers.AbstractController;
 import com.gyp.common.enums.permission.ActionPermission;
 import com.gyp.common.enums.permission.ApplicationPermission;
+import com.gyp.eventservice.exceptions.EventNotFoundException;
 import com.gyp.eventservice.services.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class EventController extends AbstractController {
 
 	@GetMapping("/{" + ID_PARAM + "}")
 	@RequestPermission(application = ApplicationPermission.EVENT, actions = { ActionPermission.READ })
-	public ResponseEntity<?> getEventById(@PathVariable(ID_PARAM) String id) {
+	public ResponseEntity<?> getEventById(@PathVariable(ID_PARAM) String id) throws EventNotFoundException {
 		return ResponseEntity.ok(eventService.getEventById(id));
 	}
 }
