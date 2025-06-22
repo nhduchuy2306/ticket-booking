@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Arc, Circle, Group, Line, Rect, Shape, Text } from "react-konva";
 import { StageConfig } from "../../../models/generated/event-service-models";
+import { getRotationOfStage } from "../utils/StageUtils.ts";
 
 export interface SeatMapStageConfigProps {
     stageConfig?: StageConfig;
@@ -34,16 +35,59 @@ const SeatMapStageConfig: React.FC<SeatMapStageConfigProps> = ({stageConfig}) =>
             case "RECTANGLE":
                 centerX += width / 2;
                 centerY += height / 2;
-                return <Rect x={positionX} y={positionY} width={width} height={height}
-                             cornerRadius={5} {...shapeProps} />;
+                return (
+                        <>
+                            <Rect x={positionX}
+                                  y={positionY}
+                                  width={width}
+                                  height={height}
+                                  cornerRadius={5}
+                                  {...shapeProps}
+                            />
+                            <Text
+                                    x={centerX}
+                                    y={centerY}
+                                    text={stage.name || "Stage"}
+                                    fontSize={16}
+                                    fontFamily="Arial"
+                                    fill="white"
+                                    fontStyle="bold"
+                                    offsetX={(stage.name?.length || 5) * 4.5}
+                                    offsetY={8}
+                            />
+                        </>
+                );
             case "CIRCULAR":
             case "ARENA":
                 return <Circle x={positionX} y={positionY} radius={width / 2} {...shapeProps} />;
             case "SEMICIRCLE":
-                positionX += 5;
-                positionY += 5;
-                return <Arc x={positionX} y={positionY} innerRadius={0} outerRadius={width / 2} angle={180}
-                            rotation={360} {...shapeProps} />;
+                const stageOrientation = stage.orientation || "NORTH";
+                const rotation = getRotationOfStage(stageOrientation);
+                return (
+                        <>
+                            <Arc x={positionX}
+                                 y={positionY}
+                                 innerRadius={0}
+                                 outerRadius={width / 2}
+                                 angle={180}
+                                 rotation={rotation}
+                                 {...shapeProps}
+                            />
+                            <Text
+                                    x={positionX}
+                                    y={positionY}
+                                    text={stage.name || "Stage"}
+                                    fontSize={16}
+                                    fontFamily="Arial"
+                                    fill="white"
+                                    fontStyle="bold"
+                                    align="center"
+                                    offsetX={(stage.name?.length || 5) * 4.5}
+                                    offsetY={-width / 4}
+                                    rotation={rotation}
+                            />
+                        </>
+                );
             case "THRUST":
                 centerX += width / 2;
                 centerY += height / 2;
@@ -76,7 +120,6 @@ const SeatMapStageConfig: React.FC<SeatMapStageConfigProps> = ({stageConfig}) =>
                                 {...shapeProps}
                         />
                 );
-
             default:
                 return null;
         }
@@ -87,22 +130,7 @@ const SeatMapStageConfig: React.FC<SeatMapStageConfigProps> = ({stageConfig}) =>
         return null;
     }
 
-    return (
-            <Group>
-                {shapeElement}
-                <Text
-                        x={centerX}
-                        y={centerY}
-                        text={stage.name || "Stage"}
-                        fontSize={16}
-                        fontFamily="Arial"
-                        fill="white"
-                        fontStyle="bold"
-                        offsetX={(stage.name?.length || 5) * 4.5}
-                        offsetY={8}
-                />
-            </Group>
-    );
+    return <Group>{shapeElement}</Group>;
 };
 
 export default SeatMapStageConfig;

@@ -20,6 +20,7 @@ public class ArcProperties {
 	private double radius;
 	private double startAngle;
 	private double endAngle;
+	private double thickness;
 
 	/**
 	 * Calculate 1 point in arc base on angle

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Group, Rect, Text } from "react-konva";
+import { Arc, Group, Rect, Text } from "react-konva";
 import { Section } from "../../../models/generated/event-service-models";
 import { useSeatMapContext } from "../context/SeatMapContext.tsx";
 import SeatMapSeatedSection from "./seated/SeatMapSeatedSection.tsx";
@@ -27,6 +27,39 @@ const SeatMapSection: React.FC<SeatMapSectionProps> = (props) => {
     const height = section?.dimensions?.height || 0;
 
     const renderSectionBase = () => {
+        const isArc = section.isArc;
+
+        if (isArc) {
+            const arcProperties = section.arcProperties || {};
+            const {centerX = 0, centerY = 0, radius = 0, startAngle = 0, endAngle = Math.PI * 2, thickness = 20} = arcProperties;
+            const fillColor = seatTypeColors?.[section.ticketTypeId] || 'rgba(200, 200, 200, 0.1)';
+
+            return (
+                    <>
+                        <Arc
+                                x={centerX}
+                                y={centerY}
+                                innerRadius={radius - thickness}
+                                outerRadius={radius}
+                                angle={endAngle - startAngle}
+                                rotation={startAngle}
+                                fill={fillColor}
+                        />
+                        <Text
+                                x={centerX}
+                                y={centerY - radius + 10}
+                                text={section.name}
+                                fontSize={14}
+                                fontFamily="Arial"
+                                fill="black"
+                                fontStyle="bold"
+                                offsetX={(section.name?.length || 6) * 4.5}
+                                align="center"
+                        />
+                    </>
+            );
+        }
+
         return <>
             <Rect
                     x={0}

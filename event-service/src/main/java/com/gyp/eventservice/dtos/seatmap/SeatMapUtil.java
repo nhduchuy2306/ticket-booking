@@ -216,7 +216,8 @@ public final class SeatMapUtil {
 					originalArc.getCenterY(),
 					originalArc.getRadius(),
 					originalArc.getStartAngle(),
-					originalArc.getEndAngle()
+					originalArc.getEndAngle(),
+					originalArc.getThickness()
 			));
 		}
 
@@ -267,7 +268,8 @@ public final class SeatMapUtil {
 					originalArc.getCenterY(),
 					originalArc.getRadius(),
 					originalArc.getStartAngle(),
-					originalArc.getEndAngle()
+					originalArc.getEndAngle(),
+					originalArc.getThickness()
 			));
 		}
 

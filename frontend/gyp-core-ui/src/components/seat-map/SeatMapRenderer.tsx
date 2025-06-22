@@ -1,7 +1,7 @@
 import Konva from "konva";
 import React, { useEffect, useRef, useState } from "react";
 import { Layer, Stage } from 'react-konva';
-import { createMockVenueData } from "../../mocks/seatmap.mock";
+import { createMockArcVenueData } from "../../mocks/seatmap.mock";
 import { SeatConfig, StageConfig, VenueMap } from "../../models/generated/event-service-models";
 import { SeatMapContext } from "./context/SeatMapContext.tsx";
 import SeatMapHeader from "./layout/SeatMapHeader.tsx";
@@ -21,7 +21,7 @@ const SeatMapRenderer: React.FC = () => {
     const layerRef = useRef<Konva.Layer>(null);
 
     useEffect(() => {
-        const data = createMockVenueData();
+        const data = createMockArcVenueData();
         setVenueData(data);
     }, []);
 

@@ -929,7 +929,8 @@ const createMockVenueData = (): VenueMap => ({
                     "centerY": 0.0,
                     "radius": 350.0,
                     "startAngle": 30.0,
-                    "endAngle": 150.0
+                    "endAngle": 150.0,
+                    "thickness": 50
                 },
                 "ticketTypeId": "Premium",
                 "rows": [
@@ -946,7 +947,8 @@ const createMockVenueData = (): VenueMap => ({
                             "centerY": 0.0,
                             "radius": 300.0,
                             "startAngle": 45.0,
-                            "endAngle": 135.0
+                            "endAngle": 135.0,
+                            "thickness": 20
                         },
                         "seats": [
                             {
@@ -1695,7 +1697,8 @@ const createMockArcVenueData = (): VenueMap => ({
                     "centerY": 0,
                     "radius": 200,
                     "startAngle": 30,
-                    "endAngle": 150
+                    "endAngle": 150,
+                    "thickness": 20
                 },
                 "ticketTypeId": "premium",
                 "rows": [
@@ -1712,7 +1715,8 @@ const createMockArcVenueData = (): VenueMap => ({
                             "centerY": 0,
                             "radius": 180,
                             "startAngle": 45,
-                            "endAngle": 135
+                            "endAngle": 135,
+                            "thickness": 20
                         },
                         "seats": [
                             {
@@ -1805,7 +1809,8 @@ const createMockArcVenueData = (): VenueMap => ({
                             "centerY": 0,
                             "radius": 220,
                             "startAngle": 40,
-                            "endAngle": 140
+                            "endAngle": 140,
+                            "thickness": 20
                         },
                         "seats": [
                             {
@@ -1908,7 +1913,8 @@ const createMockArcVenueData = (): VenueMap => ({
                     "centerY": -150,
                     "radius": 350,
                     "startAngle": 20,
-                    "endAngle": 160
+                    "endAngle": 160,
+                    "thickness": 20
                 },
                 "ticketTypeId": "standard",
                 "rows": [
@@ -1925,7 +1931,8 @@ const createMockArcVenueData = (): VenueMap => ({
                             "centerY": -150,
                             "radius": 320,
                             "startAngle": 25,
-                            "endAngle": 155
+                            "endAngle": 155,
+                            "thickness": 20
                         },
                         "seats": [
                             {
@@ -2027,7 +2034,8 @@ const createMockArcVenueData = (): VenueMap => ({
                             "centerY": -150,
                             "radius": 360,
                             "startAngle": 22,
-                            "endAngle": 158
+                            "endAngle": 158,
+                            "thickness": 20
                         },
                         "seats": [
                             {
@@ -2139,7 +2147,8 @@ const createMockArcVenueData = (): VenueMap => ({
                     "centerY": -300,
                     "radius": 500,
                     "startAngle": 15,
-                    "endAngle": 165
+                    "endAngle": 165,
+                    "thickness": 20
                 },
                 "ticketTypeId": "economy",
                 "rows": [
@@ -2156,7 +2165,8 @@ const createMockArcVenueData = (): VenueMap => ({
                             "centerY": -300,
                             "radius": 480,
                             "startAngle": 18,
-                            "endAngle": 162
+                            "endAngle": 162,
+                            "thickness": 20
                         },
                         "seats": [
                             {
