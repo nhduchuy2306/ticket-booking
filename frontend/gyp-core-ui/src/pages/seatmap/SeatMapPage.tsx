@@ -1,4 +1,5 @@
 import React from "react";
+import SeatMapRenderer from "../../components/seat-map/SeatMapRenderer.tsx";
 
 interface SeatMapPageProps {
     // Define any props if needed
@@ -6,10 +7,9 @@ interface SeatMapPageProps {
 
 const SeatMapPage: React.FC<SeatMapPageProps> = () => {
     return (
-        <div className="w-full h-full bg-white p-4">
-            <h1 className="text-2xl font-bold mb-4">Seat Map</h1>
-            <p>This is the Seat Map Page.</p>
-        </div>
+            <div className="w-full bg-white !p-2 !overflow-y-auto !h-[calc(100vh-100px)]">
+                <SeatMapRenderer/>
+            </div>
     );
 }
 

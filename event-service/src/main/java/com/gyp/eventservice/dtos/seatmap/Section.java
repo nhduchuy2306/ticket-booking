@@ -25,14 +25,14 @@ public class Section extends BaseSeatMap implements Positionable, Dimensional, R
 	private int capacity;
 	private List<Row> rows = new ArrayList<>();
 	private List<Table> tables = new ArrayList<>();
-	private boolean isArc;
+	private Boolean isArc;
 	private ArcProperties arcProperties;
 	private String ticketTypeId;
 
 	@Override
 	public void setArcProperties(ArcProperties arcProperties) {
 		this.arcProperties = arcProperties;
-		isArc = (arcProperties != null);
+		setIsArc(arcProperties != null);
 	}
 
 	public void addRow(Row row) {
@@ -41,5 +41,15 @@ public class Section extends BaseSeatMap implements Positionable, Dimensional, R
 
 	public void addTable(Table table) {
 		tables.add(table);
+	}
+
+	@Override
+	public Boolean getIsArc() {
+		return isArc != null ? isArc : false;
+	}
+
+	@Override
+	public void setIsArc(Boolean isArc) {
+		this.isArc = isArc;
 	}
 }

@@ -40,7 +40,7 @@ public final class SeatMapUtil {
 		Position seatPos = seat.getPosition();
 
 		// Handle Arc
-		if(row.isArc()) {
+		if(row.getIsArc()) {
 			ArcProperties arcProps = row.getArcProperties();
 			double seatIndex = Double.parseDouble(seat.getName()) - 1;
 			double totalSeats = row.getSeats().size();

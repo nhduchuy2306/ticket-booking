@@ -5,7 +5,9 @@ package com.gyp.eventservice.dtos.seatmap;
  * Interface for arc section
  */
 public interface ArcLayout {
-	boolean isArc();
+	Boolean getIsArc();
+
+	void setIsArc(Boolean isArc);
 
 	ArcProperties getArcProperties();
 

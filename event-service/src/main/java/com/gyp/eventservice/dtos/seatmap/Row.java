@@ -20,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 public class Row extends BaseSeatMap implements Positionable, SeatContainer, ArcLayout {
 	private Position position;
 	private List<Seat> seats = new ArrayList<>();
-	private boolean isArc;
+	private Boolean isArc;
 	private ArcProperties arcProperties;
 
 	@Override
@@ -41,7 +41,17 @@ public class Row extends BaseSeatMap implements Positionable, SeatContainer, Arc
 	@Override
 	public void setArcProperties(ArcProperties arcProperties) {
 		this.arcProperties = arcProperties;
-		isArc = (arcProperties != null);
+		setIsArc(arcProperties != null);
+	}
+
+	@Override
+	public Boolean getIsArc() {
+		return isArc != null ? isArc : false;
+	}
+
+	@Override
+	public void setIsArc(Boolean isArc) {
+		this.isArc = isArc;
 	}
 
 	/**

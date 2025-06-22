@@ -1,0 +1,65 @@
+import React, { useEffect, useState } from "react";
+import { Group, Rect, Text } from "react-konva";
+import { Section } from "../../../../models/generated/event-service-models";
+
+export interface SeatMapTableSectionProps {
+    standingSection: Section
+}
+
+const SeatMapStandingSection: React.FC<SeatMapTableSectionProps> = (props) => {
+    const [standingSection, setStandingSection] = useState<Section>(props.standingSection);
+
+    useEffect(() => {
+        const data = props.standingSection;
+        if (data) {
+            setStandingSection(data);
+        }
+    }, [props.standingSection]);
+
+    const positionX = standingSection?.position?.x || 0;
+    const positionY = standingSection?.position?.y || 0;
+    const rotation = standingSection?.rotation || 0;
+    const dimensionsWidth = standingSection?.dimensions?.width || 0;
+    const dimensionsHeight = standingSection?.dimensions?.height || 0;
+    const capacity = standingSection?.capacity || 0;
+    const sectionName = standingSection?.name || "Standing Section";
+
+    const fillColor = "#4CAF50";
+    const borderColor = "#2E7D32";
+    const textColor = "#2C3E50";
+
+    return (
+            <Group x={positionX} y={positionY}>
+                <Rect
+                        width={dimensionsWidth}
+                        height={dimensionsHeight}
+                        fillLinearGradientStartPoint={{x: 0, y: 0}}
+                        fillLinearGradientEndPoint={{x: dimensionsWidth, y: dimensionsHeight}}
+                        fillLinearGradientColorStops={[0, fillColor, 1, "#66BB6A"]}
+                        rotation={rotation}
+                        stroke={borderColor}
+                        strokeWidth={1}
+                        cornerRadius={3}
+                />
+                <Text
+                        y={dimensionsHeight / 2 - 30}
+                        width={dimensionsWidth}
+                        align="center"
+                        text={sectionName}
+                        fontSize={18}
+                        fill={textColor}
+                        fontStyle="bold"
+                />
+                <Text
+                        y={dimensionsHeight / 2}
+                        width={dimensionsWidth}
+                        align="center"
+                        text={`Capacity: ${capacity}`}
+                        fontSize={14}
+                        fill={textColor}
+                />
+            </Group>
+    );
+}
+
+export default SeatMapStandingSection;
