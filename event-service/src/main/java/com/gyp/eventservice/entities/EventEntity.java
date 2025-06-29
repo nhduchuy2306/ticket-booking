@@ -62,7 +62,7 @@ public class EventEntity extends AbstractEntity {
 	@JoinColumn(name = "organizer_id")
 	private OrganizerEntity organizerEntity;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "venue_id")
 	private VenueEntity venueEntity;
 

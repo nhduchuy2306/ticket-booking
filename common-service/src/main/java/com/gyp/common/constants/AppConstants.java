@@ -60,6 +60,8 @@ public final class AppConstants {
 	public static final String PIPE = "|";
 	public static final String UNDERSCORE = "_";
 	public static final String DASH = "-";
+	public static final String DOT = ".";
+	public static final String MINUS = "-";
 
 	// ========== BRACKETS ==========
 	public static final String SQUARE_BRACKET_OPEN = "[";

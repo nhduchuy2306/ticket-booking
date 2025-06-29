@@ -4,7 +4,6 @@ import java.util.List;
 
 import jakarta.persistence.EntityManager;
 
-import com.gyp.common.enums.event.TicketStatus;
 import com.gyp.ticketservice.entities.QTicketEntity;
 import com.gyp.ticketservice.entities.TicketEntity;
 import com.gyp.ticketservice.repositories.dsl.TicketRepositoryCustom;
@@ -28,12 +27,6 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
 		if(eventId != null) {
 			builder.and(ticket.eventId.eq(eventId));
 		}
-//		if(status != null) {
-//			builder.and(ticket.status.eq(TicketStatus.valueOf(status)));
-//		}
-//		if(attendeeEmail != null) {
-//			builder.and(ticket.attendeeEmail.containsIgnoreCase(attendeeEmail));
-//		}
 
 		return queryFactory.selectFrom(ticket).where(builder).fetch();
 	}

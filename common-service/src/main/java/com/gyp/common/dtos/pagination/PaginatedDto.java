@@ -12,6 +12,4 @@ import lombok.NoArgsConstructor;
 public class PaginatedDto {
 	private int page;
 	private int size;
-	private int totalElements;
-	private int totalPages;
 }

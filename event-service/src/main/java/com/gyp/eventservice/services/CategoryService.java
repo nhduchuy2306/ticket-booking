@@ -2,18 +2,18 @@ package com.gyp.eventservice.services;
 
 import java.util.List;
 
+import com.gyp.common.dtos.pagination.PaginatedDto;
+import com.gyp.common.exceptions.ResourceNotFoundException;
 import com.gyp.eventservice.dtos.category.CategoryRequestDto;
 import com.gyp.eventservice.dtos.category.CategoryResponseDto;
-import com.gyp.eventservice.exceptions.CategoryNotFoundException;
+import com.gyp.eventservice.services.criteria.CategorySearchCriteria;
 
 public interface CategoryService {
-	CategoryResponseDto createCategory(CategoryRequestDto request);
+	CategoryResponseDto createCategory(CategoryRequestDto categoryRequestDto);
 
-	List<CategoryResponseDto> getAllCategories();
+	List<CategoryResponseDto> getAllCategories(CategorySearchCriteria criteria, PaginatedDto pagination);
 
-	List<CategoryResponseDto> getCategoriesByEvent(String eventId);
+	CategoryResponseDto getCategoryById(String categoryId) throws ResourceNotFoundException;
 
-	void assignCategoriesToEvent(String eventId, List<String> categoryIds);
-
-	CategoryResponseDto getCategoryById(String categoryId) throws CategoryNotFoundException;
+	void deleteCategory(String categoryId) throws ResourceNotFoundException;
 }

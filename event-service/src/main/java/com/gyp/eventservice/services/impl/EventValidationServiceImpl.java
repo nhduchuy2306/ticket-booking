@@ -6,11 +6,11 @@ import java.util.Objects;
 
 import com.gyp.common.dtos.validation.ValidationResult;
 import com.gyp.common.enums.event.EventStatus;
+import com.gyp.common.exceptions.ResourceNotFoundException;
 import com.gyp.eventservice.dtos.event.EventRequestDto;
 import com.gyp.eventservice.dtos.event.EventResponseDto;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeRequestDto;
 import com.gyp.eventservice.entities.EventTimeEmbeddable;
-import com.gyp.eventservice.exceptions.CategoryNotFoundException;
 import com.gyp.eventservice.exceptions.EventNotFoundException;
 import com.gyp.eventservice.exceptions.OrganizerNotFoundException;
 import com.gyp.eventservice.exceptions.VenueNotFoundException;
@@ -223,7 +223,7 @@ public class EventValidationServiceImpl implements EventValidationService {
 		for(String categoryId : categoryIds) {
 			try {
 				categoryService.getCategoryById(categoryId);
-			} catch(CategoryNotFoundException e) {
+			} catch(ResourceNotFoundException e) {
 				result.addError("categoryIds", "Category not found: " + categoryId);
 			}
 		}
