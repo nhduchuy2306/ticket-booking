@@ -85,6 +85,19 @@
             <scope>provided</scope>
             <classifier>jakarta</classifier>
         </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-services</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.grpc</groupId>
+            <artifactId>spring-grpc-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.grpc</groupId>
+            <artifactId>spring-grpc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Local dependency-->
         <dependency>
@@ -99,6 +112,13 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.grpc</groupId>
+                <artifactId>spring-grpc-dependencies</artifactId>
+                <version>${spring.grpc.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -179,7 +199,9 @@
                         </goals>
                         <configuration>
                             <jsonLibrary>jackson2</jsonLibrary>
-                            <outputFile>${project.basedir}/../frontend/gyp-core-ui/src/models/generated/event-service-models.d.ts</outputFile>
+                            <outputFile>
+                                ${project.basedir}/../frontend/gyp-core-ui/src/models/generated/event-service-models.d.ts
+                            </outputFile>
                             <classPatterns>
                                 <pattern>com.gyp.eventservice.dtos.**</pattern>
                             </classPatterns>
@@ -205,6 +227,35 @@
                         <version>${typescript.generator.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>io.github.ascopes</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>3.4.2</version>
+                <configuration>
+                    <protocVersion>${protobuf.java.version}</protocVersion>
+                    <sourceDirectories>
+                        <sourceDirectory>
+                            ${project.basedir}/../common-service/src/main/protos/event-service
+                        </sourceDirectory>
+                    </sourceDirectories>
+                    <binaryMavenPlugins>
+                        <binaryMavenPlugin>
+                            <groupId>io.grpc</groupId>
+                            <artifactId>protoc-gen-grpc-java</artifactId>
+                            <version>${grpc.version}</version>
+                            <options>jakarta_omit,@generated=omit</options>
+                        </binaryMavenPlugin>
+                    </binaryMavenPlugins>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generate</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package event;
+
+option java_multiple_files = true;
+option java_package = "com.gyp.eventservice.grpc.event";
+option java_outer_classname = "EventServiceProto";
+
+import "category/category_service.proto";
+
+message EventLog {
+  string id = 1;
+  category.CreateCategoryRequest payload = 2;
+}

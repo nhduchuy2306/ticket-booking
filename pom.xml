@@ -49,6 +49,9 @@
         <spring.boot.starter.data.redis.version>3.4.5</spring.boot.starter.data.redis.version>
         <spring.security.core.version>6.4.5</spring.security.core.version>
         <spring.boot.starter.aop.version>3.4.5</spring.boot.starter.aop.version>
+        <grpc.version>1.72.0</grpc.version>
+        <protobuf.java.version>4.30.2</protobuf.java.version>
+        <spring.grpc.version>0.8.0</spring.grpc.version>
 
         <!-- Spring Cloud Versions -->
         <spring-cloud.version>2024.0.0</spring-cloud.version>
