@@ -1,4 +1,4 @@
-package com.gyp.eventservice.repositories.dsl;
+package com.gyp.eventservice.repositories.custom;
 
 import java.util.List;
 

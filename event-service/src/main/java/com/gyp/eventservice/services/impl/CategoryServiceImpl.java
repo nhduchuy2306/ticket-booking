@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import com.gyp.common.dtos.pagination.PaginatedDto;
-import com.gyp.common.exceptions.DuplicateResourceException;
+import com.gyp.common.exceptions.ResourceDuplicateException;
 import com.gyp.common.exceptions.ResourceNotFoundException;
+import com.gyp.common.services.ValidationService;
+import com.gyp.common.validators.criteria.ValidationInfo;
 import com.gyp.eventservice.dtos.category.CategoryRequestDto;
 import com.gyp.eventservice.dtos.category.CategoryResponseDto;
 import com.gyp.eventservice.entities.CategoryEntity;
@@ -22,13 +24,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 	private final CategoryRepository categoryRepository;
+	private final ValidationService validationService;
 	private final CategoryMapper categoryMapper;
 
 	@Override
 	public CategoryResponseDto createCategory(CategoryRequestDto categoryRequestDto) {
 		Optional<CategoryEntity> categoryEntity = categoryRepository.findByName(categoryRequestDto.getName());
 		if(categoryEntity.isPresent()) {
-			throw new DuplicateResourceException(
+			throw new ResourceDuplicateException(
 					String.format("Category with name %s already exists", categoryRequestDto.getName()));
 		}
 		CategoryEntity newCategoryEntity = new CategoryEntity();
@@ -40,14 +43,6 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public List<CategoryResponseDto> getAllCategories(CategorySearchCriteria criteria, PaginatedDto pagination) {
-		//		Specification<CategoryEntity> specification = CategorySpecification.createSearchCategorySpecification(criteria);
-		//		Pageable pageable = PageRequest.of(
-		//				pagination.getPage() > 0 ? pagination.getPage() - 1 : 0,
-		//				pagination.getSize());
-		//		Page<CategoryEntity> categoryPage = categoryRepository.findAll(specification, pageable);
-		//		return categoryPage.hasContent()
-		//				? categoryMapper.toResponseDtoList(categoryPage.getContent())
-		//				: Collections.emptyList();
 		if(criteria == null) {
 			criteria = new CategorySearchCriteria();
 		}
@@ -76,5 +71,15 @@ public class CategoryServiceImpl implements CategoryService {
 		}
 		categoryRepository.delete(categoryEntity.get());
 		log.info("Deleted category with ID: {}", categoryId);
+	}
+
+	@Override
+	public ValidationInfo validate(Class<?> clazz) {
+		var validationInfo = validationService.extractValidationInfo(clazz);
+		if(validationInfo == null) {
+			log.warn("No validation info found for request class: {}", clazz.getName());
+			return ValidationInfo.empty();
+		}
+		return validationInfo;
 	}
 }

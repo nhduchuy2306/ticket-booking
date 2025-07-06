@@ -2,23 +2,28 @@ package com.gyp.eventservice.services.impl;
 
 import java.util.List;
 
-import com.gyp.eventservice.exceptions.VenueNotFoundException;
-import com.gyp.eventservice.services.criteria.VenueSearchCriteria;
+import com.gyp.common.services.ValidationService;
+import com.gyp.common.validators.criteria.ValidationInfo;
 import com.gyp.eventservice.dtos.venue.VenueRequestDto;
 import com.gyp.eventservice.dtos.venue.VenueResponseDto;
 import com.gyp.eventservice.entities.VenueEntity;
+import com.gyp.eventservice.exceptions.VenueNotFoundException;
 import com.gyp.eventservice.mappers.VenueMapper;
 import com.gyp.eventservice.repositories.EventRepository;
 import com.gyp.eventservice.repositories.VenueRepository;
 import com.gyp.eventservice.services.VenueService;
+import com.gyp.eventservice.services.criteria.VenueSearchCriteria;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class VenueServiceImpl implements VenueService {
 	private final VenueRepository venueRepository;
 	private final EventRepository eventRepository;
+	private final ValidationService validationService;
 	private final VenueMapper venueMapper;
 
 	@Override
@@ -103,5 +108,15 @@ public class VenueServiceImpl implements VenueService {
 	@Override
 	public List<VenueResponseDto> getVenuesNearLocation(double lat, double lng, double radius) {
 		return List.of();
+	}
+
+	@Override
+	public ValidationInfo validate(Class<?> clazz) {
+		var validationInfo = validationService.extractValidationInfo(clazz);
+		if(validationInfo == null) {
+			log.warn("No validation info found for request class: {}", clazz.getName());
+			return ValidationInfo.empty();
+		}
+		return validationInfo;
 	}
 }

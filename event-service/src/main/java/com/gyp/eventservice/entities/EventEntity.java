@@ -85,4 +85,8 @@ public class EventEntity extends AbstractEntity {
 			inverseJoinColumns = @JoinColumn(name = "category_id")
 	)
 	private List<CategoryEntity> categoryEntityList = new ArrayList<>();
+
+	@ManyToOne
+	@JoinColumn(name = "season_id")
+	private SeasonEntity seasonEntity;
 }

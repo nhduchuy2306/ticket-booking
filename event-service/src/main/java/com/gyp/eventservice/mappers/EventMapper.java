@@ -11,6 +11,7 @@ import com.gyp.eventservice.dtos.event.EventResponseDto;
 import com.gyp.eventservice.entities.CategoryEntity;
 import com.gyp.eventservice.entities.EventEntity;
 import com.gyp.eventservice.entities.OrganizerEntity;
+import com.gyp.eventservice.entities.SeasonEntity;
 import com.gyp.eventservice.entities.VenueEntity;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
@@ -23,6 +24,7 @@ import org.mapstruct.Named;
 		mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG)
 public interface EventMapper extends AbstractMapper {
 	// To response DTO
+	@Mapping(target = "season", source = "seasonEntity")
 	@Mapping(target = "startTime", source = "time.startTime")
 	@Mapping(target = "endTime", source = "time.endTime")
 	@Mapping(target = "doorOpenTime", source = "time.doorOpenTime")
@@ -48,6 +50,7 @@ public interface EventMapper extends AbstractMapper {
 	@Mapping(target = "time.doorOpenTime", source = "doorOpenTime")
 	@Mapping(target = "time.doorCloseTime", source = "doorCloseTime")
 	@Mapping(target = "organizerEntity", source = "organizerId", qualifiedByName = "organizerIdToEntity")
+	@Mapping(target = "seasonEntity", source = "seasonId", qualifiedByName = "seasonIdToEntity")
 	@Mapping(target = "venueEntity", source = "venueId", qualifiedByName = "venueIdToEntity")
 	@Mapping(target = "categoryEntityList", source = "categoryIds", qualifiedByName = "categoryIdsToEntities")
 	@Mapping(target = "ticketTypeEntityList", ignore = true)
@@ -63,6 +66,7 @@ public interface EventMapper extends AbstractMapper {
 	@Mapping(target = "time.doorOpenTime", source = "doorOpenTime")
 	@Mapping(target = "time.doorCloseTime", source = "doorCloseTime")
 	@Mapping(target = "organizerEntity", source = "organizerId", qualifiedByName = "organizerIdToEntity")
+	@Mapping(target = "seasonEntity", source = "seasonId", qualifiedByName = "seasonIdToEntity")
 	@Mapping(target = "venueEntity", source = "venueId", qualifiedByName = "venueIdToEntity")
 	@Mapping(target = "categoryEntityList", source = "categoryIds", qualifiedByName = "categoryIdsToEntities")
 	@Mapping(target = "ticketTypeEntityList", ignore = true)
@@ -119,6 +123,16 @@ public interface EventMapper extends AbstractMapper {
 		OrganizerEntity organizer = new OrganizerEntity();
 		organizer.setId(organizerId);
 		return organizer;
+	}
+
+	@Named("seasonIdToEntity")
+	default SeasonEntity seasonIdToEntity(String seasonId) {
+		if(seasonId == null) {
+			return null;
+		}
+		SeasonEntity season = new SeasonEntity();
+		season.setId(seasonId);
+		return season;
 	}
 
 	@Named("venueIdToEntity")

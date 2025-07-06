@@ -73,6 +73,19 @@ CREATE TABLE IF NOT EXISTS organizer
     change_timestamp DATETIME
 );
 
+-- Create season table
+CREATE TABLE IF NOT EXISTS season
+(
+    id               VARCHAR(255) NOT NULL PRIMARY KEY,
+    name             VARCHAR(255) NOT NULL,
+    description      TEXT,
+    status           VARCHAR(255) NOT NULL,
+    create_user      VARCHAR(255),
+    change_user      VARCHAR(255),
+    create_timestamp DATETIME,
+    change_timestamp DATETIME
+);
+
 -- Create events table
 CREATE TABLE IF NOT EXISTS event
 (
@@ -86,12 +99,14 @@ CREATE TABLE IF NOT EXISTS event
     door_close_time  TIMESTAMP,
     organizer_id     VARCHAR(255) NOT NULL,
     venue_id         VARCHAR(255) NOT NULL,
+    season_id        VARCHAR(255),
     create_user      VARCHAR(255),
     change_user      VARCHAR(255),
     create_timestamp DATETIME,
     change_timestamp DATETIME,
     FOREIGN KEY (organizer_id) REFERENCES organizer (id),
-    FOREIGN KEY (venue_id) REFERENCES venue (id)
+    FOREIGN KEY (venue_id) REFERENCES venue (id),
+    FOREIGN KEY (season_id) REFERENCES season (id)
 );
 
 -- Create junction table for event-categories

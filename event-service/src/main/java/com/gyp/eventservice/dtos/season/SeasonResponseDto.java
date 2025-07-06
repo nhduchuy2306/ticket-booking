@@ -1,7 +1,6 @@
-package com.gyp.eventservice.dtos.category;
+package com.gyp.eventservice.dtos.season;
 
-import jakarta.validation.constraints.NotNull;
-
+import com.gyp.common.enums.event.SeasonStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +10,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryRequestDto {
-	@NotNull
+public class SeasonResponseDto {
+	private String id;
 	private String name;
 	private String description;
+	private SeasonStatus status;
 }

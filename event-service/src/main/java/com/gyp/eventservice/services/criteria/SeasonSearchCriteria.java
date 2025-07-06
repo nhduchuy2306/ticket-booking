@@ -1,6 +1,4 @@
-package com.gyp.eventservice.dtos.category;
-
-import jakarta.validation.constraints.NotNull;
+package com.gyp.eventservice.services.criteria;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryRequestDto {
-	@NotNull
+public class SeasonSearchCriteria {
+	private String id;
 	private String name;
 	private String description;
+	private String sortBy;
 }

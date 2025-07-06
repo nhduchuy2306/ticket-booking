@@ -6,5 +6,9 @@ public enum EventStatus {
 	PUBLISHED,
 	CANCELLED,
 	POSTPONED,
-	COMPLETED
+	COMPLETED;
+
+	public boolean isPublished() {
+		return this.equals(PUBLISHED);
+	}
 }

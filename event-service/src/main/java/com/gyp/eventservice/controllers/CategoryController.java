@@ -2,13 +2,15 @@ package com.gyp.eventservice.controllers;
 
 import java.util.Optional;
 
-import com.gyp.common.controllers.AbstractController;
+import com.gyp.common.controllers.AbstractValidatableController;
 import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.exceptions.ResourceNotFoundException;
+import com.gyp.common.services.DataIntegrityService;
 import com.gyp.eventservice.dtos.category.CategoryRequestDto;
 import com.gyp.eventservice.services.CategoryService;
 import com.gyp.eventservice.services.criteria.CategorySearchCriteria;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,10 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(CategoryController.CATEGORY_CONTROLLER_RESOURCE_PATH)
-public class CategoryController extends AbstractController {
+public class CategoryController extends AbstractValidatableController {
 	public static final String CATEGORY_CONTROLLER_RESOURCE_PATH = "/categories";
 
 	private final CategoryService categoryService;
+	private final DataIntegrityService dataIntegrityService;
 
 	@GetMapping
 	public ResponseEntity<?> getAllCategories(
@@ -66,5 +69,25 @@ public class CategoryController extends AbstractController {
 		}
 		var response = categoryService.createCategory(categoryRequestDto);
 		return createResponseCreated(response);
+	}
+
+	@Override
+	@GetMapping("/{" + ID_PARAM + "}" + REFERENCES_PATH)
+	public ResponseEntity<?> getReferences(@PathVariable("id") String id) {
+		if(StringUtils.isEmpty(id)) {
+			return ResponseEntity.badRequest().body("Category ID must not be null or empty");
+		}
+		var references = dataIntegrityService.findReferences(
+				"event_service",
+				"category",
+				id
+		);
+		return ResponseEntity.ok(references);
+	}
+
+	@Override
+	@GetMapping(VALIDATION_PATH)
+	public ResponseEntity<?> getValidationDetails() {
+		return ResponseEntity.ok(categoryService.validate(CategoryRequestDto.class));
 	}
 }

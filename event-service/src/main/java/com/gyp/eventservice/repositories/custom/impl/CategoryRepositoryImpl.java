@@ -1,4 +1,4 @@
-package com.gyp.eventservice.repositories.dsl.impl;
+package com.gyp.eventservice.repositories.custom.impl;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import jakarta.persistence.EntityManager;
 import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.eventservice.entities.CategoryEntity;
 import com.gyp.eventservice.entities.QCategoryEntity;
-import com.gyp.eventservice.repositories.dsl.CategoryRepositoryCustom;
+import com.gyp.eventservice.repositories.custom.CategoryRepositoryCustom;
 import com.gyp.eventservice.services.criteria.CategorySearchCriteria;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;

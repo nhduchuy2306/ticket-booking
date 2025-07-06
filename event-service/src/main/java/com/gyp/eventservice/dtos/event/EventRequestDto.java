@@ -3,29 +3,50 @@ package com.gyp.eventservice.dtos.event;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.validation.constraints.NotNull;
+
 import com.gyp.common.enums.event.EventStatus;
+import com.gyp.common.intefaces.Request;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventRequestDto {
+public class EventRequestDto implements Request {
+	@NotNull
 	private String name;
+
+	@Length(min = 10, max = 500)
 	private String description;
+
+	@NotNull
 	private EventStatus status;
 
-	// Time-related properties from EventTimeEmbeddable
+	@NotNull
 	private LocalDateTime startTime;
+
+	@NotNull
 	private LocalDateTime endTime;
+
+	@NotNull
 	private LocalDateTime doorOpenTime;
+
+	@NotNull
 	private LocalDateTime doorCloseTime;
 
-	// Related entities - using IDs instead of full entities
+	@NotNull
 	private String organizerId;
+
+	@NotNull
 	private String venueId;
+
+	@NotNull
+	private String seasonId;
+
 	private List<String> categoryIds;
 }

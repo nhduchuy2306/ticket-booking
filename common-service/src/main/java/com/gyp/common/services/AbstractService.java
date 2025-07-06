@@ -7,7 +7,7 @@ import jakarta.validation.ConstraintViolationException;
 
 import com.gyp.common.exceptions.DataIntegrityException;
 import com.gyp.common.exceptions.DatabaseException;
-import com.gyp.common.exceptions.DuplicateResourceException;
+import com.gyp.common.exceptions.ResourceDuplicateException;
 import com.gyp.common.exceptions.ResourceNotFoundException;
 import com.gyp.common.exceptions.SystemException;
 import com.gyp.common.exceptions.TransactionException;
@@ -44,7 +44,7 @@ public abstract class AbstractService {
 			throw new ResourceNotFoundException(errorMessage, e);
 		} catch(DuplicateKeyException e) {
 			logger.error("Duplicate key violation: {}", errorMessage, e);
-			throw new DuplicateResourceException(errorMessage, e);
+			throw new ResourceDuplicateException(errorMessage, e);
 		} catch(DataIntegrityViolationException | ConstraintViolationException e) {
 			logger.error("Data integrity violation: {}", errorMessage, e);
 			throw new DataIntegrityException(errorMessage, e);
