@@ -155,7 +155,7 @@
                             </classPatterns>
                             <mapClasses>asInterfaces</mapClasses>
                             <mapEnum>asEnum</mapEnum>
-                            <mapDate>asDate</mapDate>
+                            <mapDate>asString</mapDate>
                             <outputKind>module</outputKind>
                             <excludeClassPatterns>
                                 <pattern>java.io.**</pattern>

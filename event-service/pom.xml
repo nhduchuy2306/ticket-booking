@@ -206,7 +206,7 @@
                                 <pattern>com.gyp.eventservice.dtos.**</pattern>
                             </classPatterns>
                             <mapClasses>asInterfaces</mapClasses>
-                            <mapDate>asDate</mapDate>
+                            <mapDate>asString</mapDate>
                             <outputKind>module</outputKind>
                             <optionalProperties>all</optionalProperties>
                             <optionalAnnotations>

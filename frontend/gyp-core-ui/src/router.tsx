@@ -45,11 +45,15 @@ export const router = createBrowserRouter([
                         element: <UserAccountPage/>
                     },
                     {
-                        path: 'new',
+                        path: 'create',
                         element: <UserAccountForm mode={Mode.CREATE.key}/>
                     },
                     {
-                        path: ':id',
+                        path: 'view/:id',
+                        element: <UserAccountForm mode={Mode.READ_ONLY.key}/>
+                    },
+                    {
+                        path: 'edit/:id',
                         element: <UserAccountForm mode={Mode.EDIT.key}/>
                     }
                 ]

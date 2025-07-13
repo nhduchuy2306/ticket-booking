@@ -1,7 +1,7 @@
 import { TableProps } from "antd";
 import React from "react";
 import { DoublePageTable } from "../../components/layout/doulepage/DoublePageTable.tsx";
-import { UserGroupServiceAdapter } from "./UserGroupServiceAdapter.ts";
+import { UserGroupServiceAdapter } from "../../services/Auth/UserGroupService.ts";
 
 interface UserGroupTableProps {
 }

@@ -153,16 +153,18 @@ export const DoublePageTable: React.FC<DoublePageTableProps> = ({
     });
 
     return (
-            <div className="flex-1">
-                <Flex gap="middle" vertical align="flex-end">
+            <div className="flex-1 ">
+                <Flex gap="middle" vertical align="flex-end" className="mb-4!">
                     <Tooltip title={createButtonTooltip}>
                         <Button type="default" icon={<BiPlus/>} onClick={handleCreate}/>
                     </Tooltip>
+                </Flex>
+                <div className="overflow-auto! h-[calc(100vh-100px)]!">
                     <Table
                             columns={buildColumns()}
                             dataSource={data}
                             loading={isLoading}
-                            rowKey={(record) => (record as any).id}
+                            rowKey={(record) => record.id}
                             onRow={rowProps}
                             rowSelection={rowSelection}
                             pagination={{
@@ -172,7 +174,7 @@ export const DoublePageTable: React.FC<DoublePageTableProps> = ({
                             }}
                             onChange={handleTableChange}
                     />
-                </Flex>
+                </div>
                 {modalContextHolder}
             </div>
     );

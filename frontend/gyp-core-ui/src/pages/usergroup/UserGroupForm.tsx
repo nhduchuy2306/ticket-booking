@@ -102,63 +102,61 @@ const UserGroupForm: React.FC<UserGroupFormProps> = ({entity, mode, onSave, onCa
     };
 
     return (
-            <div className="!mt-[50px] !overflow-y-auto max-h-[calc(100vh-100px)]">
-                <Form form={form} layout="vertical" size="middle" onFinish={handleSubmit} disabled={isReadOnly}>
-                    <Form.Item
-                            name="name"
-                            label="Name"
-                            rules={[
-                                {required: true, message: 'Please enter a name'},
-                                {min: 2, message: 'Name must be at least 2 characters'}
-                            ]}
-                    >
-                        <Input placeholder="Enter group name"/>
-                    </Form.Item>
+            <Form form={form} layout="vertical" size="middle" onFinish={handleSubmit} disabled={isReadOnly}>
+                <Form.Item
+                        name="name"
+                        label="Name"
+                        rules={[
+                            {required: true, message: 'Please enter a name'},
+                            {min: 2, message: 'Name must be at least 2 characters'}
+                        ]}
+                >
+                    <Input placeholder="Enter group name"/>
+                </Form.Item>
 
-                    <Form.Item
-                            name="description"
-                            label="Description"
-                            rules={[{required: true, message: 'Please enter a description'}]}
-                    >
-                        <Input.TextArea placeholder="Enter group description" rows={3}/>
-                    </Form.Item>
+                <Form.Item
+                        name="description"
+                        label="Description"
+                        rules={[{required: true, message: 'Please enter a description'}]}
+                >
+                    <Input.TextArea placeholder="Enter group description" rows={3}/>
+                </Form.Item>
 
-                    <Form.Item name="administrator" valuePropName="checked">
-                        <Checkbox disabled={isReadOnly}>Administrator</Checkbox>
-                    </Form.Item>
+                <Form.Item name="administrator" valuePropName="checked">
+                    <Checkbox disabled={isReadOnly}>Administrator</Checkbox>
+                </Form.Item>
 
-                    {!isAdmin && (
-                            <Form.Item name="userGroupPermissions" label="Permissions">
-                                <PermissionTable
-                                        disabled={isReadOnly}
-                                        allPermissions={allPermissions}
-                                        selectedPermissions={selectedPermissions}
-                                        onChange={(permissions) => {
-                                            form.setFieldValue('userGroupPermissions', permissions);
-                                            setSelectedPermissions(permissions);
-                                        }}
-                                        isAdmin={isAdmin}
-                                />
-                            </Form.Item>
-                    )}
+                {!isAdmin && (
+                        <Form.Item name="userGroupPermissions" label="Permissions">
+                            <PermissionTable
+                                    disabled={isReadOnly}
+                                    allPermissions={allPermissions}
+                                    selectedPermissions={selectedPermissions}
+                                    onChange={(permissions) => {
+                                        form.setFieldValue('userGroupPermissions', permissions);
+                                        setSelectedPermissions(permissions);
+                                    }}
+                                    isAdmin={isAdmin}
+                            />
+                        </Form.Item>
+                )}
 
-                    {!isReadOnly && (
-                            <Form.Item>
-                                <Space className="float-right">
-                                    <Button type="default" className="bg-red-500" onClick={handleReset}>
-                                        Reset
-                                    </Button>
-                                    <Button type="default" onClick={onCancel}>
-                                        Cancel
-                                    </Button>
-                                    <Button type="primary" htmlType="submit">
-                                        {isCreateMode ? "Create" : "Update"}
-                                    </Button>
-                                </Space>
-                            </Form.Item>
-                    )}
-                </Form>
-            </div>
+                {!isReadOnly && (
+                        <Form.Item>
+                            <Space className="float-right">
+                                <Button type="default" className="bg-red-500" onClick={handleReset}>
+                                    Reset
+                                </Button>
+                                <Button type="default" onClick={onCancel}>
+                                    Cancel
+                                </Button>
+                                <Button type="primary" htmlType="submit">
+                                    {isCreateMode ? "Create" : "Update"}
+                                </Button>
+                            </Space>
+                        </Form.Item>
+                )}
+            </Form>
     );
 };
 

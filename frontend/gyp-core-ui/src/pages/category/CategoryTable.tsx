@@ -1,7 +1,7 @@
 import { TableProps } from "antd";
 import React from "react";
 import { DoublePageTable } from "../../components/layout/doulepage/DoublePageTable.tsx";
-import { CategoryServiceAdapter } from "./CategoryAdapter.ts";
+import { CategoryServiceAdapter } from "../../services/Event/CategoryService.ts";
 
 export interface CategoryTableProps {
 }

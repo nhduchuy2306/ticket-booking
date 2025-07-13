@@ -1,7 +1,7 @@
 import React from "react";
 import { DoublePageForm } from "../../components/layout/doulepage/DoublePageForm.tsx";
 import DoublePageLayout from "../../components/layout/doulepage/DoublePageLayout.tsx";
-import { CategoryServiceAdapter } from "./CategoryAdapter.ts";
+import { CategoryServiceAdapter } from "../../services/Event/CategoryService.ts";
 import CategoryForm from "./CategoryForm.tsx";
 import CategoryTable from "./CategoryTable.tsx";
 

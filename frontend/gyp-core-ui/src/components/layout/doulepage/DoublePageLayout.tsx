@@ -2,8 +2,6 @@ import { Flex } from "antd";
 import React, { useState } from "react";
 import { FormState } from "../models/LayoutModel.ts";
 import { DoublePageContext, DoublePageContextProps } from "./DoublePageContext.tsx";
-import { DoublePageForm, DoublePageFormProps } from "./DoublePageForm.tsx";
-import { DoublePageTable, DoublePageTableProps } from "./DoublePageTable.tsx";
 
 export interface DoublePageLayoutProps {
     children: React.ReactNode;
@@ -63,23 +61,14 @@ const DoublePageLayout: React.FC<DoublePageLayoutProps> = ({children, initialEnt
 
     return (
             <DoublePageContext.Provider value={contextValue}>
-                <Flex vertical={false} align="flex-start" justify="flex-start" gap="large" className="w-full h-full bg-white p-4!">
-                    {children}
-                </Flex>
+                <Flex vertical={false}
+                      align="flex-start"
+                      justify="flex-start"
+                      gap="large"
+                      className="w-full bg-white p-4!"
+                >{children}</Flex>
             </DoublePageContext.Provider>
     );
 }
-
-export const createDoublePageView = (
-        tableProps: DoublePageTableProps,
-        formProps: DoublePageFormProps
-) => {
-    return () => (
-            <DoublePageLayout>
-                <DoublePageTable {...tableProps} />
-                <DoublePageForm {...formProps} />
-            </DoublePageLayout>
-    );
-};
 
 export default DoublePageLayout;

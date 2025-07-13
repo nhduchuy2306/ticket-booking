@@ -60,7 +60,6 @@ const App: React.FC = () => {
     ];
 
     const handleMenuItemSelect = (info: SelectInfo) => {
-        console.log("Selected menu item:", info);
         if (info.key === 'logout') {
             localStorage.removeItem("token");
             navigate('/login');
@@ -84,8 +83,8 @@ const App: React.FC = () => {
                             onSelect={handleMenuItemSelect}
                     />
                 </Sider>
-                <Layout>
-                    <Content style={{margin: '24px 16px 0', overflow: 'auto'}}>
+                <Layout className="bg-white">
+                    <Content className="mt-[24px]! mr-[16px]! ml-[16px]! mb-0!">
                         <Breadcrumb items={breadCrumbItems}/>
                         <Outlet/>
                     </Content>

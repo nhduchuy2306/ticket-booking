@@ -32,11 +32,15 @@ const getApplicationPermissions = async (): Promise<UserGroupPermissionModel[]> 
 
 export const UserGroupService = {
     getApplicationPermissions,
+    getAllUserGroups,
+    createUserGroup,
+    updateUserGroup,
+    deleteUserGroup
 }
 
-export const UserGroupCRUDService: BaseService<UserGroupRequestDto, UserGroupResponseDto> = {
-    getAll: getAllUserGroups,
-    create: createUserGroup,
-    update: updateUserGroup,
-    delete: deleteUserGroup
-}
+export const UserGroupServiceAdapter: BaseService<UserGroupRequestDto, UserGroupResponseDto> = {
+    getAll: () => UserGroupService.getAllUserGroups(),
+    create: (request) => UserGroupService.createUserGroup(request),
+    update: (request, id) => UserGroupService.updateUserGroup(request, id),
+    delete: (id) => UserGroupService.deleteUserGroup(id),
+};

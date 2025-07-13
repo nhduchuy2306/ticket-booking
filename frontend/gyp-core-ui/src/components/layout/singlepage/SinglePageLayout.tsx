@@ -14,11 +14,11 @@ const SinglePageLayout: React.FC<SinglePageLayoutProps> = ({children, onNavigate
         onNavigate?.('/create');
     };
 
-    const handleEdit = (entity: object) => {
+    const handleEdit = (entity: any) => {
         onNavigate?.('/edit', entity);
     };
 
-    const handleView = (entity: object) => {
+    const handleView = (entity: any) => {
         onNavigate?.('/view', entity);
     };
 
