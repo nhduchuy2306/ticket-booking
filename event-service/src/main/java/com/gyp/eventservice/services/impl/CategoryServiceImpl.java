@@ -61,6 +61,31 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
+	public CategoryResponseDto updateCategory(String categoryId, CategoryRequestDto categoryRequestDto)
+			throws ResourceNotFoundException {
+		if(categoryId == null || categoryId.isEmpty()) {
+			throw new ResourceNotFoundException("Category ID must not be null or empty");
+		}
+
+		Optional<CategoryEntity> existingCategory = categoryRepository.findById(categoryId);
+		if(existingCategory.isEmpty()) {
+			throw new ResourceNotFoundException("Category with ID " + categoryId + " not found");
+		}
+
+		Optional<CategoryEntity> duplicateCategory = categoryRepository.findByName(categoryRequestDto.getName());
+		if(duplicateCategory.isPresent() && !duplicateCategory.get().getId().equals(categoryId)) {
+			throw new ResourceDuplicateException(
+					String.format("Category with name %s already exists", categoryRequestDto.getName()));
+		}
+
+		CategoryEntity updatedCategoryEntity = existingCategory.get();
+		categoryMapper.updateEntityFromDto(categoryRequestDto, updatedCategoryEntity);
+		CategoryEntity savedCategoryEntity = categoryRepository.save(updatedCategoryEntity);
+		log.info("Updated category with ID: {}", categoryId);
+		return categoryMapper.toResponseDto(savedCategoryEntity);
+	}
+
+	@Override
 	public void deleteCategory(String categoryId) throws ResourceNotFoundException {
 		if(categoryId == null || categoryId.isEmpty()) {
 			throw new ResourceNotFoundException("Category ID must not be null or empty");

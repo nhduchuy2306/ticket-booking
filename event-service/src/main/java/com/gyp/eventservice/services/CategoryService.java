@@ -16,5 +16,7 @@ public interface CategoryService extends Validatable {
 
 	CategoryResponseDto getCategoryById(String categoryId) throws ResourceNotFoundException;
 
+	CategoryResponseDto updateCategory(String categoryId, CategoryRequestDto categoryRequestDto) throws ResourceNotFoundException;
+
 	void deleteCategory(String categoryId) throws ResourceNotFoundException;
 }

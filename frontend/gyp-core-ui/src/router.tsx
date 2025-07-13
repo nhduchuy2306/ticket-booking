@@ -3,6 +3,7 @@ import App from "./App.tsx";
 import { Mode } from "./configs/Constants.ts";
 import LoginPage from "./pages/auth/./LoginPage.tsx";
 import RegisterPage from "./pages/auth/RegisterPage.tsx";
+import CategoryPage from "./pages/category/CategoryPage.tsx";
 import ConfigurationPage from "./pages/configuration/ConfigurationPage.tsx";
 import ErrorPage from "./pages/error/ErrorPage.tsx";
 import EventPage from "./pages/event/EventPage.tsx";
@@ -56,6 +57,10 @@ export const router = createBrowserRouter([
             {
                 path: 'user-group',
                 element: <UserGroupPage/>
+            },
+            {
+                path: 'category',
+                element: <CategoryPage/>,
             },
             {
                 path: 'event',
