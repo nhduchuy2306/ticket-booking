@@ -1,46 +1,34 @@
-import { Button, Checkbox, Form, Input, message } from "antd";
+import { Button, Checkbox, Form, Input, Space } from "antd";
 import React, { useEffect, useState } from "react";
+import { FormState } from "../../components/layout/models/LayoutModel.ts";
 import PermissionTable from "../../components/permission/PermissionTable.tsx";
-import { Mode, SPLITTER_CHARACTER } from "../../configs/Constants.ts";
-import {
-    UserGroupModel,
-    UserGroupPermissionModel,
-    UserGroupPermissions
-} from "../../models/AuthService/UserGroupModel.ts";
-import { UserGroupService } from "../../services/Auth/UserGroupService.ts";
+import { SPLITTER_CHARACTER } from "../../configs/Constants.ts";
+import { UserGroupPermissionModel, UserGroupPermissions } from "../../models/AuthService/UserGroupModel.ts";
+import { UserGroupRequestDto, UserGroupResponseDto } from "../../models/generated/auth-service-models";
 
 interface UserGroupFormProps {
-    selectedUserGroup: UserGroupModel | null;
+    entity: UserGroupResponseDto;
     mode: string;
+    onSave: (values: UserGroupRequestDto) => Promise<void>;
+    onCancel: () => void;
     allPermissions: UserGroupPermissionModel[];
-    isLoading: boolean;
-    onClearForm: () => void;
-    onReload?: () => void;
 }
 
-const UserGroupForm: React.FC<UserGroupFormProps> = ({
-                                                         selectedUserGroup,
-                                                         mode,
-                                                         allPermissions,
-                                                         isLoading,
-                                                         onClearForm,
-                                                         onReload
-                                                     }) => {
+const UserGroupForm: React.FC<UserGroupFormProps> = ({entity, mode, onSave, onCancel, allPermissions,}) => {
     const [form] = Form.useForm();
     const [selectedPermissions, setSelectedPermissions] = useState<React.Key[]>([]);
-    const [isFormDisabled, setIsFormDisabled] = useState(mode === Mode.READ_ONLY.key);
+
     const isAdmin = Form.useWatch('administrator', form);
-    const isEditMode = mode === Mode.EDIT.key;
-    const isCreateMode = mode === Mode.CREATE.key;
+    const isReadOnly = mode === FormState.READ_ONLY.key;
+    const isCreateMode = mode === FormState.CREATE.key;
 
     useEffect(() => {
-        setIsFormDisabled(mode === Mode.READ_ONLY.key);
-        if (isCreateMode) {
-            resetForm();
-        } else {
+        if (entity) {
             initializeForm();
+        } else {
+            resetForm();
         }
-    }, [selectedUserGroup, mode]);
+    }, [entity, form]);
 
     const resetForm = () => {
         form.resetFields();
@@ -54,8 +42,8 @@ const UserGroupForm: React.FC<UserGroupFormProps> = ({
     };
 
     const initializeForm = () => {
-        if (selectedUserGroup) {
-            const {administrator, name, description} = selectedUserGroup;
+        if (entity) {
+            const {administrator, name, description} = entity;
             const initialPermissions = extractPermissionKeys();
 
             form.setFieldsValue({administrator, name, description});
@@ -65,8 +53,8 @@ const UserGroupForm: React.FC<UserGroupFormProps> = ({
     };
 
     const extractPermissionKeys = (): React.Key[] => {
-        if (selectedUserGroup) {
-            return selectedUserGroup.userGroupPermissions.permissionItems.flatMap(permissionItem =>
+        if (entity) {
+            return entity.userGroupPermissions.permissionItems.flatMap(permissionItem =>
                     permissionItem.actions.map(action =>
                             `${permissionItem.applicationId}${SPLITTER_CHARACTER}${action}`
                     )
@@ -98,39 +86,24 @@ const UserGroupForm: React.FC<UserGroupFormProps> = ({
         };
     };
 
-    const handleSave = async () => {
-        try {
-            const values = await form.validateFields();
-            values.userGroupPermissions = buildPermissions(form.getFieldValue("userGroupPermissions"));
-
-            if (isCreateMode) {
-                await UserGroupService.createUserGroup(values);
-                message.success("User group created successfully");
-            } else if (isEditMode && selectedUserGroup) {
-                await UserGroupService.updateUserGroup(values, selectedUserGroup.id);
-                message.success("User group updated successfully");
-            }
-
-            setIsFormDisabled(true);
-
-            if(onReload) {
-                onReload();
-            }
-        } catch (error) {
-            console.error('Failed to save user group:', error);
-            message.error("Failed to save user group");
-        }
+    const handleSubmit = async () => {
+        const values = await form.validateFields();
+        values.userGroupPermissions = buildPermissions(form.getFieldValue("userGroupPermissions"));
+        await onSave(values);
+        resetForm();
     };
 
-    const handleCancel = () => {
-        initializeForm();
-        setIsFormDisabled(true);
-        onClearForm();
+    const handleReset = () => {
+        if (entity) {
+            initializeForm();
+        } else {
+            resetForm();
+        }
     };
 
     return (
             <div className="!mt-[50px] !overflow-y-auto max-h-[calc(100vh-100px)]">
-                <Form form={form} layout="vertical" disabled={isFormDisabled} size="middle">
+                <Form form={form} layout="vertical" size="middle" onFinish={handleSubmit} disabled={isReadOnly}>
                     <Form.Item
                             name="name"
                             label="Name"
@@ -151,13 +124,13 @@ const UserGroupForm: React.FC<UserGroupFormProps> = ({
                     </Form.Item>
 
                     <Form.Item name="administrator" valuePropName="checked">
-                        <Checkbox disabled={isFormDisabled}>Administrator</Checkbox>
+                        <Checkbox disabled={isReadOnly}>Administrator</Checkbox>
                     </Form.Item>
 
                     {!isAdmin && (
                             <Form.Item name="userGroupPermissions" label="Permissions">
                                 <PermissionTable
-                                        disabled={isFormDisabled}
+                                        disabled={isReadOnly}
                                         allPermissions={allPermissions}
                                         selectedPermissions={selectedPermissions}
                                         onChange={(permissions) => {
@@ -169,25 +142,21 @@ const UserGroupForm: React.FC<UserGroupFormProps> = ({
                             </Form.Item>
                     )}
 
-                    <Form.Item style={{marginTop: 24, textAlign: 'right'}}>
-                        {!isFormDisabled && (
-                                <>
-                                    <Button
-                                            style={{marginRight: 8}}
-                                            onClick={handleCancel}
-                                    >
+                    {!isReadOnly && (
+                            <Form.Item>
+                                <Space className="float-right">
+                                    <Button type="default" className="bg-red-500" onClick={handleReset}>
+                                        Reset
+                                    </Button>
+                                    <Button type="default" onClick={onCancel}>
                                         Cancel
                                     </Button>
-                                    <Button
-                                            type="primary"
-                                            onClick={handleSave}
-                                            loading={isLoading}
-                                    >
-                                        Save
+                                    <Button type="primary" htmlType="submit">
+                                        {isCreateMode ? "Create" : "Update"}
                                     </Button>
-                                </>
-                        )}
-                    </Form.Item>
+                                </Space>
+                            </Form.Item>
+                    )}
                 </Form>
             </div>
     );

@@ -66,10 +66,14 @@ export const DoublePageForm: React.FC<DoublePageFormProps> = ({
             mode === FormState.CREATE.key ||
             (selectedEntity && (mode === FormState.EDIT.key || mode === FormState.READ_ONLY.key));
 
-    return <div className="flex-1 mt-10!">{showForm && children({
-        entity: selectedEntity,
-        mode,
-        onSave: handleSave,
-        onCancel: handleCancel
-    })}</div>;
+    return (
+            <div className="flex-1 mt-10!">
+                {showForm && children({
+                    entity: selectedEntity,
+                    mode,
+                    onSave: handleSave,
+                    onCancel: handleCancel
+                })}
+            </div>
+    );
 };

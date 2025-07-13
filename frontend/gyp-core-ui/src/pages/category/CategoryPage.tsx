@@ -1,7 +1,7 @@
 import React from "react";
 import { DoublePageForm } from "../../components/layout/doulepage/DoublePageForm.tsx";
 import DoublePageLayout from "../../components/layout/doulepage/DoublePageLayout.tsx";
-import { categoryServiceAdapter } from "./CategoryAdapter.ts";
+import { CategoryServiceAdapter } from "./CategoryAdapter.ts";
 import CategoryForm from "./CategoryForm.tsx";
 import CategoryTable from "./CategoryTable.tsx";
 
@@ -13,7 +13,7 @@ const CategoryPage: React.FC<CategoryPageProps> = () => {
             <DoublePageLayout>
                 <CategoryTable/>
                 <DoublePageForm
-                        service={categoryServiceAdapter}
+                        service={CategoryServiceAdapter}
                         successMessages={{
                             create: "Category created successfully",
                             update: "Category updated successfully"

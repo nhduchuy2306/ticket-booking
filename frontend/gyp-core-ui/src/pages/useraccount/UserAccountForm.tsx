@@ -6,9 +6,9 @@ import DataTransfer from "../../components/data-transfer/DataTransfer.tsx";
 import { RoleItemModel } from "../../components/data-transfer/DataTransferModel.ts";
 import { Mode } from "../../configs/Constants.ts";
 import { UserAccountModel } from "../../models/AuthService/UserAccountModel.ts";
-import { UserGroupModel } from "../../models/AuthService/UserGroupModel.ts";
+import { UserGroupResponseDto } from "../../models/generated/auth-service-models";
 import { UserAccountService } from "../../services/Auth/UserAccountService.ts";
-import { UserGroupService } from "../../services/Auth/UserGroupService.ts";
+import { UserGroupCRUDService } from "../../services/Auth/UserGroupService.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
 
 interface UserAccountFormProps {
@@ -17,7 +17,7 @@ interface UserAccountFormProps {
 
 const UserAccountForm: React.FC<UserAccountFormProps> = ({mode}) => {
     const [data, setData] = useState<UserAccountModel | null>(null);
-    const [userGroups, setUserGroups] = useState<UserGroupModel[]>([]);
+    const [userGroups, setUserGroups] = useState<UserGroupResponseDto[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const navigate = useNavigate();
     const {id} = useParams<{ id: string }>();
@@ -63,7 +63,7 @@ const UserAccountForm: React.FC<UserAccountFormProps> = ({mode}) => {
     const fetchUserGroup = async () => {
         setIsLoading(true);
         try {
-            const userGroups = await UserGroupService.getAllUserGroups();
+            const userGroups = await UserGroupCRUDService.getAll();
             setUserGroups(userGroups);
         } catch (error) {
             console.error('Failed to fetch user accounts:', error);
@@ -72,7 +72,7 @@ const UserAccountForm: React.FC<UserAccountFormProps> = ({mode}) => {
         }
     }
 
-    const buildUserRoleItem = (userGroups: UserGroupModel[]): RoleItemModel[] => {
+    const buildUserRoleItem = (userGroups: UserGroupResponseDto[]): RoleItemModel[] => {
         return userGroups.map((group) => ({
             key: group.id,
             title: group.name,

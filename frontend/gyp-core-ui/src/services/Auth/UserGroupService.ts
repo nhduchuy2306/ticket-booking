@@ -1,31 +1,28 @@
-import {
-    CreateUserGroupModel,
-    UserGroupModel,
-    UserGroupPermissionModel
-} from "../../models/AuthService/UserGroupModel.ts";
+import { UserGroupPermissionModel } from "../../models/AuthService/UserGroupModel.ts";
+import { UserGroupRequestDto, UserGroupResponseDto } from "../../models/generated/auth-service-models";
 import { apiClient, AUTH_SERVICE_PATH } from "../ApiClient.ts";
+import { BaseService } from "../BaseService.ts";
 
 const USER_GROUP_PATH = "usergroups";
 const USER_GROUP_ACTIONS_PATH = "usergroupactions";
 
-const getAllUserGroups = async (): Promise<UserGroupModel[]> => {
+const getAllUserGroups = async (): Promise<UserGroupResponseDto[]> => {
     const res = await apiClient.get(`/${AUTH_SERVICE_PATH}/${USER_GROUP_PATH}`);
     return res.data;
 }
 
-const createUserGroup = async (body: CreateUserGroupModel): Promise<UserGroupModel> => {
+const createUserGroup = async (body: UserGroupRequestDto): Promise<UserGroupResponseDto> => {
     const res = await apiClient.post(`/${AUTH_SERVICE_PATH}/${USER_GROUP_PATH}`, body);
     return res.data;
 }
 
-const updateUserGroup = async (body: CreateUserGroupModel, id: string): Promise<UserGroupModel> => {
+const updateUserGroup = async (body: UserGroupRequestDto, id: string): Promise<UserGroupResponseDto> => {
     const res = await apiClient.put(`/${AUTH_SERVICE_PATH}/${USER_GROUP_PATH}/${id}`, body);
     return res.data;
 }
 
-const deleteUserGroup = async (id: string): Promise<UserGroupModel> => {
-    const res = await apiClient.delete(`/${AUTH_SERVICE_PATH}/${USER_GROUP_PATH}/${id}`);
-    return res.data;
+const deleteUserGroup = async (id: string): Promise<void> => {
+    await apiClient.delete(`/${AUTH_SERVICE_PATH}/${USER_GROUP_PATH}/${id}`);
 }
 
 const getApplicationPermissions = async (): Promise<UserGroupPermissionModel[]> => {
@@ -34,9 +31,12 @@ const getApplicationPermissions = async (): Promise<UserGroupPermissionModel[]> 
 }
 
 export const UserGroupService = {
-    getAllUserGroups,
     getApplicationPermissions,
-    createUserGroup,
-    updateUserGroup,
-    deleteUserGroup
+}
+
+export const UserGroupCRUDService: BaseService<UserGroupRequestDto, UserGroupResponseDto> = {
+    getAll: getAllUserGroups,
+    create: createUserGroup,
+    update: updateUserGroup,
+    delete: deleteUserGroup
 }

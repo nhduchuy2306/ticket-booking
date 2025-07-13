@@ -1,14 +1,13 @@
 import { TableProps } from "antd";
 import React from "react";
 import { DoublePageTable } from "../../components/layout/doulepage/DoublePageTable.tsx";
-import { categoryServiceAdapter } from "./CategoryAdapter.ts";
+import { CategoryServiceAdapter } from "./CategoryAdapter.ts";
 
 export interface CategoryTableProps {
 }
 
 const CategoryTable: React.FC<CategoryTableProps> = () => {
-
-    const columns: TableProps<object>['columns'] = [
+    const columns: TableProps['columns'] = [
         {
             title: 'ID',
             dataIndex: 'id',
@@ -32,7 +31,7 @@ const CategoryTable: React.FC<CategoryTableProps> = () => {
     return (
             <DoublePageTable
                     columns={columns}
-                    service={categoryServiceAdapter}
+                    service={CategoryServiceAdapter}
                     createButtonTooltip="Create New Category"
                     pagination={{
                         pageSize: 5,
