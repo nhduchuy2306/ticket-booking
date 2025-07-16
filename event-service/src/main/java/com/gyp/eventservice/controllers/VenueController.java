@@ -27,7 +27,7 @@ public class VenueController extends AbstractValidatableController {
 	private final DataIntegrityService dataIntegrityService;
 
 	@GetMapping
-	public ResponseEntity<?> getVenues() {
+	public ResponseEntity<?> getAllVenues() {
 		try {
 			return ResponseEntity.ok(venueService.getVenues());
 		} catch(RuntimeException e) {

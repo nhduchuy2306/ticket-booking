@@ -15,6 +15,7 @@ export interface DoublePageContextProps {
     handleView: (entity: any) => void;
     handleReload: () => void;
     handleClearForm: () => void;
+    handleChangeMode: (newMode: string) => void;
 }
 
 export const DoublePageContext = createContext<DoublePageContextProps | undefined>(undefined);

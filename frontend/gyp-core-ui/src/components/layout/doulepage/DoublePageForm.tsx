@@ -30,7 +30,8 @@ export const DoublePageForm: React.FC<DoublePageFormProps> = ({
         mode,
         setIsLoading,
         handleReload,
-        handleClearForm
+        handleClearForm,
+        handleChangeMode
     } = useDoublePageContext();
 
     const handleSave = async (values: any) => {
@@ -58,7 +59,7 @@ export const DoublePageForm: React.FC<DoublePageFormProps> = ({
     };
 
     const handleCancel = () => {
-        handleClearForm();
+        handleChangeMode(FormState.READ_ONLY.key);
         setIsLoading(false);
     };
 

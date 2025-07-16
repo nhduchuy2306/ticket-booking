@@ -42,6 +42,10 @@ const DoublePageLayout: React.FC<DoublePageLayoutProps> = ({children, initialEnt
         setMode(FormState.READ_ONLY.key);
     };
 
+    const handleChangeMode = (newMode: string) => {
+        setMode(newMode);
+    }
+
     const contextValue: DoublePageContextProps = {
         selectedEntity,
         setSelectedEntity,
@@ -57,6 +61,7 @@ const DoublePageLayout: React.FC<DoublePageLayoutProps> = ({children, initialEnt
         handleView,
         handleReload,
         handleClearForm,
+        handleChangeMode
     };
 
     return (

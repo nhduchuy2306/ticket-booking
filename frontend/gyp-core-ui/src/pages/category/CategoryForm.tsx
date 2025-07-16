@@ -24,7 +24,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({entity, mode, onSave, onCanc
     const isReadOnly = mode === FormState.READ_ONLY.key;
     const isCreateMode = mode === FormState.CREATE.key;
 
-    const handleSubmit = async (values: any) => {
+    const handleSubmit = async (values: CategoryRequestDto) => {
         await onSave(values);
         form.resetFields();
     };
