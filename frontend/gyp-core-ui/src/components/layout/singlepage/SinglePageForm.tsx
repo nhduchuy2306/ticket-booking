@@ -6,7 +6,12 @@ import { useSinglePageContext } from "./SinglePageContext.tsx";
 
 export interface SinglePageFormProps {
     service: BaseService<any, any>;
-    renderForm: (entity: any, mode: string, onSave: (values: any) => Promise<void>) => React.ReactNode;
+    renderForm: (
+            entity: any,
+            mode: string,
+            onSave: (values: any) => Promise<void>,
+            handleBack?: () => void
+    ) => React.ReactNode;
     entity?: any;
     mode: string;
     successMessages?: {
@@ -70,7 +75,7 @@ const SinglePageForm: React.FC<SinglePageFormProps> = ({
                     )}
                 </Flex>
                 <div className="p-4! overflow-auto! h-[calc(100vh-100px)]!">
-                    {renderForm(entity, mode, handleSave)}
+                    {renderForm(entity, mode, handleSave, handleBack)}
                 </div>
             </div>
     );

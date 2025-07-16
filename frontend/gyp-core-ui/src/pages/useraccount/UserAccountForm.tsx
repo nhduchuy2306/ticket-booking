@@ -23,7 +23,7 @@ const UserAccountForm: React.FC<UserAccountFormProps> = ({mode}) => {
     const [data, setData] = useState<UserAccountResponseDto | null>(null);
     const [userGroups, setUserGroups] = useState<UserGroupResponseDto[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const {id} = useParams<{ id: string }>();
+    const {id} = useParams();
     const [form] = Form.useForm();
     const navigate = useNavigate();
 
@@ -78,14 +78,19 @@ const UserAccountForm: React.FC<UserAccountFormProps> = ({mode}) => {
         }));
     };
 
-    const renderForm = (_: UserAccountResponseDto, currentMode: string, onSave: (values: UserAccountRequestDto) => Promise<void>) => {
+    const renderForm = (
+            _: UserAccountResponseDto,
+            currentMode: string,
+            onSave: (values: UserAccountRequestDto) => Promise<void>,
+            handleBack?: () => void
+    ) => {
         const isReadOnly = currentMode === Mode.READ_ONLY.key;
 
         const handleSave = async (values: any) => {
             const validatedValues = await form.validateFields();
             const adaptedValues = {
                 ...validatedValues,
-                dob: values.dob ? DateUtils.formatToDateTime(values.dob) : null,
+                dob: values.dob ? DateUtils.toIsoDateTime(values.dob) : null,
                 userGroupList: values?.roles.map((role: RoleItemModel) => role.key)
             };
             delete adaptedValues.roles;
@@ -159,18 +164,18 @@ const UserAccountForm: React.FC<UserAccountFormProps> = ({mode}) => {
                         />
                     </Form.Item>
 
-                    {!isReadOnly && (
-                            <Form.Item>
-                                <Button
-                                        type="primary"
-                                        htmlType="submit"
-                                        loading={isLoading}
-                                        className="float-right"
-                                >
-                                    {currentMode === Mode.CREATE.key ? 'Create' : 'Update'}
-                                </Button>
-                            </Form.Item>
-                    )}
+                    <div className="flex justify-end items-center gap-1.5">
+                        <Button type="default" onClick={handleBack}>Cancel</Button>
+                        {!isReadOnly &&
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                loading={isLoading}>
+                                {currentMode === Mode.CREATE.key ? 'Create' : 'Update'}
+                            </Button>
+                        }
+                    </div>
+
                 </Form>
         );
     };
