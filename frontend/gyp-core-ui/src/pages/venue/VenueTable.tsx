@@ -26,12 +26,6 @@ const VenueTable: React.FC<VenueTableProps> = () => {
             key: 'address',
             width: '40%',
         },
-        {
-            title: 'Description',
-            dataIndex: 'description',
-            key: 'description',
-            width: '50%',
-        },
     ];
 
     return (

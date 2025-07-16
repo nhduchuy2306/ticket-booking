@@ -1,6 +1,7 @@
 import { Button, Form, Input, InputNumber, Space } from "antd";
 import React, { useEffect } from "react";
 import { FormState } from "../../components/layout/models/LayoutModel.ts";
+import MetaData from "../../components/metadata/MetaData.tsx";
 import { VenueRequestDto, VenueResponseDto } from "../../models/generated/event-service-models";
 
 export interface VenueFormProps {
@@ -23,6 +24,7 @@ const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) =
 
     const isReadOnly = mode === FormState.READ_ONLY.key;
     const isCreateMode = mode === FormState.CREATE.key;
+    const isEditMode = mode === FormState.EDIT.key;
 
     const handleSubmit = async (values: VenueRequestDto) => {
         await onSave(values);
@@ -104,19 +106,33 @@ const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) =
                         <InputNumber type="number" placeholder="Enter longitude" step="any"/>
                     </Form.Item>
 
-                    <Form.Item>
-                        <Space className="float-right">
-                            <Button type="primary" htmlType="submit" disabled={isReadOnly}>
-                                {isCreateMode ? "Create" : "Update"}
-                            </Button>
-                            <Button onClick={handleReset} disabled={isReadOnly}>
-                                Reset
-                            </Button>
-                            <Button onClick={onCancel} disabled={isReadOnly}>
-                                Cancel
-                            </Button>
-                        </Space>
-                    </Form.Item>
+                    {isReadOnly &&
+                        <MetaData
+                            metadata={{
+                                id: entity.id,
+                                createUser: entity.createUser,
+                                changeUser: entity.changeUser,
+                                createTimestamp: entity.createTimestamp,
+                                changeTimestamp: entity.changeTimestamp
+                            }}
+                        />
+                    }
+
+                    {(isCreateMode || isEditMode) &&
+                        <Form.Item>
+                            <Space className="float-right">
+                                <Button type="primary" htmlType="submit" disabled={isReadOnly}>
+                                    {isCreateMode ? "Create" : "Update"}
+                                </Button>
+                                <Button onClick={handleReset} disabled={isReadOnly}>
+                                    Reset
+                                </Button>
+                                <Button onClick={onCancel} disabled={isReadOnly}>
+                                    Cancel
+                                </Button>
+                            </Space>
+                        </Form.Item>
+                    }
                 </Form>
             </div>
     );
