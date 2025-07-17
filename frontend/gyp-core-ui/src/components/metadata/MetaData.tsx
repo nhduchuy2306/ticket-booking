@@ -60,7 +60,8 @@ const MetaData: React.FC<MetaDataProps> = ({
     return (
             <Collapse
                     bordered={false}
-                    expandIcon={({isActive}) => <AiFillCaretRight rotate={isActive ? 90 : 0}/>}
+                    expandIcon={({isActive}) => <AiFillCaretRight
+                            style={{transform: `rotate(${isActive ? 90 : 0}deg)`}}/>}
                     items={getItems(panelStyle)}
             />
     );

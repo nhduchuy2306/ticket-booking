@@ -12,6 +12,7 @@ import OverviewPage from "./pages/OverviewPage.tsx";
 import ProtectRoute from "./pages/ProtectRoute.tsx";
 import SaleChannelPage from "./pages/salechannel/SaleChannelPage.tsx";
 import SeatMapPage from "./pages/seatmap/SeatMapPage.tsx";
+import TicketTypePage from "./pages/tickettype/TicketTypePage.tsx";
 import UserAccountForm from "./pages/useraccount/UserAccountForm.tsx";
 import UserAccountPage from "./pages/useraccount/UserAccountPage.tsx";
 import UserGroupPage from "./pages/usergroup/UserGroupPage.tsx";
@@ -86,20 +87,10 @@ export const router = createBrowserRouter([
             {
                 path: 'venue',
                 element: <VenuePage/>,
-                children: [
-                    {
-                        index: true,
-                        element: <VenuePage/>
-                    },
-                    {
-                        path: 'new',
-                        element: <VenuePage/>
-                    },
-                    {
-                        path: ':id',
-                        element: <VenuePage/>
-                    }
-                ]
+            },
+            {
+                path: 'ticket-type',
+                element: <TicketTypePage/>,
             },
             {
                 path: 'sale-channel',

@@ -21,6 +21,7 @@ const items: MenuItem[] = [
     getItem('Category', 'category', <BiCategory/>),
     getItem('Event', 'event', <BsCalendar3/>),
     getItem('Venue', 'venue', <CiLocationOn/>),
+    getItem('Ticket Type', 'ticket-type', <BiCategory/>),
     getItem('Seat Map', 'seat-map', <PiSeat/>),
     getItem('Sale Channel', 'sale-channel', <CiShop/>),
     getItem('Configuration', 'configuration', <CiSettings/>),
