@@ -74,7 +74,7 @@ const SinglePageForm: React.FC<SinglePageFormProps> = ({
                             </Tooltip>
                     )}
                 </Flex>
-                <div className="p-4! overflow-auto! h-[calc(100vh-100px)]!">
+                <div className="p-4! overflow-auto! h-[calc(100vh-150px)]!">
                     {renderForm(entity, mode, handleSave, handleBack)}
                 </div>
             </div>

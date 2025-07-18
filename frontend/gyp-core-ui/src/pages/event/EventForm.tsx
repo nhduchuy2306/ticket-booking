@@ -1,11 +1,12 @@
-import { Button, DatePicker, Form, Input, notification } from "antd";
+import { Button, Checkbox, DatePicker, Form, Input, notification, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import SinglePageForm from "../../components/layout/singlepage/SinglePageForm.tsx";
 import SinglePageLayout from "../../components/layout/singlepage/SinglePageLayout.tsx";
 import MetaData from "../../components/metadata/MetaData.tsx";
 import { Mode } from "../../configs/Constants.ts";
-import { EventRequestDto, EventResponseDto } from "../../models/generated/event-service-models";
+import { CategoryResponseDto, EventRequestDto, EventResponseDto } from "../../models/generated/event-service-models";
+import { CategoryService } from "../../services/Event/CategoryService.ts";
 import { EventService, EventServiceAdapter } from "../../services/Event/EventService.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
 import { handleNavigate } from "./EventPageUtils.ts";
@@ -16,6 +17,7 @@ interface EventFormProps {
 
 const EventForm: React.FC<EventFormProps> = ({mode}) => {
     const [data, setData] = useState<EventResponseDto | null>(null);
+    const [categories, setCategories] = useState<CategoryResponseDto[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const {id} = useParams();
     const [form] = Form.useForm();
@@ -25,6 +27,12 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
         const fetchData = async () => {
             setIsLoading(true);
             try {
+                // Fetch categories if in CREATE mode
+                const categoryResponse = await CategoryService.getAllCategories();
+                if (categoryResponse) {
+                    setCategories(categoryResponse);
+                }
+
                 if (id && (mode === Mode.EDIT.key || mode === Mode.READ_ONLY.key)) {
                     const response = await EventService.getEventById(id);
                     if (response) {
@@ -49,12 +57,13 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                 id: data.id,
                 name: data.name,
                 description: data.description,
-                eventInProgress: data.eventInProgress,
                 startTime: data.startTime ? DateUtils.toIsoDate(data.startTime) : undefined,
                 endTime: data.endTime ? DateUtils.toIsoDate(data.endTime) : undefined,
                 doorOpenTime: data.doorOpenTime ? DateUtils.toIsoDate(data.doorOpenTime) : undefined,
                 doorCloseTime: data.doorCloseTime ? DateUtils.toIsoDate(data.doorCloseTime) : undefined,
-
+                eventCompleted: data.eventCompleted,
+                eventInProgress: data.eventInProgress,
+                categories: data.categories ? data.categories.map(category => category.id) : []
             });
         } else {
             form.resetFields();
@@ -104,6 +113,22 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                     </Form.Item>
 
                     <Form.Item
+                            name="categories"
+                            label="Categories"
+                            rules={[{required: true, message: 'Please select at least one category!'}]}
+                    >
+                        <Select
+                                mode="multiple"
+                                placeholder="Select categories"
+                                options={categories.map(category => ({
+                                    label: category.name,
+                                    value: category.id
+                                }))}
+                                disabled={isReadOnly}
+                        />
+                    </Form.Item>
+
+                    <Form.Item
                             name="startTime"
                             label="Start Time"
                             rules={[{required: true, message: 'Please select the start time!'}]}
@@ -133,6 +158,20 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                             rules={[{required: true, message: 'Please select the door close time!'}]}
                     >
                         <DatePicker showTime/>
+                    </Form.Item>
+
+                    <Form.Item
+                            name="eventCompleted"
+                            valuePropName="checked"
+                    >
+                        <Checkbox disabled={isReadOnly}>Event Completed</Checkbox>
+                    </Form.Item>
+
+                    <Form.Item
+                            name="eventInProgress"
+                            valuePropName="checked"
+                    >
+                        <Checkbox disabled={isReadOnly}>Event In Progress</Checkbox>
                     </Form.Item>
 
                     {isReadOnly &&

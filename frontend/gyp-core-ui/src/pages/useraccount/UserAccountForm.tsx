@@ -166,11 +166,14 @@ const UserAccountForm: React.FC<UserAccountFormProps> = ({mode}) => {
                             label="Organization"
                             rules={[{required: true, message: "Please select an organization!"}]}
                     >
-                        <Select disabled={isReadOnly} className="w-full">
-                            {organizations.map(org => (
-                                    <Select.Option value={org.id}>{org.name}</Select.Option>
-                            ))}
-                        </Select>
+                        <Select
+                                disabled={isReadOnly}
+                                className="w-full"
+                                options={organizations.map(org => ({
+                                    label: org.name,
+                                    value: org.id
+                                }))}
+                        />
                     </Form.Item>
 
                     <Form.Item name="roles" label="Role Assignment">

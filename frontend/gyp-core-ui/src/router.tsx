@@ -12,6 +12,7 @@ import OrganizationPage from "./pages/organization/OrganizationPage.tsx";
 import OverviewPage from "./pages/OverviewPage.tsx";
 import ProtectRoute from "./pages/ProtectRoute.tsx";
 import SaleChannelPage from "./pages/salechannel/SaleChannelPage.tsx";
+import SeasonPage from "./pages/season/SeasonPage.tsx";
 import SeatMapPage from "./pages/seatmap/SeatMapPage.tsx";
 import TicketTypePage from "./pages/tickettype/TicketTypePage.tsx";
 import UserAccountForm from "./pages/useraccount/UserAccountForm.tsx";
@@ -19,7 +20,7 @@ import UserAccountPage from "./pages/useraccount/UserAccountPage.tsx";
 import UserGroupPage from "./pages/usergroup/UserGroupPage.tsx";
 import VenuePage from "./pages/venue/VenuePage.tsx";
 
-export const router = createBrowserRouter([
+const AuthServiceRouter = [
     {
         path: 'login',
         element: <LoginPage/>,
@@ -30,117 +31,142 @@ export const router = createBrowserRouter([
         element: <RegisterPage/>,
         errorElement: <ErrorPage/>,
     },
+
+];
+
+const UserServiceRouter = [
+    {
+        index: true,
+        element: <OverviewPage/>
+    },
+    {
+        path: 'user-account',
+        children: [
+            {
+                index: true,
+                element: <UserAccountPage/>
+            },
+            {
+                path: 'create',
+                element: <UserAccountForm mode={Mode.CREATE.key}/>
+            },
+            {
+                path: 'view/:id',
+                element: <UserAccountForm mode={Mode.READ_ONLY.key}/>
+            },
+            {
+                path: 'edit/:id',
+                element: <UserAccountForm mode={Mode.EDIT.key}/>
+            }
+        ]
+    },
+    {
+        path: 'user-group',
+        element: <UserGroupPage/>
+    },
+    {
+        path: 'organization',
+        element: <OrganizationPage/>
+    },
+];
+
+const EventServiceRouter = [
+    {
+        path: 'event',
+        children: [
+            {
+                index: true,
+                element: <EventPage/>
+            },
+            {
+                path: 'create',
+                element: <EventForm mode={Mode.CREATE.key}/>
+            },
+            {
+                path: 'view/:id',
+                element: <EventForm mode={Mode.READ_ONLY.key}/>
+            },
+            {
+                path: 'edit/:id',
+                element: <EventForm mode={Mode.EDIT.key}/>
+            }
+        ],
+    },
+    {
+        path: 'venue',
+        element: <VenuePage/>,
+    },
+    {
+        path: 'ticket-type',
+        element: <TicketTypePage/>,
+    },
+    {
+        path: 'category',
+        element: <CategoryPage/>,
+    },
+    {
+        path: 'seat-map',
+        element: <SeatMapPage/>,
+        children: [
+            {
+                index: true,
+                element: <SeatMapPage/>
+            },
+            {
+                path: 'new',
+                element: <SeatMapPage/>
+            },
+            {
+                path: ':id',
+                element: <SeatMapPage/>
+            }
+        ]
+    },
+    {
+        path: 'season',
+        element: <SeasonPage/>,
+    }
+];
+
+const SaleChannelServiceRouter = [
+    {
+        path: 'sale-channel',
+        element: <SaleChannelPage/>,
+        children: [
+            {
+                index: true,
+                element: <SaleChannelPage/>
+            },
+            {
+                path: 'new',
+                element: <SaleChannelPage/>
+            },
+            {
+                path: ':id',
+                element: <SaleChannelPage/>
+            }
+        ]
+    },
+];
+
+const ConfigurationRouter = [
+    {
+        path: 'configuration',
+        element: <ConfigurationPage/>
+    }
+]
+
+export const router = createBrowserRouter([
+    ...AuthServiceRouter,
     {
         path: '/',
         element: <ProtectRoute><App/></ProtectRoute>,
         errorElement: <ErrorPage/>,
         children: [
-            {
-                index: true,
-                element: <OverviewPage/>
-            },
-            {
-                path: 'user-account',
-                children: [
-                    {
-                        index: true,
-                        element: <UserAccountPage/>
-                    },
-                    {
-                        path: 'create',
-                        element: <UserAccountForm mode={Mode.CREATE.key}/>
-                    },
-                    {
-                        path: 'view/:id',
-                        element: <UserAccountForm mode={Mode.READ_ONLY.key}/>
-                    },
-                    {
-                        path: 'edit/:id',
-                        element: <UserAccountForm mode={Mode.EDIT.key}/>
-                    }
-                ]
-            },
-            {
-                path: 'user-group',
-                element: <UserGroupPage/>
-            },
-            {
-                path: 'organization',
-                element: <OrganizationPage/>
-            },
-            {
-                path: 'category',
-                element: <CategoryPage/>,
-            },
-            {
-                path: 'event',
-                children: [
-                    {
-                        index: true,
-                        element: <EventPage/>
-                    },
-                    {
-                        path: 'create',
-                        element: <EventForm mode={Mode.CREATE.key}/>
-                    },
-                    {
-                        path: 'view/:id',
-                        element: <EventForm mode={Mode.READ_ONLY.key}/>
-                    },
-                    {
-                        path: 'edit/:id',
-                        element: <EventForm mode={Mode.EDIT.key}/>
-                    }
-                ],
-            },
-            {
-                path: 'venue',
-                element: <VenuePage/>,
-            },
-            {
-                path: 'ticket-type',
-                element: <TicketTypePage/>,
-            },
-            {
-                path: 'sale-channel',
-                element: <SaleChannelPage/>,
-                children: [
-                    {
-                        index: true,
-                        element: <SaleChannelPage/>
-                    },
-                    {
-                        path: 'new',
-                        element: <SaleChannelPage/>
-                    },
-                    {
-                        path: ':id',
-                        element: <SaleChannelPage/>
-                    }
-                ]
-            },
-            {
-                path: 'seat-map',
-                element: <SeatMapPage/>,
-                children: [
-                    {
-                        index: true,
-                        element: <SeatMapPage/>
-                    },
-                    {
-                        path: 'new',
-                        element: <SeatMapPage/>
-                    },
-                    {
-                        path: ':id',
-                        element: <SeatMapPage/>
-                    }
-                ]
-            },
-            {
-                path: 'configuration',
-                element: <ConfigurationPage/>
-            }
+            ...UserServiceRouter,
+            ...EventServiceRouter,
+            ...SaleChannelServiceRouter,
+            ...ConfigurationRouter
         ],
     },
 ]);

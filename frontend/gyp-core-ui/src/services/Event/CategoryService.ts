@@ -23,7 +23,7 @@ const deleteCategory = async (id: string): Promise<void> => {
     await apiClient.delete(`/${EVENT_SERVICE_PATH}/${CATEGORY_PATH}/${id}`);
 }
 
-export const CategoriesService = {
+export const CategoryService = {
     getAllCategories,
     createCategory,
     updateCategory,
@@ -31,8 +31,8 @@ export const CategoriesService = {
 }
 
 export const CategoryServiceAdapter: BaseService<CategoryRequestDto, CategoryResponseDto> = {
-    getAll: () => CategoriesService.getAllCategories(),
-    create: (request) => CategoriesService.createCategory(request),
-    update: (request, id) => CategoriesService.updateCategory(request, id),
-    delete: (id) => CategoriesService.deleteCategory(id),
+    getAll: () => CategoryService.getAllCategories(),
+    create: (request) => CategoryService.createCategory(request),
+    update: (request, id) => CategoryService.updateCategory(request, id),
+    delete: (id) => CategoryService.deleteCategory(id),
 };

@@ -5,6 +5,7 @@ import { AiOutlineUser, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { BiBuilding, BiCategory, BiMoney } from "react-icons/bi";
 import { BsCalendar3, BsTicket } from "react-icons/bs";
 import { CiLocationOn, CiSettings, CiShop } from "react-icons/ci";
+import { GrShareOption } from "react-icons/gr";
 import { IoIosLogOut } from "react-icons/io";
 import { LiaFirstOrder } from "react-icons/lia";
 import { PiSeat } from "react-icons/pi";
@@ -24,6 +25,7 @@ const items: MenuItem[] = [
         getItem('Event', 'event', <BsCalendar3/>),
         getItem('Category', 'category', <BiCategory/>),
         getItem('Venue', 'venue', <CiLocationOn/>),
+        getItem('Season', 'season', <GrShareOption/>),
         getItem('Seat Map', 'seat-map', <PiSeat/>),
         getItem('Ticket Type', 'ticket-type', <BiCategory/>),
     ]),
@@ -48,7 +50,8 @@ const App: React.FC = () => {
     const [openKeys, setOpenKeys] = useState<string[]>([]);
 
     useEffect(() => {
-        const path = location.pathname.substring(1); // remove the leading "/"
+        const pathParts = location.pathname.split('/');
+        const path = pathParts.length > 1 ? pathParts[1] : '';
         setSelectedKey(path);
 
         const menuPath = findMenuPath(items, path);
