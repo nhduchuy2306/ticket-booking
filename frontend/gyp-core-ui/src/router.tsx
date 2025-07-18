@@ -8,6 +8,7 @@ import ConfigurationPage from "./pages/configuration/ConfigurationPage.tsx";
 import ErrorPage from "./pages/error/ErrorPage.tsx";
 import EventPage from "./pages/event/EventPage.tsx";
 import EventPageForm from "./pages/event/EventPageForm.tsx";
+import OrganizationPage from "./pages/organization/OrganizationPage.tsx";
 import OverviewPage from "./pages/OverviewPage.tsx";
 import ProtectRoute from "./pages/ProtectRoute.tsx";
 import SaleChannelPage from "./pages/salechannel/SaleChannelPage.tsx";
@@ -62,6 +63,10 @@ export const router = createBrowserRouter([
             {
                 path: 'user-group',
                 element: <UserGroupPage/>
+            },
+            {
+                path: 'organization',
+                element: <OrganizationPage/>
             },
             {
                 path: 'category',

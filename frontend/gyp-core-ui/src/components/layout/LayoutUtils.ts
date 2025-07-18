@@ -1,5 +1,4 @@
 import { FormInstance } from "antd";
-import { VenueRequestDto } from "../../models/generated/event-service-models";
 import { FormState } from "./models/LayoutModel.ts";
 
 export const isFormReadOnly = (mode: string): boolean => {
@@ -15,9 +14,9 @@ export const isFormEditMode = (mode: string): boolean => {
 }
 
 export const handleSubmit = async (
-        values: VenueRequestDto,
+        values: any,
         form: FormInstance,
-        onSave: (values: VenueRequestDto) => Promise<void>
+        onSave: (values: any) => Promise<void>
 ) => {
     await onSave(values);
     form.resetFields();

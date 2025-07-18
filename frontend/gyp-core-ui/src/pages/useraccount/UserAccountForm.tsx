@@ -1,4 +1,4 @@
-import { Button, Form, Input, notification } from "antd";
+import { Button, Form, Input, notification, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import DataTransfer from "../../components/data-transfer/DataTransfer.tsx";
@@ -7,10 +7,12 @@ import SinglePageForm from "../../components/layout/singlepage/SinglePageForm.ts
 import SinglePageLayout from "../../components/layout/singlepage/SinglePageLayout.tsx";
 import { Mode } from "../../configs/Constants.ts";
 import {
+    OrganizationResponseDto,
     UserAccountRequestDto,
     UserAccountResponseDto,
     UserGroupResponseDto
 } from "../../models/generated/auth-service-models";
+import { OrganizationService } from "../../services/Auth/OrganizationService.ts";
 import { UserAccountService, UserAccountServiceAdapter } from "../../services/Auth/UserAccountService.ts";
 import { UserGroupService } from "../../services/Auth/UserGroupService.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
@@ -22,6 +24,7 @@ interface UserAccountFormProps {
 const UserAccountForm: React.FC<UserAccountFormProps> = ({mode}) => {
     const [data, setData] = useState<UserAccountResponseDto | null>(null);
     const [userGroups, setUserGroups] = useState<UserGroupResponseDto[]>([]);
+    const [organizations, setOrganizations] = useState<OrganizationResponseDto[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const {id} = useParams();
     const [form] = Form.useForm();
@@ -34,6 +37,9 @@ const UserAccountForm: React.FC<UserAccountFormProps> = ({mode}) => {
                 // Fetch user groups
                 const userGroups = await UserGroupService.getAllUserGroups();
                 setUserGroups(userGroups);
+
+                const organizations = await OrganizationService.getAllOrganizations();
+                setOrganizations(organizations);
 
                 // Fetch user account if editing
                 if (id && (mode === Mode.EDIT.key || mode === Mode.READ_ONLY.key)) {
@@ -64,6 +70,7 @@ const UserAccountForm: React.FC<UserAccountFormProps> = ({mode}) => {
                 phoneNumber: data.phoneNumber,
                 email: data.email,
                 roles: data.userGroupList || [],
+                organizationId: data.organizationId,
             });
         } else {
             form.resetFields();
@@ -152,6 +159,18 @@ const UserAccountForm: React.FC<UserAccountFormProps> = ({mode}) => {
                             rules={[{required: true, message: "Please input your email!"}]}
                     >
                         <Input type="email" placeholder="Email"/>
+                    </Form.Item>
+
+                    <Form.Item
+                            name="organizationId"
+                            label="Organization"
+                            rules={[{required: true, message: "Please select an organization!"}]}
+                    >
+                        <Select disabled={isReadOnly} className="w-full">
+                            {organizations.map(org => (
+                                    <Select.Option value={org.id}>{org.name}</Select.Option>
+                            ))}
+                        </Select>
                     </Form.Item>
 
                     <Form.Item name="roles" label="Role Assignment">

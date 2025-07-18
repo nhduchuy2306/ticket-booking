@@ -16,6 +16,7 @@ public final class AppConstants {
 	// ========== AUTHENTICATION & SECURITY ==========
 	public static final String APP_TOKEN_PREFIX = "Bearer ";
 	public static final String APP_HEADER_USER_PAYLOAD = "X-User-Payload";
+	public static final String APP_HEADER_USER_SUBJECT = "X-User-Subject";
 	public static final String APP_HEADER_SCOPE = "Scope_";
 	public static final int TOKEN_EXPIRATION_HOURS = 24;
 	public static final String DEFAULT_USER_ROLE = "ROLE_USER";

@@ -2,7 +2,7 @@ import { Breadcrumb, Layout, Menu } from 'antd';
 import { SelectInfo } from "rc-menu/lib/interface";
 import React, { useEffect, useState } from 'react';
 import { AiOutlineUser, AiOutlineUsergroupAdd } from "react-icons/ai";
-import { BiCategory } from "react-icons/bi";
+import { BiBuilding, BiCategory } from "react-icons/bi";
 import { BsCalendar3 } from "react-icons/bs";
 import { CiLocationOn, CiSettings, CiShop } from "react-icons/ci";
 import { IoIosLogOut } from "react-icons/io";
@@ -16,7 +16,8 @@ const {Content, Sider} = Layout;
 const items: MenuItem[] = [
     getItem('User', 'user', <AiOutlineUser/>, [
         getItem('User Account', 'user-account', <AiOutlineUser/>),
-        getItem('User Group', 'user-group', <AiOutlineUsergroupAdd/>)
+        getItem('User Group', 'user-group', <AiOutlineUsergroupAdd/>),
+        getItem('Organization', 'organization', <BiBuilding/>),
     ]),
     getItem('Category', 'category', <BiCategory/>),
     getItem('Event', 'event', <BsCalendar3/>),

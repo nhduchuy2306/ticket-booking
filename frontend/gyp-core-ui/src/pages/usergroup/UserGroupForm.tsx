@@ -1,6 +1,7 @@
 import { Button, Checkbox, Form, Input, Space } from "antd";
 import React, { useEffect, useState } from "react";
 import { FormState } from "../../components/layout/models/LayoutModel.ts";
+import MetaData from "../../components/metadata/MetaData.tsx";
 import PermissionTable from "../../components/permission/PermissionTable.tsx";
 import { SPLITTER_CHARACTER } from "../../configs/Constants.ts";
 import { UserGroupPermissionModel, UserGroupPermissions } from "../../models/AuthService/UserGroupModel.ts";
@@ -140,6 +141,18 @@ const UserGroupForm: React.FC<UserGroupFormProps> = ({entity, mode, onSave, onCa
                             />
                         </Form.Item>
                 )}
+
+                {isReadOnly &&
+                    <MetaData
+                        metadata={{
+                            id: entity.id,
+                            createUser: entity.createUser,
+                            changeUser: entity.changeUser,
+                            createTimestamp: entity.createTimestamp,
+                            changeTimestamp: entity.changeTimestamp
+                        }}
+                    />
+                }
 
                 {!isReadOnly && (
                         <Form.Item>

@@ -1,3 +1,15 @@
+# Create `organization` table
+CREATE TABLE IF NOT EXISTS organization
+(
+    id               VARCHAR(255) PRIMARY KEY,
+    name             VARCHAR(255),
+    description      TEXT,
+    create_user      VARCHAR(255),
+    change_user      VARCHAR(255),
+    create_timestamp DATETIME,
+    change_timestamp DATETIME
+);
+
 # Create `useraccount` table
 CREATE TABLE IF NOT EXISTS useraccount
 (
@@ -8,10 +20,12 @@ CREATE TABLE IF NOT EXISTS useraccount
     user_name        VARCHAR(255) UNIQUE,
     password         VARCHAR(255),
     email            VARCHAR(255) UNIQUE,
+    organization_id  VARCHAR(255),
     create_user      VARCHAR(255),
     change_user      VARCHAR(255),
     create_timestamp DATETIME,
-    change_timestamp DATETIME
+    change_timestamp DATETIME,
+    FOREIGN KEY (organization_id) REFERENCES organization (id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 # Create `usergroup` table

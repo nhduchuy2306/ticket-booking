@@ -26,6 +26,18 @@ public final class JwtTokenProvider {
 		return StringUtils.EMPTY;
 	}
 
+	public static String getUserSub(String token, String jwtSecretKey) throws JOSEException, ParseException {
+		JWSVerifier jwsVerifier = new MACVerifier(jwtSecretKey.getBytes());
+		SignedJWT signedJWT = SignedJWT.parse(token);
+		Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+		boolean isValid = signedJWT.verify(jwsVerifier);
+		if(isValid && expirationTime.after(new Date())) {
+			var claims = signedJWT.getJWTClaimsSet().getClaims();
+			return claims.get("sub").toString();
+		}
+		return StringUtils.EMPTY;
+	}
+
 	public static boolean validateToken(String token, String jwtSecretKey) throws JOSEException, ParseException {
 		JWSVerifier jwsVerifier = new MACVerifier(jwtSecretKey.getBytes());
 		SignedJWT signedJWT = SignedJWT.parse(token);

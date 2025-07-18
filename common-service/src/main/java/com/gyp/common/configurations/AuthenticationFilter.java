@@ -28,6 +28,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		String payload = request.getHeader(AppConstants.APP_HEADER_USER_PAYLOAD);
+		String subject = request.getHeader(AppConstants.APP_HEADER_USER_SUBJECT);
 		String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
 		if(StringUtils.isNotEmpty(payload) && StringUtils.isNotEmpty(authorizationHeader)) {
@@ -36,7 +37,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
 			Collection<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(payload));
 
-			Map<String, Object> claims = Map.of("payload", payload);
+			Map<String, Object> claims = Map.of("payload", payload, "sub", subject);
 
 			Jwt jwt = new Jwt(token, Instant.now(), Instant.now().plusSeconds(3600), Map.of("alg", "none"), claims);
 

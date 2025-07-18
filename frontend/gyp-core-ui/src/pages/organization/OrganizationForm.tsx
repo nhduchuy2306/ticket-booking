@@ -1,18 +1,18 @@
-import { Button, Form, Input, InputNumber, Space } from "antd";
+import { Button, Form, Input, Space } from "antd";
 import React, { useEffect } from "react";
 import { handleReset, handleSubmit } from "../../components/layout/LayoutUtils.ts";
 import { FormState } from "../../components/layout/models/LayoutModel.ts";
 import MetaData from "../../components/metadata/MetaData.tsx";
-import { VenueRequestDto, VenueResponseDto } from "../../models/generated/event-service-models";
+import { OrganizationRequestDto, OrganizationResponseDto } from "../../models/generated/auth-service-models";
 
-export interface VenueFormProps {
-    entity: VenueResponseDto;
+export interface OrganizationFormProps {
+    entity: OrganizationResponseDto;
     mode: string;
-    onSave: (values: VenueRequestDto) => Promise<void>;
+    onSave: (values: OrganizationRequestDto) => Promise<void>;
     onCancel: () => void;
 }
 
-const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) => {
+const OrganizationForm: React.FC<OrganizationFormProps> = ({entity, mode, onSave, onCancel}) => {
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -32,9 +32,22 @@ const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) =
                 <Form
                         form={form}
                         layout="vertical"
-                        onFinish={() => handleSubmit(entity, form, onSave)}
+                        onFinish={(values: OrganizationRequestDto) => handleSubmit(values, form, onSave)}
                         disabled={isReadOnly}
                 >
+                    {!isCreateMode &&
+                        <Form.Item
+                            name="id"
+                            label="Id"
+                            rules={[
+                                {required: true, message: 'Please enter venue name'},
+                                {min: 2, message: 'Venue name must be at least 2 characters'}
+                            ]}
+                        >
+                            <Input disabled={true}/>
+                        </Form.Item>
+                    }
+
                     <Form.Item
                             name="name"
                             label="Venue Name"
@@ -47,51 +60,10 @@ const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) =
                     </Form.Item>
 
                     <Form.Item
-                            name="address"
-                            label="Address"
-                            rules={[{required: true, message: 'Please enter address'}]}
+                            name="description"
+                            label="Description"
                     >
-                        <Input placeholder="Enter address"/>
-                    </Form.Item>
-
-                    <Form.Item
-                            name="city"
-                            label="City"
-                            rules={[{required: true, message: 'Please enter city'}]}
-                    >
-                        <Input placeholder="Enter address"/>
-                    </Form.Item>
-
-                    <Form.Item
-                            name="country"
-                            label="Country"
-                            rules={[{required: true, message: 'Please enter country'}]}
-                    >
-                        <Input placeholder="Enter address"/>
-                    </Form.Item>
-
-                    <Form.Item
-                            name="capacity"
-                            label="Capacity"
-                            rules={[{required: true, message: 'Please enter capacity'}]}
-                    >
-                        <InputNumber placeholder="Enter capacity" min={1}/>
-                    </Form.Item>
-
-                    <Form.Item
-                            name="latitude"
-                            label="Latitude"
-                            rules={[{required: true, message: 'Please enter latitude'}]}
-                    >
-                        <InputNumber type="number" placeholder="Enter latitude" step="any"/>
-                    </Form.Item>
-
-                    <Form.Item
-                            name="longitude"
-                            label="Longitude"
-                            rules={[{required: true, message: 'Please enter longitude'}]}
-                    >
-                        <InputNumber type="number" placeholder="Enter longitude" step="any"/>
+                        <Input placeholder="Enter description"/>
                     </Form.Item>
 
                     {isReadOnly &&
@@ -126,4 +98,4 @@ const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) =
     );
 }
 
-export default VenueForm;
+export default OrganizationForm;
