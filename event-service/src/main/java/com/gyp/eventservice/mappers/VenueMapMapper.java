@@ -33,6 +33,11 @@ public interface VenueMapMapper extends AbstractMapper {
 		mapAbstractFieldsToEntity(entity);
 	}
 
+	@AfterMapping
+	default void afterMapping(@MappingTarget VenueMapResponseDto responseDto, VenueMapEntity entity) {
+		mapAbstractFields(entity, responseDto);
+	}
+
 	@Named("venueIdToEntity")
 	default VenueEntity venueIdToEntity(String venueId) {
 		if(venueId == null || venueId.isBlank()) {

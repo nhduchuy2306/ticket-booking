@@ -30,4 +30,9 @@ public interface SeasonMapper extends AbstractMapper {
 	default void afterMapping(@MappingTarget CategoryEntity entity) {
 		mapAbstractFieldsToEntity(entity);
 	}
+
+	@AfterMapping
+	default void afterMapping(@MappingTarget SeasonResponseDto responseDto, SeasonEntity entity) {
+		mapAbstractFields(entity, responseDto);
+	}
 }

@@ -64,4 +64,9 @@ public interface TicketTypeMapper extends AbstractMapper {
 	default void afterMapping(@MappingTarget TicketTypeEntity entity) {
 		mapAbstractFieldsToEntity(entity);
 	}
+
+	@AfterMapping
+	default void afterMapping(@MappingTarget TicketTypeResponseDto responseDto, TicketTypeEntity entity) {
+		mapAbstractFields(entity, responseDto);
+	}
 }

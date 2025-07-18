@@ -60,4 +60,9 @@ public interface EventPromotionMapper extends AbstractMapper {
 	default void afterMapping(@MappingTarget EventPromotionEntity entity) {
 		mapAbstractFieldsToEntity(entity);
 	}
+
+	@AfterMapping
+	default void afterMapping(@MappingTarget EventPromotionResponseDto responseDto, EventPromotionEntity entity) {
+		mapAbstractFields(entity, responseDto);
+	}
 }

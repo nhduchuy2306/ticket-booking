@@ -38,4 +38,9 @@ public interface VenueMapper extends AbstractMapper {
 	default void afterMapping(@MappingTarget VenueEntity entity) {
 		mapAbstractFieldsToEntity(entity);
 	}
+
+	@AfterMapping
+	default void afterMapping(@MappingTarget VenueResponseDto responseDto, VenueEntity entity) {
+		mapAbstractFields(entity, responseDto);
+	}
 }

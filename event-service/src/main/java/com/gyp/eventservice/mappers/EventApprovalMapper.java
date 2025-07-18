@@ -5,7 +5,6 @@ import java.util.List;
 import com.gyp.eventservice.dtos.eventapproval.EventApprovalRequestDto;
 import com.gyp.eventservice.dtos.eventapproval.EventApprovalResponseDto;
 import com.gyp.eventservice.entities.EventApprovalEntity;
-import com.gyp.eventservice.entities.EventEntity;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
@@ -39,7 +38,12 @@ public interface EventApprovalMapper extends AbstractMapper {
 	void updateEntityFromDto(EventApprovalRequestDto dto, @MappingTarget EventApprovalEntity entity);
 
 	@AfterMapping
-	default void afterMapping(@MappingTarget EventEntity entity) {
+	default void afterMapping(@MappingTarget EventApprovalEntity entity) {
 		mapAbstractFieldsToEntity(entity);
+	}
+
+	@AfterMapping
+	default void afterMapping(@MappingTarget EventApprovalResponseDto responseDto, EventApprovalEntity entity) {
+		mapAbstractFields(entity, responseDto);
 	}
 }

@@ -173,4 +173,9 @@ public interface EventMapper extends AbstractMapper {
 	default void afterMapping(@MappingTarget EventEntity entity) {
 		mapAbstractFieldsToEntity(entity);
 	}
+
+	@AfterMapping
+	default void afterMapping(@MappingTarget EventResponseDto responseDto, EventEntity entity) {
+		mapAbstractFields(entity, responseDto);
+	}
 }
