@@ -2,10 +2,11 @@ import { Breadcrumb, Layout, Menu } from 'antd';
 import { SelectInfo } from "rc-menu/lib/interface";
 import React, { useEffect, useState } from 'react';
 import { AiOutlineUser, AiOutlineUsergroupAdd } from "react-icons/ai";
-import { BiBuilding, BiCategory } from "react-icons/bi";
-import { BsCalendar3 } from "react-icons/bs";
+import { BiBuilding, BiCategory, BiMoney } from "react-icons/bi";
+import { BsCalendar3, BsTicket } from "react-icons/bs";
 import { CiLocationOn, CiSettings, CiShop } from "react-icons/ci";
 import { IoIosLogOut } from "react-icons/io";
+import { LiaFirstOrder } from "react-icons/lia";
 import { PiSeat } from "react-icons/pi";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "./app.scss";
@@ -14,18 +15,29 @@ import { findMenuPath, getItem, getLabelByKey, MenuItem } from "./services/AppSe
 const {Content, Sider} = Layout;
 
 const items: MenuItem[] = [
-    getItem('User', 'user', <AiOutlineUser/>, [
+    getItem('User Service', 'user-service', <AiOutlineUser/>, [
         getItem('User Account', 'user-account', <AiOutlineUser/>),
         getItem('User Group', 'user-group', <AiOutlineUsergroupAdd/>),
         getItem('Organization', 'organization', <BiBuilding/>),
     ]),
-    getItem('Category', 'category', <BiCategory/>),
-    getItem('Event', 'event', <BsCalendar3/>),
-    getItem('Venue', 'venue', <CiLocationOn/>),
-    getItem('Ticket Type', 'ticket-type', <BiCategory/>),
-    getItem('Seat Map', 'seat-map', <PiSeat/>),
-    getItem('Sale Channel', 'sale-channel', <CiShop/>),
-    getItem('Configuration', 'configuration', <CiSettings/>),
+    getItem('Event Service', 'event-service', <BsCalendar3/>, [
+        getItem('Event', 'event', <BsCalendar3/>),
+        getItem('Category', 'category', <BiCategory/>),
+        getItem('Venue', 'venue', <CiLocationOn/>),
+        getItem('Seat Map', 'seat-map', <PiSeat/>),
+        getItem('Ticket Type', 'ticket-type', <BiCategory/>),
+    ]),
+    getItem('Ticket Service', 'ticket-service', <BsTicket/>, [
+        getItem('Ticket', 'ticket', <BsTicket/>),
+        getItem('Order', 'order', <BiMoney/>),
+    ]),
+    getItem('Sale Channel Service', 'sale-channel-service', <LiaFirstOrder/>, [
+        getItem('Sale Channel', 'sale-channel', <CiShop/>),
+        getItem('Sale Channel Type', 'sale-channel-type', <CiShop/>),
+    ]),
+    getItem('Configuration Service', 'configuration-service', <CiSettings/>, [
+        getItem('Configuration', 'configuration', <CiSettings/>),
+    ]),
     getItem('Logout', 'logout', <IoIosLogOut/>)
 ];
 

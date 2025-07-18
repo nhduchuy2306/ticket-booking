@@ -25,9 +25,16 @@ const toIsoDateTime = (date: string): string => {
     return moment(date).format('YYYY-MM-DDTHH:mm:ss');
 };
 
+const toIsoDate = (date: string | undefined | null) => {
+    if (!date || !moment(date).isValid()) {
+        return undefined;
+    }
+    return moment(date);
+};
+
 const isValidDate = (date: string): boolean => {
     return moment(date, 'YYYY-MM-DD', true).isValid() ||
-              moment(date, 'YYYY-MM-DD HH:mm:ss', true).isValid();
+            moment(date, 'YYYY-MM-DD HH:mm:ss', true).isValid();
 }
 
 export const DateUtils = {
@@ -35,5 +42,6 @@ export const DateUtils = {
     formatDate,
     formatToDateTime,
     isValidDate,
-    toIsoDateTime
+    toIsoDateTime,
+    toIsoDate
 }

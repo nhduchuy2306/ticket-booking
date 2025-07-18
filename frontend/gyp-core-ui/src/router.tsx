@@ -6,8 +6,8 @@ import RegisterPage from "./pages/auth/RegisterPage.tsx";
 import CategoryPage from "./pages/category/CategoryPage.tsx";
 import ConfigurationPage from "./pages/configuration/ConfigurationPage.tsx";
 import ErrorPage from "./pages/error/ErrorPage.tsx";
+import EventForm from "./pages/event/EventForm.tsx";
 import EventPage from "./pages/event/EventPage.tsx";
-import EventPageForm from "./pages/event/EventPageForm.tsx";
 import OrganizationPage from "./pages/organization/OrganizationPage.tsx";
 import OverviewPage from "./pages/OverviewPage.tsx";
 import ProtectRoute from "./pages/ProtectRoute.tsx";
@@ -80,12 +80,16 @@ export const router = createBrowserRouter([
                         element: <EventPage/>
                     },
                     {
-                        path: 'new',
-                        element: <EventPageForm mode={Mode.CREATE.key}/>
+                        path: 'create',
+                        element: <EventForm mode={Mode.CREATE.key}/>
                     },
                     {
-                        path: ':id',
-                        element: <EventPageForm mode={Mode.EDIT.key}/>
+                        path: 'view/:id',
+                        element: <EventForm mode={Mode.READ_ONLY.key}/>
+                    },
+                    {
+                        path: 'edit/:id',
+                        element: <EventForm mode={Mode.EDIT.key}/>
                     }
                 ],
             },

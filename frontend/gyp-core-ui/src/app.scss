@@ -28,7 +28,7 @@
   }
 
   .ant-menu:not(.ant-menu-inline-collapsed) {
-    width: 280px !important;
+    width: 270px !important;
   }
 }
 
@@ -41,4 +41,10 @@
   bottom: 0;
   scrollbar-width: thin;
   scrollbar-gutter: stable;
+
+  .ant-menu {
+    height: 100%;
+    //overflow-y: auto;
+    //overflow-x: hidden;
+  }
 }
