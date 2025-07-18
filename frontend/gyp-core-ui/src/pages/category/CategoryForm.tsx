@@ -1,6 +1,7 @@
 import { Button, Form, Input, Space } from "antd";
 import React, { useEffect } from "react";
 import { FormState } from "../../components/layout/models/LayoutModel.ts";
+import MetaData from "../../components/metadata/MetaData.tsx";
 import { CategoryRequestDto, CategoryResponseDto } from "../../models/generated/event-service-models";
 
 export interface CategoryFormProps {
@@ -63,6 +64,16 @@ const CategoryForm: React.FC<CategoryFormProps> = ({entity, mode, onSave, onCanc
                     >
                         <Input.TextArea rows={4} placeholder="Enter category description"/>
                     </Form.Item>
+
+                    <MetaData
+                            metadata={{
+                                id: entity?.id,
+                                createUser: entity?.createUser,
+                                changeUser: entity?.changeUser,
+                                createTimestamp: entity?.createTimestamp,
+                                changeTimestamp: entity?.changeTimestamp
+                            }}
+                    />
 
                     {!isReadOnly && (
                             <Form.Item>

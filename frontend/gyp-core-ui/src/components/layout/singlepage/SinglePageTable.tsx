@@ -1,7 +1,7 @@
 import { Button, Flex, Modal, notification, Table, TableProps, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import { BiPlus } from "react-icons/bi";
-import { BaseService } from "../models/LayoutModel.ts";
+import { BaseService } from "../../../services/BaseService.ts";
 import { useSinglePageContext } from "./SinglePageContext.tsx";
 
 export interface SinglePageTableProps {

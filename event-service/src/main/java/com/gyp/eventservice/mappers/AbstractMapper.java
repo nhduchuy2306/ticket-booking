@@ -1,7 +1,6 @@
 package com.gyp.eventservice.mappers;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import com.gyp.eventservice.dtos.AbstractDto;
 import com.gyp.eventservice.entities.AbstractEntity;

@@ -9,6 +9,11 @@ const getAllSeasons = async (): Promise<SeasonResponseDto[]> => {
     return res.data;
 }
 
+const getSeasonById = async (id: string): Promise<SeasonResponseDto> => {
+    const res = await apiClient.get(`/${EVENT_SERVICE_PATH}/${SEASON_PATH}/${id}`);
+    return res.data;
+}
+
 const createSeason = async (body: SeasonRequestDto): Promise<SeasonResponseDto> => {
     const res = await apiClient.post(`/${EVENT_SERVICE_PATH}/${SEASON_PATH}`, body);
     return res.data;
@@ -28,6 +33,7 @@ export const SeasonService = {
     createSeason,
     updateSeason,
     deleteSeason,
+    getSeasonById,
 }
 
 export const SeasonServiceAdapter: BaseService<SeasonRequestDto, SeasonResponseDto> = {
@@ -35,4 +41,5 @@ export const SeasonServiceAdapter: BaseService<SeasonRequestDto, SeasonResponseD
     create: (request) => SeasonService.createSeason(request),
     update: (request, id) => SeasonService.updateSeason(request, id),
     delete: (id) => SeasonService.deleteSeason(id),
+    getById: (id) => SeasonService.getSeasonById(id),
 };

@@ -47,4 +47,5 @@ export const EventServiceAdapter: BaseService<EventRequestDto, EventResponseDto>
     create: (request) => EventService.createEvent(request),
     update: (request, id) => EventService.updateEvent(id, request),
     delete: (id) => EventService.deleteEvent(id),
+    getById: (id) => EventService.getEventById(id),
 }

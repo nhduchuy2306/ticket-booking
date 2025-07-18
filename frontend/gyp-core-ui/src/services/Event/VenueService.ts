@@ -9,6 +9,11 @@ const getAllVenues = async (): Promise<VenueResponseDto[]> => {
     return res.data;
 }
 
+const getVenueById = async (id: string): Promise<VenueResponseDto> => {
+    const res = await apiClient.get(`/${EVENT_SERVICE_PATH}/${VENUE_PATH}/${id}`);
+    return res.data;
+}
+
 const createVenue = async (body: VenueRequestDto): Promise<VenueResponseDto> => {
     const res = await apiClient.post(`/${EVENT_SERVICE_PATH}/${VENUE_PATH}`, body);
     return res.data;
@@ -28,6 +33,7 @@ export const VenueService = {
     createVenue,
     updateVenue,
     deleteVenue,
+    getVenueById,
 }
 
 export const VenueServiceAdapter: BaseService<VenueRequestDto, VenueResponseDto> = {
@@ -35,4 +41,5 @@ export const VenueServiceAdapter: BaseService<VenueRequestDto, VenueResponseDto>
     create: (request) => VenueService.createVenue(request),
     update: (request, id) => VenueService.updateVenue(request, id),
     delete: (id) => VenueService.deleteVenue(id),
+    getById: (id) => VenueService.getVenueById(id),
 };

@@ -6,4 +6,6 @@ export interface BaseService<T, U> {
     update(entity: T, id: string): Promise<U>;
 
     delete(id: string): Promise<void>;
+
+    getById(id: string): Promise<U>;
 }

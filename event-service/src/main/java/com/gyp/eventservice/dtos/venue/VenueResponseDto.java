@@ -1,6 +1,9 @@
 package com.gyp.eventservice.dtos.venue;
 
+import java.util.List;
+
 import com.gyp.eventservice.dtos.AbstractDto;
+import com.gyp.eventservice.dtos.venuemap.VenueMapResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,4 +24,5 @@ public class VenueResponseDto extends AbstractDto {
 	private Integer capacity;
 	private Double latitude;
 	private Double longitude;
+	private List<VenueMapResponseDto> venueMapList;
 }

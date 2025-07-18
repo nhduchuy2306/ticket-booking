@@ -97,11 +97,11 @@ const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) =
                     {isReadOnly &&
                         <MetaData
                             metadata={{
-                                id: entity.id,
-                                createUser: entity.createUser,
-                                changeUser: entity.changeUser,
-                                createTimestamp: entity.createTimestamp,
-                                changeTimestamp: entity.changeTimestamp
+                                id: entity?.id,
+                                createUser: entity?.createUser,
+                                changeUser: entity?.changeUser,
+                                createTimestamp: entity?.createTimestamp,
+                                changeTimestamp: entity?.changeTimestamp
                             }}
                         />
                     }

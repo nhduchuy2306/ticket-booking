@@ -14,44 +14,24 @@ export interface MetaDataModel {
 
 export interface MetaDataProps {
     metadata?: MetaDataModel;
-    showCreateUser?: boolean;
-    showChangeUser?: boolean;
-    showCreateTimestamp?: boolean;
-    showChangeTimestamp?: boolean;
 }
 
-const MetaData: React.FC<MetaDataProps> = ({
-                                               metadata,
-                                               showCreateUser = true,
-                                               showChangeUser = true,
-                                               showCreateTimestamp = true,
-                                               showChangeTimestamp = true
-                                           }) => {
+const MetaData: React.FC<MetaDataProps> = ({metadata}) => {
     const getItems: (panelStyle: CSSProperties) => CollapseProps['items'] = (panelStyle) => [
         {
             key: 'metadata',
             label: 'Metadata',
             children: (
                     <div className="bg-gray-100 p-2! rounded-md flex flex-col justify-center items-start">
-                        {metadata?.id && (
-                                <MetaDataItem label="ID" data={metadata?.id}/>
-                        )}
-                        {showCreateUser && metadata?.createUser && (
-                                <MetaDataItem label="Create User" data={metadata.createUser}/>
-                        )}
-                        {showChangeUser && metadata?.changeUser && (
-                                <MetaDataItem label="Change User" data={metadata.changeUser}/>
-                        )}
-                        {showCreateTimestamp && metadata?.createTimestamp && (
-                                <MetaDataItem label="Create Timestamp"
-                                              data={metadata.createTimestamp}
-                                              formatter={(data) => DateUtils.formatToDateTime(data)}/>
-                        )}
-                        {showChangeTimestamp && metadata?.changeTimestamp && (
-                                <MetaDataItem label="Change Timestamp"
-                                              data={metadata.changeTimestamp}
-                                              formatter={(data) => DateUtils.formatToDateTime(data)}/>
-                        )}
+                        <MetaDataItem label="ID" data={metadata?.id}/>
+                        <MetaDataItem label="Create User" data={metadata?.createUser}/>
+                        <MetaDataItem label="Change User" data={metadata?.changeUser}/>
+                        <MetaDataItem label="Create Timestamp"
+                                      data={metadata?.createTimestamp}
+                                      formatter={(data) => DateUtils.formatToDateTime(data)}/>
+                        <MetaDataItem label="Change Timestamp"
+                                      data={metadata?.changeTimestamp}
+                                      formatter={(data) => DateUtils.formatToDateTime(data)}/>
                     </div>
             ),
             style: panelStyle

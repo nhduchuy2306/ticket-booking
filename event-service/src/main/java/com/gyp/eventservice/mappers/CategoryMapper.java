@@ -49,4 +49,9 @@ public interface CategoryMapper extends AbstractMapper {
 	default void afterMapping(@MappingTarget CategoryEntity entity) {
 		mapAbstractFieldsToEntity(entity);
 	}
+
+	@AfterMapping
+	default void afterMapping(@MappingTarget CategoryResponseDto responseDto, CategoryEntity entity) {
+		mapAbstractFields(entity, responseDto);
+	}
 }

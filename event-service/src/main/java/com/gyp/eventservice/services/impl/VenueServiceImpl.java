@@ -78,12 +78,6 @@ public class VenueServiceImpl implements VenueService {
 		VenueEntity existingVenue = venueRepository.findById(venueId)
 				.orElseThrow(() -> new RuntimeException("Venue not found with id: " + venueId));
 		venueMapper.updateEntityFromDto(venueDto, existingVenue);
-		if(eventRepository.findEventByVenueEntity_Id(existingVenue.getId()).isPresent()) {
-			throw new RuntimeException("Venue already exists with address: " + venueDto.getAddress());
-		}
-		if(eventRepository.findEventByVenueEntity_Address(existingVenue.getAddress()).isPresent()) {
-			throw new RuntimeException("Venue already exists with address: " + venueDto.getAddress());
-		}
 		existingVenue = venueRepository.save(existingVenue);
 		return venueMapper.toResponseDto(existingVenue);
 	}

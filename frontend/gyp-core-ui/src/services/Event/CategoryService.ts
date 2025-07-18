@@ -9,6 +9,11 @@ const getAllCategories = async (): Promise<CategoryResponseDto[]> => {
     return res.data;
 }
 
+const getCategoryById = async (id: string): Promise<CategoryResponseDto> => {
+    const res = await apiClient.get(`/${EVENT_SERVICE_PATH}/${CATEGORY_PATH}/${id}`);
+    return res.data;
+}
+
 const createCategory = async (body: CategoryRequestDto): Promise<CategoryResponseDto> => {
     const res = await apiClient.post(`/${EVENT_SERVICE_PATH}/${CATEGORY_PATH}`, body);
     return res.data;
@@ -28,6 +33,7 @@ export const CategoryService = {
     createCategory,
     updateCategory,
     deleteCategory,
+    getCategoryById,
 }
 
 export const CategoryServiceAdapter: BaseService<CategoryRequestDto, CategoryResponseDto> = {
@@ -35,4 +41,5 @@ export const CategoryServiceAdapter: BaseService<CategoryRequestDto, CategoryRes
     create: (request) => CategoryService.createCategory(request),
     update: (request, id) => CategoryService.updateCategory(request, id),
     delete: (id) => CategoryService.deleteCategory(id),
+    getById: (id) => CategoryService.getCategoryById(id),
 };

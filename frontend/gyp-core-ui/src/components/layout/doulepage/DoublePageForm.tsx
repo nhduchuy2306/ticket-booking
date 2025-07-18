@@ -1,7 +1,8 @@
 import { notification } from "antd";
-import React from "react";
-import { BaseService, FormState } from "../models/LayoutModel.ts";
+import React, { useEffect } from "react";
+import { FormState } from "../models/LayoutModel.ts";
 import { useDoublePageContext } from "./DoublePageContext.tsx";
+import { BaseService } from "../../../services/BaseService.ts";
 
 export interface DoublePageFormProps {
     service: BaseService<any, any>;
@@ -33,6 +34,28 @@ export const DoublePageForm: React.FC<DoublePageFormProps> = ({
         handleClearForm,
         handleChangeMode
     } = useDoublePageContext();
+
+    const [dataById, setDataById] = React.useState(null);
+
+    useEffect(() => {
+        const getDataById = async (id: string) => {
+            setIsLoading(true);
+            try {
+                const response = await service.getById(id);
+                if (response) {
+                    setDataById(response);
+                } else {
+                    handleClearForm();
+                }
+            } catch (error) {
+                console.error("Failed to fetch data:", error);
+                notification.error({message: "Failed to fetch item"});
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        void getDataById(selectedEntity?.id)
+    }, [selectedEntity]);
 
     const handleSave = async (values: any) => {
         setIsLoading(true);
@@ -70,7 +93,7 @@ export const DoublePageForm: React.FC<DoublePageFormProps> = ({
     return (
             <div className="flex-1 mt-10! overflow-auto! h-[calc(100vh-100px)]!">
                 {showForm && children({
-                    entity: selectedEntity,
+                    entity: dataById,
                     mode,
                     onSave: handleSave,
                     onCancel: handleCancel

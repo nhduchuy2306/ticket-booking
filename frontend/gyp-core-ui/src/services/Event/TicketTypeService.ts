@@ -9,6 +9,11 @@ const getAllTicketTypes = async (): Promise<TicketTypeResponseDto[]> => {
     return res.data;
 }
 
+const getTicketTypeById = async (id: string): Promise<TicketTypeResponseDto> => {
+    const res = await apiClient.get(`/${EVENT_SERVICE_PATH}/${TICKET_TYPE_PATH}/${id}`);
+    return res.data;
+}
+
 const createTicketType = async (body: TicketTypeRequestDto): Promise<TicketTypeResponseDto> => {
     const res = await apiClient.post(`/${EVENT_SERVICE_PATH}/${TICKET_TYPE_PATH}`, body);
     return res.data;
@@ -28,6 +33,7 @@ export const TicketTypeService = {
     createTicketType,
     updateTicketType,
     deleteTicketType,
+    getTicketTypeById,
 }
 
 export const TicketTypeServiceAdapter: BaseService<TicketTypeRequestDto, TicketTypeResponseDto> = {
@@ -35,4 +41,5 @@ export const TicketTypeServiceAdapter: BaseService<TicketTypeRequestDto, TicketT
     create: (request) => TicketTypeService.createTicketType(request),
     update: (request, id) => TicketTypeService.updateTicketType(request, id),
     delete: (id) => TicketTypeService.deleteTicketType(id),
+    getById: (id) => TicketTypeService.getTicketTypeById(id),
 };

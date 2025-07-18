@@ -19,7 +19,12 @@ const MetaDataItem: React.FC<MetaDataItemProps> = ({label, data, formatter}) => 
             <div className="flex items-center justify-center w-full">
                 <strong className="flex-3">{label ? label : 'Data'}:</strong>
                 <span className="ml-1 text-gray-600 flex-2/3">
-                    {formatter ? formatter(data) : data}
+                    {formatter
+                            ? data
+                                    ? formatter(data)
+                                    : 'N/A'
+                            : data
+                    }
                 </span>
             </div>
     );

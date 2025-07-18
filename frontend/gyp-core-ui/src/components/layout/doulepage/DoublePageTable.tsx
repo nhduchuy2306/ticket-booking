@@ -2,7 +2,7 @@ import { Button, Flex, Modal, notification, Table, TableProps, Tooltip } from "a
 import React, { useEffect, useState } from "react";
 import { BiPlus } from "react-icons/bi";
 import { ThemeColors } from "../../../configs/Constants.ts";
-import { BaseService } from "../models/LayoutModel.ts";
+import { BaseService } from "../../../services/BaseService.ts";
 import { useDoublePageContext } from "./DoublePageContext.tsx";
 
 export interface DoublePageTableProps {
