@@ -1,6 +1,8 @@
 import { Collapse, CollapseProps } from "antd";
 import React, { CSSProperties } from "react";
 import { AiFillCaretRight } from "react-icons/ai";
+import { DateUtils } from "../../utils/DateUtils.ts";
+import MetaDataItem from "./MetaDataItem.tsx";
 
 export interface MetaDataModel {
     id?: string;
@@ -30,21 +32,25 @@ const MetaData: React.FC<MetaDataProps> = ({
             key: 'metadata',
             label: 'Metadata',
             children: (
-                    <div>
+                    <div className="bg-gray-100 p-2! rounded-md flex flex-col justify-center items-start">
                         {metadata?.id && (
-                                <p><strong>ID:</strong> {metadata.id}</p>
+                                <MetaDataItem label="ID" data={metadata?.id}/>
                         )}
                         {showCreateUser && metadata?.createUser && (
-                                <p><strong>Created By:</strong> {metadata.createUser}</p>
+                                <MetaDataItem label="Create User" data={metadata.createUser}/>
                         )}
                         {showChangeUser && metadata?.changeUser && (
-                                <p><strong>Last Modified By:</strong> {metadata.changeUser}</p>
+                                <MetaDataItem label="Change User" data={metadata.changeUser}/>
                         )}
                         {showCreateTimestamp && metadata?.createTimestamp && (
-                                <p><strong>Created On:</strong> {metadata.createTimestamp}</p>
+                                <MetaDataItem label="Create Timestamp"
+                                              data={metadata.createTimestamp}
+                                              formatter={(data) => DateUtils.formatToDateTime(data)}/>
                         )}
                         {showChangeTimestamp && metadata?.changeTimestamp && (
-                                <p><strong>Last Modified On:</strong> {metadata.changeTimestamp}</p>
+                                <MetaDataItem label="Change Timestamp"
+                                              data={metadata.changeTimestamp}
+                                              formatter={(data) => DateUtils.formatToDateTime(data)}/>
                         )}
                     </div>
             ),
@@ -58,12 +64,14 @@ const MetaData: React.FC<MetaDataProps> = ({
     };
 
     return (
-            <Collapse
-                    bordered={false}
-                    expandIcon={({isActive}) => <AiFillCaretRight
-                            style={{transform: `rotate(${isActive ? 90 : 0}deg)`}}/>}
-                    items={getItems(panelStyle)}
-            />
+            <div className="-ml-2!">
+                <Collapse
+                        ghost
+                        expandIcon={({isActive}) => <AiFillCaretRight
+                                style={{transform: `rotate(${isActive ? 90 : 0}deg)`}}/>}
+                        items={getItems(panelStyle)}
+                />
+            </div>
     );
 }
 

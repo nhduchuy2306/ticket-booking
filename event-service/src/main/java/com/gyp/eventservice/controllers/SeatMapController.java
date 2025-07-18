@@ -2,6 +2,7 @@ package com.gyp.eventservice.controllers;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import com.gyp.eventservice.services.DirectoryService;
@@ -11,6 +12,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +34,15 @@ public class SeatMapController {
 
 	private final SeatMapService seatMapService;
 	private final DirectoryService directoryService;
+
+	@GetMapping
+	public ResponseEntity<?> getAllSeatMaps() {
+		try {
+			return ResponseEntity.ok(new ArrayList<>());
+		} catch(Exception e) {
+			return ResponseEntity.internalServerError().body("Error fetching seat maps: " + e.getMessage());
+		}
+	}
 
 	@PostMapping(value = UPLOAD_PATH, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> uploadSeatMap(@RequestParam("file") MultipartFile file) {
