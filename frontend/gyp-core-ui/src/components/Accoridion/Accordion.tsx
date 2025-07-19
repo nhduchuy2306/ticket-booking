@@ -1,27 +1,37 @@
+import { Button, Flex, Tooltip } from "antd";
 import React from "react";
+import { BiPlus } from "react-icons/bi";
 
-export interface AccordionProps<T> {
-    label?: string;
+export interface AccordionProps {
     disabled?: boolean;
-    onChange?: (data: T[]) => void;
-    data?: T[];
+    onAddNew: () => void;
+    createButtonTooltip?: string;
+    children: React.ReactNode;
 }
 
-const Accordion: React.FC = <T, >({label, disabled, onChange, data}: AccordionProps<T>) => {
+const Accordion: React.FC<AccordionProps> = ({
+                                                 createButtonTooltip = "Create New Item",
+                                                 children,
+                                                 onAddNew,
+                                                 disabled = false
+                                             }) => {
     return (
-            <>
-                <div>{label}</div>
-                <div>{disabled}</div>
-                <div>{JSON.stringify(data)}</div>
-                <div>
-                    {onChange ? (
-                            <button onClick={() => onChange(data || [])}>Trigger Change</button>
-                    ) : (
-                            <span>No change handler provided</span>
-                    )}
+            <Flex vertical>
+                <div className="flex justify-end mb-2!">
+                    <Tooltip title={createButtonTooltip}>
+                        <Button
+                                type="primary"
+                                icon={<BiPlus/>}
+                                onClick={onAddNew}
+                                disabled={disabled}
+                        />
+                    </Tooltip>
                 </div>
-            </>
+                <div className="accordion-content">
+                    {children}
+                </div>
+            </Flex>
     );
-}
+};
 
 export default Accordion;

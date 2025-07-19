@@ -31,6 +31,7 @@ export const DoublePageForm: React.FC<DoublePageFormProps> = ({
         mode,
         setIsLoading,
         handleReload,
+        handleView,
         handleClearForm,
         handleChangeMode
     } = useDoublePageContext();
@@ -54,7 +55,9 @@ export const DoublePageForm: React.FC<DoublePageFormProps> = ({
                 setIsLoading(false);
             }
         };
-        void getDataById(selectedEntity?.id)
+        if(selectedEntity) {
+            void getDataById(selectedEntity?.id)
+        }
     }, [selectedEntity]);
 
     const handleSave = async (values: any) => {
@@ -84,6 +87,7 @@ export const DoublePageForm: React.FC<DoublePageFormProps> = ({
     const handleCancel = () => {
         handleChangeMode(FormState.READ_ONLY.key);
         setIsLoading(false);
+        handleView(dataById);
     };
 
     const showForm =

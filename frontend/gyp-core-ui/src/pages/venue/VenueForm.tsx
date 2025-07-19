@@ -4,6 +4,7 @@ import { handleReset, handleSubmit } from "../../components/layout/LayoutUtils.t
 import { FormState } from "../../components/layout/models/LayoutModel.ts";
 import MetaData from "../../components/metadata/MetaData.tsx";
 import { VenueRequestDto, VenueResponseDto } from "../../models/generated/event-service-models";
+import VenueFormAccordion from "./VenueFormAccordion.tsx";
 
 export interface VenueFormProps {
     entity: VenueResponseDto;
@@ -17,7 +18,10 @@ const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) =
 
     useEffect(() => {
         if (entity) {
-            form.setFieldsValue(entity);
+            form.setFieldsValue({
+                ...entity,
+                venueMapList: entity.venueMapList || []
+            });
         } else {
             form.resetFields();
         }
@@ -32,7 +36,7 @@ const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) =
                 <Form
                         form={form}
                         layout="vertical"
-                        onFinish={() => handleSubmit(entity, form, onSave)}
+                        onFinish={(values) => handleSubmit(values, form, onSave)}
                         disabled={isReadOnly}
                 >
                     <Form.Item
@@ -59,7 +63,7 @@ const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) =
                             label="City"
                             rules={[{required: true, message: 'Please enter city'}]}
                     >
-                        <Input placeholder="Enter address"/>
+                        <Input placeholder="Enter city"/>
                     </Form.Item>
 
                     <Form.Item
@@ -67,7 +71,7 @@ const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) =
                             label="Country"
                             rules={[{required: true, message: 'Please enter country'}]}
                     >
-                        <Input placeholder="Enter address"/>
+                        <Input placeholder="Enter country"/>
                     </Form.Item>
 
                     <Form.Item
@@ -75,7 +79,7 @@ const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) =
                             label="Capacity"
                             rules={[{required: true, message: 'Please enter capacity'}]}
                     >
-                        <InputNumber placeholder="Enter capacity" min={1}/>
+                        <InputNumber placeholder="Enter capacity" min={1} style={{width: '100%'}}/>
                     </Form.Item>
 
                     <Form.Item
@@ -83,7 +87,7 @@ const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) =
                             label="Latitude"
                             rules={[{required: true, message: 'Please enter latitude'}]}
                     >
-                        <InputNumber type="number" placeholder="Enter latitude" step="any"/>
+                        <InputNumber placeholder="Enter latitude" step="any" style={{width: '100%'}}/>
                     </Form.Item>
 
                     <Form.Item
@@ -91,7 +95,26 @@ const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) =
                             label="Longitude"
                             rules={[{required: true, message: 'Please enter longitude'}]}
                     >
-                        <InputNumber type="number" placeholder="Enter longitude" step="any"/>
+                        <InputNumber placeholder="Enter longitude" step="any" style={{width: '100%'}}/>
+                    </Form.Item>
+
+                    <Form.Item
+                            label="Venue Maps"
+                            name="venueMapList"
+                            rules={[{required: true, message: 'Please add at least one venue map'}]}
+                    >
+                        <Form.List name="venueMapList">
+                            {(fields, {add, remove}, {errors}) => (
+                                    <VenueFormAccordion
+                                            mode={mode}
+                                            fields={fields}
+                                            onAdd={add}
+                                            onRemove={remove}
+                                            errors={errors}
+                                            form={form}
+                                    />
+                            )}
+                        </Form.List>
                     </Form.Item>
 
                     {isReadOnly &&
