@@ -1,4 +1,4 @@
-import { Button, Flex, Tooltip } from "antd";
+import { Button, Flex, Space, Tooltip } from "antd";
 import React from "react";
 import { BiPlus } from "react-icons/bi";
 
@@ -27,9 +27,9 @@ const Accordion: React.FC<AccordionProps> = ({
                         />
                     </Tooltip>
                 </div>
-                <div className="accordion-content">
+                <Space direction="vertical" size="middle" style={{display: 'flex'}}>
                     {children}
-                </div>
+                </Space>
             </Flex>
     );
 };

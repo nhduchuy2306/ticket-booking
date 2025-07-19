@@ -1,14 +1,22 @@
 import React from "react";
-import SeatMapRenderer from "../../components/seat-map/SeatMapRenderer.tsx";
+import { useNavigate } from "react-router-dom";
+import SinglePageLayout from "../../components/layout/singlepage/SinglePageLayout.tsx";
+import { SeatMapResponseDto } from "../../models/generated/event-service-models";
+import { SeatMapService } from "../../services/Event/SeatMapService.ts";
+import SeatMapTable from "./SeatMapTable.tsx";
 
 interface SeatMapPageProps {
-    // Define any props if needed
 }
 
 const SeatMapPage: React.FC<SeatMapPageProps> = () => {
+    const navigate = useNavigate();
+
     return (
-            <div className="w-full bg-white !p-2 !overflow-y-auto !h-[calc(100vh-100px)]">
-                <SeatMapRenderer/>
+            <div className="bg-white">
+                <SinglePageLayout onNavigate={(path: string, entity?: SeatMapResponseDto) =>
+                        SeatMapService.navigate(navigate, path, entity)}>
+                    <SeatMapTable/>
+                </SinglePageLayout>
             </div>
     );
 }

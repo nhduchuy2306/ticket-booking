@@ -44,7 +44,7 @@ const SinglePageLayout: React.FC<SinglePageLayoutProps> = ({children, onNavigate
 
     return (
             <SinglePageContext.Provider value={contextValue}>
-                <div className="w-full h-full bg-white">
+                <div className="w-full h-full">
                     {children}
                 </div>
             </SinglePageContext.Provider>

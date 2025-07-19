@@ -11,6 +11,7 @@ export interface SeatMapHeaderProps {
     zoomLevel: number,
     resetView: () => void,
     clearSelection: () => void,
+    title?: string;
 }
 
 const SeatMapHeader: React.FC<SeatMapHeaderProps> = (props) => {
@@ -23,7 +24,7 @@ const SeatMapHeader: React.FC<SeatMapHeaderProps> = (props) => {
     return (
             <div className="!w-full !mb-4 flex flex-col items-center justify-center">
                 <Typography.Title level={2} className="text-2xl font-bold text-gray-800">
-                    Interactive Seat Map
+                    {props.title ? props.title : 'Interactive Seat Map'}
                 </Typography.Title>
 
                 <Flex justify="flex-start" align="flex-start" gap={30} className="!mb-1">

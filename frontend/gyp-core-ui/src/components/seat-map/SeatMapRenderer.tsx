@@ -1,14 +1,18 @@
 import Konva from "konva";
 import React, { useEffect, useRef, useState } from "react";
 import { Layer, Stage } from 'react-konva';
-import { createMockArcVenueData } from "../../mocks/seatmap.mock";
 import { SeatConfig, StageConfig, VenueMap } from "../../models/generated/event-service-models";
 import { SeatMapContext } from "./context/SeatMapContext.tsx";
 import SeatMapHeader from "./layout/SeatMapHeader.tsx";
 import SeatMapSeatConfig from "./layout/SeatMapSeatConfig.tsx";
 import SeatMapStageConfig from "./layout/SeatMapStageConfig.tsx";
 
-const SeatMapRenderer: React.FC = () => {
+export interface SeatMapRendererProps {
+    venueMap?: VenueMap;
+    title?: string;
+}
+
+const SeatMapRenderer: React.FC<SeatMapRendererProps> = ({venueMap, title}) => {
     const [venueData, setVenueData] = useState<VenueMap>({});
     const [seatTypeColors, setSeatTypeColors] = useState<SeatConfig['seatTypeColors']>({});
     const [stageConfig, setStageConfig] = useState<StageConfig>({});
@@ -21,9 +25,10 @@ const SeatMapRenderer: React.FC = () => {
     const layerRef = useRef<Konva.Layer>(null);
 
     useEffect(() => {
-        const data = createMockArcVenueData();
-        setVenueData(data);
-    }, []);
+        if (venueMap) {
+            setVenueData(venueMap);
+        }
+    }, [venueMap]);
 
     useEffect(() => {
         if (venueData && Object.keys(venueData).length > 0) {
@@ -93,7 +98,7 @@ const SeatMapRenderer: React.FC = () => {
                 draggable: draggable,
                 setDraggable: setDraggable,
             }}>
-                <div className="w-full max-w-6xl mx-auto flex flex-col items-center justify-center">
+                <div className="w-full flex flex-col items-center justify-center mb-5!">
                     {/* SeatMap Header */}
                     <SeatMapHeader
                             selectedSeats={selectedSeats}
@@ -101,10 +106,11 @@ const SeatMapRenderer: React.FC = () => {
                             zoomLevel={zoomLevel}
                             resetView={handleResetView}
                             clearSelection={() => setSelectedSeats([])}
+                            title={title}
                     ></SeatMapHeader>
 
                     {/* SeatMap Container */}
-                    <div className="border border-gray-200 rounded flex items-center justify-center !w-full">
+                    <div className="border border-gray-200 rounded flex items-center justify-center">
                         <Stage ref={stageRef}
                                width={1100}
                                height={800}

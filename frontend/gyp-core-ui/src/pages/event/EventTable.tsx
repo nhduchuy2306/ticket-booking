@@ -1,4 +1,5 @@
 import { Button, Tooltip } from "antd";
+import { ColumnsType } from "antd/es/table";
 import React from "react";
 import { RiLoopLeftFill } from "react-icons/ri";
 import SinglePageTable from "../../components/layout/singlepage/SinglePageTable.tsx";
@@ -59,7 +60,7 @@ const EventTable: React.FC<EventTableProps> = () => {
     return (
             <SinglePageTable
                     columns={columns}
-                    createButtonTooltip="Create New User Account"
+                    createButtonTooltip="Create New Event"
                     service={EventServiceAdapter}
                     customActions={customActions}
             />

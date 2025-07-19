@@ -13,6 +13,7 @@ import OverviewPage from "./pages/OverviewPage.tsx";
 import ProtectRoute from "./pages/ProtectRoute.tsx";
 import SaleChannelPage from "./pages/salechannel/SaleChannelPage.tsx";
 import SeasonPage from "./pages/season/SeasonPage.tsx";
+import SeatMapForm from "./pages/seatmap/SeatMapForm.tsx";
 import SeatMapPage from "./pages/seatmap/SeatMapPage.tsx";
 import TicketTypePage from "./pages/tickettype/TicketTypePage.tsx";
 import UserAccountForm from "./pages/useraccount/UserAccountForm.tsx";
@@ -106,19 +107,22 @@ const EventServiceRouter = [
     },
     {
         path: 'seat-map',
-        element: <SeatMapPage/>,
         children: [
             {
                 index: true,
                 element: <SeatMapPage/>
             },
             {
-                path: 'new',
-                element: <SeatMapPage/>
+                path: 'create',
+                element: <SeatMapForm mode={Mode.CREATE.key}/>
             },
             {
-                path: ':id',
-                element: <SeatMapPage/>
+                path: 'view/:id',
+                element: <SeatMapForm mode={Mode.READ_ONLY.key}/>
+            },
+            {
+                path: 'edit/:id',
+                element: <SeatMapForm mode={Mode.EDIT.key}/>
             }
         ]
     },

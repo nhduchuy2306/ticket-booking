@@ -16,6 +16,15 @@ apiClient.interceptors.request.use(
             return config;
         },
         (error) => {
+            return Promise.reject(error);
+        }
+);
+
+apiClient.interceptors.response.use(
+        (response) => {
+            return response;
+        },
+        (error) => {
             if (error.response?.status === 401) {
                 localStorage.removeItem('token');
                 window.location.href = '/login';

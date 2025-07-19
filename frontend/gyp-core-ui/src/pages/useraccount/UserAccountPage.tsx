@@ -23,9 +23,11 @@ const UserAccountPage: React.FC<UserAccountPageProps> = () => {
     };
 
     return (
-            <SinglePageLayout onNavigate={handleNavigate}>
-                <UserAccountTable/>
-            </SinglePageLayout>
+            <div className="bg-white">
+                <SinglePageLayout onNavigate={handleNavigate}>
+                    <UserAccountTable/>
+                </SinglePageLayout>
+            </div>
     );
 }
 

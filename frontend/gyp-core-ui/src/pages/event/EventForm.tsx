@@ -9,7 +9,6 @@ import { CategoryResponseDto, EventRequestDto, EventResponseDto } from "../../mo
 import { CategoryService } from "../../services/Event/CategoryService.ts";
 import { EventService, EventServiceAdapter } from "../../services/Event/EventService.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
-import { handleNavigate } from "./EventPageUtils.ts";
 
 interface EventFormProps {
     mode: string;
@@ -201,21 +200,23 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
     }
 
     return (
-            <SinglePageLayout onNavigate={(path: string, entity?: EventResponseDto) =>
-                    handleNavigate(navigate, path, entity)}
-            >
-                <SinglePageForm
-                        service={EventServiceAdapter}
-                        renderForm={renderForm}
-                        entity={data}
-                        mode={mode}
-                        successMessages={{
-                            create: "User account created successfully",
-                            update: "User account updated successfully"
-                        }}
-                        showBackButton={true}
-                />
-            </SinglePageLayout>
+            <div className="bg-white">
+                <SinglePageLayout onNavigate={(path: string, entity?: EventResponseDto) =>
+                        EventService.navigate(navigate, path, entity)}
+                >
+                    <SinglePageForm
+                            service={EventServiceAdapter}
+                            renderForm={renderForm}
+                            entity={data}
+                            mode={mode}
+                            successMessages={{
+                                create: "Event created successfully",
+                                update: "Event updated successfully"
+                            }}
+                            showBackButton={true}
+                    />
+                </SinglePageLayout>
+            </div>
     );
 }
 

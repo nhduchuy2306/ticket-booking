@@ -2,9 +2,10 @@ package com.gyp.eventservice.controllers;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Objects;
 
+import com.gyp.common.controllers.AbstractController;
+import com.gyp.eventservice.dtos.seatmap.SeatMapRequestDto;
 import com.gyp.eventservice.services.DirectoryService;
 import com.gyp.eventservice.services.SeatMapService;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +13,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,8 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(SeatMapController.SEAT_MAP_CONTROLLER_RESOURCE_PATH)
-public class SeatMapController {
-	public static final String SEAT_MAP_CONTROLLER_RESOURCE_PATH = "/seatmaps";
+public class SeatMapController extends AbstractController {
+	public static final String SEAT_MAP_CONTROLLER_RESOURCE_PATH = "/seat-maps";
 
 	private static final String UPLOAD_PATH = "/upload";
 	private static final String DOWNLOAD_TEMPLATE_PATH = "/downloadtemplate";
@@ -38,9 +41,47 @@ public class SeatMapController {
 	@GetMapping
 	public ResponseEntity<?> getAllSeatMaps() {
 		try {
-			return ResponseEntity.ok(new ArrayList<>());
+			return ResponseEntity.ok(seatMapService.getAllSeatMaps());
 		} catch(Exception e) {
 			return ResponseEntity.internalServerError().body("Error fetching seat maps: " + e.getMessage());
+		}
+	}
+
+	@GetMapping("/{" + ID_PARAM + "}")
+	public ResponseEntity<?> getSeatMapById(@PathVariable(ID_PARAM) String seatMapId) {
+		try {
+			return ResponseEntity.ok(seatMapService.getSeatMapById(seatMapId));
+		} catch(Exception e) {
+			return ResponseEntity.status(404).body("Seat map not found: " + e.getMessage());
+		}
+	}
+
+	@PostMapping
+	public ResponseEntity<?> createSeatMap(@RequestBody SeatMapRequestDto seatMapDto) {
+		try {
+			return ResponseEntity.ok(seatMapService.createSeatMap(seatMapDto));
+		} catch(Exception e) {
+			return ResponseEntity.status(400).body("Error creating seat map: " + e.getMessage());
+		}
+	}
+
+	@PutMapping("/{" + ID_PARAM + "}")
+	public ResponseEntity<?> updateSeatMap(@PathVariable(ID_PARAM) String seatMapId,
+			@RequestBody SeatMapRequestDto seatMapDto) {
+		try {
+			return ResponseEntity.ok(seatMapService.updateSeatMap(seatMapId, seatMapDto));
+		} catch(Exception e) {
+			return ResponseEntity.status(404).body("Error updating seat map: " + e.getMessage());
+		}
+	}
+
+	@DeleteMapping("/{" + ID_PARAM + "}")
+	public ResponseEntity<?> deleteSeatMap(@PathVariable(ID_PARAM) String seatMapId) {
+		try {
+			seatMapService.deleteSeatMap(seatMapId);
+			return ResponseEntity.ok("Seat map deleted successfully");
+		} catch(Exception e) {
+			return ResponseEntity.status(404).body("Error deleting seat map: " + e.getMessage());
 		}
 	}
 

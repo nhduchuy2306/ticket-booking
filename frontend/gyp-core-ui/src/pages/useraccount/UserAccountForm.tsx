@@ -215,19 +215,21 @@ const UserAccountForm: React.FC<UserAccountFormProps> = ({mode}) => {
     };
 
     return (
-            <SinglePageLayout onNavigate={handleNavigate}>
-                <SinglePageForm
-                        service={UserAccountServiceAdapter}
-                        renderForm={renderForm}
-                        entity={data}
-                        mode={mode}
-                        successMessages={{
-                            create: "User account created successfully",
-                            update: "User account updated successfully"
-                        }}
-                        showBackButton={true}
-                />
-            </SinglePageLayout>
+            <div className="bg-white">
+                <SinglePageLayout onNavigate={handleNavigate}>
+                    <SinglePageForm
+                            service={UserAccountServiceAdapter}
+                            renderForm={renderForm}
+                            entity={data}
+                            mode={mode}
+                            successMessages={{
+                                create: "User account created successfully",
+                                update: "User account updated successfully"
+                            }}
+                            showBackButton={true}
+                    />
+                </SinglePageLayout>
+            </div>
     );
 };
 

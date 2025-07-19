@@ -43,7 +43,7 @@ public class SeatMapEntity extends AbstractEntity {
 	@Column(name = "stage_config", columnDefinition = "TEXT", nullable = false)
 	private String stageConfigRaw;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "venue_map_id", nullable = false)
 	private VenueMapEntity venueMapEntity;
 }

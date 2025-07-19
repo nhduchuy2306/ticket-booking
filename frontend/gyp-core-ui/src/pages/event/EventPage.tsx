@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import SinglePageLayout from "../../components/layout/singlepage/SinglePageLayout.tsx";
 import { EventResponseDto } from "../../models/generated/event-service-models";
+import { EventService } from "../../services/Event/EventService.ts";
 import EventTable from "./EventTable.tsx";
 
 interface EventPageProps {
@@ -10,22 +11,13 @@ interface EventPageProps {
 const EventPage: React.FC<EventPageProps> = () => {
     const navigate = useNavigate();
 
-    const handleNavigate = (path: string, entity?: EventResponseDto) => {
-        if (path === '/create') {
-            navigate('/event/create');
-        } else if (path === '/edit') {
-            navigate(`/event/edit/${entity?.id}`);
-        } else if (path === '/view') {
-            navigate(`/event/view/${entity?.id}`);
-        } else {
-            navigate('/event');
-        }
-    };
-
     return (
-            <SinglePageLayout onNavigate={handleNavigate}>
-                <EventTable/>
-            </SinglePageLayout>
+            <div className="bg-white">
+                <SinglePageLayout onNavigate={(path: string, entity?: EventResponseDto) =>
+                        EventService.navigate(navigate, path, entity)}>
+                    <EventTable/>
+                </SinglePageLayout>
+            </div>
     );
 };
 

@@ -10,22 +10,20 @@ const createMockVenueData = (): VenueMap => ({
     "stageConfig": {
         "id": "stage-001",
         "name": "Main Stage",
-        "description": "Primary performance stage",
+        "description": "Semi-circular main stage",
         "position": {
-            "x": 50.0,
-            "y": 20.0
+            "x": 600,
+            "y": 100
         },
         "dimensions": {
-            "width": 1100.0,
-            "height": 150.0
+            "width": 200,
+            "height": 100
         },
-        "rotation": 0.0,
-        "shape": "RECTANGLE",
+        "rotation": 0,
+        "shape": "SEMICIRCLE",
         "orientation": "SOUTH",
         "active": true,
-        "customVertices": [],
-        "elevation": 2.0,
-        "svgPath": undefined
+        "elevation": 1.5
     },
     "seatConfig": {
         "seatTypeColors": {
@@ -33,7 +31,7 @@ const createMockVenueData = (): VenueMap => ({
             "Premium": "#FF6B6B",
             "Standard": "#4ECDC4",
             "Economy": "#95E1D3",
-            "Selected": "#FF6347",
+            "Selected": "#FF6347"
         },
         "sections": [
             {
@@ -41,35 +39,33 @@ const createMockVenueData = (): VenueMap => ({
                 "name": "VIP Section A",
                 "type": "SEATED",
                 "position": {
-                    "x": 400.0,
-                    "y": 200.0
+                    "x": 400,
+                    "y": 200
                 },
                 "dimensions": {
-                    "width": 400.0,
-                    "height": 200.0
+                    "width": 400,
+                    "height": 200
                 },
-                "rotation": 0.0,
+                "rotation": 0,
                 "capacity": 120,
                 "isArc": false,
-                "arcProperties": undefined,
                 "ticketTypeId": "VIP",
                 "rows": [
                     {
                         "id": "row-vip-001-a",
                         "name": "Row A",
                         "position": {
-                            "x": 5.0,
-                            "y": 40.0
+                            "x": 5,
+                            "y": 40
                         },
                         "isArc": false,
-                        "arcProperties": undefined,
                         "seats": [
                             {
                                 "id": "seat-vip-001-a-1",
                                 "name": "1",
                                 "position": {
-                                    "x": 0.0,
-                                    "y": 0.0
+                                    "x": 0,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -79,14 +75,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -95,15 +89,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-a-2",
                                 "name": "2",
                                 "position": {
-                                    "x": 50.0,
-                                    "y": 0.0
+                                    "x": 50,
+                                    "y": 0
                                 },
                                 "status": "RESERVED",
                                 "attributes": {
@@ -113,14 +106,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFFF00",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -129,15 +120,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": false,
                                     "hoverAble": true,
                                     "cursor": "not-allowed",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-a-3",
                                 "name": "3",
                                 "position": {
-                                    "x": 100.0,
-                                    "y": 0.0
+                                    "x": 100,
+                                    "y": 0
                                 },
                                 "status": "SOLD",
                                 "attributes": {
@@ -147,14 +137,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FF0000",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -163,15 +151,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": false,
                                     "hoverAble": false,
                                     "cursor": "default",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-a-4",
                                 "name": "4",
                                 "position": {
-                                    "x": 150.0,
-                                    "y": 0.0
+                                    "x": 150,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -181,14 +168,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -197,15 +182,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-a-5",
                                 "name": "5",
                                 "position": {
-                                    "x": 200.0,
-                                    "y": 0.0
+                                    "x": 200,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -215,14 +199,16 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#0000FF",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
+                                    "strokeWidth": 2,
                                     "opacity": 0.7,
-                                    "dashPattern": ["5", "5"],
+                                    "dashPattern": [
+                                        "5",
+                                        "5"
+                                    ],
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -231,15 +217,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": false,
                                     "hoverAble": false,
                                     "cursor": "not-allowed",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-a-6",
                                 "name": "6",
                                 "position": {
-                                    "x": 250.0,
-                                    "y": 0.0
+                                    "x": 250,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -249,14 +234,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -265,15 +248,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-a-7",
                                 "name": "7",
                                 "position": {
-                                    "x": 300.0,
-                                    "y": 0.0
+                                    "x": 300,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -283,14 +265,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -299,15 +279,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-a-8",
                                 "name": "8",
                                 "position": {
-                                    "x": 350.0,
-                                    "y": 0.0
+                                    "x": 350,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -317,14 +296,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -333,7 +310,6 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             }
                         ]
@@ -342,18 +318,17 @@ const createMockVenueData = (): VenueMap => ({
                         "id": "row-vip-001-b",
                         "name": "Row B",
                         "position": {
-                            "x": 5.0,
-                            "y": 90.0
+                            "x": 5,
+                            "y": 90
                         },
                         "isArc": false,
-                        "arcProperties": undefined,
                         "seats": [
                             {
                                 "id": "seat-vip-001-b-1",
                                 "name": "1",
                                 "position": {
-                                    "x": 0.0,
-                                    "y": 0.0
+                                    "x": 0,
+                                    "y": 0
                                 },
                                 "status": "SOLD",
                                 "attributes": {
@@ -363,14 +338,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FF0000",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -379,15 +352,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": false,
                                     "hoverAble": false,
                                     "cursor": "default",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-b-2",
                                 "name": "2",
                                 "position": {
-                                    "x": 50.0,
-                                    "y": 0.0
+                                    "x": 50,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -397,14 +369,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -413,15 +383,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-b-3",
                                 "name": "3",
                                 "position": {
-                                    "x": 100.0,
-                                    "y": 0.0
+                                    "x": 100,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -431,14 +400,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -447,15 +414,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-b-4",
                                 "name": "4",
                                 "position": {
-                                    "x": 150.0,
-                                    "y": 0.0
+                                    "x": 150,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -465,14 +431,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -481,15 +445,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-b-5",
                                 "name": "5",
                                 "position": {
-                                    "x": 200.0,
-                                    "y": 0.0
+                                    "x": 200,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -499,14 +462,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -515,15 +476,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    'eventHandlers': {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-b-6",
                                 "name": "6",
                                 "position": {
-                                    "x": 250.0,
-                                    "y": 0.0
+                                    "x": 250,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -533,14 +493,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -549,15 +507,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    'eventHandlers': {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-b-7",
                                 "name": "7",
                                 "position": {
-                                    "x": 300.0,
-                                    "y": 0.0
+                                    "x": 300,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -567,57 +524,51 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
-                                    'visible': true,
-                                    'zindex': 3
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
+                                    "visible": true,
+                                    "zindex": 3
                                 },
-                                'interactiveProperties': {
-                                    'draggable': false,
-                                    'selectable': true,
-                                    'hoverAble': true,
-                                    'cursor': 'pointer',
-                                    'eventHandlers': {}
+                                "interactiveProperties": {
+                                    "draggable": false,
+                                    "selectable": true,
+                                    "hoverAble": true,
+                                    "cursor": "pointer",
                                 }
                             },
                             {
-                                'id': 'seat-vip-001-b-8',
-                                'name': '8',
-                                'position': {
-                                    'x': 350.0,
-                                    'y': 0.0
+                                "id": "seat-vip-001-b-8",
+                                "name": "8",
+                                "position": {
+                                    "x": 350,
+                                    "y": 0
                                 },
-                                'status': 'AVAILABLE',
-                                'attributes': {
-                                    'qualityScore': true,
-                                    'premiumSeat': true,
-                                    'hasArmrest': true,
-                                    'extraLegroom': true
+                                "status": "AVAILABLE",
+                                "attributes": {
+                                    "qualityScore": true,
+                                    "premiumSeat": true,
+                                    "hasArmrest": true,
+                                    "extraLegroom": true
                                 },
-                                'useAbsolutePosition': false,
-                                'absolutePosition': undefined,
-                                'ticketTypeId': 'VIP',
-                                'visualStyle': {
-                                    'fillColor': '#FFD700',
-                                    'strokeColor': '#000000',
-                                    'strokeWidth': 2.0,
-                                    'opacity': 1.0,
-                                    'dashPattern': undefined,
-                                    'visible': true,
-                                    'zindex': 3
+                                "useAbsolutePosition": false,
+                                "ticketTypeId": "VIP",
+                                "visualStyle": {
+                                    "fillColor": "#FFD700",
+                                    "strokeColor": "#000000",
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
+                                    "visible": true,
+                                    "zindex": 3
                                 },
-                                'interactiveProperties': {
-                                    'draggable': false,
-                                    'selectable': true,
-                                    'hoverAble': true,
-                                    'cursor': 'pointer',
-                                    'eventHandlers': {}
+                                "interactiveProperties": {
+                                    "draggable": false,
+                                    "selectable": true,
+                                    "hoverAble": true,
+                                    "cursor": "pointer",
                                 }
                             }
                         ]
@@ -626,18 +577,17 @@ const createMockVenueData = (): VenueMap => ({
                         "id": "row-vip-001-c",
                         "name": "Row C",
                         "position": {
-                            "x": 5.0,
-                            "y": 140.0
+                            "x": 5,
+                            "y": 140
                         },
                         "isArc": false,
-                        "arcProperties": undefined,
                         "seats": [
                             {
                                 "id": "seat-vip-001-c-1",
                                 "name": "1",
                                 "position": {
-                                    "x": 0.0,
-                                    "y": 0.0
+                                    "x": 0,
+                                    "y": 0
                                 },
                                 "status": "SOLD",
                                 "attributes": {
@@ -647,14 +597,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FF0000",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -663,15 +611,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": false,
                                     "hoverAble": false,
                                     "cursor": "default",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-c-2",
                                 "name": "2",
                                 "position": {
-                                    "x": 50.0,
-                                    "y": 0.0
+                                    "x": 50,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -681,14 +628,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -697,15 +642,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-c-3",
                                 "name": "3",
                                 "position": {
-                                    "x": 100.0,
-                                    "y": 0.0
+                                    "x": 100,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -715,14 +659,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -731,15 +673,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-c-4",
                                 "name": "4",
                                 "position": {
-                                    "x": 150.0,
-                                    "y": 0.0
+                                    "x": 150,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -749,14 +690,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -765,15 +704,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-c-5",
                                 "name": "5",
                                 "position": {
-                                    "x": 200.0,
-                                    "y": 0.0
+                                    "x": 200,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -783,14 +721,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -799,15 +735,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    'eventHandlers': {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-c-6",
                                 "name": "6",
                                 "position": {
-                                    "x": 250.0,
-                                    "y": 0.0
+                                    "x": 250,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -817,14 +752,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -833,15 +766,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    'eventHandlers': {}
                                 }
                             },
                             {
                                 "id": "seat-vip-001-c-7",
                                 "name": "7",
                                 "position": {
-                                    "x": 300.0,
-                                    "y": 0.0
+                                    "x": 300,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -851,61 +783,55 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
-                                    'visible': true,
-                                    'zindex': 3
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
+                                    "visible": true,
+                                    "zindex": 3
                                 },
-                                'interactiveProperties': {
-                                    'draggable': false,
-                                    'selectable': true,
-                                    'hoverAble': true,
-                                    'cursor': 'pointer',
-                                    'eventHandlers': {}
+                                "interactiveProperties": {
+                                    "draggable": false,
+                                    "selectable": true,
+                                    "hoverAble": true,
+                                    "cursor": "pointer",
                                 }
                             },
                             {
-                                'id': 'seat-vip-001-c-8',
-                                'name': '8',
-                                'position': {
-                                    'x': 350.0,
-                                    'y': 0.0
+                                "id": "seat-vip-001-c-8",
+                                "name": "8",
+                                "position": {
+                                    "x": 350,
+                                    "y": 0
                                 },
-                                'status': 'AVAILABLE',
-                                'attributes': {
-                                    'qualityScore': true,
-                                    'premiumSeat': true,
-                                    'hasArmrest': true,
-                                    'extraLegroom': true
+                                "status": "AVAILABLE",
+                                "attributes": {
+                                    "qualityScore": true,
+                                    "premiumSeat": true,
+                                    "hasArmrest": true,
+                                    "extraLegroom": true
                                 },
-                                'useAbsolutePosition': false,
-                                'absolutePosition': undefined,
-                                'ticketTypeId': 'VIP',
-                                'visualStyle': {
-                                    'fillColor': '#FFD700',
-                                    'strokeColor': '#000000',
-                                    'strokeWidth': 2.0,
-                                    'opacity': 1.0,
-                                    'dashPattern': undefined,
-                                    'visible': true,
-                                    'zindex': 3
+                                "useAbsolutePosition": false,
+                                "ticketTypeId": "VIP",
+                                "visualStyle": {
+                                    "fillColor": "#FFD700",
+                                    "strokeColor": "#000000",
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
+                                    "visible": true,
+                                    "zindex": 3
                                 },
-                                'interactiveProperties': {
-                                    'draggable': false,
-                                    'selectable': true,
-                                    'hoverAble': true,
-                                    'cursor': 'pointer',
-                                    'eventHandlers': {}
+                                "interactiveProperties": {
+                                    "draggable": false,
+                                    "selectable": true,
+                                    "hoverAble": true,
+                                    "cursor": "pointer",
                                 }
                             }
                         ]
-                    },
+                    }
                 ],
                 "tables": []
             },
@@ -914,22 +840,22 @@ const createMockVenueData = (): VenueMap => ({
                 "name": "Premium Section B",
                 "type": "SEATED",
                 "position": {
-                    "x": 50.0,
-                    "y": 450.0
+                    "x": 50,
+                    "y": 450
                 },
                 "dimensions": {
-                    "width": 750.0,
-                    "height": 200.0
+                    "width": 750,
+                    "height": 200
                 },
-                "rotation": 0.0,
+                "rotation": 0,
                 "capacity": 240,
                 "isArc": true,
                 "arcProperties": {
-                    "centerX": 400.0,
-                    "centerY": 0.0,
-                    "radius": 350.0,
-                    "startAngle": 30.0,
-                    "endAngle": 150.0,
+                    "centerX": 400,
+                    "centerY": 0,
+                    "radius": 350,
+                    "startAngle": 30,
+                    "endAngle": 150,
                     "thickness": 50
                 },
                 "ticketTypeId": "Premium",
@@ -938,16 +864,16 @@ const createMockVenueData = (): VenueMap => ({
                         "id": "row-premium-001-c",
                         "name": "Row C",
                         "position": {
-                            "x": 0.0,
-                            "y": 50.0
+                            "x": 0,
+                            "y": 50
                         },
                         "isArc": true,
                         "arcProperties": {
-                            "centerX": 400.0,
-                            "centerY": 0.0,
-                            "radius": 300.0,
-                            "startAngle": 45.0,
-                            "endAngle": 135.0,
+                            "centerX": 400,
+                            "centerY": 0,
+                            "radius": 300,
+                            "startAngle": 45,
+                            "endAngle": 135,
                             "thickness": 20
                         },
                         "seats": [
@@ -955,8 +881,8 @@ const createMockVenueData = (): VenueMap => ({
                                 "id": "seat-premium-001-c-1",
                                 "name": "1",
                                 "position": {
-                                    "x": 283.0,
-                                    "y": 212.0
+                                    "x": 283,
+                                    "y": 212
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -966,14 +892,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": false
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "Premium",
                                 "visualStyle": {
                                     "fillColor": "#FF6B6B",
                                     "strokeColor": "#000000",
                                     "strokeWidth": 1.5,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -982,7 +906,6 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             }
                         ]
@@ -995,17 +918,16 @@ const createMockVenueData = (): VenueMap => ({
                 "name": "VIP Dining Area",
                 "type": "TABLE",
                 "position": {
-                    "x": 50.0,
-                    "y": 200.0
+                    "x": 50,
+                    "y": 200
                 },
                 "dimensions": {
-                    "width": 300.0,
-                    "height": 200.0
+                    "width": 300,
+                    "height": 200
                 },
-                "rotation": 0.0,
+                "rotation": 0,
                 "capacity": 32,
                 "isArc": false,
-                "arcProperties": undefined,
                 "ticketTypeId": "VIP",
                 "rows": [],
                 "tables": [
@@ -1013,12 +935,12 @@ const createMockVenueData = (): VenueMap => ({
                         "id": "table-001",
                         "name": "Table 1",
                         "position": {
-                            "x": 40.0,
-                            "y": 60.0
+                            "x": 40,
+                            "y": 60
                         },
                         "dimensions": {
-                            "width": 80.0,
-                            "height": 80.0
+                            "width": 80,
+                            "height": 80
                         },
                         "shape": "ROUND",
                         "capacity": 8,
@@ -1027,8 +949,8 @@ const createMockVenueData = (): VenueMap => ({
                                 "id": "seat-table-001-1",
                                 "name": "1",
                                 "position": {
-                                    "x": 40.0,
-                                    "y": 15.0
+                                    "x": 40,
+                                    "y": 15
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -1038,14 +960,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "waitService": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#8B4513",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -1054,7 +974,6 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
@@ -1062,7 +981,7 @@ const createMockVenueData = (): VenueMap => ({
                                 "name": "2",
                                 "position": {
                                     "x": 68.3,
-                                    "y": 25.0
+                                    "y": 25
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -1072,14 +991,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "waitService": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#8B4513",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -1088,15 +1005,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-table-001-3",
                                 "name": "3",
                                 "position": {
-                                    "x": 75.0,
-                                    "y": 40.0
+                                    "x": 75,
+                                    "y": 40
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -1106,14 +1022,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "waitService": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#8B4513",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -1122,7 +1036,6 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
@@ -1130,7 +1043,7 @@ const createMockVenueData = (): VenueMap => ({
                                 "name": "4",
                                 "position": {
                                     "x": 68.3,
-                                    "y": 55.0
+                                    "y": 55
                                 },
                                 "status": "BLOCKED",
                                 "attributes": {
@@ -1140,14 +1053,16 @@ const createMockVenueData = (): VenueMap => ({
                                     "waitService": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#0000FF",
                                     "strokeColor": "#8B4513",
-                                    "strokeWidth": 2.0,
+                                    "strokeWidth": 2,
                                     "opacity": 0.7,
-                                    "dashPattern": ["5", "5"],
+                                    "dashPattern": [
+                                        "5",
+                                        "5"
+                                    ],
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -1156,15 +1071,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": false,
                                     "hoverAble": false,
                                     "cursor": "not-allowed",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-table-001-5",
                                 "name": "5",
                                 "position": {
-                                    "x": 40.0,
-                                    "y": 65.0
+                                    "x": 40,
+                                    "y": 65
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -1174,14 +1088,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "waitService": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#8B4513",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -1190,7 +1102,6 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
@@ -1198,7 +1109,7 @@ const createMockVenueData = (): VenueMap => ({
                                 "name": "6",
                                 "position": {
                                     "x": 11.7,
-                                    "y": 55.0
+                                    "y": 55
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -1208,14 +1119,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "waitService": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#8B4513",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -1224,15 +1133,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-table-001-7",
                                 "name": "7",
                                 "position": {
-                                    "x": 5.0,
-                                    "y": 40.0
+                                    "x": 5,
+                                    "y": 40
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -1242,14 +1150,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "waitService": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#8B4513",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -1258,7 +1164,6 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
@@ -1266,7 +1171,7 @@ const createMockVenueData = (): VenueMap => ({
                                 "name": "8",
                                 "position": {
                                     "x": 11.7,
-                                    "y": 25.0
+                                    "y": 25
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -1276,14 +1181,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "waitService": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#8B4513",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -1292,7 +1195,6 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             }
                         ]
@@ -1301,12 +1203,12 @@ const createMockVenueData = (): VenueMap => ({
                         "id": "table-002",
                         "name": "Table 2",
                         "position": {
-                            "x": 200.0,
-                            "y": 50.0
+                            "x": 200,
+                            "y": 50
                         },
                         "dimensions": {
-                            "width": 60.0,
-                            "height": 70.0
+                            "width": 60,
+                            "height": 70
                         },
                         "shape": "RECTANGLE",
                         "capacity": 6,
@@ -1316,7 +1218,7 @@ const createMockVenueData = (): VenueMap => ({
                                 "name": "1",
                                 "position": {
                                     "x": 33.3,
-                                    "y": -15.0
+                                    "y": -15
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -1326,14 +1228,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "waitService": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#8B4513",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -1342,7 +1242,6 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
@@ -1350,7 +1249,7 @@ const createMockVenueData = (): VenueMap => ({
                                 "name": "2",
                                 "position": {
                                     "x": 66.7,
-                                    "y": -15.0
+                                    "y": -15
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -1360,14 +1259,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "waitService": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#8B4513",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -1376,15 +1273,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-table-002-3",
                                 "name": "3",
                                 "position": {
-                                    "x": 115.0,
-                                    "y": 30.0
+                                    "x": 115,
+                                    "y": 30
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -1394,14 +1290,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "waitService": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#8B4513",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -1410,7 +1304,6 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
@@ -1418,7 +1311,7 @@ const createMockVenueData = (): VenueMap => ({
                                 "name": "4",
                                 "position": {
                                     "x": 66.7,
-                                    "y": 75.0
+                                    "y": 75
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -1428,14 +1321,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "waitService": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#8B4513",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -1444,7 +1335,6 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
@@ -1452,7 +1342,7 @@ const createMockVenueData = (): VenueMap => ({
                                 "name": "5",
                                 "position": {
                                     "x": 33.3,
-                                    "y": 75.0
+                                    "y": 75
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -1462,14 +1352,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "waitService": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#8B4513",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -1478,15 +1366,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-table-002-6",
                                 "name": "6",
                                 "position": {
-                                    "x": -15.0,
-                                    "y": 30.0
+                                    "x": -15,
+                                    "y": 30
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -1496,14 +1383,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "waitService": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "VIP",
                                 "visualStyle": {
                                     "fillColor": "#FFD700",
                                     "strokeColor": "#8B4513",
-                                    "strokeWidth": 2.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 2,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -1512,7 +1397,6 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             }
                         ]
@@ -1524,35 +1408,33 @@ const createMockVenueData = (): VenueMap => ({
                 "name": "Standard Section D",
                 "type": "SEATED",
                 "position": {
-                    "x": 50.0,
-                    "y": 700.0
+                    "x": 50,
+                    "y": 700
                 },
                 "dimensions": {
-                    "width": 1100.0,
-                    "height": 200.0
+                    "width": 1100,
+                    "height": 200
                 },
-                "rotation": 5.0,
+                "rotation": 5,
                 "capacity": 400,
                 "isArc": false,
-                "arcProperties": undefined,
                 "ticketTypeId": "Standard",
                 "rows": [
                     {
                         "id": "row-standard-001-d",
                         "name": "Row D",
                         "position": {
-                            "x": 100.0,
-                            "y": 50.0
+                            "x": 100,
+                            "y": 50
                         },
                         "isArc": false,
-                        "arcProperties": undefined,
                         "seats": [
                             {
                                 "id": "seat-standard-001-d-1",
                                 "name": "1",
                                 "position": {
-                                    "x": 0.0,
-                                    "y": 0.0
+                                    "x": 0,
+                                    "y": 0
                                 },
                                 "status": "AVAILABLE",
                                 "attributes": {
@@ -1562,14 +1444,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "extraLegroom": false
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "Standard",
                                 "visualStyle": {
                                     "fillColor": "#4ECDC4",
                                     "strokeColor": "#000000",
-                                    "strokeWidth": 1.0,
-                                    "opacity": 1.0,
-                                    "dashPattern": undefined,
+                                    "strokeWidth": 1,
+                                    "opacity": 1,
                                     "visible": true,
                                     "zindex": 3
                                 },
@@ -1578,15 +1458,14 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": true,
                                     "hoverAble": true,
                                     "cursor": "pointer",
-                                    "eventHandlers": {}
                                 }
                             },
                             {
                                 "id": "seat-standard-001-d-2",
                                 "name": "2",
                                 "position": {
-                                    "x": 40.0,
-                                    "y": 0.0
+                                    "x": 40,
+                                    "y": 0
                                 },
                                 "status": "DISABLED",
                                 "attributes": {
@@ -1597,14 +1476,12 @@ const createMockVenueData = (): VenueMap => ({
                                     "maintenance": true
                                 },
                                 "useAbsolutePosition": false,
-                                "absolutePosition": undefined,
                                 "ticketTypeId": "Standard",
                                 "visualStyle": {
                                     "fillColor": "#CCCCCC",
                                     "strokeColor": "#666666",
-                                    "strokeWidth": 1.0,
+                                    "strokeWidth": 1,
                                     "opacity": 0.5,
-                                    "dashPattern": undefined,
                                     "visible": false,
                                     "zindex": 1
                                 },
@@ -1613,7 +1490,6 @@ const createMockVenueData = (): VenueMap => ({
                                     "selectable": false,
                                     "hoverAble": false,
                                     "cursor": "default",
-                                    "eventHandlers": {}
                                 }
                             }
                         ]
@@ -1626,17 +1502,16 @@ const createMockVenueData = (): VenueMap => ({
                 "name": "General Admission Standing",
                 "type": "STANDING",
                 "position": {
-                    "x": 850.0,
-                    "y": 200.0
+                    "x": 850,
+                    "y": 200
                 },
                 "dimensions": {
-                    "width": 300.0,
-                    "height": 450.0
+                    "width": 300,
+                    "height": 450
                 },
-                "rotation": 0.0,
+                "rotation": 0,
                 "capacity": 500,
                 "isArc": false,
-                "arcProperties": undefined,
                 "ticketTypeId": "Economy",
                 "rows": [],
                 "tables": []

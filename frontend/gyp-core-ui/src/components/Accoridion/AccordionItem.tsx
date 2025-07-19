@@ -1,4 +1,4 @@
-import { Button, Collapse, CollapseProps, Form, FormInstance } from "antd";
+import { Button, Collapse, CollapseProps, FormInstance, Space } from "antd";
 import { FormListFieldData } from "antd/es/form/FormList";
 import React from "react";
 import { AiFillCaretRight } from "react-icons/ai";
@@ -42,26 +42,25 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
             key: field.key,
             label: getLabel(),
             children: (
-                    <div className="accordion-item">
+                    <Space direction="vertical" size="middle" style={{display: 'flex'}}>
                         {renderForm()}
                         {!isReadOnly && (
-                                <Form.Item className="float-right">
+                                <div className="float-right">
                                     <Button
-                                            type="link"
+                                            type="default"
                                             danger
                                             onClick={() => onRemove(index)}
                                             icon={<BiTrash/>}
                                     />
-                                </Form.Item>
+                                </div>
                         )}
-                    </div>
+                    </Space>
             ),
         }
     ];
 
     return (
             <Collapse
-                    className="mb-2!"
                     items={items}
                     expandIcon={({isActive}) => (
                             <AiFillCaretRight

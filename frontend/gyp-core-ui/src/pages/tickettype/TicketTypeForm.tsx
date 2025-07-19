@@ -134,11 +134,11 @@ const TicketTypeForm: React.FC<TicketTypeFormProps> = ({entity, mode, onSave, on
                     {isReadOnly && (
                             <MetaData
                                     metadata={{
-                                        id: entity.id,
-                                        createUser: entity.createUser,
-                                        changeUser: entity.changeUser,
-                                        createTimestamp: entity.createTimestamp,
-                                        changeTimestamp: entity.changeTimestamp
+                                        id: entity?.id,
+                                        createUser: entity?.createUser,
+                                        changeUser: entity?.changeUser,
+                                        createTimestamp: entity?.createTimestamp,
+                                        changeTimestamp: entity?.changeTimestamp
                                     }}
                             />
                     )}

@@ -1,3 +1,4 @@
+import { NavigateFunction } from "react-router-dom";
 import { EventRequestDto, EventResponseDto } from "../../models/generated/event-service-models";
 import { apiClient, EVENT_SERVICE_PATH } from "../ApiClient.ts";
 import { BaseService } from "../BaseService.ts";
@@ -33,13 +34,26 @@ const syncEvents = async (): Promise<void> => {
     await apiClient.get(`/${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${SYNC_EVENT_PATH}`);
 }
 
+const navigate = (navigator: NavigateFunction, path: string, entity?: EventResponseDto) => {
+    if (path === '/create') {
+        navigator('/event/create');
+    } else if (path === '/edit') {
+        navigator(`/event/edit/${entity?.id}`);
+    } else if (path === '/view') {
+        navigator(`/event/view/${entity?.id}`);
+    } else {
+        navigator('/event');
+    }
+}
+
 export const EventService = {
     getAllEvents,
     getEventById,
     syncEvents,
     createEvent,
     deleteEvent,
-    updateEvent
+    updateEvent,
+    navigate
 }
 
 export const EventServiceAdapter: BaseService<EventRequestDto, EventResponseDto> = {

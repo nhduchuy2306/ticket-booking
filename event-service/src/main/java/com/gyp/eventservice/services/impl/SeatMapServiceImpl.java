@@ -11,11 +11,14 @@ import java.util.stream.Stream;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gyp.common.exceptions.ResourceNotFoundException;
 import com.gyp.eventservice.dtos.seatmap.Position;
 import com.gyp.eventservice.dtos.seatmap.Row;
 import com.gyp.eventservice.dtos.seatmap.Seat;
 import com.gyp.eventservice.dtos.seatmap.SeatAvailability;
 import com.gyp.eventservice.dtos.seatmap.SeatConfig;
+import com.gyp.eventservice.dtos.seatmap.SeatMapRequestDto;
+import com.gyp.eventservice.dtos.seatmap.SeatMapResponseDto;
 import com.gyp.eventservice.dtos.seatmap.SeatMapUtil;
 import com.gyp.eventservice.dtos.seatmap.SeatStatus;
 import com.gyp.eventservice.dtos.seatmap.SeatWithScore;
@@ -24,24 +27,28 @@ import com.gyp.eventservice.dtos.seatmap.SectionType;
 import com.gyp.eventservice.dtos.seatmap.StageConfig;
 import com.gyp.eventservice.dtos.seatmap.Table;
 import com.gyp.eventservice.dtos.seatmap.VenueMap;
+import com.gyp.eventservice.mappers.SeatMapMapper;
 import com.gyp.eventservice.repositories.SeatMapRepository;
 import com.gyp.eventservice.repositories.VenueRepository;
 import com.gyp.eventservice.services.SeatMapService;
 import com.gyp.eventservice.services.SeatMapTemplateService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SeatMapServiceImpl implements SeatMapService {
-	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final SeatMapTemplateService seatMapTemplateService;
 	private final SeatMapRepository seatMapRepository;
 	private final VenueRepository venueRepository;
+	private final SeatMapMapper seatMapMapper;
 
 	@Override
 	public String convertOrganizerJson(String content) {
 		try {
+			ObjectMapper objectMapper = new ObjectMapper();
 			JsonNode root = objectMapper.readTree(content);
 
 			// 1. Extract and map `stage` part
@@ -168,6 +175,55 @@ public class SeatMapServiceImpl implements SeatMapService {
 	@Override
 	public SeatConfig parseSeatConfig(String seatConfigJson) {
 		return null;
+	}
+
+	@Override
+	public List<SeatMapResponseDto> getAllSeatMaps() {
+		var seatMaps = seatMapRepository.findAll();
+		if(seatMaps.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return seatMapMapper.toResponseDtoList(seatMaps);
+	}
+
+	@Override
+	public SeatMapResponseDto getSeatMapById(String seatMapId) {
+		var seatMapEntity = seatMapRepository.findById(seatMapId)
+				.orElseThrow(() -> new ResourceNotFoundException("Seat Map Not Found"));
+		if(seatMapEntity != null) {
+			return seatMapMapper.toResponseDto(seatMapEntity);
+		}
+		return null;
+	}
+
+	@Override
+	public SeatMapResponseDto updateSeatMap(String seatMapId, SeatMapRequestDto seatMapDto) {
+		var seatMapEntity = seatMapRepository.findById(seatMapId)
+				.orElseThrow(() -> new ResourceNotFoundException("Seat Map Not Found"));
+		if(seatMapEntity != null) {
+			seatMapMapper.updateEntityFromDto(seatMapDto, seatMapEntity);
+			seatMapRepository.save(seatMapEntity);
+			return seatMapMapper.toResponseDto(seatMapEntity);
+		}
+		return null;
+	}
+
+	@Override
+	public SeatMapResponseDto createSeatMap(SeatMapRequestDto seatMapDto) {
+		if(!venueRepository.existsById(seatMapDto.getVenueMapId())) {
+			throw new ResourceNotFoundException("Venue Map Not Found");
+		}
+		var seatMapEntity = seatMapMapper.toEntity(seatMapDto);
+		seatMapRepository.save(seatMapEntity);
+		return seatMapMapper.toResponseDto(seatMapEntity);
+	}
+
+	@Override
+	public void deleteSeatMap(String seatMapId) {
+		if(!seatMapRepository.existsById(seatMapId)) {
+			throw new ResourceNotFoundException("Seat Map Not Found");
+		}
+		seatMapRepository.deleteById(seatMapId);
 	}
 
 	private Seat findSeatById(VenueMap venueMap, String seatId) {

@@ -9,30 +9,34 @@ import com.gyp.eventservice.dtos.seatmap.SeatMapRequestDto;
 import com.gyp.eventservice.dtos.seatmap.SeatMapResponseDto;
 import com.gyp.eventservice.dtos.seatmap.StageConfig;
 import com.gyp.eventservice.entities.SeatMapEntity;
+import com.gyp.eventservice.entities.VenueMapEntity;
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingInheritanceStrategy;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring",
 		mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG,
 		uses = { EventMapper.class, VenueMapper.class })
 public interface SeatMapMapper extends AbstractMapper {
-	// To response DTO
+	@Mapping(target = "venueMapId", source = "entity.venueMapEntity.id")
 	@Mapping(target = "seatConfig", expression = "java(parseSeatConfig(entity.getSeatConfigRaw()))")
 	@Mapping(target = "stageConfig", expression = "java(parseStageConfig(entity.getStageConfigRaw()))")
 	SeatMapResponseDto toResponseDto(SeatMapEntity entity);
 
-	// List mappings
 	List<SeatMapResponseDto> toResponseDtoList(List<SeatMapEntity> entities);
 
-	// Create new entity from request
+	@Mapping(target = "venueMapEntity", source = "venueMapId", qualifiedByName = "toVenueMapEntity")
+	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "seatConfigRaw", expression = "java(parseSeatConfigRaw(dto.getSeatConfig()))")
 	@Mapping(target = "stageConfigRaw", expression = "java(parseStageConfig(dto.getStageConfig()))")
 	SeatMapEntity toEntity(SeatMapRequestDto dto);
 
-	// Update existing entity from request
+	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "venueMapEntity", source = "venueMapId", qualifiedByName = "toVenueMapEntity")
 	@Mapping(target = "seatConfigRaw", expression = "java(parseSeatConfigRaw(dto.getSeatConfig()))")
 	@Mapping(target = "stageConfigRaw", expression = "java(parseStageConfig(dto.getStageConfig()))")
 	void updateEntityFromDto(SeatMapRequestDto dto, @MappingTarget SeatMapEntity entity);
@@ -67,6 +71,16 @@ public interface SeatMapMapper extends AbstractMapper {
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Named("toVenueMapEntity")
+	default VenueMapEntity toVenueMapEntity(String venueMapId) {
+		if(StringUtils.isEmpty(venueMapId)) {
+			return null;
+		}
+		VenueMapEntity entity = new VenueMapEntity();
+		entity.setId(venueMapId);
+		return entity;
 	}
 
 	@AfterMapping
