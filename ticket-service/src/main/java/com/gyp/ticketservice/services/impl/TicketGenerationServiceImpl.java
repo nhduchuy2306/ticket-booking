@@ -36,4 +36,9 @@ public class TicketGenerationServiceImpl implements TicketGenerationService {
 		Optional<TicketGenerationEntity> ticketGeneration = ticketGenerationRepository.findById(id);
 		return ticketGeneration.map(ticketGenerationMapper::toResponse).orElse(null);
 	}
+
+	@Override
+	public void generateTicketBaseOnEventConfiguration(String eventId) {
+
+	}
 }

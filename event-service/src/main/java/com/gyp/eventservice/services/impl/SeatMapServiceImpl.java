@@ -210,9 +210,6 @@ public class SeatMapServiceImpl implements SeatMapService {
 
 	@Override
 	public SeatMapResponseDto createSeatMap(SeatMapRequestDto seatMapDto) {
-		if(!venueRepository.existsById(seatMapDto.getVenueMapId())) {
-			throw new ResourceNotFoundException("Venue Map Not Found");
-		}
 		var seatMapEntity = seatMapMapper.toEntity(seatMapDto);
 		seatMapRepository.save(seatMapEntity);
 		return seatMapMapper.toResponseDto(seatMapEntity);

@@ -13,7 +13,7 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring",
 		mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG,
-		uses = { EventMapper.class, SeatMapMapper.class })
+		uses = { EventMapper.class, SeatMapMapper.class, VenueMapMapper.class })
 public interface VenueMapper extends AbstractMapper {
 	// To response DTO
 	@Mapping(target = "venueMapList", source = "entity.venueMapEntityList")

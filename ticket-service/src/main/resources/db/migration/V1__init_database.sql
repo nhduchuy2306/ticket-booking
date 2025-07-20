@@ -1,5 +1,5 @@
 -- 1. TICKETTYPE Table
-CREATE TABLE TICKETTYPE
+CREATE TABLE tickettype
 (
     id                 VARCHAR(255) PRIMARY KEY,
     event_id           VARCHAR(255) NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE TICKETTYPE
 );
 
 -- 2. TICKET Table
-CREATE TABLE TICKET
+CREATE TABLE ticket
 (
     id               VARCHAR(255) PRIMARY KEY,
     event_id         VARCHAR(255) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE TICKET
     FOREIGN KEY (ticket_type_id) REFERENCES TICKETTYPE (id)
 );
 
-CREATE TABLE TICKETGENERATION
+CREATE TABLE ticketgeneration
 (
     id               VARCHAR(255) PRIMARY KEY,
     event_id         VARCHAR(255) NOT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE TICKETGENERATION
 );
 
 -- 3. Optional: TICKET_ORDER_LINK Table
-CREATE TABLE TICKETORDERLINK
+CREATE TABLE ticketorderlink
 (
     id               VARCHAR(255) PRIMARY KEY,
     ticket_id        VARCHAR(255) NOT NULL,

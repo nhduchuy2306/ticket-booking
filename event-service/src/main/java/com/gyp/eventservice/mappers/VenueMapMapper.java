@@ -2,8 +2,10 @@ package com.gyp.eventservice.mappers;
 
 import com.gyp.eventservice.dtos.venuemap.VenueMapRequestDto;
 import com.gyp.eventservice.dtos.venuemap.VenueMapResponseDto;
+import com.gyp.eventservice.entities.SeatMapEntity;
 import com.gyp.eventservice.entities.VenueEntity;
 import com.gyp.eventservice.entities.VenueMapEntity;
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,15 +19,17 @@ import org.mapstruct.Named;
 public interface VenueMapMapper extends AbstractMapper {
 
 	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "seatMapEntity", source = "seatMapId", qualifiedByName = "seatMapIdToEntity")
 	@Mapping(target = "venueEntity", source = "venueId", qualifiedByName = "venueIdToEntity")
-	@Mapping(target = "seatMapEntityList", ignore = true)
 	VenueMapEntity toEntity(VenueMapRequestDto requestDto);
 
+	@Mapping(target = "venueId", source = "venueMapEntity.venueEntity.id")
+	@Mapping(target = "seatMapId", source = "venueMapEntity.seatMapEntity.id")
 	VenueMapResponseDto toResponseDto(VenueMapEntity venueMapEntity);
 
-	@Mapping(target = "seatMapEntityList", ignore = true)
 	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "venueEntity", ignore = true)
+	@Mapping(target = "seatMapEntity", source = "seatMapId", qualifiedByName = "seatMapIdToEntity")
+	@Mapping(target = "venueEntity", source = "venueId", qualifiedByName = "venueIdToEntity")
 	void updateEntityFromDto(VenueMapRequestDto requestDto, @MappingTarget VenueMapEntity venueMapEntity);
 
 	@AfterMapping
@@ -40,11 +44,21 @@ public interface VenueMapMapper extends AbstractMapper {
 
 	@Named("venueIdToEntity")
 	default VenueEntity venueIdToEntity(String venueId) {
-		if(venueId == null || venueId.isBlank()) {
+		if(StringUtils.isEmpty(venueId)) {
 			return null;
 		}
 		VenueEntity venueEntity = new VenueEntity();
 		venueEntity.setId(venueId);
 		return venueEntity;
+	}
+
+	@Named("seatMapIdToEntity")
+	default SeatMapEntity seatMapIdToEntity(String seatMapId) {
+		if(StringUtils.isEmpty(seatMapId)) {
+			return null;
+		}
+		SeatMapEntity seatMapEntity = new SeatMapEntity();
+		seatMapEntity.setId(seatMapId);
+		return seatMapEntity;
 	}
 }

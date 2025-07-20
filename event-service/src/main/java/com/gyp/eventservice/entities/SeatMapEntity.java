@@ -1,6 +1,8 @@
 package com.gyp.eventservice.entities;
 
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,8 +10,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -43,7 +47,7 @@ public class SeatMapEntity extends AbstractEntity {
 	@Column(name = "stage_config", columnDefinition = "TEXT", nullable = false)
 	private String stageConfigRaw;
 
-	@ManyToOne
-	@JoinColumn(name = "venue_map_id", nullable = false)
-	private VenueMapEntity venueMapEntity;
+	@JsonIgnore
+	@OneToMany(mappedBy = "seatMapEntity", fetch = FetchType.LAZY)
+	private List<VenueMapEntity> venueMapEntityList = new ArrayList<>();
 }

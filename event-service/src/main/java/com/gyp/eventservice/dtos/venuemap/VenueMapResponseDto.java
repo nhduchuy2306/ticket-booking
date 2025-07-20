@@ -17,4 +17,6 @@ public class VenueMapResponseDto extends AbstractDto {
 	private String name;
 	private Double width;
 	private Double height;
+	private String venueId;
+	private String seatMapId;
 }

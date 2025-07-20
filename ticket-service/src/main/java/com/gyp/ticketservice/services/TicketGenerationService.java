@@ -7,4 +7,6 @@ public interface TicketGenerationService {
 	TicketGenerationSummaryDto validateTicket(String ticketNumber);
 
 	TicketGenerationResponseDto getTicketGenerationById(String id);
+
+	void generateTicketBaseOnEventConfiguration(String eventId);
 }

@@ -14,4 +14,5 @@ public class VenueMapRequestDto {
 	private Double width;
 	private Double height;
 	private String venueId;
+	private String seatMapId;
 }
