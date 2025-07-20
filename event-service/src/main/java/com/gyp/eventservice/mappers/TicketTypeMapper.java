@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.gyp.common.enums.event.TicketStatus;
+import com.gyp.common.models.TicketTypeEventModel;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeRequestDto;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeResponseDto;
 import com.gyp.eventservice.entities.TicketTypeEntity;
@@ -32,6 +33,8 @@ public interface TicketTypeMapper extends AbstractMapper {
 	@Mapping(target = "eventEntity", source = "eventId", qualifiedByName = "eventIdToEntity")
 	@Named("toEntity")
 	TicketTypeEntity toEntity(TicketTypeRequestDto dto);
+
+	List<TicketTypeEventModel> toEventModelList(List<TicketTypeEntity> ticketTypeEntities);
 
 	// Update existing entity from request
 	@Mapping(target = "id", ignore = true)

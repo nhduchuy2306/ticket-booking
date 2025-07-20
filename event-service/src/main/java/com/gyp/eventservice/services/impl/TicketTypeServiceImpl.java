@@ -2,6 +2,7 @@ package com.gyp.eventservice.services.impl;
 
 import java.util.List;
 
+import com.gyp.common.models.TicketTypeEventModel;
 import com.gyp.eventservice.dtos.seatmap.Seat;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeRequestDto;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeResponseDto;
@@ -78,6 +79,15 @@ public class TicketTypeServiceImpl implements TicketTypeService {
 
 	@Override
 	public TicketTypeResponseDto toggleTicketTypeStatus(String ticketTypeId) {
+		return null;
+	}
+
+	@Override
+	public List<TicketTypeEventModel> getListTicketTypeModel() {
+		var ticketTypes = ticketTypeRepository.findAll();
+		if(!ticketTypes.isEmpty()) {
+			return ticketTypeMapper.toEventModelList(ticketTypes);
+		}
 		return null;
 	}
 }

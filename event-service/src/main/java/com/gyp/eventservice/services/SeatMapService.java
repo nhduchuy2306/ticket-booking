@@ -2,6 +2,7 @@ package com.gyp.eventservice.services;
 
 import java.util.List;
 
+import com.gyp.common.models.SeatMapEventModel;
 import com.gyp.eventservice.dtos.seatmap.Seat;
 import com.gyp.eventservice.dtos.seatmap.SeatAvailability;
 import com.gyp.eventservice.dtos.seatmap.SeatConfig;
@@ -45,4 +46,6 @@ public interface SeatMapService {
 	SeatMapResponseDto createSeatMap(SeatMapRequestDto seatMapDto);
 
 	void deleteSeatMap(String seatMapId);
+
+	List<SeatMapEventModel> getListSeatMapModel();
 }

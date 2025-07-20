@@ -2,6 +2,7 @@ package com.gyp.eventservice.services;
 
 import java.util.List;
 
+import com.gyp.common.models.TicketTypeEventModel;
 import com.gyp.eventservice.dtos.seatmap.Seat;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeRequestDto;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeResponseDto;
@@ -23,4 +24,6 @@ public interface TicketTypeService {
 	void deleteTicketType(String ticketTypeId);
 
 	TicketTypeResponseDto toggleTicketTypeStatus(String ticketTypeId);
+
+	List<TicketTypeEventModel> getListTicketTypeModel();
 }

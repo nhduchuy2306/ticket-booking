@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gyp.common.exceptions.ResourceNotFoundException;
+import com.gyp.common.models.SeatMapEventModel;
 import com.gyp.eventservice.dtos.seatmap.Position;
 import com.gyp.eventservice.dtos.seatmap.Row;
 import com.gyp.eventservice.dtos.seatmap.Seat;
@@ -221,6 +222,17 @@ public class SeatMapServiceImpl implements SeatMapService {
 			throw new ResourceNotFoundException("Seat Map Not Found");
 		}
 		seatMapRepository.deleteById(seatMapId);
+	}
+
+	@Override
+	public List<SeatMapEventModel> getListSeatMapModel() {
+		var seatMaps = seatMapRepository.findAll();
+		if(seatMaps.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return seatMaps.stream()
+				.map(seatMapMapper::toSeatMapEventModel)
+				.collect(Collectors.toList());
 	}
 
 	private Seat findSeatById(VenueMap venueMap, String seatId) {
