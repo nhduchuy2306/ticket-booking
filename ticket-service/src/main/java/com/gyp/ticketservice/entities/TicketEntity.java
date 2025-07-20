@@ -55,7 +55,7 @@ public class TicketEntity extends AbstractEntity {
 	@JoinColumn(name = "ticket_type_id", nullable = false)
 	private TicketTypeEntity ticketTypeEntity;
 
-	@OneToMany(mappedBy = "ticketEntity", fetch = FetchType.LAZY)
 	@JsonIgnore
+	@OneToMany(mappedBy = "ticketEntity", fetch = FetchType.LAZY)
 	private List<TicketGenerationEntity> ticketGenerationEntityList = new ArrayList<>();
 }
