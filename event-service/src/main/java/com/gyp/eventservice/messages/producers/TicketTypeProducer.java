@@ -29,29 +29,29 @@ public class TicketTypeProducer {
 	private final TicketTypeService ticketTypeService;
 
 	public void syncTicketType() {
-		try {
-			List<TicketTypeEventModel> ticketTypeModels = ticketTypeService.getListTicketTypeModel();
-			String dataString = Serialization.serializeToString(ticketTypeModels);
-
-			CompletableFuture<SendResult<String, String>> future =
-					kafkaTemplate.send(EventServiceTopic.TICKET_TYPE_SYNC, dataString);
-
-			future.whenComplete((result, throwable) -> {
-				if(throwable != null) {
-					log.error("Failed to send message to topic {}: {}", EventServiceTopic.TICKET_TYPE_SYNC,
-							throwable.getMessage());
-				} else {
-					log.info("Message sent successfully to topic {} at offset {} in partition {}",
-							result.getRecordMetadata().topic(),
-							result.getRecordMetadata().offset(),
-							result.getRecordMetadata().partition());
-					log.info("Sent sync TicketType data: {}", dataString);
-				}
-			});
-		} catch(Exception e) {
-			log.error("Serialization failed", e);
-			throw new RuntimeException("Failed to sync TicketType data", e);
-		}
+//		try {
+//			List<TicketTypeEventModel> ticketTypeModels = ticketTypeService.getListTicketTypeModel();
+//			String dataString = Serialization.serializeToString(ticketTypeModels);
+//
+//			CompletableFuture<SendResult<String, String>> future =
+//					kafkaTemplate.send(EventServiceTopic.TICKET_TYPE_SYNC, dataString);
+//
+//			future.whenComplete((result, throwable) -> {
+//				if(throwable != null) {
+//					log.error("Failed to send message to topic {}: {}", EventServiceTopic.TICKET_TYPE_SYNC,
+//							throwable.getMessage());
+//				} else {
+//					log.info("Message sent successfully to topic {} at offset {} in partition {}",
+//							result.getRecordMetadata().topic(),
+//							result.getRecordMetadata().offset(),
+//							result.getRecordMetadata().partition());
+//					log.info("Sent sync TicketType data: {}", dataString);
+//				}
+//			});
+//		} catch(Exception e) {
+//			log.error("Serialization failed", e);
+//			throw new RuntimeException("Failed to sync TicketType data", e);
+//		}
 	}
 
 	@PostConstruct

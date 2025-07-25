@@ -30,29 +30,33 @@ public class EventProducer {
 	private final EventService eventService;
 
 	public void syncEvent() {
-		try {
-			List<EventEventModel> eventEventModels = eventService.getListEventModel();
-			String dataString = Serialization.serializeToString(eventEventModels);
+//		try {
+//			List<EventEventModel> eventEventModels = eventService.getListEventModel();
+//			String dataString = Serialization.serializeToString(eventEventModels);
+//
+//			CompletableFuture<SendResult<String, String>> future =
+//					kafkaTemplate.send(EventServiceTopic.EVENT_SYNC, dataString);
+//
+//			future.whenComplete((result, throwable) -> {
+//				if(throwable != null) {
+//					log.error("Failed to send message to topic {}: {}",
+//							EventServiceTopic.EVENT_SYNC, throwable.getMessage());
+//				} else {
+//					log.info("Message sent successfully to topic {} at offset {} in partition {}",
+//							result.getRecordMetadata().topic(),
+//							result.getRecordMetadata().offset(),
+//							result.getRecordMetadata().partition());
+//					log.info("Sent sync Event data: {}", dataString);
+//				}
+//			});
+//		} catch(JsonProcessingException e) {
+//			log.error("Serialization failed", e);
+//			throw new RuntimeException("Failed to sync Event data", e);
+//		}
+	}
 
-			CompletableFuture<SendResult<String, String>> future =
-					kafkaTemplate.send(EventServiceTopic.EVENT_SYNC, dataString);
+	public void createNewEvent() {
 
-			future.whenComplete((result, throwable) -> {
-				if(throwable != null) {
-					log.error("Failed to send message to topic {}: {}",
-							EventServiceTopic.EVENT_SYNC, throwable.getMessage());
-				} else {
-					log.info("Message sent successfully to topic {} at offset {} in partition {}",
-							result.getRecordMetadata().topic(),
-							result.getRecordMetadata().offset(),
-							result.getRecordMetadata().partition());
-					log.info("Sent sync Event data: {}", dataString);
-				}
-			});
-		} catch(JsonProcessingException e) {
-			log.error("Serialization failed", e);
-			throw new RuntimeException("Failed to sync Event data", e);
-		}
 	}
 
 	@PostConstruct

@@ -29,7 +29,6 @@
         <module>search-service</module>
         <module>configuration-service</module>
         <module>observability-service</module>
-        <module>notification-service</module>
     </modules>
 
     <properties>

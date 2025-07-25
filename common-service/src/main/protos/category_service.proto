@@ -57,5 +57,5 @@ message DeleteCategoryRequest {
 
 message DeleteCategoryResponse {
   string id = 1;
-  string message = 2; // e.g., "Category deleted successfully"
+  string message = 2;
 }

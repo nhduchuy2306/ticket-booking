@@ -236,7 +236,7 @@
                     <protocVersion>${protobuf.java.version}</protocVersion>
                     <sourceDirectories>
                         <sourceDirectory>
-                            ${project.basedir}/../common-service/src/main/protos/event-service
+                            ${project.basedir}/../common-service/src/main/protos
                         </sourceDirectory>
                     </sourceDirectories>
                     <binaryMavenPlugins>

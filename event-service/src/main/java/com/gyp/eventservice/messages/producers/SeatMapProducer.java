@@ -29,29 +29,29 @@ public class SeatMapProducer {
 	private final SeatMapService seatMapService;
 
 	public void syncSeatMap() {
-		try {
-			List<SeatMapEventModel> seatMapEventModels = seatMapService.getListSeatMapModel();
-			String dataString = Serialization.serializeToString(seatMapEventModels);
-
-			CompletableFuture<SendResult<String, String>> future =
-					kafkaTemplate.send(EventServiceTopic.SEAT_MAP_SYNC, dataString);
-
-			future.whenComplete((result, throwable) -> {
-				if(throwable != null) {
-					log.error("Failed to send message to topic {}: {}", EventServiceTopic.SEAT_MAP_SYNC,
-							throwable.getMessage());
-				} else {
-					log.info("Message sent successfully to topic {} at offset {} in partition {}",
-							result.getRecordMetadata().topic(),
-							result.getRecordMetadata().offset(),
-							result.getRecordMetadata().partition());
-					log.info("Sent sync SeatMap data: {}", dataString);
-				}
-			});
-		} catch(Exception e) {
-			log.error("Serialization failed", e);
-			throw new RuntimeException("Failed to sync SeatMap data", e);
-		}
+//		try {
+//			List<SeatMapEventModel> seatMapEventModels = seatMapService.getListSeatMapModel();
+//			String dataString = Serialization.serializeToString(seatMapEventModels);
+//
+//			CompletableFuture<SendResult<String, String>> future =
+//					kafkaTemplate.send(EventServiceTopic.SEAT_MAP_SYNC, dataString);
+//
+//			future.whenComplete((result, throwable) -> {
+//				if(throwable != null) {
+//					log.error("Failed to send message to topic {}: {}", EventServiceTopic.SEAT_MAP_SYNC,
+//							throwable.getMessage());
+//				} else {
+//					log.info("Message sent successfully to topic {} at offset {} in partition {}",
+//							result.getRecordMetadata().topic(),
+//							result.getRecordMetadata().offset(),
+//							result.getRecordMetadata().partition());
+//					log.info("Sent sync SeatMap data: {}", dataString);
+//				}
+//			});
+//		} catch(Exception e) {
+//			log.error("Serialization failed", e);
+//			throw new RuntimeException("Failed to sync SeatMap data", e);
+//		}
 	}
 
 	@PostConstruct
