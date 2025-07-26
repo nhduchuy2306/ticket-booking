@@ -15,12 +15,12 @@ import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring", uses = { UserGroupMapper.class })
 public interface UserAccountMapper extends AbstractMapper {
-	@Mapping(target = "organization", source = "organizationId", qualifiedByName = "toOrganizationEntity")
+	@Mapping(target = "organizationEntity", source = "organizationId", qualifiedByName = "toOrganizationEntity")
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "userGroupEntityList", ignore = true)
 	UserAccountEntity toEntity(UserAccountRequestDto dto);
 
-	@Mapping(target = "organizationId", source = "entity.organization.id")
+	@Mapping(target = "organizationId", source = "entity.organizationEntity.id")
 	@Mapping(target = "userGroupList", source = "userGroupEntityList")
 	UserAccountResponseDto toResponseDto(UserAccountEntity entity);
 
@@ -28,7 +28,7 @@ public interface UserAccountMapper extends AbstractMapper {
 	UserAccountEventModel toModel(UserAccountEntity entity);
 
 	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "organization", ignore = true)
+	@Mapping(target = "organizationEntity", ignore = true)
 	@Mapping(target = "userGroupEntityList", ignore = true)
 	UserAccountEntity toEntity(RegisterRequestDto dto);
 

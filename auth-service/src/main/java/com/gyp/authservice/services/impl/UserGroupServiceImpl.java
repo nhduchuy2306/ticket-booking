@@ -14,9 +14,17 @@ import com.gyp.authservice.exceptions.ReferenceException;
 import com.gyp.authservice.mappers.UserGroupMapper;
 import com.gyp.authservice.repositories.UserGroupRepository;
 import com.gyp.authservice.services.UserGroupService;
+import com.gyp.authservice.services.criteria.UserGroupSearchCriteria;
+import com.gyp.authservice.services.specifications.UserGroupSpecification;
 import com.gyp.common.converters.Serialization;
+import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.enums.permission.ApplicationPermission;
+import com.gyp.common.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,14 +34,20 @@ public class UserGroupServiceImpl implements UserGroupService {
 	private final UserGroupMapper userGroupMapper;
 
 	@Override
-	public List<UserGroupResponseDto> getListUserGroups() {
-		List<UserGroupEntity> userGroupEntities = userGroupRepository.findAll();
-		return userGroupEntities.stream().map(userGroupMapper::toDto).toList();
+	public List<UserGroupResponseDto> getListUserGroups(UserGroupSearchCriteria userGroupSearchCriteria,
+			PaginatedDto paginatedDto) {
+		Specification<UserGroupEntity> specification =
+				UserGroupSpecification.createSearchUserGroupSpecification(userGroupSearchCriteria);
+		Pageable pageable = PageRequest.of(paginatedDto.getPage(), paginatedDto.getSize());
+		Page<UserGroupEntity> userGroupEntities = userGroupRepository.findAll(specification, pageable);
+		return userGroupEntities.getContent().stream().map(userGroupMapper::toDto).toList();
 	}
 
 	@Override
 	public UserGroupResponseDto getUserGroupById(String id) {
-		UserGroupEntity userGroupEntity = userGroupRepository.findById(id).orElse(null);
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
+		UserGroupEntity userGroupEntity = userGroupRepository.findByIdAndOrganizationEntityId(id, organizationId)
+				.orElse(null);
 		if(userGroupEntity != null) {
 			return userGroupMapper.toDto(userGroupEntity);
 		}
@@ -43,6 +57,8 @@ public class UserGroupServiceImpl implements UserGroupService {
 	@Override
 	public UserGroupResponseDto createUserGroup(UserGroupRequestDto userGroupRequestDto) {
 		try {
+			String organizationId = SecurityUtils.getCurrentOrganizationId();
+			userGroupRequestDto.setOrganizationId(organizationId);
 			UserGroupEntity userGroupEntity = userGroupMapper.toEntity(userGroupRequestDto);
 			UserGroupPermissions userGroupPermissions = userGroupRequestDto.getUserGroupPermissions();
 			String userPermissionString = Serialization.serializeToString(userGroupPermissions);

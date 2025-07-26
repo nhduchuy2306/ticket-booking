@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.gyp.common.utils.SecurityUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,14 @@ public abstract class AbstractController {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
 		}
 		return authentication.getName();
+	}
+
+	protected String getCurrentUserId() {
+		return SecurityUtils.getCurrentUserId();
+	}
+
+	protected String getCurrentOrganizationId() {
+		return SecurityUtils.getCurrentOrganizationId();
 	}
 
 	protected Authentication getCurrentAuthentication() {

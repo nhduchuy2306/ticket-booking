@@ -10,9 +10,11 @@ import com.gyp.authservice.repositories.UserAccountRepository;
 import com.gyp.authservice.services.AuthService;
 import com.gyp.authservice.services.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -31,7 +33,12 @@ public class AuthServiceImpl implements AuthService {
 			if(passwordEncoder.matches(loginRequestDto.getPassword(), password)) {
 				UserAccountResponseDto dto = userAccountMapper.toResponseDto(userAccountEntity);
 				String token = jwtTokenProvider.generateToken(dto);
-				return LoginResponseDto.builder().token(token).build();
+				return LoginResponseDto.builder()
+						.token(token)
+						.userId(dto.getId())
+						.username(dto.getUsername())
+						.organizationId(dto.getOrganizationId())
+						.build();
 			}
 		}
 		return null;

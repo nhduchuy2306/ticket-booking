@@ -12,12 +12,14 @@ import org.mapstruct.MappingTarget;
 public interface OrganizationMapper extends AbstractMapper {
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "userAccountEntityList", ignore = true)
+	@Mapping(target = "userGroupEntityList", ignore = true)
 	OrganizationEntity toEntity(OrganizationRequestDto dto);
 
 	OrganizationResponseDto toResponseDto(OrganizationEntity entity);
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "userAccountEntityList", ignore = true)
+	@Mapping(target = "userGroupEntityList", ignore = true)
 	void updateEntityFromDto(OrganizationRequestDto dto, @MappingTarget OrganizationEntity entity);
 
 	@AfterMapping

@@ -22,6 +22,7 @@ public class SwaggerConfiguration {
 	public OpenAPI customOpenAPI() {
 		return new OpenAPI()
 				.servers(List.of(
+						new Server().url("http://localhost:9999/auths").description("Auth Service"),
 						new Server().url("http://localhost:9000").description("Auth Service"),
 						new Server().url("http://172.19.0.6:9000").description("Auth Service - Docker")
 				))

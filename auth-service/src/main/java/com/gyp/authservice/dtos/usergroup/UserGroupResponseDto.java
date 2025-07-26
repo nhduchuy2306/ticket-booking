@@ -19,5 +19,6 @@ public class UserGroupResponseDto extends AbstractDto {
 	private String name;
 	private String description;
 	private Boolean administrator;
+	private String organizationId;
 	private UserGroupPermissions userGroupPermissions;
 }

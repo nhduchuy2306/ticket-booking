@@ -35,11 +35,13 @@ CREATE TABLE IF NOT EXISTS usergroup
     name                   VARCHAR(255),
     description            TEXT,
     administrator          BOOLEAN,
+    organization_id       VARCHAR(255),
     user_group_permissions TEXT,
     create_user            VARCHAR(255),
     change_user            VARCHAR(255),
     create_timestamp       DATETIME,
-    change_timestamp       DATETIME
+    change_timestamp       DATETIME,
+    FOREIGN KEY (organization_id) REFERENCES organization (id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 # Create join table for the many-to-many relationship

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gyp.authservice.dtos.usergroup.UserGroupPermissions;
 import com.gyp.authservice.dtos.usergroup.UserGroupRequestDto;
 import com.gyp.authservice.dtos.usergroup.UserGroupResponseDto;
+import com.gyp.authservice.entities.OrganizationEntity;
 import com.gyp.authservice.entities.UserGroupEntity;
 import com.gyp.common.converters.Serialization;
 import org.mapstruct.AfterMapping;
@@ -15,14 +16,23 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface UserGroupMapper extends AbstractMapper {
 	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "organizationEntity", source = "organizationId", qualifiedByName = "mapOrganizationIdToEntity")
 	@Mapping(target = "userAccountEntityList", ignore = true)
 	@Mapping(target = "userGroupPermissionsRaw", source = "userGroupPermissions",
 			qualifiedByName = "mapUserGroupPermissionsRaw")
 	UserGroupEntity toEntity(UserGroupRequestDto dto);
 
+	@Mapping(target = "organizationId", source = "entity.organizationEntity.id")
 	@Mapping(target = "userGroupPermissions", source = "userGroupPermissionsRaw",
 			qualifiedByName = "mapUserGroupPermissions")
 	UserGroupResponseDto toDto(UserGroupEntity entity);
+
+	@Named("mapOrganizationIdToEntity")
+	default OrganizationEntity mapOrganizationIdToEntity(String organizationId) {
+		OrganizationEntity organizationEntity = new OrganizationEntity();
+		organizationEntity.setId(organizationId);
+		return organizationEntity;
+	}
 
 	@Named("mapUserGroupPermissions")
 	default UserGroupPermissions mapUserGroupPermissions(String userGroupPermissionsRaw) {

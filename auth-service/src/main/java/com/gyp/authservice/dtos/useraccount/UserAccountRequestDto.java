@@ -32,7 +32,6 @@ public class UserAccountRequestDto {
 	@NotNull
 	private String email;
 
-	@NotEmpty
 	private String organizationId;
 
 	private List<String> userGroupList;

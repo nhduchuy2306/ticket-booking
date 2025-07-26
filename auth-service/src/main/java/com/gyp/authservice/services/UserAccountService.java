@@ -4,11 +4,13 @@ import java.util.List;
 
 import com.gyp.authservice.dtos.useraccount.UserAccountRequestDto;
 import com.gyp.authservice.dtos.useraccount.UserAccountResponseDto;
+import com.gyp.authservice.services.criteria.UserAccountSearchCriteria;
+import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.models.UserAccountEventModel;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface UserAccountService extends UserDetailsService {
-	List<UserAccountResponseDto> getUserAccountList();
+public interface UserAccountService {
+	List<UserAccountResponseDto> getUserAccountList(UserAccountSearchCriteria userAccountSearchCriteria,
+			PaginatedDto paginatedDto);
 
 	UserAccountResponseDto getUserAccountByUserName(String username);
 

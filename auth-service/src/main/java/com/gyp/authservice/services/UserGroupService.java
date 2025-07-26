@@ -5,9 +5,12 @@ import java.util.List;
 import com.gyp.authservice.dtos.usergroup.ApplicationPermissionDto;
 import com.gyp.authservice.dtos.usergroup.UserGroupRequestDto;
 import com.gyp.authservice.dtos.usergroup.UserGroupResponseDto;
+import com.gyp.authservice.services.criteria.UserGroupSearchCriteria;
+import com.gyp.common.dtos.pagination.PaginatedDto;
 
 public interface UserGroupService {
-	List<UserGroupResponseDto> getListUserGroups();
+	List<UserGroupResponseDto> getListUserGroups(UserGroupSearchCriteria userGroupSearchCriteria,
+			PaginatedDto paginatedDto);
 
 	UserGroupResponseDto getUserGroupById(String id);
 

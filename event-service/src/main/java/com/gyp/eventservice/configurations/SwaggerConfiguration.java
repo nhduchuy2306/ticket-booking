@@ -13,7 +13,10 @@ public class SwaggerConfiguration {
 	@Bean
 	public OpenAPI customOpenAPI() {
 		return new OpenAPI()
-				.servers(List.of(new Server().url("http://localhost:9001").description("Event Service")))
+				.servers(List.of(
+						new Server().url("http://localhost:9999/events").description("Event Service"),
+						new Server().url("http://localhost:9001").description("Event Service"))
+				)
 				.info(new Info().title("Event Service API")
 						.version("1.0")
 						.description("API Documentation"));

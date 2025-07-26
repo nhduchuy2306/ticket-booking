@@ -5,16 +5,22 @@ import java.util.stream.Collectors;
 
 import com.gyp.authservice.dtos.useraccount.UserAccountRequestDto;
 import com.gyp.authservice.dtos.useraccount.UserAccountResponseDto;
-import com.gyp.authservice.entities.CustomUserDetails;
 import com.gyp.authservice.entities.UserAccountEntity;
 import com.gyp.authservice.entities.UserGroupEntity;
 import com.gyp.authservice.mappers.UserAccountMapper;
 import com.gyp.authservice.repositories.UserAccountRepository;
 import com.gyp.authservice.repositories.UserGroupRepository;
 import com.gyp.authservice.services.UserAccountService;
+import com.gyp.authservice.services.criteria.UserAccountSearchCriteria;
+import com.gyp.authservice.services.specifications.UserAccountSpecification;
+import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.models.UserAccountEventModel;
+import com.gyp.common.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -28,21 +34,14 @@ public class UserAccountServiceImpl implements UserAccountService {
 	private final UserAccountMapper userAccountMapper;
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		UserAccountEntity userAccountEntity = userAccountRepository.findByUsername(username).orElse(null);
-		if(userAccountEntity == null) {
-			throw new UsernameNotFoundException("User not found");
-		}
+	public List<UserAccountResponseDto> getUserAccountList(UserAccountSearchCriteria userAccountSearchCriteria,
+			PaginatedDto paginatedDto) {
+		Specification<UserAccountEntity> specification =
+				UserAccountSpecification.createUserAccountSpecification(userAccountSearchCriteria);
+		Pageable pageable = PageRequest.of(paginatedDto.getPage(), paginatedDto.getSize());
+		var userAccounts = userAccountRepository.findAll(specification, pageable);
 
-		return CustomUserDetails.builder()
-				.username(userAccountEntity.getUsername())
-				.password(userAccountEntity.getPassword())
-				.build();
-	}
-
-	@Override
-	public List<UserAccountResponseDto> getUserAccountList() {
-		return userAccountRepository.findAll().stream()
+		return userAccounts.getContent().stream()
 				.map(userAccountMapper::toResponseDto)
 				.collect(Collectors.toList());
 	}
@@ -70,6 +69,8 @@ public class UserAccountServiceImpl implements UserAccountService {
 		if(request.getUserGroupList() == null || request.getUserGroupList().isEmpty()) {
 			throw new IllegalArgumentException("User group list cannot be empty");
 		}
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
+		request.setOrganizationId(organizationId);
 		List<UserGroupEntity> userGroupIds = userGroupRepository.findAllById(request.getUserGroupList());
 		UserAccountEntity userAccountEntity = userAccountMapper.toEntity(request);
 		userAccountEntity.setUserGroupEntityList(userGroupIds);

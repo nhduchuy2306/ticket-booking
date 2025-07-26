@@ -9,6 +9,8 @@ import java.time.format.DateTimeFormatter;
  */
 public final class AppConstants {
 
+
+
 	// Private constructor to prevent instantiation
 	private AppConstants() {
 	}
@@ -17,6 +19,8 @@ public final class AppConstants {
 	public static final String APP_TOKEN_PREFIX = "Bearer ";
 	public static final String APP_HEADER_USER_PAYLOAD = "X-User-Payload";
 	public static final String APP_HEADER_USER_SUBJECT = "X-User-Subject";
+	public static final String APP_HEADER_USER_ID = "X-User-ID";
+	public static final String APP_HEADER_ORGANIZATION_ID = "X-Organization-ID";
 	public static final String APP_HEADER_SCOPE = "Scope_";
 	public static final int TOKEN_EXPIRATION_HOURS = 24;
 	public static final String DEFAULT_USER_ROLE = "ROLE_USER";

@@ -17,4 +17,7 @@ public class LoginResponseDto implements Response {
 	private static final long serialVersionUID = 2120453009295682055L;
 
 	private String token;
+	private String userId;
+	private String username;
+	private String organizationId;
 }

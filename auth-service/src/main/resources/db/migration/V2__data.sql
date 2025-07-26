@@ -37,24 +37,24 @@ VALUES ('0ead97fd-06e7-4977-a76e-b906c61964bb', 'fsdfsdf', '1985-05-15 08:00:00'
 
 -- Insert sample user groups
 INSERT INTO usergroup (id, name, description, administrator, user_group_permissions, create_user, change_user,
-                       create_timestamp, change_timestamp)
+                       create_timestamp, change_timestamp, organization_id)
 VALUES ('0432f3d0-5d41-42f2-b836-b44b9386e6b4', 'normal', 'This is Normal role', 0,
         '{"permissionItems":[{"actions":["READ"],"applicationId":"app.user.account"},{"actions":["READ","DELETE","CREATE","UPDATE"],"applicationId":"app.event"},{"actions":["READ","DELETE","CREATE","UPDATE"],"applicationId":"app.user.group"},{"actions":["READ","DELETE","EXPORT","CREATE","IMPORT","UPDATE"],"applicationId":"app.configuration"}]}',
-        null, null, null, null),
+        null, null, null, null, '1f2d3c4b-5a6b-7c8d-9e0f-1a2b3c4d5e6f'),
        ('0f044715-1926-4f3c-9e7b-563200c4d9cc', 'UserGroup2', 'Editors group with limited permissions', 0,
         '{"permissionItems":[{"actions":["READ"],"applicationId":"app.user.group"},{"actions":["LOGIN","READ","LOGOUT","DELETE","CREATE","UPDATE"],"applicationId":"app.user.account"},{"actions":["READ","DELETE","CREATE","UPDATE"],"applicationId":"app.event"}]}',
-        'system', 'system', '2025-05-31 05:06:15', '2025-05-31 05:06:15'),
-       ('287e90bc-d761-4fbf-9b05-673d5da53c87', 'ROOT', 'This is Admin role', 1, '{}', null, null, null, null),
+        'system', 'system', '2025-05-31 05:06:15', '2025-05-31 05:06:15', '1f2d3c4b-5a6b-7c8d-9e0f-1a2b3c4d5e6f'),
+       ('287e90bc-d761-4fbf-9b05-673d5da53c87', 'ROOT', 'This is Admin role', 1, '{}', null, null, null, null,
+        '1f2d3c4b-5a6b-7c8d-9e0f-1a2b3c4d5e6f'),
        ('7ac08049-1709-4757-9250-bcf16c32f57a', 'UserGroup3', 'Viewers group with view-only permissions', 0,
         '{"permissionItems":[{"applicationId":"app.user.group","actions":["READ"]},{"applicationId":"app.user.account","actions":["READ","CREATE"]}]}',
-        'system', 'system', '2025-05-31 05:06:15', '2025-05-31 05:06:15'),
+        'system', 'system', '2025-05-31 05:06:15', '2025-05-31 05:06:15', '1f2d3c4b-5a6b-7c8d-9e0f-1a2b3c4d5e6f'),
        ('7b4b7969-3544-433c-bec5-40ee41d38384', 'Organizer1', 'This is Organizer role', 0,
         '{"permissionItems":[{"actions":["READ"],"applicationId":"app.user.account"},{"actions":["DELETE","READ","CREATE","UPDATE"],"applicationId":"app.event"}]}',
-        null, null, null, null),
+        null, null, null, null, '1f2d3c4b-5a6b-7c8d-9e0f-1a2b3c4d5e6f'),
        ('cb2f0983-5b96-4d4d-8e61-12286d75ac54', 'UserGroup1', 'Viewer', 0,
         '{"permissionItems":[{"applicationId":"app.user.group","actions":["CREATE","UPDATE","READ","DELETE"]}]}',
-        'system', 'system', '2025-05-31 05:06:15', '2025-05-31 05:06:15');
-
+        'system', 'system', '2025-05-31 05:06:15', '2025-05-31 05:06:15', '1f2d3c4b-5a6b-7c8d-9e0f-1a2b3c4d5e6f');
 
 -- Establish relationships between user accounts and user groups
 INSERT INTO userpermissions (user_group_id, user_account_id)

@@ -58,10 +58,15 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
 			String payload = JwtTokenProvider.getUserPayload(token, jwtSecretKey);
 			String subject = JwtTokenProvider.getUserSub(token, jwtSecretKey);
+			String userId = JwtTokenProvider.getUserId(token, jwtSecretKey);
+			String organizationId = JwtTokenProvider.getOrganizationId(token, jwtSecretKey);
+
 			ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
 					.header(HttpHeaders.AUTHORIZATION, AppConstants.APP_TOKEN_PREFIX + token)
 					.header(AppConstants.APP_HEADER_USER_PAYLOAD, AppConstants.APP_HEADER_SCOPE + payload)
 					.header(AppConstants.APP_HEADER_USER_SUBJECT, subject)
+					.header(AppConstants.APP_HEADER_USER_ID, userId)
+					.header(AppConstants.APP_HEADER_ORGANIZATION_ID, organizationId)
 					.build();
 			ServerWebExchange mutatedExchange = exchange.mutate()
 					.request(mutatedRequest)

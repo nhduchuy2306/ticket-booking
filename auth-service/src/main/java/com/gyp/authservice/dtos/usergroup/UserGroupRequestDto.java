@@ -29,5 +29,8 @@ public class UserGroupRequestDto extends AbstractDto implements Request {
 	private String description;
 
 	private Boolean administrator;
+
+	private String organizationId;
+
 	private UserGroupPermissions userGroupPermissions;
 }

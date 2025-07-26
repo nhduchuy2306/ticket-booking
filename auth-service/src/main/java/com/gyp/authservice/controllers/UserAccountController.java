@@ -1,10 +1,14 @@
 package com.gyp.authservice.controllers;
 
+import java.util.Optional;
+
 import com.gyp.authservice.dtos.useraccount.UserAccountRequestDto;
 import com.gyp.authservice.messages.producers.UserAccountProducer;
 import com.gyp.authservice.services.UserAccountService;
+import com.gyp.authservice.services.criteria.UserAccountSearchCriteria;
 import com.gyp.common.annotations.RequestPermission;
 import com.gyp.common.controllers.AbstractController;
+import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.enums.permission.ActionPermission;
 import com.gyp.common.enums.permission.ApplicationPermission;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -35,8 +40,20 @@ public class UserAccountController extends AbstractController {
 	@GetMapping
 	@RequestPermission(application = ApplicationPermission.USER_ACCOUNT, actions = { ActionPermission.READ })
 	@RequestPermission(application = ApplicationPermission.USER_GROUP, actions = { ActionPermission.READ })
-	public ResponseEntity<?> getUserAccountList() {
-		return createResponseOk(userAccountService.getUserAccountList());
+	public ResponseEntity<?> getListUserAccount(
+			@RequestParam(value = "sortBy", required = false) String sortBy,
+			@RequestParam(value = "page", required = false) Optional<Integer> page,
+			@RequestParam(value = "size", required = false) Optional<Integer> size) {
+		String organizationId = getCurrentOrganizationId();
+		UserAccountSearchCriteria userGroupSearchCriteria = UserAccountSearchCriteria.builder()
+				.organizationId(organizationId)
+				.sortBy(sortBy)
+				.build();
+		PaginatedDto pagination = PaginatedDto.builder()
+				.page(page.orElse(0))
+				.size(size.orElse(10))
+				.build();
+		return createResponseOk(userAccountService.getUserAccountList(userGroupSearchCriteria, pagination));
 	}
 
 	@GetMapping("/{" + ID_PARAM + "}")

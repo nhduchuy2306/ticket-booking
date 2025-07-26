@@ -67,5 +67,5 @@ public class UserAccountEntity extends AbstractEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "organization_id")
-	private OrganizationEntity organization;
+	private OrganizationEntity organizationEntity;
 }

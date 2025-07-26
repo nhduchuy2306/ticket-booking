@@ -46,6 +46,8 @@ public class JwtTokenProvider {
 						Instant.now().plus(1, ChronoUnit.DAYS).toEpochMilli()
 				))
 				.claim("scope", buildAuthoritiesScope(dto))
+				.claim("organizationId", dto.getOrganizationId())
+				.claim("userId", dto.getId())
 				.build();
 
 		Payload payload = new Payload(jwtClaimsSet.toJSONObject());
