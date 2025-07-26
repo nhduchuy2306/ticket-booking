@@ -98,7 +98,6 @@ to PDF, QR code and use this at the event.
 - OrderService -> 9003
 - SaleChannelService -> port:9004
 - NotificationService -> 9005
-- SearchService -> 9006
 - Observability -> 9007
 - Configuration -> 9008
 - DiscoveryService -> port:9761
