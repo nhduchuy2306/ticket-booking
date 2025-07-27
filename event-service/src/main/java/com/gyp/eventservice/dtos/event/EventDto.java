@@ -29,6 +29,7 @@ public class EventDto extends AbstractDto {
 	private String name;
 	private String description;
 	private EventStatus status;
+	private String organizationId;
 
 	// Time-related properties
 	private LocalDateTime startTime;

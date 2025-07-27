@@ -17,4 +17,5 @@ public class VenueRequestDto {
 	private Integer capacity;
 	private Double latitude;
 	private Double longitude;
+	private String organizationId;
 }

@@ -3,6 +3,7 @@ package com.gyp.eventservice.services.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.enums.event.EventStatus;
 import com.gyp.common.exceptions.ResourceDuplicateException;
 import com.gyp.common.exceptions.ResourceNotFoundException;
@@ -21,6 +22,7 @@ import com.gyp.eventservice.services.criteria.EventSearchCriteria;
 import com.gyp.eventservice.services.specifications.EventSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -40,10 +42,11 @@ public class EventServiceImpl implements EventService {
 	}
 
 	@Override
-	public List<EventResponseDto> getAllEvents() {
-		List<EventEntity> entities = eventRepository.findAll();
+	public List<EventResponseDto> getAllEvents(EventSearchCriteria criteria, PaginatedDto pagination) {
+		Specification<EventEntity> eventSpecification = EventSpecification.createSearchEventSpecification(criteria);
+		Page<EventEntity> entities = eventRepository.findAll(eventSpecification, pagination.toPageable());
 		if(!entities.isEmpty()) {
-			return eventMapper.toResponseDtoList(entities);
+			return eventMapper.toResponseDtoList(entities.getContent());
 		}
 		return null;
 	}

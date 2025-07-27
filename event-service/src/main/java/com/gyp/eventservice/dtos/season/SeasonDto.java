@@ -18,4 +18,5 @@ public class SeasonDto extends AbstractDto {
 	private String name;
 	private String description;
 	private SeasonStatus status;
+	private String organizationId;
 }

@@ -15,4 +15,5 @@ public class VenueMapRequestDto {
 	private Double height;
 	private String venueId;
 	private String seatMapId;
+	private String organizationId;
 }

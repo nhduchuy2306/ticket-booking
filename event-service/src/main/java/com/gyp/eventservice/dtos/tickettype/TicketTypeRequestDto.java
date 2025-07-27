@@ -22,4 +22,5 @@ public class TicketTypeRequestDto {
 	private LocalDateTime saleStartDate;
 	private LocalDateTime saleEndDate;
 	private String eventId;
+	private String organizationId;
 }

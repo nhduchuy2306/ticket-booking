@@ -1,14 +1,18 @@
 package com.gyp.eventservice.controllers;
 
+import java.util.Optional;
+
 import jakarta.validation.Valid;
 
 import com.gyp.common.annotations.RequestPermission;
 import com.gyp.common.controllers.AbstractValidatableController;
+import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.enums.permission.ActionPermission;
 import com.gyp.common.enums.permission.ApplicationPermission;
 import com.gyp.common.services.DataIntegrityService;
 import com.gyp.eventservice.dtos.event.EventRequestDto;
 import com.gyp.eventservice.services.EventService;
+import com.gyp.eventservice.services.criteria.EventSearchCriteria;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -32,8 +37,18 @@ public class EventController extends AbstractValidatableController {
 
 	@GetMapping
 	@RequestPermission(application = ApplicationPermission.EVENT, actions = { ActionPermission.READ })
-	public ResponseEntity<?> getAllEvents() {
-		return ResponseEntity.ok(eventService.getAllEvents());
+	public ResponseEntity<?> getAllEvents(
+			@RequestParam(value = "page", required = false) Optional<Integer> page,
+			@RequestParam(value = "size", required = false) Optional<Integer> size) {
+		String organizationId = getCurrentOrganizationId();
+		EventSearchCriteria criteria = EventSearchCriteria.builder()
+				.organizationId(organizationId)
+				.build();
+		PaginatedDto pagination = PaginatedDto.builder()
+				.page(page.orElse(0))
+				.size(size.orElse(10))
+				.build();
+		return ResponseEntity.ok(eventService.getAllEvents(criteria, pagination));
 	}
 
 	@GetMapping("/{" + ID_PARAM + "}")

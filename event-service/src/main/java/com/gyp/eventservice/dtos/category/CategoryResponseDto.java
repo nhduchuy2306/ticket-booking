@@ -16,6 +16,7 @@ public class CategoryResponseDto extends AbstractDto {
 	private String id;
 	private String name;
 	private String description;
+	private String organizationId;
 
 	// Optional
 	// private List<EventSummaryDto> events;

@@ -33,4 +33,5 @@ public class TicketSearchCriteria {
 
 	@Builder.Default
 	private String sortDirection = "ASC";
+	private String organizationId;
 }

@@ -15,4 +15,5 @@ public class CategoryRequestDto {
 	@NotNull
 	private String name;
 	private String description;
+	private String organizationId;
 }

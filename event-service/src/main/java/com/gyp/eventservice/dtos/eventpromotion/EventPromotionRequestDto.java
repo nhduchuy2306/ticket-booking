@@ -17,4 +17,5 @@ public class EventPromotionRequestDto {
 	private LocalDateTime validFrom;
 	private LocalDateTime validTo;
 	private String eventId;
+	private String organizationId;
 }

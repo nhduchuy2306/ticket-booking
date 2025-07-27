@@ -58,6 +58,9 @@ public class EventEntity extends AbstractEntity {
 	@Embedded
 	private EventTimeEmbeddable time;
 
+	@Column(name = "organization_id")
+	private String organizationId;
+
 	@ManyToOne
 	@JoinColumn(name = "organizer_id")
 	private OrganizerEntity organizerEntity;

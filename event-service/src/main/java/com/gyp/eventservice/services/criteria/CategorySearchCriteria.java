@@ -14,4 +14,5 @@ public class CategorySearchCriteria {
 	private String name;
 	private String description;
 	private String sortBy;
+	private String organizationId;
 }

@@ -42,6 +42,9 @@ public class VenueMapEntity extends AbstractEntity {
 	@Column(name = "height")
 	private Double height;
 
+	@Column(name = "organization_id")
+	private String organizationId;
+
 	@ManyToOne
 	@JoinColumn(name = "venue_id")
 	private VenueEntity venueEntity;

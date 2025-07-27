@@ -24,4 +24,5 @@ public class EventPromotionResponseDto extends AbstractDto {
 	// Calculated properties
 	private boolean isActive;
 	private boolean isExpired;
+	private String organizationId;
 }

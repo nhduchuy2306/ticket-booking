@@ -56,6 +56,9 @@ public class VenueEntity extends AbstractEntity {
 	@Column(name = "longitude")
 	private Double longitude;
 
+	@Column(name = "organization_id")
+	private String organizationId;
+
 	@JsonIgnore
 	@OneToMany(mappedBy = "venueEntity")
 	private List<EventEntity> eventEntityList = new ArrayList<>();

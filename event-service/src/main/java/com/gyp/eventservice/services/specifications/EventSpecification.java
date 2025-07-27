@@ -8,6 +8,8 @@ import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 
 import com.gyp.common.enums.event.TicketStatus;
+import com.gyp.common.utils.PropertyName;
+import com.gyp.eventservice.entities.CategoryEntity;
 import com.gyp.eventservice.entities.EventEntity;
 import com.gyp.eventservice.entities.TicketTypeEntity;
 import com.gyp.eventservice.services.criteria.EventSearchCriteria;
@@ -20,6 +22,13 @@ public final class EventSpecification {
 	public static Specification<EventEntity> createSearchEventSpecification(EventSearchCriteria criteria) {
 		return (root, query, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<>();
+
+			// Organization ID filter
+			if(criteria.getOrganizationId() != null && !criteria.getOrganizationId().trim().isEmpty()) {
+				predicates.add(
+						criteriaBuilder.equal(root.get(PropertyName.of(CategoryEntity::getOrganizationId)),
+								criteria.getOrganizationId()));
+			}
 
 			// Keyword search
 			if(criteria.getKeyword() != null && !criteria.getKeyword().trim().isEmpty()) {

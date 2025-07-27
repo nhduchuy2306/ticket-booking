@@ -16,4 +16,5 @@ public class CategoryDto extends AbstractDto {
 	private String id;
 	private String name;
 	private String description;
+	private String organizationId;
 }

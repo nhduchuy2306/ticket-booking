@@ -50,4 +50,5 @@ public class EventResponseDto extends AbstractDto {
 	private long ticketsSold;
 	private boolean isEventInProgress;
 	private boolean isEventCompleted;
+	private String organizationId;
 }

@@ -29,4 +29,5 @@ public class TicketTypeDto extends AbstractDto {
 	private Integer soldTickets;
 	private boolean isSaleActive;
 	private boolean isSoldOut;
+	private String organizationId;
 }

@@ -50,6 +50,9 @@ public class SeasonEntity extends AbstractEntity {
 	@Enumerated(EnumType.STRING)
 	private SeasonStatus status;
 
+	@Column(name = "organization_id")
+	private String organizationId;
+
 	@JsonIgnore
 	@OneToMany(mappedBy = "seasonEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<EventEntity> eventEntityList = new ArrayList<>();

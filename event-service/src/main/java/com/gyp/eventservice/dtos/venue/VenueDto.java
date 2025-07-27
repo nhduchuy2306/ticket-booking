@@ -23,4 +23,5 @@ public class VenueDto extends AbstractDto {
 	private Double latitude;
 	private Double longitude;
 	private VenueMap venueMap;
+	private String organizationId;
 }

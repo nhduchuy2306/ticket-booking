@@ -41,6 +41,9 @@ public class SeatMapEntity extends AbstractEntity {
 	@Column(name = "venue_type", nullable = false)
 	private String venueType;
 
+	@Column(name = "organization_id")
+	private String organizationId;
+
 	@Column(name = "seat_config", columnDefinition = "TEXT", nullable = false)
 	private String seatConfigRaw;
 

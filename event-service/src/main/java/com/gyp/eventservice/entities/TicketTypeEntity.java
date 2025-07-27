@@ -62,6 +62,9 @@ public class TicketTypeEntity extends AbstractEntity {
 	@Column(name = "sale_end_date")
 	private LocalDateTime saleEndDate;
 
+	@Column(name = "organization_id")
+	private String organizationId;
+
 	@ManyToOne
 	@JoinColumn(name = "event_id")
 	private EventEntity eventEntity;

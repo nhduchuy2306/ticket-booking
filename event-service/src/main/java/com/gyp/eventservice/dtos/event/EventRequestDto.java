@@ -49,4 +49,5 @@ public class EventRequestDto implements Request {
 	private String seasonId;
 
 	private List<String> categoryIds;
+	private String organizationId;
 }

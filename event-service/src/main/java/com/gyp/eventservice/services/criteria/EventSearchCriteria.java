@@ -43,6 +43,7 @@ public class EventSearchCriteria {
 	// Price filtering (based on ticket types)
 	private Double minPrice;
 	private Double maxPrice;
+	private String organizationId;
 
 	// Pagination
 	@Builder.Default

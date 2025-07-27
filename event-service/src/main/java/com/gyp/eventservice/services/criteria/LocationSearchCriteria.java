@@ -30,4 +30,5 @@ public class LocationSearchCriteria {
 
 	@Builder.Default
 	private Integer size = 20;
+	private String organizationId;
 }

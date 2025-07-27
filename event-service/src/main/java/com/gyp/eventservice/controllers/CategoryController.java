@@ -39,7 +39,8 @@ public class CategoryController extends AbstractValidatableController {
 			@RequestParam(value = "sortBy", required = false) String sortBy,
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
 			@RequestParam(value = "size", required = false) Optional<Integer> size) {
-		CategorySearchCriteria criteria = new CategorySearchCriteria(id, name, description, sortBy);
+		String organizationId = getCurrentOrganizationId();
+		CategorySearchCriteria criteria = new CategorySearchCriteria(id, name, description, sortBy, organizationId);
 		PaginatedDto pagination = PaginatedDto.builder()
 				.page(page.orElse(0))
 				.size(size.orElse(10))

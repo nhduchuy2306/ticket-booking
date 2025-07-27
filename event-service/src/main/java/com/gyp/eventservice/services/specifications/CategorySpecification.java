@@ -18,6 +18,13 @@ public final class CategorySpecification {
 		return (root, query, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<>();
 
+			// Organization ID filter
+			if(criteria.getOrganizationId() != null && !criteria.getOrganizationId().trim().isEmpty()) {
+				predicates.add(
+						criteriaBuilder.equal(root.get(PropertyName.of(CategoryEntity::getOrganizationId)),
+								criteria.getOrganizationId()));
+			}
+
 			// ID filter
 			if(criteria.getId() != null && !criteria.getId().trim().isEmpty()) {
 				predicates.add(

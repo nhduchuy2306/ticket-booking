@@ -35,4 +35,5 @@ public class VenueSearchCriteria {
 
 	@Builder.Default
 	private String sortDirection = "ASC";
+	private String organizationId;
 }

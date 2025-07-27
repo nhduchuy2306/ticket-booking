@@ -40,6 +40,9 @@ public class CategoryEntity extends AbstractEntity {
 	@Column(name = "description")
 	private String description;
 
+	@Column(name = "organization_id")
+	private String organizationId;
+
 	@JsonIgnore
 	@ManyToMany(mappedBy = "categoryEntityList")
 	private List<EventEntity> eventEntityList;

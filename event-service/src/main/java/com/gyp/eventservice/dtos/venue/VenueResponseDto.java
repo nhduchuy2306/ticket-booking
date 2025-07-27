@@ -24,5 +24,6 @@ public class VenueResponseDto extends AbstractDto {
 	private Integer capacity;
 	private Double latitude;
 	private Double longitude;
+	private String organizationId;
 	private List<VenueMapResponseDto> venueMapList;
 }
