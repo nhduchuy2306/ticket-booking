@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS event
     door_open_time   TIMESTAMP,
     door_close_time  TIMESTAMP,
     organizer_id     VARCHAR(255) NOT NULL,
-    venue_id         VARCHAR(255) NOT NULL,
+    venue_map_id     VARCHAR(255) NOT NULL,
     season_id        VARCHAR(255),
     organization_id  VARCHAR(255),
     create_user      VARCHAR(255),
@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS event
     create_timestamp DATETIME,
     change_timestamp DATETIME,
     FOREIGN KEY (organizer_id) REFERENCES organizer (id),
-    FOREIGN KEY (venue_id) REFERENCES venue (id),
+    FOREIGN KEY (venue_map_id) REFERENCES venuemap (id),
     FOREIGN KEY (season_id) REFERENCES season (id)
 );
 
@@ -179,7 +179,7 @@ CREATE TABLE IF NOT EXISTS eventapproval
 
 -- Create indexes
 CREATE INDEX idx_event_organizer ON event (organizer_id);
-CREATE INDEX idx_event_venue ON event (venue_id);
+CREATE INDEX idx_event_venue ON event (venue_map_id);
 CREATE INDEX idx_event_status ON event (status);
 CREATE INDEX idx_ticket_type_event ON tickettype (event_id);
 CREATE INDEX idx_ticket_type_status ON tickettype (status);

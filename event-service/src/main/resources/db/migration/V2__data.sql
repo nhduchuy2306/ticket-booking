@@ -59,21 +59,21 @@ VALUES ('2942c27a-faa5-462b-bd41-6e44ea8d17f5', 'Season 1', 'This is season 1', 
 
 
 INSERT INTO event (id, name, description, status, start_time, end_time, door_open_time, door_close_time, organizer_id,
-                   venue_id, create_user, create_timestamp, season_id, organization_id)
+                   venue_map_id, create_user, create_timestamp, season_id, organization_id)
 VALUES ('33fe6f8c-7c73-4248-99b6-5a7934af2905', 'Summer Music Festival', 'Annual outdoor music festival', 'PUBLISHED',
         '2023-07-15 18:00:00',
         '2023-07-15 23:00:00', '2023-07-15 16:00:00', '2023-07-15 22:30:00', 'cd79cb00-3978-4709-81fc-9aeb41b0a430',
-        '24743759-bc98-45b2-9f3d-63fb2e467fd9', 'Admin', NOW(),
+        '2a941d3d-6726-49f4-9622-effa14492dde', 'Admin', NOW(),
         '2942c27a-faa5-462b-bd41-6e44ea8d17f5', '1f2d3c4b-5a6b-7c8d-9e0f-1a2b3c4d5e6f'),
        ('63fcf9a1-3b6a-40be-a277-f7c91092ee52', 'Championship Finals', 'National sports championship', 'PUBLISHED',
         '2023-08-20 19:00:00',
         '2023-08-20 21:30:00', '2023-08-20 17:00:00', '2023-08-20 20:30:00', 'be4d36d6-1f61-45ff-8c94-75d20d4ec1dd',
-        'ad17fc7f-1514-47ec-a9fa-9c7a5ebefd12', 'Admin', NOW(),
+        '0ce83fc4-7155-4fb9-b614-d2081ceb293e', 'Admin', NOW(),
         '141f7332-f102-4454-8046-b4eaf4a5e9fc', '1f2d3c4b-5a6b-7c8d-9e0f-1a2b3c4d5e6f'),
        ('98ff9939-f15f-490a-89cb-a276c7537b91', 'Hamlet Performance', 'Classic Shakespeare play', 'DRAFT',
         '2023-09-10 20:00:00', '2023-09-10 22:30:00',
         '2023-09-10 19:00:00', '2023-09-10 22:00:00', '471b4a5b-7bfa-4d12-a0d2-d3f0021fba4a',
-        '23884001-0cc9-46e9-95d2-82f5e64dcf68', 'Admin', NOW(),
+        'bfc4eceb-0f3c-4576-a399-6a44a5570099', 'Admin', NOW(),
         'ec467ee5-8ae8-4dc3-a6d0-291ca9f40bb3', '1f2d3c4b-5a6b-7c8d-9e0f-1a2b3c4d5e6f');
 
 INSERT INTO eventcategories (event_id, category_id)

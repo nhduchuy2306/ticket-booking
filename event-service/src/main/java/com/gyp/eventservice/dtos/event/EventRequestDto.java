@@ -43,7 +43,7 @@ public class EventRequestDto implements Request {
 	private String organizerId;
 
 	@NotNull
-	private String venueId;
+	private String venueMapId;
 
 	@NotNull
 	private String seasonId;

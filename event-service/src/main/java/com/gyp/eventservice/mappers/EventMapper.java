@@ -13,6 +13,8 @@ import com.gyp.eventservice.entities.EventEntity;
 import com.gyp.eventservice.entities.OrganizerEntity;
 import com.gyp.eventservice.entities.SeasonEntity;
 import com.gyp.eventservice.entities.VenueEntity;
+import com.gyp.eventservice.entities.VenueMapEntity;
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -30,7 +32,7 @@ public interface EventMapper extends AbstractMapper {
 	@Mapping(target = "doorOpenTime", source = "time.doorOpenTime")
 	@Mapping(target = "doorCloseTime", source = "time.doorCloseTime")
 	@Mapping(target = "organizer", source = "organizerEntity")
-	@Mapping(target = "venue", source = "venueEntity")
+	@Mapping(target = "venueMap", source = "venueMapEntity")
 	@Mapping(target = "categories", source = "categoryEntityList")
 	@Mapping(target = "ticketTypes", source = "ticketTypeEntityList")
 	@Mapping(target = "promotions", source = "eventPromotionEntityList")
@@ -51,7 +53,7 @@ public interface EventMapper extends AbstractMapper {
 	@Mapping(target = "time.doorCloseTime", source = "doorCloseTime")
 	@Mapping(target = "organizerEntity", source = "organizerId", qualifiedByName = "organizerIdToEntity")
 	@Mapping(target = "seasonEntity", source = "seasonId", qualifiedByName = "seasonIdToEntity")
-	@Mapping(target = "venueEntity", source = "venueId", qualifiedByName = "venueIdToEntity")
+	@Mapping(target = "venueMapEntity", source = "venueMapId", qualifiedByName = "venueMapIdToEntity")
 	@Mapping(target = "categoryEntityList", source = "categoryIds", qualifiedByName = "categoryIdsToEntities")
 	@Mapping(target = "ticketTypeEntityList", ignore = true)
 	@Mapping(target = "eventPromotionEntityList", ignore = true)
@@ -67,7 +69,7 @@ public interface EventMapper extends AbstractMapper {
 	@Mapping(target = "time.doorCloseTime", source = "doorCloseTime")
 	@Mapping(target = "organizerEntity", source = "organizerId", qualifiedByName = "organizerIdToEntity")
 	@Mapping(target = "seasonEntity", source = "seasonId", qualifiedByName = "seasonIdToEntity")
-	@Mapping(target = "venueEntity", source = "venueId", qualifiedByName = "venueIdToEntity")
+	@Mapping(target = "venueMapEntity", source = "venueMapId", qualifiedByName = "venueMapIdToEntity")
 	@Mapping(target = "categoryEntityList", source = "categoryIds", qualifiedByName = "categoryIdsToEntities")
 	@Mapping(target = "ticketTypeEntityList", ignore = true)
 	@Mapping(target = "eventPromotionEntityList", ignore = true)
@@ -76,7 +78,6 @@ public interface EventMapper extends AbstractMapper {
 	void updateEntityFromDto(EventRequestDto dto, @MappingTarget EventEntity entity);
 
 	@Mapping(target = "organizer", source = "entity.organizerEntity.name")
-	@Mapping(target = "venue", source = "entity.venueEntity.name")
 	@Mapping(target = "endTime", source = "entity.time.endTime")
 	@Mapping(target = "startTime", source = "entity.time.startTime")
 	@Mapping(target = "doorCloseTime", source = "entity.time.doorCloseTime")
@@ -135,14 +136,14 @@ public interface EventMapper extends AbstractMapper {
 		return season;
 	}
 
-	@Named("venueIdToEntity")
-	default VenueEntity venueIdToEntity(String venueId) {
-		if(venueId == null) {
+	@Named("venueMapIdToEntity")
+	default VenueMapEntity venueIdToEntity(String venueMapId) {
+		if(StringUtils.isEmpty(venueMapId)) {
 			return null;
 		}
-		VenueEntity venue = new VenueEntity();
-		venue.setId(venueId);
-		return venue;
+		VenueMapEntity venueMap = new VenueMapEntity();
+		venueMap.setId(venueMapId);
+		return venueMap;
 	}
 
 	@Named("eventIdToEntity")

@@ -6,13 +6,9 @@ import java.util.List;
 import com.gyp.common.enums.event.EventStatus;
 import com.gyp.eventservice.dtos.AbstractDto;
 import com.gyp.eventservice.dtos.category.CategoryDto;
-import com.gyp.eventservice.dtos.category.CategoryResponseDto;
-import com.gyp.eventservice.dtos.eventapproval.EventApprovalResponseDto;
-import com.gyp.eventservice.dtos.eventpromotion.EventPromotionResponseDto;
 import com.gyp.eventservice.dtos.organizer.OrganizerDto;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeDto;
-import com.gyp.eventservice.dtos.tickettype.TicketTypeResponseDto;
-import com.gyp.eventservice.dtos.venue.VenueDto;
+import com.gyp.eventservice.dtos.venuemap.VenueMapDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,7 +35,7 @@ public class EventDto extends AbstractDto {
 
 	// Related entities - more detailed information
 	private OrganizerDto organizer;
-	private VenueDto venue;
+	private VenueMapDto venueMap;
 	private List<CategoryDto> categories;
 	private List<TicketTypeDto> ticketTypes;
 }

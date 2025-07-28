@@ -20,5 +20,4 @@ public class EventEventModel {
 	private LocalDateTime doorOpenTime;
 	private LocalDateTime doorCloseTime;
 	private String organizer;
-	private String venue;
 }

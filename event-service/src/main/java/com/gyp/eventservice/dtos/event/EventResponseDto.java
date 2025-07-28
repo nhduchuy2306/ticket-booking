@@ -12,6 +12,7 @@ import com.gyp.eventservice.dtos.organizer.OrganizerResponseDto;
 import com.gyp.eventservice.dtos.season.SeasonResponseDto;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeResponseDto;
 import com.gyp.eventservice.dtos.venue.VenueResponseDto;
+import com.gyp.eventservice.dtos.venuemap.VenueMapResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,7 +38,7 @@ public class EventResponseDto extends AbstractDto {
 
 	// Related entities - more detailed information
 	private OrganizerResponseDto organizer;
-	private VenueResponseDto venue;
+	private VenueMapResponseDto venueMap;
 	private SeasonResponseDto season;
 	private List<CategoryResponseDto> categories;
 

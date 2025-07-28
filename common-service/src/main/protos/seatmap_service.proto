@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package seatmap;
+
+option java_multiple_files = true;
+option java_package = "com.gyp.seatmapservice.grpc.seatmap";
+option java_outer_classname = "SeatMapServiceProto";
+
+import "google/protobuf/empty.proto";
+
+service SeatMapService {
+  rpc GetSeatMap(SeatMapRequest) returns (SeatMapResponse);
+}
+
+message SeatMapRequest {
+  string eventId = 1;
+}
+
+message SeatMapResponse {
+  string id = 1;
+  string name = 2;
+  string venueType = 3;
+  string organizationId = 4;
+  string seatConfig = 5;
+  string stageConfig = 6;
+}

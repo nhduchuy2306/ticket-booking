@@ -25,13 +25,11 @@ public interface VenueMapper extends AbstractMapper {
 	// Create new entity from request
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "venueMapEntityList", ignore = true)
-	@Mapping(target = "eventEntityList", ignore = true)
 	VenueEntity toEntity(VenueRequestDto dto);
 
 	// Update existing entity from request
 	@Mapping(target = "venueMapEntityList", ignore = true)
 	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "eventEntityList", ignore = true)
 	void updateEntityFromDto(VenueRequestDto dto, @MappingTarget VenueEntity entity);
 
 	@AfterMapping
