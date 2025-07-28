@@ -11,11 +11,12 @@ import { LiaFirstOrder } from "react-icons/lia";
 import { PiSeat } from "react-icons/pi";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "./app.scss";
+import ProfilePage from "./pages/profile/ProfilePage.tsx";
 import { findMenuPath, getItem, getLabelByKey, MenuItem } from "./services/AppService.ts";
 
 const {Content, Sider} = Layout;
 
-const items: MenuItem[] = [
+const menuItems: MenuItem[] = [
     getItem('User Service', 'user-service', <AiOutlineUser/>, [
         getItem('User Account', 'user-account', <AiOutlineUser/>),
         getItem('User Group', 'user-group', <AiOutlineUsergroupAdd/>),
@@ -43,6 +44,14 @@ const items: MenuItem[] = [
     getItem('Logout', 'logout', <IoIosLogOut/>)
 ];
 
+const allItems: MenuItem[] = [
+    {
+        key: 'profile-detail',
+        label: 'Profile Detail',
+    },
+    ...menuItems,
+]
+
 const App: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -54,15 +63,15 @@ const App: React.FC = () => {
         const path = pathParts.length > 1 ? pathParts[1] : '';
         setSelectedKey(path);
 
-        const menuPath = findMenuPath(items, path);
+        const menuPath = findMenuPath(menuItems, path);
         if (menuPath && menuPath.length > 1) {
             setOpenKeys(menuPath.slice(0, -1));
         }
     }, [location.pathname]);
 
-    const menuPath = findMenuPath(items, selectedKey);
+    const menuPath = findMenuPath(allItems, selectedKey);
     const breadcrumbItems = menuPath
-            ? menuPath.map(key => getLabelByKey(key, items)).filter(Boolean)
+            ? menuPath.map(key => getLabelByKey(key, allItems)).filter(Boolean)
             : [selectedKey.replace('-', ' ')];
 
     const breadCrumbItems = [
@@ -70,8 +79,8 @@ const App: React.FC = () => {
             title: 'Home',
             key: 'home',
         },
-        ...breadcrumbItems.map((label, idx) => ({
-            title: label,
+        ...breadcrumbItems.map((title, idx) => ({
+            title: title,
             key: `breadcrumb-${idx}`,
         }))
     ];
@@ -88,7 +97,7 @@ const App: React.FC = () => {
     return (
             <Layout hasSider className="layout-container">
                 <Sider collapsible className="app-side" width={280} theme="light">
-                    <div className="logo-vertical"/>
+                    <ProfilePage/>
                     <Menu
                             className="w-full h-full"
                             theme="light"
@@ -96,7 +105,7 @@ const App: React.FC = () => {
                             selectedKeys={[selectedKey]}
                             openKeys={openKeys}
                             onOpenChange={(keys) => setOpenKeys(keys)}
-                            items={items}
+                            items={menuItems}
                             onSelect={handleMenuItemSelect}
                     />
                 </Sider>

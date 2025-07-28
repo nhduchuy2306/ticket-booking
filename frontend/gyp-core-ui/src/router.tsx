@@ -10,6 +10,7 @@ import EventForm from "./pages/event/EventForm.tsx";
 import EventPage from "./pages/event/EventPage.tsx";
 import OrganizationPage from "./pages/organization/OrganizationPage.tsx";
 import OverviewPage from "./pages/OverviewPage.tsx";
+import ProfileDetailPage from "./pages/profile/ProfileDetailPage.tsx";
 import ProtectRoute from "./pages/ProtectRoute.tsx";
 import SaleChannelPage from "./pages/salechannel/SaleChannelPage.tsx";
 import SeasonPage from "./pages/season/SeasonPage.tsx";
@@ -39,6 +40,10 @@ const UserServiceRouter = [
     {
         index: true,
         element: <OverviewPage/>
+    },
+    {
+        path: 'profile-detail',
+        element: <ProfileDetailPage/>
     },
     {
         path: 'user-account',

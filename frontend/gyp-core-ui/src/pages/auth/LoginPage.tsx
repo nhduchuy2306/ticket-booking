@@ -20,6 +20,9 @@ const LoginPage: React.FC = () => {
             const response = await AuthService.login(values);
             if (response.token) {
                 localStorage.setItem('token', response.token);
+                localStorage.setItem('organizationId', response.organizationId);
+                localStorage.setItem('userId', response.userId);
+                localStorage.setItem('username', response.username);
                 navigate('/user-account');
             }
         } catch (error) {

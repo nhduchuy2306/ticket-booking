@@ -1,7 +1,8 @@
 import type { MenuProps } from "antd";
+import { SubMenuType } from "antd/es/menu/interface";
 import React from "react";
 
-export type MenuItem = Required<MenuProps>['items'][number];
+export type MenuItem = Required<MenuProps>['items'][number] & { label: string }
 
 export function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
     return {key, icon, children, label} as MenuItem;
@@ -31,8 +32,9 @@ export const findMenuPath = (items: MenuItem[], key: string, path: string[] = []
 export const getLabelByKey = (key: string, items: MenuItem[]): string | null => {
     for (const item of items) {
         if (item.key === key) return String(item.label);
-        if (item.children) {
-            const found = getLabelByKey(key, item.children);
+        if ((item as SubMenuType).children) {
+            const children = (item as SubMenuType).children;
+            const found = getLabelByKey(key, children as MenuItem[]);
             if (found) return found;
         }
     }
