@@ -1,6 +1,7 @@
 package com.gyp.ticketservice.messages.grpcs;
 
 import com.gyp.eventservice.grpc.event.EventServiceGrpc;
+import com.gyp.seatmapservice.grpc.seatmap.SeatMapServiceGrpc;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.grpc.client.GrpcChannelFactory;
@@ -10,5 +11,10 @@ public class GrpcConfiguration {
 	@Bean
 	public EventServiceGrpc.EventServiceBlockingStub eventServiceBlockingStub(GrpcChannelFactory channelFactory) {
 		return EventServiceGrpc.newBlockingStub(channelFactory.createChannel("event-service"));
+	}
+
+	@Bean
+	public SeatMapServiceGrpc.SeatMapServiceBlockingStub seatMapServiceBlockingStub(GrpcChannelFactory channelFactory) {
+		return SeatMapServiceGrpc.newBlockingStub(channelFactory.createChannel("seatmap-service"));
 	}
 }
