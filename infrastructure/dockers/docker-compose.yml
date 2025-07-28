@@ -130,6 +130,7 @@ services:
     container_name: event-service
     ports:
       - "9001:9001"
+      - "39001:39001"
     environment:
       SPRING_PROFILES_ACTIVE: prod
     depends_on:

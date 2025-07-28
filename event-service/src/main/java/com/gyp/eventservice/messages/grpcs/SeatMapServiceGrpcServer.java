@@ -19,7 +19,8 @@ public class SeatMapServiceGrpcServer extends SeatMapServiceGrpc.SeatMapServiceI
 	public void getSeatMap(SeatMapRequest request, StreamObserver<SeatMapResponse> responseObserver) {
 		var event = eventRepository.findById(request.getEventId());
 		if(event.isPresent()) {
-			var venueMap = event.get().getVenueMapEntity();
+			var currentEvent = event.get();
+			var venueMap = currentEvent.getVenueMapEntity();
 			if(venueMap != null) {
 				String seatMapId = venueMap.getSeatMapEntity().getId();
 				var seatMapEntity = seatMapRepository.findById(seatMapId);
@@ -29,6 +30,8 @@ public class SeatMapServiceGrpcServer extends SeatMapServiceGrpc.SeatMapServiceI
 					var response = SeatMapResponse.newBuilder()
 							.setId(seatMap.getId())
 							.setName(seatMap.getName())
+							.setEventName(currentEvent.getName())
+							.setEventDateTime(currentEvent.getTime().getStartTime().toString())
 							.setVenueType(seatMap.getVenueType())
 							.setOrganizationId(seatMap.getOrganizationId())
 							.setSeatConfig(seatMap.getSeatConfigRaw())

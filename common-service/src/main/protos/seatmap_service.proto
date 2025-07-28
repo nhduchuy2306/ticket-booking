@@ -7,6 +7,7 @@ option java_package = "com.gyp.seatmapservice.grpc.seatmap";
 option java_outer_classname = "SeatMapServiceProto";
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 service SeatMapService {
   rpc GetSeatMap(SeatMapRequest) returns (SeatMapResponse);
@@ -19,8 +20,10 @@ message SeatMapRequest {
 message SeatMapResponse {
   string id = 1;
   string name = 2;
-  string venueType = 3;
-  string organizationId = 4;
-  string seatConfig = 5;
-  string stageConfig = 6;
+  string eventName = 3;
+  string eventDateTime = 4;
+  string venueType = 5;
+  string organizationId = 6;
+  string seatConfig = 7;
+  string stageConfig = 8;
 }

@@ -11,7 +11,7 @@ import org.springframework.grpc.server.service.GrpcService;
 
 @GrpcService
 @RequiredArgsConstructor
-public class CategoryServiceGrpcImpl extends CategoryServiceImplBase {
+public class CategoryServiceGrpcServer extends CategoryServiceImplBase {
 	private final CategoryRepository categoryRepository;
 
 	@Override

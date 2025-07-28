@@ -1,6 +1,8 @@
 package com.gyp.ticketservice.controllers;
 
+import com.gyp.seatmapservice.grpc.seatmap.SeatMapRequest;
 import com.gyp.ticketservice.dtos.ticketgeneration.TicketGenerationSummaryDto;
+import com.gyp.ticketservice.messages.grpcs.SeatMapServiceGrpcClient;
 import com.gyp.ticketservice.services.TicketGenerationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ public class TicketController extends AbstractController {
 	private static final String TICKET_NUMBER_PARAM = "ticketnumber";
 
 	private final TicketGenerationService ticketGenerationService;
+	private final SeatMapServiceGrpcClient seatMapServiceGrpcClient;
 
 	@GetMapping("/" + VALIDATE_TICKET_PATH)
 	public ResponseEntity<?> validateTicket(@RequestParam(TICKET_NUMBER_PARAM) String ticketNumber) {
@@ -28,5 +31,15 @@ public class TicketController extends AbstractController {
 			return ResponseEntity.ok().body(ticketGenerationSummaryDto);
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+	}
+
+	@GetMapping("/seatmap")
+	public ResponseEntity<?> getSeatMap(@RequestParam("eventId") String eventId) {
+		var seatMap = seatMapServiceGrpcClient.getSeatMap(
+				SeatMapRequest.newBuilder().setEventId(eventId).build());
+		if(seatMap != null) {
+			return ResponseEntity.ok().body(seatMap);
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	}
 }
