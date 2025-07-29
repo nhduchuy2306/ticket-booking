@@ -20,7 +20,6 @@ public interface TicketMapper extends AbstractMapper {
 	@Mapping(target = "reservedDateTime", source = "dto.reservedDateTime")
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "ticketTypeEntity", ignore = true)
-	@Mapping(target = "ticketGenerationEntityList", ignore = true)
 	TicketEntity toEntity(TicketRequestDto dto);
 
 	@Mapping(target = "ticketTypeSummaryDto", source = "entity.ticketTypeEntity",

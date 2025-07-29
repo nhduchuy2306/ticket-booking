@@ -2,21 +2,20 @@ package com.gyp.ticketservice.entities;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gyp.common.enums.event.TicketStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Builder
-@Table(name = "TICKET")
+@Table(name = "ticket")
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
@@ -38,6 +37,9 @@ public class TicketEntity extends AbstractEntity {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "id")
 	private String id;
+
+	@Column(name = "ticket_code", unique = true)
+	private String ticketCode;
 
 	@Column(name = "event_id", nullable = false)
 	private String eventId;
@@ -51,11 +53,26 @@ public class TicketEntity extends AbstractEntity {
 	@Column(name = "reserved_date")
 	private LocalDateTime reservedDateTime;
 
-	@ManyToOne
-	@JoinColumn(name = "ticket_type_id", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ticket_type_id")
 	private TicketTypeEntity ticketTypeEntity;
 
-	@JsonIgnore
-	@OneToMany(mappedBy = "ticketEntity", fetch = FetchType.LAZY)
-	private List<TicketGenerationEntity> ticketGenerationEntityList = new ArrayList<>();
+	@Column(name = "seat_info")
+	private String seatInfo;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	private TicketStatus status;
+
+	@Column(name = "attendee_name")
+	private String attendeeName;
+
+	@Column(name = "attendee_email")
+	private String attendeeEmail;
+
+	@Column(name = "qr_code_url", columnDefinition = "TEXT")
+	private String qrCodeUrl;
+
+	@Column(name = "pdf_url", columnDefinition = "TEXT")
+	private String pdfUrl;
 }
