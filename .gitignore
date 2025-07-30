@@ -47,3 +47,4 @@ build/
 .env
 
 /infrastructure/dockers/mysql_data
+/infrastructure/dockers/minio_data
