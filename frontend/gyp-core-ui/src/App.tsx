@@ -9,10 +9,12 @@ import { GrShareOption } from "react-icons/gr";
 import { IoIosLogOut } from "react-icons/io";
 import { LiaFirstOrder } from "react-icons/lia";
 import { PiSeat } from "react-icons/pi";
+import { useSelector } from "react-redux";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "./app.scss";
 import ProfilePage from "./pages/profile/ProfilePage.tsx";
 import { findMenuPath, getItem, getLabelByKey, MenuItem } from "./services/AppService.ts";
+import { RootState } from "./states/store.ts";
 
 const {Content, Sider} = Layout;
 
@@ -44,12 +46,20 @@ const menuItems: MenuItem[] = [
     getItem('Logout', 'logout', <IoIosLogOut/>)
 ];
 
+const boxOfficeMenuItems: MenuItem[] = [
+    getItem('Box Office', 'box-office', <BiMoney/>, [
+        getItem('Box Office Dashboard', 'box-office-dashboard', <BiMoney/>),
+        getItem('Box Office Report', 'box-office-report', <BiMoney/>),
+    ]),
+];
+
 const allItems: MenuItem[] = [
     {
         key: 'profile-detail',
         label: 'Profile Detail',
     },
     ...menuItems,
+    ...boxOfficeMenuItems
 ]
 
 const App: React.FC = () => {
@@ -57,6 +67,8 @@ const App: React.FC = () => {
     const location = useLocation();
     const [selectedKey, setSelectedKey] = useState<string>('');
     const [openKeys, setOpenKeys] = useState<string[]>([]);
+    const [collapsed, setCollapsed] = useState(false);
+    const boxOfficeMode = useSelector((state: RootState) => state.boxOffice.value);
 
     useEffect(() => {
         const pathParts = location.pathname.split('/');
@@ -96,8 +108,11 @@ const App: React.FC = () => {
 
     return (
             <Layout hasSider className="layout-container">
-                <Sider collapsible className="app-side" width={280} theme="light">
-                    <ProfilePage/>
+                <Sider collapsible
+                       collapsed={collapsed}
+                       onCollapse={(value) => setCollapsed(value)}
+                       className="app-side" width={280} theme="light">
+                    <ProfilePage collapsed={collapsed}/>
                     <Menu
                             className="w-full h-full"
                             theme="light"
@@ -105,7 +120,7 @@ const App: React.FC = () => {
                             selectedKeys={[selectedKey]}
                             openKeys={openKeys}
                             onOpenChange={(keys) => setOpenKeys(keys)}
-                            items={menuItems}
+                            items={boxOfficeMode ? boxOfficeMenuItems : menuItems}
                             onSelect={handleMenuItemSelect}
                     />
                 </Sider>

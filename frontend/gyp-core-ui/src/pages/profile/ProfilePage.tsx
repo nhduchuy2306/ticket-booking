@@ -1,10 +1,20 @@
+import { Switch, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import { CgProfile } from "react-icons/cg";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toggleBoxOfficeMode } from "../../states/reducers/boxOfficeSlice.ts";
+import { AppDispatch } from "../../states/store.ts";
 
-const ProfilePage: React.FC = () => {
+export interface ProfilePageProps {
+    collapsed?: boolean;
+}
+
+const ProfilePage: React.FC<ProfilePageProps> = ({collapsed = false}) => {
     const [username, setUsername] = useState<string | null>(null);
+    const [isBoxOfficeMode, setIsBoxOfficeMode] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch<AppDispatch>();
 
     useEffect(() => {
         const storedUsername = localStorage.getItem('username');
@@ -15,7 +25,7 @@ const ProfilePage: React.FC = () => {
         }
     }, []);
 
-    const handleClick = () => {
+    const handleProfileClick = () => {
         if (username) {
             navigate('/profile-detail');
         } else {
@@ -23,13 +33,77 @@ const ProfilePage: React.FC = () => {
         }
     }
 
+    const onSwitchChange = (checked: boolean) => {
+        setIsBoxOfficeMode(checked);
+        dispatch(toggleBoxOfficeMode(checked));
+        console.log(`Box Office mode: ${checked ? 'ON' : 'OFF'}`);
+    };
+
+    if (collapsed) {
+        return (
+                <div className="flex flex-col items-center gap-2 bg-white rounded-lg shadow-md px-2 py-3 border border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer group !mb-2 !mt-2">
+                    {/* Profile Icon Only */}
+                    <div onClick={handleProfileClick}>
+                        <Tooltip title={username} placement="right">
+                            <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-orange-400 rounded-full flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
+                                <CgProfile className="w-6 h-6 text-white"/>
+                            </div>
+                        </Tooltip>
+                        <div className="w-2 h-2 bg-green-400 rounded-full mx-auto mt-1"></div>
+                    </div>
+
+                    {/* Box Office Switch - Vertical */}
+                    <div className="flex flex-col items-center gap-1 mt-2">
+                        <Tooltip
+                                title={`Box Office mode: ${isBoxOfficeMode ? 'ON' : 'OFF'}`}
+                                placement="right"
+                        >
+                            <Switch
+                                    size="small"
+                                    checked={isBoxOfficeMode}
+                                    onChange={onSwitchChange}
+                                    style={{
+                                        backgroundColor: isBoxOfficeMode ? '#1890ff' : undefined,
+                                    }}
+                            />
+                        </Tooltip>
+                    </div>
+                </div>
+        );
+    }
+
+    // Expanded view - full layout
     return (
-            <div
-                    className="flex flex-row gap-2 items-center justify-center bg-gray-400 p-4! cursor-pointer"
-                    onClick={handleClick}
-            >
-                <div><CgProfile className="size-6"/></div>
-                <div>{username}</div>
+            <div className="flex items-center gap-4 bg-white rounded-full shadow-md px-4 py-3 border border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer group !mb-2 !mt-2">
+                {/* Profile Section */}
+                <div className="flex items-center gap-3" onClick={handleProfileClick}>
+                    <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-orange-400 rounded-full flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
+                        <CgProfile className="w-6 h-6 text-white"/>
+                    </div>
+                    <span className="font-medium text-gray-800 group-hover:text-gray-900">{username}</span>
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                </div>
+
+                {/* Divider */}
+                <div className="w-px h-6 bg-gray-200"></div>
+
+                {/* Box Office Switch Section */}
+                <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-gray-700">Box Office</span>
+                    <Tooltip
+                            title={isBoxOfficeMode ? "Disable Box Office mode" : "Enable Box Office mode"}
+                            placement="right"
+                    >
+                        <Switch
+                                size="small"
+                                checked={isBoxOfficeMode}
+                                onChange={onSwitchChange}
+                                style={{
+                                    backgroundColor: isBoxOfficeMode ? '#1890ff' : undefined,
+                                }}
+                        />
+                    </Tooltip>
+                </div>
             </div>
     );
 }
