@@ -50,6 +50,8 @@ const boxOfficeMenuItems: MenuItem[] = [
     getItem('Box Office', 'box-office', <BiMoney/>, [
         getItem('Box Office Dashboard', 'box-office-dashboard', <BiMoney/>),
         getItem('Box Office Report', 'box-office-report', <BiMoney/>),
+        getItem('Box Office Settings', 'box-office-settings', <CiSettings/>),
+        getItem('Box Office Sale Ticket', 'box-office-sale-ticket', <BsTicket/>),
     ]),
 ];
 
@@ -73,7 +75,11 @@ const App: React.FC = () => {
     useEffect(() => {
         const pathParts = location.pathname.split('/');
         const path = pathParts.length > 1 ? pathParts[1] : '';
-        setSelectedKey(path);
+        if (boxOfficeMode && boxOfficeMenuItems.every(item => item.key !== path)) {
+            navigate("/");
+        } else {
+            setSelectedKey(path);
+        }
 
         const menuPath = findMenuPath(menuItems, path);
         if (menuPath && menuPath.length > 1) {
@@ -111,7 +117,9 @@ const App: React.FC = () => {
                 <Sider collapsible
                        collapsed={collapsed}
                        onCollapse={(value) => setCollapsed(value)}
-                       className="app-side" width={280} theme="light">
+                       className="app-side !overflow-hidden"
+                       width={280}
+                       theme="light">
                     <ProfilePage collapsed={collapsed}/>
                     <Menu
                             className="w-full h-full"

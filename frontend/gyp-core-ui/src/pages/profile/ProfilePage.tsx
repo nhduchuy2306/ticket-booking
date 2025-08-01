@@ -12,7 +12,7 @@ export interface ProfilePageProps {
 
 const ProfilePage: React.FC<ProfilePageProps> = ({collapsed = false}) => {
     const [username, setUsername] = useState<string | null>(null);
-    const [isBoxOfficeMode, setIsBoxOfficeMode] = useState(false);
+    const [isBoxOfficeMode, setIsBoxOfficeMode] = useState(JSON.parse(localStorage.getItem('boxOfficeMode') || 'false'));
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
 
@@ -36,12 +36,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({collapsed = false}) => {
     const onSwitchChange = (checked: boolean) => {
         setIsBoxOfficeMode(checked);
         dispatch(toggleBoxOfficeMode(checked));
-        console.log(`Box Office mode: ${checked ? 'ON' : 'OFF'}`);
     };
 
     if (collapsed) {
         return (
-                <div className="flex flex-col items-center gap-2 bg-white rounded-lg shadow-md px-2 py-3 border border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer group !mb-2 !mt-2">
+                <div className="flex flex-col items-center gap-2 bg-white rounded-lg px-2 py-3 border border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer group !m-1 !p-2">
                     {/* Profile Icon Only */}
                     <div onClick={handleProfileClick}>
                         <Tooltip title={username} placement="right">
@@ -74,14 +73,19 @@ const ProfilePage: React.FC<ProfilePageProps> = ({collapsed = false}) => {
 
     // Expanded view - full layout
     return (
-            <div className="flex items-center gap-4 bg-white rounded-full shadow-md px-4 py-3 border border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer group !mb-2 !mt-2">
+            <div className="flex items-center gap-4 bg-white rounded-lg px-4 py-3 border border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer group !m-1 !p-2">
                 {/* Profile Section */}
-                <div className="flex items-center gap-3" onClick={handleProfileClick}>
-                    <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-orange-400 rounded-full flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
-                        <CgProfile className="w-6 h-6 text-white"/>
+                <div className="flex items-center gap-3 flex-1" onClick={handleProfileClick}>
+                    <div className="flex items-center gap-1">
+                        <div className="!ml-2">
+                            <div className="w-2 h-2 bg-green-400 rounded-full float-right "></div>
+                            <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-orange-400 rounded-full flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
+                                <CgProfile className="w-6 h-6 text-white"/>
+                            </div>
+                        </div>
+                        <span className="font-medium text-gray-800 group-hover:text-gray-900">{username}</span>
                     </div>
-                    <span className="font-medium text-gray-800 group-hover:text-gray-900">{username}</span>
-                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+
                 </div>
 
                 {/* Divider */}

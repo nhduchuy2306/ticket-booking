@@ -1,111 +1,243 @@
-## 🎯 **Main Flow từ Organizer tạo tài khoản đến khi Customer thanh toán thành công**
+# TicketBox Main Flow: Organizer to Ticket Scanning
+
+## Phase 1: Organizer Setup & Event Creation
+
+### 1.1 Organizer Registration & Authentication
+```
+Flow: Organizer → API Gateway → Auth Service
+```
+- Organizer registers/logs in through Keycloak
+- Auth Service validates credentials and creates organizer profile
+- JWT token issued for subsequent requests
+
+### 1.2 Event Creation & Setup
+```
+Flow: Organizer → API Gateway → Event Service
+```
+**Steps:**
+1. **Create Event**
+  - POST `/api/events`
+  - Event details: name, description, date, time, location, category
+  - Event status: DRAFT
+
+2. **Setup Seat Map**
+  - POST `/api/events/{eventId}/seatmap`
+  - Define venue layout (sections, rows, seats)
+  - Set seat categories (VIP, Premium, Regular)
+
+3. **Event Approval** (if required)
+  - PUT `/api/events/{eventId}/status` → PENDING_APPROVAL
+  - Admin reviews and approves → APPROVED
+
+### 1.3 Ticket Configuration
+```
+Flow: Organizer → API Gateway → Ticket Service
+```
+**Steps:**
+1. **Create Ticket Types**
+  - POST `/api/tickets/types`
+  - Define ticket categories with pricing
+  - Set quantity limits per type
+  - Configure sale periods (start/end dates)
+
+2. **Generate Ticket Inventory**
+  - POST `/api/tickets/inventory/generate`
+  - Create individual tickets based on seat map + ticket types
+  - Initialize inventory counts
+
+### 1.4 Sales Channel Configuration
+```
+Flow: Organizer → API Gateway → SaleChannel Service
+```
+- Configure sales channels (online, mobile app, physical outlets)
+- Set commission rates and payment methods per channel
 
 ---
 
-### **I. Organizer đăng ký và tạo sự kiện**
+## Phase 2: Customer Ticket Purchase Journey
 
-#### 🟠 **1. Organizer đăng ký tài khoản**
+### 2.1 Event Discovery
+```
+Flow: Customer → API Gateway → Event Service
+```
+- GET `/api/events` - Browse available events
+- GET `/api/events/{eventId}` - View event details
+- GET `/api/events/{eventId}/seatmap` - View available seats
 
-* 📍 **Auth Service**
+### 2.2 Ticket Selection & Cart Management
+```
+Flow: Customer → API Gateway → Ticket Service + Order Service
+```
+**Steps:**
+1. **Check Ticket Availability**
+  - GET `/api/tickets/availability/{eventId}`
+  - Real-time inventory check via Redis cache
 
-    * Organizer gửi thông tin đăng ký → Tạo tài khoản Organizer
-    * Nhận token đăng nhập (JWT)
+2. **Select Seats/Tickets**
+  - POST `/api/tickets/reserve` - Temporary seat hold (5-10 minutes)
+  - PUT `/api/orders/cart/add` - Add to shopping cart
 
-#### 🟠 **2. Organizer đăng nhập & tạo sự kiện**
+3. **Cart Management**
+  - GET `/api/orders/cart` - View cart contents
+  - PUT `/api/orders/cart/update` - Modify quantities
+  - DELETE `/api/orders/cart/remove` - Remove items
 
-* 📍 **Auth Service**
+### 2.3 Checkout & Payment
+```
+Flow: Customer → API Gateway → Order Service → Payment Gateway
+```
+**Steps:**
+1. **Create Order**
+  - POST `/api/orders/create`
+  - Validate inventory availability
+  - Calculate total price (including fees)
+  - Order status: PENDING_PAYMENT
 
-    * Đăng nhập → Lấy token xác thực
-* 📍 **Event Service**
+2. **Process Payment**
+  - POST `/api/orders/{orderId}/payment`
+  - Integrate with payment gateway (Stripe, PayPal, etc.)
+  - Handle different payment methods (card, wallet, bank transfer)
 
-    * Gửi yêu cầu tạo sự kiện (thông tin tên, mô tả, địa điểm, thời gian)
-    * Cấu hình sơ đồ chỗ ngồi (SeatMap)
+3. **Payment Confirmation**
+  - Payment success → Order status: CONFIRMED
+  - Payment failure → Release reserved seats → Order status: FAILED
 
-#### 🟠 **3. Event được duyệt (nếu cần)**
+### 2.4 Ticket Generation & Delivery
+```
+Flow: Order Service → Ticket Service → Notification Service
+```
+**Steps:**
+1. **Generate Digital Tickets**
+  - POST `/api/tickets/generate/{orderId}`
+  - Create PDF tickets with QR codes
+  - Update inventory (decrement available quantity)
 
-* 📍 **Event Service**
-
-    * Admin hoặc hệ thống duyệt sự kiện
-
-#### 🟠 **4. Organizer tạo các loại vé**
-
-* 📍 **Ticket Service**
-
-    * Tạo các loại vé (loại, giá, số lượng, thời gian mở bán)
-    * Hệ thống phân bổ vé theo SeatMap
-
----
-
-### **II. Customer đăng ký, chọn vé và thanh toán**
-
-#### 🔵 **5. Customer đăng ký/đăng nhập**
-
-* 📍 **Auth Service**
-
-    * Đăng ký hoặc đăng nhập tài khoản Customer
-    * Nhận token xác thực
-
-#### 🔵 **6. Customer duyệt danh sách sự kiện**
-
-* 📍 **API Gateway → Event Service**
-
-    * Lọc sự kiện theo thời gian, địa điểm, danh mục
-
-#### 🔵 **7. Customer chọn sự kiện và loại vé**
-
-* 📍 **API Gateway → Ticket Service**
-
-    * Chọn loại vé và số lượng
-    * Hệ thống kiểm tra vé còn lại (availability)
-
-#### 🔵 **8. Customer tạo đơn hàng**
-
-* 📍 **Order Service**
-
-    * Tạo đơn hàng mới
-    * Cập nhật số lượng vé đã chọn (lock temporary)
-
-#### 🔵 **9. Customer thanh toán**
-
-* 📍 **Order Service → Payment Service**
-
-    * Tích hợp thanh toán qua các cổng (VNPay, Momo, Stripe…)
-    * Sau khi thanh toán thành công → cập nhật trạng thái đơn hàng
-
-#### 🔵 **10. Gửi thông báo & vé điện tử**
-
-* 📍 **Notification Service**
-
-    * Gửi email xác nhận đặt vé thành công
-    * Gửi kèm file PDF vé & QR Code
+2. **Send Confirmation**
+  - Kafka event: `ORDER_CONFIRMED`
+  - Notification Service sends email with:
+    - Order confirmation
+    - PDF tickets attached
+    - QR codes for each ticket
 
 ---
 
-### **III. Sau thanh toán**
+## Phase 3: Event Day & Ticket Validation
 
-* 📍 **Order Service**
+### 3.1 Ticket Scanning Setup
+```
+Flow: Event Staff → API Gateway → Ticket Service
+```
+- Staff login with scanner device/app
+- GET `/api/events/{eventId}/scan-config` - Load event scanning configuration
 
-    * Lưu thông tin lịch sử đơn hàng
-    * Cập nhật báo cáo doanh thu, phân tích số lượng vé bán
-* 📍 **Ticket Service**
+### 3.2 Ticket Validation Process
+```
+Flow: Scanner App → API Gateway → Ticket Service
+```
+**Steps:**
+1. **Scan QR Code**
+  - POST `/api/tickets/validate`
+  - Decode QR code to extract ticket ID and validation hash
 
-    * Cập nhật tồn kho vé (inventory)
+2. **Validate Ticket**
+  - Check ticket authenticity
+  - Verify ticket hasn't been used (prevent double-entry)
+  - Confirm ticket is for correct event/date
+  - Validate seat assignment (if applicable)
+
+3. **Entry Response**
+  - Valid ticket → Mark as USED → Allow entry
+  - Invalid/Used ticket → Deny entry → Log attempt
+  - Show attendee info on scanner device
+
+### 3.3 Real-time Analytics
+```
+Flow: Ticket Service → Analytics Dashboard
+```
+- Real-time entry tracking
+- Attendance monitoring
+- No-show analysis
+- Revenue reporting
 
 ---
 
-## ✅ **Tóm tắt theo thứ tự service**
+## Phase 4: Post-Event Activities
 
-| Bước | Service liên quan           | Mô tả ngắn                   |
-| ---- | --------------------------- | ---------------------------- |
-| 1    | Auth Service                | Organizer đăng ký tài khoản  |
-| 2    | Auth Service, Event Service | Tạo sự kiện & sơ đồ chỗ ngồi |
-| 3    | Event Service               | Duyệt sự kiện (nếu cần)      |
-| 4    | Ticket Service              | Tạo loại vé và phân bổ vé    |
-| 5    | Auth Service                | Customer đăng nhập           |
-| 6    | Event Service               | Xem danh sách sự kiện        |
-| 7    | Ticket Service              | Chọn loại vé và kiểm tra tồn |
-| 8    | Order Service               | Tạo đơn hàng                 |
-| 9    | Payment Service             | Thanh toán đơn hàng          |
-| 10   | Notification Service        | Gửi vé PDF và QR code        |
+### 4.1 Event Completion
+```
+Flow: System → Event Service → Analytics
+```
+- Automatic event status update to COMPLETED
+- Generate final attendance reports
+- Calculate final revenue and commission
+
+### 4.2 Review & Feedback (Optional)
+```
+Flow: Customer → API Gateway → Review Service
+```
+- Send post-event survey via Notification Service
+- Collect feedback and ratings
+- Analytics for organizer improvement
 
 ---
+
+## Key Integration Points & Data Flow
+
+### Real-time Inventory Management
+```
+Ticket Service ↔ Redis Cache ↔ Order Service
+```
+- Seat reservations with TTL
+- Inventory updates via Kafka events
+- Conflict resolution for concurrent purchases
+
+### Event-Driven Communication (Kafka Topics)
+- `EVENT_CREATED` → Notification Service (welcome email)
+- `TICKET_RESERVED` → Inventory update
+- `ORDER_CONFIRMED` → Ticket generation + Email notification
+- `TICKET_SCANNED` → Real-time analytics update
+
+### Authentication & Authorization Flow
+```
+All Requests → API Gateway → Auth Service (JWT validation) → Target Service
+```
+- Role-based access (Organizer, Customer, Staff, Admin)
+- Service-to-service authentication via service tokens
+
+### Error Handling & Resilience
+- Circuit breaker patterns for external payment gateways
+- Retry mechanisms for failed operations
+- Compensation transactions for order failures
+- Dead letter queues for failed messages
+
+---
+
+## Development Priority Order
+
+1. **Core Foundation** (Weeks 1-2)
+  - Auth Service + API Gateway
+  - Basic Event Service (CRUD operations)
+  - Database setup + service discovery
+
+2. **Event Management** (Weeks 3-4)
+  - Complete Event Service with seat mapping
+  - Ticket Service with inventory management
+  - Basic Order Service
+
+3. **Purchase Flow** (Weeks 5-6)
+  - Shopping cart functionality
+  - Payment integration
+  - Notification Service for confirmations
+
+4. **Ticket Generation** (Weeks 7-8)
+  - PDF generation with QR codes
+  - Ticket validation API
+  - Scanner application/interface
+
+5. **Advanced Features** (Weeks 9-10)
+  - Real-time analytics
+  - Advanced reporting
+  - Review system
+  - Performance optimization
+
+This flow ensures a complete ticket lifecycle from creation to validation while maintaining the microservice architecture principles and leveraging your specified technology stack.

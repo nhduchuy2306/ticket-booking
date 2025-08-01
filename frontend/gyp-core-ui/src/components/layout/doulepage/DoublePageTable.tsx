@@ -153,7 +153,7 @@ export const DoublePageTable: React.FC<DoublePageTableProps> = ({
     });
 
     return (
-            <div className="flex-1 ">
+            <div className="flex-1">
                 <Flex gap="middle" vertical align="flex-end" className="mb-4!">
                     <Tooltip title={createButtonTooltip}>
                         <Button type="default" icon={<BiPlus/>} onClick={handleCreate}/>

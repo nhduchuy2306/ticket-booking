@@ -70,8 +70,9 @@ const DoublePageLayout: React.FC<DoublePageLayoutProps> = ({children, initialEnt
                       align="flex-start"
                       justify="flex-start"
                       gap="large"
-                      className="w-full bg-white p-4!"
-                >{children}</Flex>
+                      className="w-full bg-white !p-4">
+                    {children}
+                </Flex>
             </DoublePageContext.Provider>
     );
 }

@@ -8,6 +8,7 @@ import ConfigurationPage from "./pages/configuration/ConfigurationPage.tsx";
 import ErrorPage from "./pages/error/ErrorPage.tsx";
 import EventForm from "./pages/event/EventForm.tsx";
 import EventPage from "./pages/event/EventPage.tsx";
+import LandingPage from "./pages/landing/LandingPage.tsx";
 import OrganizationPage from "./pages/organization/OrganizationPage.tsx";
 import OverviewPage from "./pages/OverviewPage.tsx";
 import ProfileDetailPage from "./pages/profile/ProfileDetailPage.tsx";
@@ -163,7 +164,14 @@ const ConfigurationRouter = [
         path: 'configuration',
         element: <ConfigurationPage/>
     }
-]
+];
+
+const OtherRouter = [
+    {
+        path: 'ticket-box',
+        element: <LandingPage/>
+    }
+];
 
 export const router = createBrowserRouter([
     ...AuthServiceRouter,
@@ -178,4 +186,5 @@ export const router = createBrowserRouter([
             ...ConfigurationRouter
         ],
     },
+    ...OtherRouter,
 ]);
