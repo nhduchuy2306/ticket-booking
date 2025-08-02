@@ -103,7 +103,6 @@ to PDF, QR code and use this at the event.
 - DiscoveryService -> port:9761
 - ApiGateway -> 9999
 # Other Service
-- Keycloak -> 9091
 - Zipkin -> 9411
 - Kafka -> 9092
 - Kafka-ui -> 9090

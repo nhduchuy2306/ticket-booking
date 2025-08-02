@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package tickettype;
+
+option java_multiple_files = true;
+option java_package = "com.gyp.tickettype.grpc.tickettype";
+option java_outer_classname = "TicketTypeServiceProto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+service TicketTypeService {
+  rpc GetTicketType(TicketTypeRequest) returns (TicketTypeResponseList);
+}
+
+message TicketTypeRequest {
+  string eventId = 1;
+}
+
+message TicketTypeResponse {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string eventId = 4;
+  double price = 5;
+  int32 quantityAvailable = 6;
+  string status = 7;
+  string saleStartDate = 8;
+  string saleEndDate = 9;
+}
+
+message TicketTypeResponseList {
+  repeated TicketTypeResponse ticketTypes = 1;
+}
