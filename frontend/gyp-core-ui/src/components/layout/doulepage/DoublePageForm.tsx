@@ -57,6 +57,8 @@ export const DoublePageForm: React.FC<DoublePageFormProps> = ({
         };
         if(selectedEntity) {
             void getDataById(selectedEntity?.id)
+        } else {
+            setDataById(null);
         }
     }, [selectedEntity]);
 

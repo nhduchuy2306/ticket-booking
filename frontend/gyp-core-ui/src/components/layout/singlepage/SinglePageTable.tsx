@@ -81,10 +81,7 @@ const SinglePageTable: React.FC<SinglePageTableProps> = ({
                 await service.delete((entity as any).id);
                 await new Promise(resolve => setTimeout(resolve, 300));
                 void fetchData();
-                notification.success({
-                    message: "Delete successfully",
-                    placement: "bottomRight"
-                });
+                notification.success({message: "Delete successfully"});
             }
         } catch (error: any) {
             modal.error({

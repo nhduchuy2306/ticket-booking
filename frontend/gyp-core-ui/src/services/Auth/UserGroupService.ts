@@ -11,6 +11,11 @@ const getAllUserGroups = async (): Promise<UserGroupResponseDto[]> => {
     return res.data;
 }
 
+const getUserGroupById = async (id: string): Promise<UserGroupResponseDto> => {
+    const res = await apiClient.get(`/${AUTH_SERVICE_PATH}/${USER_GROUP_PATH}/${id}`);
+    return res.data;
+}
+
 const createUserGroup = async (body: UserGroupRequestDto): Promise<UserGroupResponseDto> => {
     const res = await apiClient.post(`/${AUTH_SERVICE_PATH}/${USER_GROUP_PATH}`, body);
     return res.data;
@@ -33,6 +38,7 @@ const getApplicationPermissions = async (): Promise<UserGroupPermissionModel[]> 
 export const UserGroupService = {
     getApplicationPermissions,
     getAllUserGroups,
+    getUserGroupById,
     createUserGroup,
     updateUserGroup,
     deleteUserGroup
@@ -43,4 +49,5 @@ export const UserGroupServiceAdapter: BaseService<UserGroupRequestDto, UserGroup
     create: (request) => UserGroupService.createUserGroup(request),
     update: (request, id) => UserGroupService.updateUserGroup(request, id),
     delete: (id) => UserGroupService.deleteUserGroup(id),
+    getById: (id: string) => UserGroupService.getUserGroupById(id)
 };

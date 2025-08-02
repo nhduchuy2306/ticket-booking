@@ -35,7 +35,7 @@ const SeasonForm: React.FC<SeasonFormProps> = ({entity, mode, onSave, onCancel})
                 >
                     <Form.Item
                             name="name"
-                            label="Category Name"
+                            label="Season Name"
                             rules={[
                                 {required: true, message: 'Please enter category name'},
                                 {min: 2, message: 'Category name must be at least 2 characters'}

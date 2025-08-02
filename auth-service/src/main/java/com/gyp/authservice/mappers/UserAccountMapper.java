@@ -32,6 +32,11 @@ public interface UserAccountMapper extends AbstractMapper {
 	@Mapping(target = "userGroupEntityList", ignore = true)
 	UserAccountEntity toEntity(RegisterRequestDto dto);
 
+	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "userGroupEntityList", ignore = true)
+	@Mapping(target = "organizationEntity", ignore = true)
+	void updateEntityFromDto(UserAccountRequestDto dto, @MappingTarget UserAccountEntity entity);
+
 	@AfterMapping
 	default void afterMapping(@MappingTarget UserAccountEntity entity) {
 		mapAbstractFieldsToEntity(entity);

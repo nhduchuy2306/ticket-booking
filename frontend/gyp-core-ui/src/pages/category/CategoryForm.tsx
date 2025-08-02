@@ -65,7 +65,8 @@ const CategoryForm: React.FC<CategoryFormProps> = ({entity, mode, onSave, onCanc
                         <Input.TextArea rows={4} placeholder="Enter category description"/>
                     </Form.Item>
 
-                    <MetaData
+                    {isReadOnly &&
+                        <MetaData
                             metadata={{
                                 id: entity?.id,
                                 createUser: entity?.createUser,
@@ -73,7 +74,8 @@ const CategoryForm: React.FC<CategoryFormProps> = ({entity, mode, onSave, onCanc
                                 createTimestamp: entity?.createTimestamp,
                                 changeTimestamp: entity?.changeTimestamp
                             }}
-                    />
+                        />
+                    }
 
                     {!isReadOnly && (
                             <Form.Item>

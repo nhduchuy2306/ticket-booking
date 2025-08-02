@@ -41,4 +41,5 @@ export const OrganizationServiceAdapter: BaseService<OrganizationRequestDto, Org
     create: (request) => OrganizationService.createOrganization(request),
     update: (request, id) => OrganizationService.updateOrganization(request, id),
     delete: (id) => OrganizationService.deleteOrganization(id),
+    getById: (id) => OrganizationService.getOrganizationById(id),
 };

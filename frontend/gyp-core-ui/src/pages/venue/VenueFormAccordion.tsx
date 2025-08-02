@@ -1,8 +1,8 @@
 import { Form, FormInstance, Input, InputNumber } from "antd";
 import { FormListFieldData } from "antd/es/form/FormList";
 import React from "react";
-import Accordion from "../../components/Accoridion/Accordion.tsx";
-import AccordionItem from "../../components/Accoridion/AccordionItem.tsx";
+import Accordion from "../../components/accoridion/Accordion.tsx";
+import AccordionItem from "../../components/accoridion/AccordionItem.tsx";
 import { FormState } from "../../components/layout/models/LayoutModel.ts";
 import { VenueMapResponseDto } from "../../models/generated/event-service-models";
 

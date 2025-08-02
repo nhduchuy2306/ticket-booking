@@ -1,7 +1,7 @@
 import React from "react";
 import { DoublePageForm } from "../../components/layout/doulepage/DoublePageForm.tsx";
 import DoublePageLayout from "../../components/layout/doulepage/DoublePageLayout.tsx";
-import { CategoryServiceAdapter } from "../../services/Event/CategoryService.ts";
+import { SeasonServiceAdapter } from "../../services/Event/SeasonService.ts";
 import SeasonForm from "./SeasonForm.tsx";
 import SeasonTable from "./SeasonTable.tsx";
 
@@ -13,7 +13,7 @@ const SeasonPage: React.FC<SeasonPageProps> = () => {
             <DoublePageLayout>
                 <SeasonTable/>
                 <DoublePageForm
-                        service={CategoryServiceAdapter}
+                        service={SeasonServiceAdapter}
                         successMessages={{
                             create: "Category created successfully",
                             update: "Category updated successfully"

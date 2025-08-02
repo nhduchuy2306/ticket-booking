@@ -69,7 +69,7 @@ const UserAccountForm: React.FC<UserAccountFormProps> = ({mode}) => {
                 dob: data.dob ? DateUtils.formatDate(data.dob) : undefined,
                 phoneNumber: data.phoneNumber,
                 email: data.email,
-                roles: data.userGroupList || [],
+                roles: buildUserRoleItem(data.userGroupList) || [],
                 organizationId: data.organizationId,
             });
         } else {

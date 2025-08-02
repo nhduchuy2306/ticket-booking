@@ -47,4 +47,5 @@ export const UserAccountServiceAdapter: BaseService<UserAccountRequestDto, UserA
     create: (request) => UserAccountService.createUserAccount(request),
     update: (request, id) => UserAccountService.updateUserAccount(request, id),
     delete: (id) => UserAccountService.deleteUserAccount(id),
+    getById: (id) => UserAccountService.getUserAccountById(id),
 };

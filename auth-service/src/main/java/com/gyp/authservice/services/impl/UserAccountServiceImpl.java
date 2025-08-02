@@ -21,8 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -32,6 +31,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	private final UserAccountRepository userAccountRepository;
 	private final UserGroupRepository userGroupRepository;
 	private final UserAccountMapper userAccountMapper;
+	private final PasswordEncoder passwordEncoder;
 
 	@Override
 	public List<UserAccountResponseDto> getUserAccountList(UserAccountSearchCriteria userAccountSearchCriteria,
@@ -73,6 +73,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 		request.setOrganizationId(organizationId);
 		List<UserGroupEntity> userGroupIds = userGroupRepository.findAllById(request.getUserGroupList());
 		UserAccountEntity userAccountEntity = userAccountMapper.toEntity(request);
+		userAccountEntity.setPassword(passwordEncoder.encode(userAccountEntity.getPassword()));
 		userAccountEntity.setUserGroupEntityList(userGroupIds);
 		userAccountEntity = userAccountRepository.save(userAccountEntity);
 		return userAccountMapper.toResponseDto(userAccountEntity);
@@ -88,11 +89,11 @@ public class UserAccountServiceImpl implements UserAccountService {
 	public UserAccountResponseDto updateUserAccount(String id, UserAccountRequestDto request) {
 		UserAccountEntity userAccountEntity = userAccountRepository.findById(id).orElse(null);
 		if(userAccountEntity != null) {
-			if(request.getUserGroupList() == null || request.getUserGroupList().isEmpty()) {
-				throw new IllegalArgumentException("User group list cannot be empty");
+			if(request.getUserGroupList() != null && !request.getUserGroupList().isEmpty()) {
+				List<UserGroupEntity> userGroupIds = userGroupRepository.findAllById(request.getUserGroupList());
+				userAccountEntity.setUserGroupEntityList(userGroupIds);
 			}
-			List<UserGroupEntity> userGroupIds = userGroupRepository.findAllById(request.getUserGroupList());
-			userAccountEntity.setUserGroupEntityList(userGroupIds);
+			userAccountMapper.updateEntityFromDto(request, userAccountEntity);
 			userAccountEntity = userAccountRepository.save(userAccountEntity);
 			return userAccountMapper.toResponseDto(userAccountEntity);
 		}

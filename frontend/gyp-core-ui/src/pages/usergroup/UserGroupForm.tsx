@@ -145,11 +145,11 @@ const UserGroupForm: React.FC<UserGroupFormProps> = ({entity, mode, onSave, onCa
                 {isReadOnly &&
                     <MetaData
                         metadata={{
-                            id: entity.id,
-                            createUser: entity.createUser,
-                            changeUser: entity.changeUser,
-                            createTimestamp: entity.createTimestamp,
-                            changeTimestamp: entity.changeTimestamp
+                            id: entity?.id,
+                            createUser: entity?.createUser,
+                            changeUser: entity?.changeUser,
+                            createTimestamp: entity?.createTimestamp,
+                            changeTimestamp: entity?.changeTimestamp
                         }}
                     />
                 }
