@@ -60,21 +60,6 @@ CREATE TABLE IF NOT EXISTS venuemap
     foreign key (seat_map_id) references seatmap (id) ON DELETE CASCADE
 );
 
--- Create organizers table
-CREATE TABLE IF NOT EXISTS organizer
-(
-    id               VARCHAR(255)       NOT NULL PRIMARY KEY,
-    name             VARCHAR(255)       NOT NULL,
-    user_name        VARCHAR(50) UNIQUE NOT NULL,
-    dob              TIMESTAMP,
-    phone_number     VARCHAR(255),
-    email            VARCHAR(255) UNIQUE,
-    create_user      VARCHAR(255),
-    change_user      VARCHAR(255),
-    create_timestamp DATETIME,
-    change_timestamp DATETIME
-);
-
 -- Create season table
 CREATE TABLE IF NOT EXISTS season
 (
@@ -108,7 +93,6 @@ CREATE TABLE IF NOT EXISTS event
     change_user      VARCHAR(255),
     create_timestamp DATETIME,
     change_timestamp DATETIME,
-    FOREIGN KEY (organizer_id) REFERENCES organizer (id),
     FOREIGN KEY (venue_map_id) REFERENCES venuemap (id),
     FOREIGN KEY (season_id) REFERENCES season (id)
 );

@@ -5,10 +5,26 @@ import SinglePageForm from "../../components/layout/singlepage/SinglePageForm.ts
 import SinglePageLayout from "../../components/layout/singlepage/SinglePageLayout.tsx";
 import MetaData from "../../components/metadata/MetaData.tsx";
 import { Mode } from "../../configs/Constants.ts";
-import { CategoryResponseDto, EventRequestDto, EventResponseDto } from "../../models/generated/event-service-models";
+import {
+    CategoryResponseDto,
+    EventRequestDto,
+    EventResponseDto, EventStatus, SeasonResponseDto,
+    VenueMapResponseDto
+} from "../../models/generated/event-service-models";
 import { CategoryService } from "../../services/Event/CategoryService.ts";
 import { EventService, EventServiceAdapter } from "../../services/Event/EventService.ts";
+import { SeasonService } from "../../services/Event/SeasonService.ts";
+import { VenueMapService } from "../../services/Event/VenueMapService.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
+
+const EventStatus = Object.freeze({
+    DRAFT: Object.freeze({ key: 'DRAFT', value: 'Draft' }),
+    PENDING_APPROVAL: Object.freeze({ key: 'PENDING_APPROVAL', value: 'Pending Approval' }),
+    PUBLISHED: Object.freeze({ key: 'PUBLISHED', value: 'Published' }),
+    CANCELLED: Object.freeze({ key: 'CANCELLED', value: 'Cancelled' }),
+    COMPLETED: Object.freeze({ key: 'COMPLETED', value: 'Completed' }),
+    POSTPONED: Object.freeze({ key: 'POSTPONED', value: 'Postponed' }),
+});
 
 interface EventFormProps {
     mode: string;
@@ -17,6 +33,8 @@ interface EventFormProps {
 const EventForm: React.FC<EventFormProps> = ({mode}) => {
     const [data, setData] = useState<EventResponseDto | null>(null);
     const [categories, setCategories] = useState<CategoryResponseDto[]>([]);
+    const [venueMaps, setVenueMaps] = useState<VenueMapResponseDto[]>([]);
+    const [seasons, setSeasons] = useState<SeasonResponseDto[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const {id} = useParams();
     const [form] = Form.useForm();
@@ -30,6 +48,24 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                 const categoryResponse = await CategoryService.getAllCategories();
                 if (categoryResponse) {
                     setCategories(categoryResponse);
+                } else {
+                    setCategories([]);
+                }
+
+                // Fetch venue map
+                const venueMapResponse = await VenueMapService.getAllVenueMaps();
+                if (venueMapResponse) {
+                    setVenueMaps(venueMapResponse);
+                } else {
+                    setVenueMaps([]);
+                }
+
+                // Fetch season
+                const seasonResponse = await SeasonService.getAllSeasons();
+                if (seasonResponse) {
+                    setSeasons(seasonResponse);
+                } else {
+                    setSeasons([]);
                 }
 
                 if (id && (mode === Mode.EDIT.key || mode === Mode.READ_ONLY.key)) {
@@ -62,7 +98,10 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                 doorCloseTime: data.doorCloseTime ? DateUtils.toIsoDate(data.doorCloseTime) : undefined,
                 eventCompleted: data.eventCompleted,
                 eventInProgress: data.eventInProgress,
-                categories: data.categories ? data.categories.map(category => category.id) : []
+                categories: data.categories ? data.categories.map(category => category.id) : [],
+                venueMapId: data.venueMap?.id,
+                seasonId: data.season?.id,
+                status: data.status
             });
         } else {
             form.resetFields();
@@ -85,6 +124,7 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                 endTime: values.endTime ? DateUtils.toIsoDateTime(values.endTime) : null,
                 doorOpenTime: values.doorOpenTime ? DateUtils.toIsoDateTime(values.doorOpenTime) : null,
                 doorCloseTime: values.doorCloseTime ? DateUtils.toIsoDateTime(values.doorCloseTime) : null,
+                categoryIds: validatedValues.categories || [],
             };
             await onSave(adaptedValues);
         };
@@ -112,6 +152,18 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                     </Form.Item>
 
                     <Form.Item
+                            name="status"
+                            label="Status"
+                    >
+                        <Select
+                            options={Object.values(EventStatus).map(status => ({
+                                label: status.value,
+                                value: status.key
+                            }))}
+                        />
+                    </Form.Item>
+
+                    <Form.Item
                             name="categories"
                             label="Categories"
                             rules={[{required: true, message: 'Please select at least one category!'}]}
@@ -122,6 +174,36 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                                 options={categories.map(category => ({
                                     label: category.name,
                                     value: category.id
+                                }))}
+                                disabled={isReadOnly}
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                            name="venueMapId"
+                            label="Venue Map"
+                            rules={[{required: true, message: 'Please select Venue Map!'}]}
+                    >
+                        <Select
+                                placeholder="Select Venue Map"
+                                options={venueMaps.map(venueMap => ({
+                                    label: venueMap.name,
+                                    value: venueMap.id
+                                }))}
+                                disabled={isReadOnly}
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                            name="seasonId"
+                            label="Season"
+                            rules={[{required: true, message: 'Please select Season!'}]}
+                    >
+                        <Select
+                                placeholder="Select Season"
+                                options={seasons.map(season => ({
+                                    label: season.name,
+                                    value: season.id
                                 }))}
                                 disabled={isReadOnly}
                         />

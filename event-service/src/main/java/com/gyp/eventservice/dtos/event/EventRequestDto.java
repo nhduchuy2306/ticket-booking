@@ -40,9 +40,6 @@ public class EventRequestDto implements Request {
 	private LocalDateTime doorCloseTime;
 
 	@NotNull
-	private String organizerId;
-
-	@NotNull
 	private String venueMapId;
 
 	@NotNull

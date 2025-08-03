@@ -64,17 +64,6 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public EventResponseDto createEvent(EventRequestDto request) {
-		var checkDuplicate = checkFactory.createMultiFieldDuplicateCheck(EventEntity.class,
-				Map.of(
-						PropertyName.of(request::getOrganizerId), request.getOrganizerId(),
-						PropertyName.of(request::getName), request.getName(),
-						PropertyName.of(request::getSeasonId), request.getSeasonId()
-				));
-		if(!checkDuplicate.isValid()) {
-			throw new ResourceDuplicateException(
-					"Duplicate event found: " + "Organizer ID: " + request.getOrganizerId() +
-							", Name: " + request.getName() + ", Season ID: " + request.getSeasonId());
-		}
 		EventEntity eventEntity = eventMapper.toEntity(request);
 		var saveEvent = eventRepository.save(eventEntity);
 		return eventMapper.toResponseDto(saveEvent);
@@ -82,22 +71,11 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public EventResponseDto updateEvent(String eventId, EventRequestDto request) {
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		EventEntity existingEvent = eventRepository.findById(eventId)
 				.orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + eventId));
-		var checkDuplicate = checkFactory.createMultiFieldDuplicateCheck(EventEntity.class,
-				Map.of(
-						PropertyName.of(request::getOrganizerId), request.getOrganizerId(),
-						PropertyName.of(request::getName), request.getName(),
-						PropertyName.of(request::getSeasonId), request.getSeasonId()
-				));
-		if(!checkDuplicate.isValid()) {
-			throw new ResourceDuplicateException(
-					"Duplicate event found: " + "Organizer ID: " + request.getOrganizerId() +
-							", Name: " + request.getName() + ", Season ID: " + request.getSeasonId());
-		}
-		EventEntity eventEntity = eventMapper.toEntity(request);
 		eventMapper.updateEntityFromDto(request, existingEvent);
-
+		existingEvent.setOrganizationId(organizationId);
 		EventEntity updatedEvent = eventRepository.save(existingEvent);
 		return eventMapper.toResponseDto(updatedEvent);
 	}

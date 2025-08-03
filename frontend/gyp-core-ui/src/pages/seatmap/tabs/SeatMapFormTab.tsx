@@ -1,13 +1,13 @@
-import { Button, Form, Input, message, notification, Select, Tooltip, Upload, UploadProps } from "antd";
+import { Button, Form, Input, notification, Select, Tooltip, Upload, UploadProps } from "antd";
 import React, { useEffect, useState } from "react";
 import { BiArrowBack, BiCloudUpload } from "react-icons/bi";
 import { useParams } from "react-router-dom";
 import { useSinglePageContext } from "../../../components/layout/singlepage/SinglePageContext.tsx";
 import MetaData from "../../../components/metadata/MetaData.tsx";
+import { createErrorNotification, createSuccessNotification } from "../../../components/notification/Notification.ts";
 import { Mode } from "../../../configs/Constants.ts";
-import { SeatMapRequestDto, VenueMapResponseDto } from "../../../models/generated/event-service-models";
+import { SeatMapRequestDto } from "../../../models/generated/event-service-models";
 import { SeatMapService, SeatMapServiceAdapter } from "../../../services/Event/SeatMapService.ts";
-import { VenueMapService } from "../../../services/Event/VenueMapService.ts";
 import { useSeatMapFormContext } from "../SeatMapFormContext.tsx";
 
 export interface SeatMapFormTabProps {
@@ -18,7 +18,6 @@ const SeatMapFormTab: React.FC<SeatMapFormTabProps> = ({mode}) => {
     const {id} = useParams();
     const [form] = Form.useForm();
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [venueMaps, setVenueMaps] = useState<VenueMapResponseDto[] | null>([]);
     const {handleBack} = useSinglePageContext();
     const {entity, setEntity} = useSeatMapFormContext();
 
@@ -27,32 +26,11 @@ const SeatMapFormTab: React.FC<SeatMapFormTabProps> = ({mode}) => {
     const isCreateMode = mode === Mode.CREATE.key;
 
     useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            try {
-                const venueMapsResponse = await VenueMapService.getAllVenueMaps();
-                if (venueMapsResponse) {
-                    setVenueMaps(venueMapsResponse);
-                } else {
-                    setVenueMaps([]);
-                }
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                notification.error({message: "Failed to fetch data"});
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        void fetchData();
-    }, [id, mode]);
-
-    useEffect(() => {
         if (entity && (mode === Mode.EDIT.key || mode === Mode.READ_ONLY.key)) {
             form.setFieldsValue({
                 id: entity.id,
                 name: entity.name,
                 venueType: entity.venueType,
-                venueMapId: entity.venueMapId,
             });
         } else {
             form.resetFields();
@@ -95,9 +73,10 @@ const SeatMapFormTab: React.FC<SeatMapFormTabProps> = ({mode}) => {
                     }
                     setEntity(uploadedSeatMap);
                 }
-                message.success("File uploaded successfully");
+                createSuccessNotification("Seat Map", "File uploaded successfully");
             } catch (error) {
                 console.error("Upload failed:", error);
+                createErrorNotification("Seat Map", "File upload failed");
             }
         },
     };
@@ -148,20 +127,6 @@ const SeatMapFormTab: React.FC<SeatMapFormTabProps> = ({mode}) => {
                                     {label: 'Round', value: 'ROUND'},
                                     {label: 'Rectangle', value: 'RECTANGLE'},
                                 ]}
-                        />
-                    </Form.Item>
-
-                    <Form.Item
-                            name="venueMapId"
-                            label="Venue Map"
-                            rules={[{required: true, message: 'Please select the venue map!'}]}
-                    >
-                        <Select
-                                placeholder="Select venue map"
-                                options={venueMaps?.map((venueMap) => ({
-                                    label: venueMap.name,
-                                    value: venueMap.id
-                                }))}
                         />
                     </Form.Item>
 

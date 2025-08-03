@@ -1,5 +1,6 @@
 import { notification } from "antd";
 import React, { useEffect } from "react";
+import { createSuccessNotification } from "../../notification/Notification.ts";
 import { FormState } from "../models/LayoutModel.ts";
 import { useDoublePageContext } from "./DoublePageContext.tsx";
 import { BaseService } from "../../../services/BaseService.ts";
@@ -70,10 +71,10 @@ export const DoublePageForm: React.FC<DoublePageFormProps> = ({
 
             if (isCreateMode) {
                 await service.create(values);
-                notification.success({message: successMessages.create});
+                createSuccessNotification("Success", successMessages.create || "Item created successfully");
             } else if (isEditMode && selectedEntity) {
                 await service.update(values, selectedEntity.id);
-                notification.success({message: successMessages.update});
+                createSuccessNotification("Success", successMessages.update || "Item updated successfully");
             }
 
             handleReload();

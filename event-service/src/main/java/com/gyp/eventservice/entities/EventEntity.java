@@ -61,10 +61,6 @@ public class EventEntity extends AbstractEntity {
 	private String organizationId;
 
 	@ManyToOne
-	@JoinColumn(name = "organizer_id")
-	private OrganizerEntity organizerEntity;
-
-	@ManyToOne
 	@JoinColumn(name = "venue_map_id")
 	private VenueMapEntity venueMapEntity;
 

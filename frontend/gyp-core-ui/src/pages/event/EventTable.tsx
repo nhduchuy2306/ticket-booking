@@ -5,6 +5,7 @@ import { RiLoopLeftFill } from "react-icons/ri";
 import SinglePageTable from "../../components/layout/singlepage/SinglePageTable.tsx";
 import { EventModel } from "../../models/EventService/EventModel.ts";
 import { EventService, EventServiceAdapter } from "../../services/Event/EventService.ts";
+import { DateUtils } from "../../utils/DateUtils.ts";
 
 export interface EventTableProps {
 }
@@ -31,11 +32,21 @@ const EventTable: React.FC<EventTableProps> = () => {
             title: 'Start Time',
             dataIndex: 'startTime',
             width: '20%',
+            render: (text: string) => {
+                return (
+                        <span>{text ? DateUtils.formatToDateTime(text) : 'N/A'}</span>
+                );
+            }
         },
         {
             title: 'End Time',
             dataIndex: 'endTime',
             width: '20%',
+            render: (text: string) => {
+                return (
+                        <span>{text ? DateUtils.formatToDateTime(text) : 'N/A'}</span>
+                );
+            }
         },
     ];
 

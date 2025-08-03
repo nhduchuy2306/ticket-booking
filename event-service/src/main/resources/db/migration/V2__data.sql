@@ -44,11 +44,6 @@ VALUES ('2a941d3d-6726-49f4-9622-effa14492dde', 'Grand Arena Main Map', 100.0, 8
         '23884001-0cc9-46e9-95d2-82f5e64dcf68', 'c143797f-4b03-4d21-aa4a-02a21f195b55', 'admin', NOW(),
         '1f2d3c4b-5a6b-7c8d-9e0f-1a2b3c4d5e6f');
 
-INSERT INTO organizer (id, name, user_name, phone_number, create_user, create_timestamp)
-VALUES ('cd79cb00-3978-4709-81fc-9aeb41b0a430', 'Live Nation', 'livenation', '+1234567890', 'admin', NOW()),
-       ('be4d36d6-1f61-45ff-8c94-75d20d4ec1dd', 'Sports International', 'sportsintl', '+4423456789', 'admin', NOW()),
-       ('471b4a5b-7bfa-4d12-a0d2-d3f0021fba4a', 'Cultural Events Ltd', 'culturevents', '+3312345678', 'admin', NOW());
-
 INSERT INTO season (id, name, description, status, organization_id)
 VALUES ('2942c27a-faa5-462b-bd41-6e44ea8d17f5', 'Season 1', 'This is season 1', 'ACTIVE',
         '1f2d3c4b-5a6b-7c8d-9e0f-1a2b3c4d5e6f'),
@@ -105,7 +100,15 @@ VALUES ('fb81dfc2-1fda-481a-968c-88c589e4c380', 'VIP Pass', 'Premium seating wit
 
 INSERT INTO eventpromotion (id, code, discount_amount, valid_from, valid_to, event_id, create_user, create_timestamp,
                             organization_id)
-VALUES ('9aaf9834-3892-4280-a895-aaa165c097f9', 'EARLYBIRD20', 20.00, '2023-05-01 00:00:00', '2023-05-31 23:59:59', '33fe6f8c-7c73-4248-99b6-5a7934af2905', 'cd79cb00-3978-4709-81fc-9aeb41b0a430', NOW(), '1f2d3c4b-5a6b-7c8d-9e0f-1a2b3c4d5e6f'), ('14f4bcec-8861-4691-9d73-bf12bf1aed45', 'SUMMER10', 10.00, '2023-06-01 00:00:00', '2023-06-30 23:59:59', '33fe6f8c-7c73-4248-99b6-5a7934af2905', 'cd79cb00-3978-4709-81fc-9aeb41b0a430', NOW(), '1f2d3c4b-5a6b-7c8d-9e0f-1a2b3c4d5e6f'), ('efda1945-f830-4fcf-b4c9-62f21daa4cf0', 'FANCLUB15', 15.00, '2023-06-15 00:00:00', '2023-07-10 23:59:59', '63fcf9a1-3b6a-40be-a277-f7c91092ee52', 'be4d36d6-1f61-45ff-8c94-75d20d4ec1dd', NOW(), '1f2d3c4b-5a6b-7c8d-9e0f-1a2b3c4d5e6f');
+VALUES ('9aaf9834-3892-4280-a895-aaa165c097f9', 'EARLYBIRD20', 20.00, '2023-05-01 00:00:00', '2023-05-31 23:59:59',
+        '33fe6f8c-7c73-4248-99b6-5a7934af2905', 'cd79cb00-3978-4709-81fc-9aeb41b0a430', NOW(),
+        '1f2d3c4b-5a6b-7c8d-9e0f-1a2b3c4d5e6f'),
+       ('14f4bcec-8861-4691-9d73-bf12bf1aed45', 'SUMMER10', 10.00, '2023-06-01 00:00:00', '2023-06-30 23:59:59',
+        '33fe6f8c-7c73-4248-99b6-5a7934af2905', 'cd79cb00-3978-4709-81fc-9aeb41b0a430', NOW(),
+        '1f2d3c4b-5a6b-7c8d-9e0f-1a2b3c4d5e6f'),
+       ('efda1945-f830-4fcf-b4c9-62f21daa4cf0', 'FANCLUB15', 15.00, '2023-06-15 00:00:00', '2023-07-10 23:59:59',
+        '63fcf9a1-3b6a-40be-a277-f7c91092ee52', 'be4d36d6-1f61-45ff-8c94-75d20d4ec1dd', NOW(),
+        '1f2d3c4b-5a6b-7c8d-9e0f-1a2b3c4d5e6f');
 
 INSERT INTO eventapproval (id, status, approved_by, approval_date, event_id, create_user, create_timestamp)
 VALUES ('b55928ed-b058-4349-9c5c-ceeaabf2fd1e', 'APPROVED', 'admin1', '2023-04-15 14:30:00',
