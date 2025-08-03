@@ -12,6 +12,7 @@ import { PiSeat } from "react-icons/pi";
 import { useSelector } from "react-redux";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "./app.scss";
+import AppConfigurationPage from "./pages/configuration/AppConfigurationPage.tsx";
 import ProfilePage from "./pages/profile/ProfilePage.tsx";
 import { findMenuPath, getItem, getLabelByKey, MenuItem } from "./services/AppService.ts";
 import { RootState } from "./states/store.ts";
@@ -121,6 +122,7 @@ const App: React.FC = () => {
                        width={280}
                        theme="light">
                     <ProfilePage collapsed={collapsed}/>
+                    <AppConfigurationPage collapsed={collapsed}/>
                     <Menu
                             className="w-full h-full"
                             theme="light"
@@ -132,7 +134,7 @@ const App: React.FC = () => {
                             onSelect={handleMenuItemSelect}
                     />
                 </Sider>
-                <Layout className="bg-white">
+                <Layout className="bg-white" style={{overflow: 'hidden !important'}}>
                     <Content className="mt-[24px]! mr-[16px]! ml-[16px]! mb-0!">
                         <Breadcrumb items={breadCrumbItems}/>
                         <Outlet/>

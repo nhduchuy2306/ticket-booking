@@ -1,10 +1,14 @@
-import { Button, DatePicker, Form, Input, InputNumber, Select, Space, Switch } from "antd";
+import { Button, DatePicker, Form, Input, InputNumber, notification, Select, Space, Switch } from "antd";
 import moment from "moment";
-import React, { useEffect } from "react";
-import { handleReset, handleSubmit } from "../../components/layout/LayoutUtils.ts";
+import React, { useEffect, useState } from "react";
 import { FormState } from "../../components/layout/models/LayoutModel.ts";
 import MetaData from "../../components/metadata/MetaData.tsx";
-import { TicketTypeRequestDto, TicketTypeResponseDto } from "../../models/generated/event-service-models";
+import {
+    EventResponseDto,
+    TicketTypeRequestDto,
+    TicketTypeResponseDto
+} from "../../models/generated/event-service-models";
+import { EventService } from "../../services/Event/EventService.ts";
 
 export interface TicketTypeFormProps {
     entity: TicketTypeResponseDto;
@@ -15,6 +19,7 @@ export interface TicketTypeFormProps {
 
 const TicketTypeForm: React.FC<TicketTypeFormProps> = ({entity, mode, onSave, onCancel}) => {
     const [form] = Form.useForm();
+    const [events, setEvents] = useState<EventResponseDto[]>([]);
 
     useEffect(() => {
         if (entity) {
@@ -26,18 +31,45 @@ const TicketTypeForm: React.FC<TicketTypeFormProps> = ({entity, mode, onSave, on
         } else {
             form.resetFields();
         }
+        void fetchEvents();
     }, [entity, form]);
+
+    const fetchEvents = async () => {
+        try {
+            const events = await EventService.getActiveEvents();
+            if (events) {
+                setEvents(events);
+            } else {
+                setEvents([]);
+            }
+        } catch (error) {
+            notification.error({message: "Failed to fetch events"});
+        }
+    }
 
     const isReadOnly = mode === FormState.READ_ONLY.key;
     const isCreateMode = mode === FormState.CREATE.key;
     const isEditMode = mode === FormState.EDIT.key;
+
+    const handleSubmit = async (values: TicketTypeRequestDto) => {
+        await onSave(values);
+        form.resetFields();
+    };
+
+    const handleReset = () => {
+        if (entity) {
+            form.setFieldsValue(entity);
+        } else {
+            form.resetFields();
+        }
+    };
 
     return (
             <div className="p-6">
                 <Form
                         form={form}
                         layout="vertical"
-                        onFinish={() => handleSubmit(entity, form, onSave)}
+                        onFinish={handleSubmit}
                         disabled={isReadOnly}
                 >
                     <Form.Item
@@ -57,6 +89,19 @@ const TicketTypeForm: React.FC<TicketTypeFormProps> = ({entity, mode, onSave, on
                             rules={[{required: true, message: 'Please enter description'}]}
                     >
                         <Input.TextArea placeholder="Enter ticket description"/>
+                    </Form.Item>
+
+                    <Form.Item
+                            name="eventId"
+                            label="Event"
+                            rules={[{required: true, message: 'Please choose an event'}]}
+                    >
+                        <Select
+                                options={events.map(event => ({
+                                    label: event.name,
+                                    value: event.id
+                                }))}
+                        />
                     </Form.Item>
 
                     <Form.Item
@@ -149,7 +194,7 @@ const TicketTypeForm: React.FC<TicketTypeFormProps> = ({entity, mode, onSave, on
                                     <Button type="primary" htmlType="submit" disabled={isReadOnly}>
                                         {isCreateMode ? "Create" : "Update"}
                                     </Button>
-                                    <Button onClick={() => handleReset(entity, form)} disabled={isReadOnly}>
+                                    <Button onClick={handleReset} disabled={isReadOnly}>
                                         Reset
                                     </Button>
                                     <Button onClick={onCancel} disabled={isReadOnly}>

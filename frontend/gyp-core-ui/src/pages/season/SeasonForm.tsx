@@ -1,4 +1,4 @@
-import { Button, Form, Input, Space } from "antd";
+import { Button, Checkbox, Form, Input, Space } from "antd";
 import React, { useEffect } from "react";
 import { handleReset, handleSubmit } from "../../components/layout/LayoutUtils.ts";
 import { FormState } from "../../components/layout/models/LayoutModel.ts";
@@ -50,6 +50,15 @@ const SeasonForm: React.FC<SeasonFormProps> = ({entity, mode, onSave, onCancel})
                             rules={[{required: true, message: 'Please enter category description'}]}
                     >
                         <Input.TextArea rows={4} placeholder="Enter category description"/>
+                    </Form.Item>
+
+                    <Form.Item
+                            name="status"
+                            valuePropName="checked"
+                            getValueProps={(status) => ({checked: status === 'ACTIVE'})}
+                            getValueFromEvent={(e) => e.target.checked ? 'ACTIVE' : 'INACTIVE'}
+                    >
+                        <Checkbox>Status</Checkbox>
                     </Form.Item>
 
                     {!isReadOnly && (

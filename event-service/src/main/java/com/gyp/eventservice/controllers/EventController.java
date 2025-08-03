@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class EventController extends AbstractValidatableController {
 	public static final String EVENT_CONTROLLER_RESOURCE_PATH = "/events";
 
+	private static final String ACTIVE_PATH = "/active";
+
 	private final EventService eventService;
 	private final DataIntegrityService dataIntegrityService;
 
@@ -55,6 +57,11 @@ public class EventController extends AbstractValidatableController {
 	@RequestPermission(application = ApplicationPermission.EVENT, actions = { ActionPermission.READ })
 	public ResponseEntity<?> getEventById(@PathVariable(ID_PARAM) String id) {
 		return ResponseEntity.ok(eventService.getEventById(id));
+	}
+
+	@GetMapping(ACTIVE_PATH)
+	public ResponseEntity<?> getAllActiveEvents() {
+		return ResponseEntity.ok(eventService.getAllActiveEvents());
 	}
 
 	@PostMapping

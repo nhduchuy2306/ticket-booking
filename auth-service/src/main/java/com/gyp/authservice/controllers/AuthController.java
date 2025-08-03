@@ -1,7 +1,5 @@
 package com.gyp.authservice.controllers;
 
-import java.util.Objects;
-
 import com.gyp.authservice.dtos.auth.LoginRequestDto;
 import com.gyp.authservice.dtos.auth.LoginResponseDto;
 import com.gyp.authservice.dtos.auth.RegisterRequestDto;
@@ -25,12 +23,18 @@ public class AuthController extends AbstractController {
 	@PostMapping(AuthController.LOGIN_PATH)
 	public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) {
 		LoginResponseDto loginResponseDto = authService.login(loginRequestDto);
-		return createResponseOk(Objects.requireNonNullElse(loginResponseDto, "Invalid username or password"));
+		if(loginResponseDto == null) {
+			return ResponseEntity.badRequest().body("Invalid username or password");
+		}
+		return ResponseEntity.ok(loginResponseDto);
 	}
 
 	@PostMapping(AuthController.REGISTER_PATH)
 	public ResponseEntity<?> register(@RequestBody RegisterRequestDto registerRequestDto) {
 		UserAccountResponseDto dto = authService.register(registerRequestDto);
-		return createResponseOk(Objects.requireNonNullElse(dto, "Something wrong"));
+		if(dto == null) {
+			return ResponseEntity.badRequest().body("Registration failed");
+		}
+		return ResponseEntity.ok(dto);
 	}
 }

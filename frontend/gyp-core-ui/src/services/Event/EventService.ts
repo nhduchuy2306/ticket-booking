@@ -5,6 +5,7 @@ import { BaseService } from "../BaseService.ts";
 
 const EVENTS_PATH = "events";
 const SYNC_EVENT_PATH = "syncevent";
+const ACTIVE_PATH = "active";
 
 const getAllEvents = async (): Promise<EventResponseDto[]> => {
     const response = await apiClient.get(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}`);
@@ -13,6 +14,11 @@ const getAllEvents = async (): Promise<EventResponseDto[]> => {
 
 const getEventById = async (id: string): Promise<EventResponseDto> => {
     const response = await apiClient.get(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${id}`);
+    return response.data;
+}
+
+const getActiveEvents = async (): Promise<EventResponseDto[]> => {
+    const response = await apiClient.get(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${ACTIVE_PATH}`);
     return response.data;
 }
 
@@ -53,6 +59,7 @@ export const EventService = {
     createEvent,
     deleteEvent,
     updateEvent,
+    getActiveEvents,
     navigate
 }
 

@@ -2,7 +2,9 @@ package com.gyp.eventservice.services.impl;
 
 import java.util.List;
 
+import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.models.TicketTypeEventModel;
+import com.gyp.common.utils.SecurityUtils;
 import com.gyp.eventservice.dtos.seatmap.Seat;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeRequestDto;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeResponseDto;
@@ -10,7 +12,11 @@ import com.gyp.eventservice.entities.TicketTypeEntity;
 import com.gyp.eventservice.mappers.TicketTypeMapper;
 import com.gyp.eventservice.repositories.TicketTypeRepository;
 import com.gyp.eventservice.services.TicketTypeService;
+import com.gyp.eventservice.services.criteria.TicketTypeSearchCriteria;
+import com.gyp.eventservice.services.specifications.TicketTypeSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,12 +33,15 @@ public class TicketTypeServiceImpl implements TicketTypeService {
 	}
 
 	@Override
-	public List<TicketTypeResponseDto> getTicketTypes() {
-		List<TicketTypeEntity> ticketTypeEntities = ticketTypeRepository.findAll();
-		if(ticketTypeEntities.isEmpty()) {
-			throw new RuntimeException("No TicketTypes found");
+	public List<TicketTypeResponseDto> getTicketTypes(TicketTypeSearchCriteria criteria, PaginatedDto pagination) {
+		Specification<TicketTypeEntity> ticketTypeSpecification =
+				TicketTypeSpecification.createSearchTicketTypeSpecification(criteria);
+		Page<TicketTypeEntity> entities = ticketTypeRepository.findAll(ticketTypeSpecification,
+				pagination.toPageable());
+		if(!entities.isEmpty()) {
+			return ticketTypeMapper.toResponseDtoList(entities.getContent());
 		}
-		return ticketTypeMapper.toResponseDtoList(ticketTypeEntities);
+		return null;
 	}
 
 	@Override
@@ -53,17 +62,21 @@ public class TicketTypeServiceImpl implements TicketTypeService {
 
 	@Override
 	public TicketTypeResponseDto createTicketType(TicketTypeRequestDto ticketTypeDto) {
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		TicketTypeEntity ticketType = ticketTypeMapper.toEntity(ticketTypeDto);
+		ticketType.setOrganizationId(organizationId);
 		ticketType = ticketTypeRepository.save(ticketType);
 		return ticketTypeMapper.toResponseDto(ticketType);
 	}
 
 	@Override
 	public TicketTypeResponseDto updateTicketType(String ticketTypeId, TicketTypeRequestDto ticketTypeDto) {
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		TicketTypeEntity existingTicketType = ticketTypeRepository.findById(ticketTypeId)
 				.orElseThrow(() -> new RuntimeException("TicketType not found"));
 
 		ticketTypeMapper.updateEntityFromDto(ticketTypeDto, existingTicketType);
+		existingTicketType.setOrganizationId(organizationId);
 
 		TicketTypeEntity updatedTicketType = ticketTypeRepository.save(existingTicketType);
 		return ticketTypeMapper.toResponseDto(updatedTicketType);

@@ -47,7 +47,7 @@ public class TicketTypeEntity extends AbstractEntity {
 	private String description;
 
 	@Column(name = "price")
-	private double price;
+	private Double price;
 
 	@Column(name = "quantity_available")
 	private Integer quantityAvailable;

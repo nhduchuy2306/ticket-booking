@@ -10,6 +10,7 @@ import com.gyp.common.exceptions.ResourceNotFoundException;
 import com.gyp.common.models.EventEventModel;
 import com.gyp.common.services.ValidationService;
 import com.gyp.common.utils.PropertyName;
+import com.gyp.common.utils.SecurityUtils;
 import com.gyp.common.validators.criteria.ValidationInfo;
 import com.gyp.common.validators.rulecheck.CheckFactory;
 import com.gyp.eventservice.dtos.event.EventRequestDto;
@@ -136,6 +137,16 @@ public class EventServiceImpl implements EventService {
 		EventEntity eventEntity = eventRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + id));
 		eventRepository.delete(eventEntity);
+	}
+
+	@Override
+	public List<EventResponseDto> getAllActiveEvents() {
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
+		var events = eventRepository.findAllActiveEvents(organizationId);
+		if(events != null && !events.isEmpty()) {
+			return eventMapper.toResponseDtoList(events);
+		}
+		return null;
 	}
 
 	@Override

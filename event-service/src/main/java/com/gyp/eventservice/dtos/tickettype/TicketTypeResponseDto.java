@@ -30,7 +30,5 @@ public class TicketTypeResponseDto extends AbstractDto {
 	private boolean isSaleActive;
 	private boolean isSoldOut;
 	private String organizationId;
-
-	// Optional
-	//	private EventSummaryDto event;
+	private String eventId;
 }

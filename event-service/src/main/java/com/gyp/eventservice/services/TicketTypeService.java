@@ -2,16 +2,18 @@ package com.gyp.eventservice.services;
 
 import java.util.List;
 
+import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.models.TicketTypeEventModel;
 import com.gyp.eventservice.dtos.seatmap.Seat;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeRequestDto;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeResponseDto;
+import com.gyp.eventservice.services.criteria.TicketTypeSearchCriteria;
 
 public interface TicketTypeService {
 
 	double getEffectivePrice(Seat seat);
 
-	List<TicketTypeResponseDto> getTicketTypes();
+	List<TicketTypeResponseDto> getTicketTypes(TicketTypeSearchCriteria criteria, PaginatedDto pagination);
 
 	TicketTypeResponseDto getTicketTypeById(String ticketTypeId);
 

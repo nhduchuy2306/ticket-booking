@@ -20,6 +20,7 @@ import org.mapstruct.Named;
 		uses = { EventMapper.class })
 public interface TicketTypeMapper extends AbstractMapper {
 	// To response DTO
+	@Mapping(target = "eventId", source = "entity.eventEntity.id")
 	@Mapping(target = "soldTickets", expression = "java(calculateSoldTickets(entity))")
 	@Mapping(target = "isSaleActive", expression = "java(isSaleActive(entity))")
 	@Mapping(target = "isSoldOut", expression = "java(isSoldOut(entity))")

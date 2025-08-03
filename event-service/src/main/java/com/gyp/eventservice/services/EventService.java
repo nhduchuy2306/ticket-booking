@@ -30,4 +30,6 @@ public interface EventService extends Validatable {
 	EventResponseDto getEventDetails(String eventId);
 
 	void deleteEvent(String id) throws ResourceNotFoundException;
+
+	List<EventResponseDto> getAllActiveEvents();
 }
