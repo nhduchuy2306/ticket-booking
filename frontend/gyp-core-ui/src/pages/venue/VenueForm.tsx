@@ -1,10 +1,8 @@
 import { Button, Form, Input, InputNumber, Space } from "antd";
 import React, { useEffect } from "react";
-import { handleReset, handleSubmit } from "../../components/layout/LayoutUtils.ts";
 import { FormState } from "../../components/layout/models/LayoutModel.ts";
 import MetaData from "../../components/metadata/MetaData.tsx";
 import { VenueRequestDto, VenueResponseDto } from "../../models/generated/event-service-models";
-import VenueFormAccordion from "./VenueFormAccordion.tsx";
 
 export interface VenueFormProps {
     entity: VenueResponseDto;
@@ -18,10 +16,7 @@ const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) =
 
     useEffect(() => {
         if (entity) {
-            form.setFieldsValue({
-                ...entity,
-                venueMapList: entity.venueMapList || []
-            });
+            form.setFieldsValue(entity);
         } else {
             form.resetFields();
         }
@@ -31,12 +26,25 @@ const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) =
     const isCreateMode = mode === FormState.CREATE.key;
     const isEditMode = mode === FormState.EDIT.key;
 
+    const handleSubmit = async (values: VenueRequestDto) => {
+        await onSave(values);
+        form.resetFields();
+    };
+
+    const handleReset = () => {
+        if (entity) {
+            form.setFieldsValue(entity);
+        } else {
+            form.resetFields();
+        }
+    };
+
     return (
             <div className="p-6">
                 <Form
                         form={form}
                         layout="vertical"
-                        onFinish={(values) => handleSubmit(values, form, onSave)}
+                        onFinish={handleSubmit}
                         disabled={isReadOnly}
                 >
                     <Form.Item
@@ -98,25 +106,6 @@ const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) =
                         <InputNumber placeholder="Enter longitude" step="any" style={{width: '100%'}}/>
                     </Form.Item>
 
-                    <Form.Item
-                            label="Venue Maps"
-                            name="venueMapList"
-                            rules={[{required: true, message: 'Please add at least one venue map'}]}
-                    >
-                        <Form.List name="venueMapList">
-                            {(fields, {add, remove}, {errors}) => (
-                                    <VenueFormAccordion
-                                            mode={mode}
-                                            fields={fields}
-                                            onAdd={add}
-                                            onRemove={remove}
-                                            errors={errors}
-                                            form={form}
-                                    />
-                            )}
-                        </Form.List>
-                    </Form.Item>
-
                     {isReadOnly &&
                         <MetaData
                             metadata={{
@@ -135,7 +124,7 @@ const VenueForm: React.FC<VenueFormProps> = ({entity, mode, onSave, onCancel}) =
                                 <Button type="primary" htmlType="submit" disabled={isReadOnly}>
                                     {isCreateMode ? "Create" : "Update"}
                                 </Button>
-                                <Button onClick={() => handleReset(entity, form)} disabled={isReadOnly}>
+                                <Button onClick={handleReset} disabled={isReadOnly}>
                                     Reset
                                 </Button>
                                 <Button onClick={onCancel} disabled={isReadOnly}>

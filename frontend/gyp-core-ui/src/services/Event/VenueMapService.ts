@@ -1,5 +1,6 @@
 import { VenueMapRequestDto, VenueMapResponseDto } from "../../models/generated/event-service-models";
 import { apiClient, EVENT_SERVICE_PATH } from "../ApiClient.ts";
+import { BaseService } from "../BaseService.ts";
 
 const VENUE_MAP_PATH = "venue-maps";
 
@@ -33,4 +34,12 @@ export const VenueMapService = {
     updateVenueMap,
     deleteVenueMap,
     getVenueMapById,
+}
+
+export const VenueMapServiceAdapter: BaseService<VenueMapRequestDto, VenueMapResponseDto> = {
+    create: (request) => VenueMapService.createVenueMap(request),
+    update: (request, id) => VenueMapService.updateVenueMap(request, id),
+    delete: (id) => VenueMapService.deleteVenueMap(id),
+    getAll: () => VenueMapService.getAllVenueMaps(),
+    getById: (id) => VenueMapService.getVenueMapById(id),
 }

@@ -12,7 +12,6 @@ import com.gyp.eventservice.entities.CategoryEntity;
 import com.gyp.eventservice.entities.EventEntity;
 import com.gyp.eventservice.entities.OrganizerEntity;
 import com.gyp.eventservice.entities.SeasonEntity;
-import com.gyp.eventservice.entities.VenueEntity;
 import com.gyp.eventservice.entities.VenueMapEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;

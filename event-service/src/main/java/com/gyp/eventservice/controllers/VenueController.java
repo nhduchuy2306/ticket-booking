@@ -1,10 +1,14 @@
 package com.gyp.eventservice.controllers;
 
+import java.util.Optional;
+
 import com.gyp.common.controllers.AbstractValidatableController;
+import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.services.DataIntegrityService;
 import com.gyp.eventservice.dtos.venue.VenueRequestDto;
 import com.gyp.eventservice.exceptions.VenueNotFoundException;
 import com.gyp.eventservice.services.VenueService;
+import com.gyp.eventservice.services.criteria.VenueSearchCriteria;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -27,9 +32,19 @@ public class VenueController extends AbstractValidatableController {
 	private final DataIntegrityService dataIntegrityService;
 
 	@GetMapping
-	public ResponseEntity<?> getAllVenues() {
+	public ResponseEntity<?> getAllVenues(
+			@RequestParam(value = "page", required = false) Optional<Integer> page,
+			@RequestParam(value = "size", required = false) Optional<Integer> size) {
 		try {
-			return ResponseEntity.ok(venueService.getVenues());
+			String organizationId = getCurrentOrganizationId();
+			VenueSearchCriteria criteria = VenueSearchCriteria.builder()
+					.organizationId(organizationId)
+					.build();
+			PaginatedDto pagination = PaginatedDto.builder()
+					.page(page.orElse(0))
+					.size(size.orElse(10))
+					.build();
+			return ResponseEntity.ok(venueService.getAllVenues(criteria, pagination));
 		} catch(RuntimeException e) {
 			return ResponseEntity.status(404).body(e.getMessage());
 		}

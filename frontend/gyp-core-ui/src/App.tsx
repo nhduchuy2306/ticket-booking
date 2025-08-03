@@ -29,6 +29,7 @@ const menuItems: MenuItem[] = [
         getItem('Event', 'event', <BsCalendar3/>),
         getItem('Category', 'category', <BiCategory/>),
         getItem('Venue', 'venue', <CiLocationOn/>),
+        getItem('Venue Map', 'venue-map', <CiLocationOn/>),
         getItem('Season', 'season', <GrShareOption/>),
         getItem('Seat Map', 'seat-map', <PiSeat/>),
         getItem('Ticket Type', 'ticket-type', <BiCategory/>),

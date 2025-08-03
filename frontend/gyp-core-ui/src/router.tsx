@@ -22,6 +22,7 @@ import UserAccountForm from "./pages/useraccount/UserAccountForm.tsx";
 import UserAccountPage from "./pages/useraccount/UserAccountPage.tsx";
 import UserGroupPage from "./pages/usergroup/UserGroupPage.tsx";
 import VenuePage from "./pages/venue/VenuePage.tsx";
+import VenueMapPage from "./pages/venuemap/VenueMapPage.tsx";
 
 const AuthServiceRouter = [
     {
@@ -102,6 +103,10 @@ const EventServiceRouter = [
     {
         path: 'venue',
         element: <VenuePage/>,
+    },
+    {
+        path: 'venue-map',
+        element: <VenueMapPage/>,
     },
     {
         path: 'ticket-type',

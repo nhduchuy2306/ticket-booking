@@ -1,8 +1,12 @@
 package com.gyp.eventservice.controllers;
 
+import java.util.Optional;
+
 import com.gyp.common.controllers.AbstractController;
+import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.eventservice.dtos.venuemap.VenueMapRequestDto;
 import com.gyp.eventservice.services.VenueMapService;
+import com.gyp.eventservice.services.criteria.VenueMapSearchCriteria;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -23,8 +28,18 @@ public class VenueMapController extends AbstractController {
 	private final VenueMapService venueMapService;
 
 	@GetMapping
-	public ResponseEntity<?> getAllVenueMaps() {
-		var venueMaps = venueMapService.getAllVenueMaps();
+	public ResponseEntity<?> getAllVenueMaps(
+			@RequestParam(value = "page", required = false) Optional<Integer> page,
+			@RequestParam(value = "size", required = false) Optional<Integer> size) {
+		String organizationId = getCurrentOrganizationId();
+		VenueMapSearchCriteria criteria = VenueMapSearchCriteria.builder()
+				.organizationId(organizationId)
+				.build();
+		PaginatedDto pagination = PaginatedDto.builder()
+				.page(page.orElse(0))
+				.size(size.orElse(10))
+				.build();
+		var venueMaps = venueMapService.getAllVenueMaps(criteria, pagination);
 		if(venueMaps != null && !venueMaps.isEmpty()) {
 			return ResponseEntity.ok(venueMaps);
 		}

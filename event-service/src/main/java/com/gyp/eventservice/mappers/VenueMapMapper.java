@@ -1,5 +1,7 @@
 package com.gyp.eventservice.mappers;
 
+import java.util.List;
+
 import com.gyp.eventservice.dtos.venuemap.VenueMapRequestDto;
 import com.gyp.eventservice.dtos.venuemap.VenueMapResponseDto;
 import com.gyp.eventservice.entities.SeatMapEntity;
@@ -19,15 +21,21 @@ import org.mapstruct.Named;
 public interface VenueMapMapper extends AbstractMapper {
 
 	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "eventEntityList", ignore = true)
 	@Mapping(target = "seatMapEntity", source = "seatMapId", qualifiedByName = "seatMapIdToEntity")
 	@Mapping(target = "venueEntity", source = "venueId", qualifiedByName = "venueIdToEntity")
 	VenueMapEntity toEntity(VenueMapRequestDto requestDto);
 
+	@Mapping(target = "venueName", source = "venueMapEntity.venueEntity.name")
+	@Mapping(target = "seatMapName", source = "venueMapEntity.seatMapEntity.name")
 	@Mapping(target = "venueId", source = "venueMapEntity.venueEntity.id")
 	@Mapping(target = "seatMapId", source = "venueMapEntity.seatMapEntity.id")
 	VenueMapResponseDto toResponseDto(VenueMapEntity venueMapEntity);
 
+	List<VenueMapResponseDto> toResponseDtoList(List<VenueMapEntity> venueMapEntities);
+
 	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "eventEntityList", ignore = true)
 	@Mapping(target = "seatMapEntity", source = "seatMapId", qualifiedByName = "seatMapIdToEntity")
 	@Mapping(target = "venueEntity", source = "venueId", qualifiedByName = "venueIdToEntity")
 	void updateEntityFromDto(VenueMapRequestDto requestDto, @MappingTarget VenueMapEntity venueMapEntity);

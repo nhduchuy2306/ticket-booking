@@ -2,19 +2,23 @@ package com.gyp.eventservice.services.impl;
 
 import java.util.List;
 
+import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.services.ValidationService;
+import com.gyp.common.utils.SecurityUtils;
 import com.gyp.common.validators.criteria.ValidationInfo;
 import com.gyp.eventservice.dtos.venue.VenueRequestDto;
 import com.gyp.eventservice.dtos.venue.VenueResponseDto;
 import com.gyp.eventservice.entities.VenueEntity;
 import com.gyp.eventservice.exceptions.VenueNotFoundException;
 import com.gyp.eventservice.mappers.VenueMapper;
-import com.gyp.eventservice.repositories.EventRepository;
 import com.gyp.eventservice.repositories.VenueRepository;
 import com.gyp.eventservice.services.VenueService;
 import com.gyp.eventservice.services.criteria.VenueSearchCriteria;
+import com.gyp.eventservice.services.specifications.VenueSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -22,17 +26,26 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class VenueServiceImpl implements VenueService {
 	private final VenueRepository venueRepository;
-	private final EventRepository eventRepository;
 	private final ValidationService validationService;
 	private final VenueMapper venueMapper;
 
 	@Override
-	public List<VenueResponseDto> getVenues() {
+	public List<VenueResponseDto> getAllVenues() {
 		var venues = venueRepository.findAll();
 		if(venues.isEmpty()) {
 			throw new RuntimeException("No venues found");
 		}
 		return venueMapper.toResponseDtoList(venues);
+	}
+
+	@Override
+	public List<VenueResponseDto> getAllVenues(VenueSearchCriteria criteria, PaginatedDto pagination) {
+		Specification<VenueEntity> seasonSpecification = VenueSpecification.createVenueSearchSpecification(criteria);
+		Page<VenueEntity> entities = venueRepository.findAll(seasonSpecification, pagination.toPageable());
+		if(!entities.isEmpty()) {
+			return venueMapper.toResponseDtoList(entities.getContent());
+		}
+		return null;
 	}
 
 	@Override
@@ -58,7 +71,9 @@ public class VenueServiceImpl implements VenueService {
 
 	@Override
 	public VenueResponseDto createVenue(VenueRequestDto venueDto) {
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		VenueEntity venueEntity = venueMapper.toEntity(venueDto);
+		venueEntity.setOrganizationId(organizationId);
 		venueEntity = venueRepository.save(venueEntity);
 		return venueMapper.toResponseDto(venueEntity);
 	}

@@ -16,7 +16,6 @@ import org.mapstruct.MappingTarget;
 		uses = { EventMapper.class, SeatMapMapper.class, VenueMapMapper.class })
 public interface VenueMapper extends AbstractMapper {
 	// To response DTO
-	@Mapping(target = "venueMapList", source = "entity.venueMapEntityList")
 	VenueResponseDto toResponseDto(VenueEntity entity);
 
 	// List mappings
