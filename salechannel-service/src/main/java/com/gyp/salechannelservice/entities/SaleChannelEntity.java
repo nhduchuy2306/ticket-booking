@@ -18,16 +18,16 @@ import jakarta.persistence.Table;
 
 import com.gyp.common.enums.salechannel.SaleChannelType;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "SALECHANNEL")
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class SaleChannelEntity extends AbstractEntity {
 	@Serial
 	private static final long serialVersionUID = 3004379468671448341L;

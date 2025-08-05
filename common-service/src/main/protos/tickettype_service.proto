@@ -7,7 +7,6 @@ option java_package = "com.gyp.tickettype.grpc.tickettype";
 option java_outer_classname = "TicketTypeServiceProto";
 
 import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
 
 service TicketTypeService {
   rpc GetTicketType(TicketTypeRequest) returns (TicketTypeResponseList);

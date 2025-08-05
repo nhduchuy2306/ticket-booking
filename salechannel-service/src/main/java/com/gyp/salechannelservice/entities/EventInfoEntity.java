@@ -11,15 +11,15 @@ import jakarta.persistence.Id;
 
 import com.gyp.common.enums.event.EventStatus;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity(name = "EVENTINFO")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class EventInfoEntity extends AbstractEntity {
 	@Serial
 	private static final long serialVersionUID = -2510514114776707337L;

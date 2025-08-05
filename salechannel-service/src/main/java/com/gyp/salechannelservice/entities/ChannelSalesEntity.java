@@ -11,17 +11,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-// For tracking sales from different channels
+@Getter
+@Setter
 @Entity
 @Table(name = "CHANELSALES")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class ChannelSalesEntity extends AbstractEntity {
 	@Serial
 	private static final long serialVersionUID = 6546474765105671500L;

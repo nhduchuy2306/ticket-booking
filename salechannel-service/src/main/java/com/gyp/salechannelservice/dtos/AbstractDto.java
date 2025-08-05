@@ -6,10 +6,12 @@ import java.time.LocalDateTime;
 
 import com.gyp.common.intefaces.Dto;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class AbstractDto implements Dto, Serializable {

@@ -6,14 +6,14 @@ import com.gyp.common.enums.event.TicketStatus;
 import com.gyp.ticketservice.dtos.AbstractDto;
 import com.gyp.ticketservice.entities.TicketEntity;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class TicketGenerationResponseDto extends AbstractDto {
 	private String id;
 	private String eventId;

@@ -12,17 +12,16 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-// Entity for TicketShop - web-based sales for organizers
+@Getter
+@Setter
 @Entity
 @Table(name = "TICKETSHOP")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class TicketShopEntity extends AbstractEntity {
 	@Serial
 	private static final long serialVersionUID = -5778164280137371124L;

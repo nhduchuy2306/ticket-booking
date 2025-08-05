@@ -1,5 +1,6 @@
 package com.gyp.ticketservice.entities;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -16,18 +17,21 @@ import jakarta.persistence.Table;
 import com.gyp.common.enums.event.TicketStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Builder
 @Table(name = "TICKETGENERATION")
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class TicketGenerationEntity extends AbstractEntity {
+	@Serial
+	private static final long serialVersionUID = 1175683210970070443L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "id")

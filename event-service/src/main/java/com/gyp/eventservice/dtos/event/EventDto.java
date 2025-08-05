@@ -6,20 +6,19 @@ import java.util.List;
 import com.gyp.common.enums.event.EventStatus;
 import com.gyp.eventservice.dtos.AbstractDto;
 import com.gyp.eventservice.dtos.category.CategoryDto;
-import com.gyp.eventservice.dtos.organizer.OrganizerDto;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeDto;
 import com.gyp.eventservice.dtos.venuemap.VenueMapDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class EventDto extends AbstractDto {
 	private String id;
 	private String name;
@@ -34,7 +33,6 @@ public class EventDto extends AbstractDto {
 	private LocalDateTime doorCloseTime;
 
 	// Related entities - more detailed information
-	private OrganizerDto organizer;
 	private VenueMapDto venueMap;
 	private List<CategoryDto> categories;
 	private List<TicketTypeDto> ticketTypes;

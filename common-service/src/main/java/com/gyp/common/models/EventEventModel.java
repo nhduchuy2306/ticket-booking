@@ -4,10 +4,12 @@ import java.time.LocalDateTime;
 
 import com.gyp.common.enums.event.EventStatus;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventEventModel {
@@ -19,5 +21,4 @@ public class EventEventModel {
 	private LocalDateTime endTime;
 	private LocalDateTime doorOpenTime;
 	private LocalDateTime doorCloseTime;
-	private String organizer;
 }

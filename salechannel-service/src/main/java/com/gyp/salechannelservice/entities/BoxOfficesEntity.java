@@ -12,17 +12,16 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-// Entity for BoxOffice - extends the base SaleChannel concept
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "BOXOFFICES")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class BoxOfficesEntity extends AbstractEntity {
 	@Serial
 	private static final long serialVersionUID = 7274240468414096444L;

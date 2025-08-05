@@ -4,14 +4,14 @@ import java.io.Serial;
 
 import com.gyp.authservice.dtos.AbstractDto;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class OrganizationResponseDto extends AbstractDto {
 	@Serial
 	private static final long serialVersionUID = 222452602074102819L;

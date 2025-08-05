@@ -8,22 +8,20 @@ import com.gyp.eventservice.dtos.AbstractDto;
 import com.gyp.eventservice.dtos.category.CategoryResponseDto;
 import com.gyp.eventservice.dtos.eventapproval.EventApprovalResponseDto;
 import com.gyp.eventservice.dtos.eventpromotion.EventPromotionResponseDto;
-import com.gyp.eventservice.dtos.organizer.OrganizerResponseDto;
 import com.gyp.eventservice.dtos.season.SeasonResponseDto;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeResponseDto;
-import com.gyp.eventservice.dtos.venue.VenueResponseDto;
 import com.gyp.eventservice.dtos.venuemap.VenueMapResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class EventResponseDto extends AbstractDto {
 	private String id;
 	private String name;
@@ -37,7 +35,6 @@ public class EventResponseDto extends AbstractDto {
 	private LocalDateTime doorCloseTime;
 
 	// Related entities - more detailed information
-	private OrganizerResponseDto organizer;
 	private VenueMapResponseDto venueMap;
 	private SeasonResponseDto season;
 	private List<CategoryResponseDto> categories;

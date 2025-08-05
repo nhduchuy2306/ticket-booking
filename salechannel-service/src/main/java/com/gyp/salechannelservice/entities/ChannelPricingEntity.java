@@ -11,17 +11,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-// Configuration for channel-specific pricing
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "CHANNELPRICING")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class ChannelPricingEntity extends AbstractEntity {
 	@Serial
 	private static final long serialVersionUID = 8804704960869417338L;
