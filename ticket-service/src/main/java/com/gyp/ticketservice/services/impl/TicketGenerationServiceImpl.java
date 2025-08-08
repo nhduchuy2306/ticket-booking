@@ -6,6 +6,7 @@ import java.util.List;
 import com.gyp.common.enums.event.TicketStatus;
 import com.gyp.common.exceptions.ResourceNotFoundException;
 import com.gyp.common.models.EventGenerationTicketEM;
+import com.gyp.common.utils.SecurityUtils;
 import com.gyp.seatmapservice.grpc.seatmap.SeatMapRequest;
 import com.gyp.ticketservice.dtos.seatmap.Row;
 import com.gyp.ticketservice.dtos.seatmap.Seat;
@@ -16,13 +17,15 @@ import com.gyp.ticketservice.dtos.seatmap.Table;
 import com.gyp.ticketservice.dtos.ticketgeneration.TicketGenerationResponseDto;
 import com.gyp.ticketservice.dtos.ticketgeneration.TicketGenerationSummaryDto;
 import com.gyp.ticketservice.entities.TicketEntity;
-import com.gyp.ticketservice.mappers.TicketMapper;
 import com.gyp.ticketservice.messages.grpcs.SeatMapServiceGrpcClient;
 import com.gyp.ticketservice.messages.producers.EventGeneratedProducer;
 import com.gyp.ticketservice.repositories.TicketRepository;
 import com.gyp.ticketservice.services.TicketGenerationService;
+import com.gyp.ticketservice.services.criteria.TicketSearchCriteria;
+import com.gyp.ticketservice.services.specification.TicketSpecification;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -31,7 +34,6 @@ import org.springframework.util.CollectionUtils;
 public class TicketGenerationServiceImpl implements TicketGenerationService {
 	private final TicketRepository ticketRepository;
 	private final SeatMapServiceGrpcClient seatMapServiceGrpcClient;
-	private final TicketMapper ticketMapper;
 	private final EventGeneratedProducer eventGeneratedProducer;
 
 	@Override
@@ -86,6 +88,30 @@ public class TicketGenerationServiceImpl implements TicketGenerationService {
 		}
 	}
 
+	@Override
+	public void deleteTicketsGeneration(String eventId) {
+		try {
+			String organizationId = SecurityUtils.getCurrentOrganizationId();
+			TicketSearchCriteria ticketSearchCriteria = TicketSearchCriteria.builder()
+					.eventId(eventId)
+					.organizationId(organizationId)
+					.build();
+			Specification<TicketEntity> specification = TicketSpecification.createTicketSpecification(
+					ticketSearchCriteria);
+			var tickets = ticketRepository.findAll(specification);
+			if(!CollectionUtils.isEmpty(tickets)) {
+				ticketRepository.deleteAll(tickets);
+				EventGenerationTicketEM eventGenerationTicketEM = EventGenerationTicketEM.builder()
+						.isTicketGenerated(false)
+						.eventId(eventId)
+						.build();
+				eventGeneratedProducer.send(eventGenerationTicketEM);
+			}
+		} catch(Exception e) {
+			throw new ResourceNotFoundException("Error deleting tickets for event: " + eventId, e);
+		}
+	}
+
 	private void generateRowTickets(String eventId, SeatMapDto seatMapDto, Section section, List<Row> rows) {
 		for(Row row : rows) {
 			List<Seat> seats = row.getSeats();
@@ -111,12 +137,14 @@ public class TicketGenerationServiceImpl implements TicketGenerationService {
 	}
 
 	private void generateSeatTickets(String eventId, SeatMapDto seatMapDto, List<Seat> seats, String seatInfoPrefix) {
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		for(Seat seat : seats) {
 			TicketEntity ticketEntity = TicketEntity.builder()
 					.eventId(eventId)
 					.eventName(seatMapDto.getEventName())
 					.seatInfo(seatInfoPrefix + seat.getName())
 					.ticketCode(generateTicketNumber())
+					.organizationId(organizationId)
 					.eventDateTime(StringUtils.isNotEmpty(seatMapDto.getEventDateTime())
 							? LocalDateTime.parse(seatMapDto.getEventDateTime())
 							: LocalDateTime.now())

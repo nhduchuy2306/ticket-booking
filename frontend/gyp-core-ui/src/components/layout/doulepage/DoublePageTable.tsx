@@ -1,4 +1,6 @@
+import type { TableColumnsType } from 'antd';
 import { Button, Flex, Modal, notification, Table, TableProps, Tooltip } from "antd";
+import { ColumnType } from "antd/es/table/interface";
 import React, { useEffect, useState } from "react";
 import { BiPlus } from "react-icons/bi";
 import { ThemeColors } from "../../../configs/Constants.ts";
@@ -6,7 +8,7 @@ import { BaseService } from "../../../services/BaseService.ts";
 import { useDoublePageContext } from "./DoublePageContext.tsx";
 
 export interface DoublePageTableProps {
-    columns: TableProps<any>['columns'];
+    columns: TableColumnsType;
     service: BaseService<any, any>;
     createButtonTooltip?: string;
     onDelete?: (entity: any) => Promise<void>;
@@ -91,10 +93,11 @@ export const DoublePageTable: React.FC<DoublePageTableProps> = ({
         }
     };
 
-    const buildColumns = () => {
-        const actionColumn = {
+    const buildColumns = (): TableColumnsType => {
+        const actionColumn: ColumnType = {
             title: 'Actions',
-            width: '10%',
+            width: '50',
+            fixed: 'right',
             render: (_: any, record: object) => (
                     <Flex gap="small">
                         {additionalActions?.(record)}
@@ -156,7 +159,7 @@ export const DoublePageTable: React.FC<DoublePageTableProps> = ({
                         <Button type="default" icon={<BiPlus/>} onClick={handleCreate}/>
                     </Tooltip>
                 </Flex>
-                <div className="overflow-auto! h-[calc(100vh-100px)]!">
+                <div>
                     <Table
                             columns={buildColumns()}
                             dataSource={data}
@@ -169,6 +172,7 @@ export const DoublePageTable: React.FC<DoublePageTableProps> = ({
                                 showSizeChanger: pagination.showSizeChanger,
                                 showTotal: pagination.showTotal || ((total, range) => `${range[0]}-${range[1]} of ${total} items`),
                             }}
+                            // scroll={{y: 50 * 10}}
                             onChange={handleTableChange}
                     />
                 </div>

@@ -9,22 +9,14 @@ export interface OrganizationTableProps {
 const OrganizationTable: React.FC<OrganizationTableProps> = () => {
     const columns: TableProps['columns'] = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-            width: '10%',
-        },
-        {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            width: '40%',
         },
         {
             title: 'Description',
             dataIndex: 'description',
             key: 'description',
-            width: '40%',
         },
     ];
 

@@ -1,54 +1,54 @@
-.layout-container {
-  .ant-menu {
-    .ant-menu-submenu-arrow {
-      transform: none !important;
-      position: unset !important;
-    }
-  }
-
-  .ant-menu.ant-menu-inline-collapsed {
-    width: 80px !important;
-
-    .ant-menu-submenu-arrow {
-      transform: none !important;
-      position: unset !important;
-    }
-
-    .ant-menu-item, .ant-menu-submenu-title {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      svg {
-        width: 20px !important;
-        height: 20px !important;
-        font-size: 20px !important;
-      }
-    }
-  }
-
-  .ant-menu:not(.ant-menu-inline-collapsed) {
-    width: 270px !important;
-  }
-}
-
-.app-side {
-  overflow: auto;
-  height: 100vh;
-  position: sticky;
-  inset-inline-start: 0;
-  top: 0;
-  bottom: 0;
-  scrollbar-width: thin;
-  scrollbar-gutter: stable;
-
-  .ant-menu {
-    height: 100%;
-    //overflow-y: auto;
-    //overflow-x: hidden;
-  }
-}
-
-.ant-tabs-nav {
-  margin: 0 !important;
-}
+//.layout-container {
+//  .ant-menu {
+//    .ant-menu-submenu-arrow {
+//      transform: none !important;
+//      position: unset !important;
+//    }
+//  }
+//
+//  .ant-menu.ant-menu-inline-collapsed {
+//    width: 80px !important;
+//
+//    .ant-menu-submenu-arrow {
+//      transform: none !important;
+//      position: unset !important;
+//    }
+//
+//    .ant-menu-item, .ant-menu-submenu-title {
+//      display: flex;
+//      align-items: center;
+//      justify-content: center;
+//
+//      svg {
+//        width: 20px !important;
+//        height: 20px !important;
+//        font-size: 20px !important;
+//      }
+//    }
+//  }
+//
+//  .ant-menu:not(.ant-menu-inline-collapsed) {
+//    width: 270px !important;
+//  }
+//}
+//
+//.app-side {
+//  overflow: auto;
+//  height: 100vh;
+//  position: sticky;
+//  inset-inline-start: 0;
+//  top: 0;
+//  bottom: 0;
+//  scrollbar-width: thin;
+//  scrollbar-gutter: stable;
+//
+//  .ant-menu {
+//    height: 100%;
+//    //overflow-y: auto;
+//    //overflow-x: hidden;
+//  }
+//}
+//
+//.ant-tabs-nav {
+//  margin: 0 !important;
+//}

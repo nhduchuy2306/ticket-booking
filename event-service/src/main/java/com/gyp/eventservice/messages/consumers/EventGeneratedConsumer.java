@@ -26,7 +26,7 @@ public class EventGeneratedConsumer {
 				var event = eventRepository.findById(eventGenerationTicketEM.getEventId());
 				if(event.isPresent()) {
 					var newEvent = event.get();
-					newEvent.setIsGenerated(true);
+					newEvent.setIsGenerated(eventGenerationTicketEM.getIsTicketGenerated());
 					eventRepository.save(newEvent);
 				}
 			}

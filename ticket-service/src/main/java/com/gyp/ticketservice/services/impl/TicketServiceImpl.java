@@ -43,11 +43,11 @@ public class TicketServiceImpl extends AbstractService implements TicketService 
 	}
 
 	@Override
-	public List<TicketResponseDto> getAllTickets(TicketSearchCriteria criteria, PaginatedDto pagination) {
+	public List<TicketResponseDto> getAllTickets(TicketSearchCriteria criteria) {
 		Specification<TicketEntity> ticketSpecification = TicketSpecification.createTicketSpecification(criteria);
-		var tickets = ticketRepository.findAll(ticketSpecification, pagination.toPageable());
-		if(!CollectionUtils.isEmpty(tickets.getContent())) {
-			return ticketMapper.toResponseList(tickets.getContent());
+		var tickets = ticketRepository.findAll(ticketSpecification);
+		if(!CollectionUtils.isEmpty(tickets)) {
+			return ticketMapper.toResponseList(tickets);
 		}
 		return null;
 	}

@@ -63,7 +63,17 @@ const allItems: MenuItem[] = [
     },
     ...menuItems,
     ...boxOfficeMenuItems
-]
+];
+
+const siderStyle: React.CSSProperties = {
+    overflow: 'auto',
+    position: 'sticky',
+    insetInlineStart: 0,
+    top: 0,
+    bottom: 0,
+    scrollbarWidth: 'thin',
+    scrollbarGutter: 'stable'
+};
 
 const App: React.FC = () => {
     const navigate = useNavigate();
@@ -114,11 +124,12 @@ const App: React.FC = () => {
     }
 
     return (
-            <Layout hasSider className="layout-container">
+            <Layout hasSider>
                 <Sider collapsible
                        collapsed={collapsed}
                        onCollapse={(value) => setCollapsed(value)}
                        className="app-side !overflow-hidden"
+                       style={siderStyle}
                        width={280}
                        theme="light">
                     <ProfilePage collapsed={collapsed}/>
@@ -133,8 +144,8 @@ const App: React.FC = () => {
                             onSelect={handleMenuItemSelect}
                     />
                 </Sider>
-                <Layout className="bg-white" style={{overflow: 'hidden !important'}}>
-                    <Content className="mt-[24px]! mr-[16px]! ml-[16px]! mb-0!">
+                <Layout className="h-[100vh] max-h-[100vh]">
+                    <Content className="!m-5 p-0 !overflow-hidden">
                         <Breadcrumb items={breadCrumbItems}/>
                         <Outlet/>
                     </Content>

@@ -11,5 +11,5 @@ public interface TicketService {
 
 	List<TicketResponseDto> getTicketByEventId(String eventId);
 
-	List<TicketResponseDto> getAllTickets(TicketSearchCriteria criteria, PaginatedDto pagination);
+	List<TicketResponseDto> getAllTickets(TicketSearchCriteria criteria);
 }

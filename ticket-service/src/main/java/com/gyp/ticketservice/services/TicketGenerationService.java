@@ -9,4 +9,6 @@ public interface TicketGenerationService {
 	TicketGenerationResponseDto getTicketGenerationById(String id);
 
 	void generateTicketBaseOnEventConfiguration(String eventId);
+
+	void deleteTicketsGeneration(String eventId);
 }

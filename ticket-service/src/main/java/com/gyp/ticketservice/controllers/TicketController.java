@@ -54,7 +54,7 @@ public class TicketController extends AbstractController {
 	}
 
 	@GetMapping
-	public ResponseEntity<?> getTicketGenerationById(
+	public ResponseEntity<?> getAllTicketGeneration(
 			@RequestParam(value = "eventId", required = false) String eventId,
 			@RequestParam(value = "ticketId", required = false) String ticketId,
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
@@ -69,10 +69,7 @@ public class TicketController extends AbstractController {
 				.page(page.orElse(0))
 				.size(size.orElse(10))
 				.build();
-		var ticketGenerationResponse = ticketService.getAllTickets(criteria, pagination);
-		if(ticketGenerationResponse != null) {
-			return ResponseEntity.ok().body(ticketGenerationResponse);
-		}
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		var ticketGenerationResponse = ticketService.getAllTickets(criteria);
+		return ResponseEntity.ok().body(ticketGenerationResponse);
 	}
 }

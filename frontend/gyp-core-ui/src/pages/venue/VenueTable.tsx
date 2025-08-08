@@ -9,22 +9,14 @@ export interface VenueTableProps {
 const VenueTable: React.FC<VenueTableProps> = () => {
     const columns: TableProps['columns'] = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-            width: '10%',
-        },
-        {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            width: '40%',
         },
         {
             title: 'Address',
             dataIndex: 'address',
             key: 'address',
-            width: '40%',
         },
     ];
 

@@ -17,13 +17,14 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring", mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG)
 public interface TicketMapper extends AbstractMapper {
 
+	@Mapping(target = "organizationId", ignore = true)
 	@Mapping(target = "reservedDateTime", source = "dto.reservedDateTime")
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "ticketTypeEntity", ignore = true)
 	TicketEntity toEntity(TicketRequestDto dto);
 
-	@Mapping(target = "ticketTypeSummaryDto", source = "entity.ticketTypeEntity",
-			qualifiedByName = "mapTicketTypeSummary")
+	@Mapping(target = "ticketTypeColor", source = "entity.ticketTypeEntity.color")
+	@Mapping(target = "ticketTypeName", source = "entity.ticketTypeEntity.name")
 	@Mapping(target = "ticketTypeId", source = "entity.ticketTypeEntity.id")
 	TicketResponseDto toResponse(TicketEntity entity);
 

@@ -10,28 +10,19 @@ interface VenueMapTableProps {
 const VenueMapTable: React.FC<VenueMapTableProps> = () => {
     const columns: TableProps['columns'] = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-            width: '10%',
-        },
-        {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            width: '40%',
         },
         {
             title: 'Seat Map',
             dataIndex: 'seatMapName',
             key: 'seatMapName',
-            width: '40%',
         },
         {
             title: 'Venue',
             dataIndex: 'venueName',
             key: 'venueName',
-            width: '40%',
         },
     ];
 

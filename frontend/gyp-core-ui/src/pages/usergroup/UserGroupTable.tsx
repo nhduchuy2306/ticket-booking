@@ -9,25 +9,17 @@ interface UserGroupTableProps {
 const UserGroupTable: React.FC<UserGroupTableProps> = () => {
     const columns: TableProps['columns'] = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            width: '20%',
-        },
-        {
             title: 'Name',
             dataIndex: 'name',
             sorter: true,
-            width: '20%',
         },
         {
             title: 'Description',
             dataIndex: 'description',
-            width: '20%',
         },
         {
             title: 'Administrator',
             dataIndex: 'administrator',
-            width: '20%',
             render: (value: boolean) => value ? "TRUE" : "FALSE"
         },
     ];

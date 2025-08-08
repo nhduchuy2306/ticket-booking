@@ -7,7 +7,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -47,13 +46,16 @@ public class TicketEntity extends AbstractEntity {
 	@Column(name = "event_name")
 	private String eventName;
 
+	@Column(name = "organization_id")
+	private String organizationId;
+
 	@Column(name = "event_date_time")
 	private LocalDateTime eventDateTime;
 
 	@Column(name = "reserved_date")
 	private LocalDateTime reservedDateTime;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "ticket_type_id")
 	private TicketTypeEntity ticketTypeEntity;
 

@@ -11,30 +11,21 @@ export interface UserAccountTableProps {
 const UserAccountTable: React.FC<UserAccountTableProps> = () => {
     const columns: TableProps['columns'] = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            width: '20%',
-        },
-        {
             title: 'Name',
             dataIndex: 'name',
             sorter: true,
-            width: '20%',
         },
         {
             title: 'UserName',
             dataIndex: 'username',
-            width: '20%',
         },
         {
             title: 'PhoneNumber',
             dataIndex: 'phoneNumber',
-            width: '20%',
         },
         {
             title: 'Email',
             dataIndex: 'email',
-            width: '20%',
         },
     ];
 

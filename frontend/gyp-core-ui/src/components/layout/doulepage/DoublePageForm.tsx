@@ -98,7 +98,7 @@ export const DoublePageForm: React.FC<DoublePageFormProps> = ({
             (selectedEntity && (mode === FormState.EDIT.key || mode === FormState.READ_ONLY.key));
 
     return (
-            <div className="flex-1 mt-10! overflow-auto! h-[calc(100vh-100px)]!">
+            <div className="flex-1 mt-10! overflow-auto! h-[calc(100vh-120px)]!">
                 {showForm && children({
                     entity: dataById,
                     mode,

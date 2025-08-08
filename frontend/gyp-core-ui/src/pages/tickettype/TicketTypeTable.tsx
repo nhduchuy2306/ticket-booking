@@ -9,28 +9,20 @@ export interface TicketTypeTableProps {
 const TicketTypeTable: React.FC<TicketTypeTableProps> = () => {
     const columns: TableProps['columns'] = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-            width: '10%',
-        },
-        {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            width: '40%',
+            sorter: true,
         },
         {
             title: 'Description',
             dataIndex: 'description',
             key: 'description',
-            width: '40%',
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            width: '40%',
         },
     ];
 

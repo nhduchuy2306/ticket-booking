@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 import com.gyp.common.enums.event.TicketStatus;
 import com.gyp.ticketservice.dtos.AbstractDto;
-import com.gyp.ticketservice.dtos.tickettype.TicketTypeSummaryDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +19,8 @@ public class TicketResponseDto extends AbstractDto {
 	private String eventId;
 	private String eventName;
 	private String ticketTypeId;
+	private String ticketTypeName;
+	private String ticketTypeColor;
 	private LocalDateTime eventDateTime;
 	private LocalDateTime reservedDateTime;
 	private String seatInfo;
@@ -28,5 +29,4 @@ public class TicketResponseDto extends AbstractDto {
 	private String attendeeEmail;
 	private String qrCodeUrl;
 	private String pdfUrl;
-	private TicketTypeSummaryDto ticketTypeSummaryDto;
 }

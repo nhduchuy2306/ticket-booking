@@ -1,14 +1,17 @@
-import { Button, Form, notification, Select } from "antd";
+import { Button, Flex, Form, Select } from "antd";
 import React, { useEffect, useState } from "react";
+import { createErrorNotification, createSuccessNotification } from "../../components/notification/Notification.ts";
 import { EventResponseDto } from "../../models/generated/event-service-models";
 import { EventService } from "../../services/Event/EventService.ts";
 import { TicketService } from "../../services/Ticket/TicketService.ts";
 
 interface TicketFormProps {
+    onShowTicket?: (eventId: string) => void;
 }
 
-const TicketForm: React.FC<TicketFormProps> = () => {
+const TicketForm: React.FC<TicketFormProps> = ({onShowTicket}) => {
     const [events, setEvents] = useState<EventResponseDto[]>([]);
+    const [isGenerated, setIsGenerated] = useState<boolean>(false);
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -21,21 +24,46 @@ const TicketForm: React.FC<TicketFormProps> = () => {
                     setEvents([]);
                 }
             } catch (error) {
-                notification.error({message: "Failed to fetch events"});
+                createErrorNotification("Failed to fetch events", "Failed to fetch events");
             }
         }
         void fetchEvents();
     }, []);
 
+    const handleEventSelect = (value: string) => {
+        const event = events.find(event => event.id === value);
+        if (event?.isGenerated) {
+            setIsGenerated(true);
+        } else {
+            setIsGenerated(false);
+        }
+    }
+
+    const handleShowTicket = async () => {
+        const eventId = form.getFieldValue("eventId");
+        if (!eventId) {
+            createErrorNotification("No event selected", "Please select an event to show the ticket.");
+            return;
+        }
+        if (onShowTicket) {
+            onShowTicket(eventId);
+        }
+    }
+
     const handleGenerateTicket = async () => {
         try {
             const eventId = form.getFieldValue("eventId");
             await TicketService.generateTicket(eventId);
+            setIsGenerated(true);
+            createSuccessNotification(
+                    "Ticket generated successfully",
+                    `Ticket for event ID ${eventId} has been generated.`
+            );
         } catch (error) {
-            notification.error({
-                message: "Failed to generate ticket",
-                description: error instanceof Error ? error.message : "Unknown error"
-            });
+            createErrorNotification(
+                    "Failed to generate ticket",
+                    error instanceof Error ? error.message : "Unknown error"
+            );
         }
     }
 
@@ -56,15 +84,14 @@ const TicketForm: React.FC<TicketFormProps> = () => {
                                 label: event.name,
                                 value: event.id
                             }))}
+                            onSelect={handleEventSelect}
                     />
                 </Form.Item>
-
                 <Form.Item>
-                    <Button
-                            type="primary"
-                            htmlType="submit"
-                            className="float-right"
-                    >Generate</Button>
+                    <Flex gap={5} justify="flex-end">
+                        {isGenerated && <Button type="default" onClick={handleShowTicket}>Show</Button>}
+                        <Button type="primary" htmlType="submit" disabled={isGenerated}>Generate</Button>
+                    </Flex>
                 </Form.Item>
             </Form>
     );

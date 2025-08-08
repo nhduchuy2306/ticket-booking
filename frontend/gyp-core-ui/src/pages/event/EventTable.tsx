@@ -1,4 +1,4 @@
-import { Button, Tooltip } from "antd";
+import { Button, Tag, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
 import React from "react";
 import { RiLoopLeftFill } from "react-icons/ri";
@@ -13,25 +13,44 @@ export interface EventTableProps {
 const EventTable: React.FC<EventTableProps> = () => {
     const columns: ColumnsType<EventModel> = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            width: '20%',
-        },
-        {
             title: 'Name',
             dataIndex: 'name',
             sorter: true,
-            width: '20%',
         },
         {
             title: 'Status',
             dataIndex: 'status',
-            width: '20%',
+            render: (text: string) => {
+                const statusColor = {
+                    "DRAFT": 'blue',
+                    "PENDING_APPROVAL": 'orange',
+                    "PUBLISHED": 'green',
+                    "CANCELED": 'red',
+                    "POSTPONED": 'purple',
+                    "COMPLETED": 'cyan',
+                } as const;
+                type StatusKey = keyof typeof statusColor;
+                return (
+                        <Tag color={statusColor?.[text as StatusKey] || 'default'} style={{cursor: 'pointer'}}>
+                            {text}
+                        </Tag>
+                );
+            }
+        },
+        {
+            title: 'Generated',
+            dataIndex: 'isGenerated',
+            render: (text: boolean) => {
+                return (
+                        <Tag color={text ? 'green' : 'red'} style={{cursor: 'pointer'}}>
+                            {text ? 'True' : 'False'}
+                        </Tag>
+                );
+            }
         },
         {
             title: 'Start Time',
             dataIndex: 'startTime',
-            width: '20%',
             render: (text: string) => {
                 return (
                         <span>{text ? DateUtils.formatToDateTime(text) : 'N/A'}</span>
@@ -41,7 +60,6 @@ const EventTable: React.FC<EventTableProps> = () => {
         {
             title: 'End Time',
             dataIndex: 'endTime',
-            width: '20%',
             render: (text: string) => {
                 return (
                         <span>{text ? DateUtils.formatToDateTime(text) : 'N/A'}</span>

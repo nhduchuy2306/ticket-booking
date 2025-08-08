@@ -1,15 +1,17 @@
 -- 1. TICKETTYPE Table
-CREATE TABLE tickettype
+CREATE TABLE IF NOT EXISTS tickettype
 (
-    id                 VARCHAR(255) PRIMARY KEY,
-    event_id           VARCHAR(255) NOT NULL,
-    name               VARCHAR(255) NOT NULL,
+    id                 VARCHAR(255)   NOT NULL PRIMARY KEY,
+    name               VARCHAR(255)   NOT NULL,
     description        TEXT,
-    price              DOUBLE       NOT NULL,
-    quantity_total     INT          NOT NULL,
-    quantity_available INT,
-    sale_start_date    DATETIME,
-    sale_end_date      DATETIME,
+    price              DECIMAL(19, 2) NOT NULL,
+    color              VARCHAR(255),
+    quantity_available INT            NOT NULL,
+    status             VARCHAR(255)   NOT NULL,
+    sale_start_date    TIMESTAMP,
+    sale_end_date      TIMESTAMP,
+    event_id           VARCHAR(255)   NOT NULL,
+    organization_id    VARCHAR(255),
     create_user        VARCHAR(255),
     change_user        VARCHAR(255),
     create_timestamp   DATETIME,
@@ -17,11 +19,12 @@ CREATE TABLE tickettype
 );
 
 -- 2. TICKET Table (đã gộp ticketgeneration)
-CREATE TABLE ticket
+CREATE TABLE IF NOT EXISTS ticket
 (
     id               VARCHAR(255) PRIMARY KEY,
     ticket_code      VARCHAR(255) UNIQUE,             -- dùng cho QR/PDF
     ticket_type_id   VARCHAR(255),
+    organization_id  VARCHAR(255),
     event_id         VARCHAR(255) NOT NULL,
     event_name       VARCHAR(255),
     event_date_time  DATETIME,
@@ -44,7 +47,7 @@ CREATE TABLE ticket
 );
 
 -- 3. TICKETORDERLINK Table
-CREATE TABLE ticketorderlink
+CREATE TABLE IF NOT EXISTS ticketorderlink
 (
     id                VARCHAR(255) PRIMARY KEY,
     ticket_id         VARCHAR(255) NOT NULL,

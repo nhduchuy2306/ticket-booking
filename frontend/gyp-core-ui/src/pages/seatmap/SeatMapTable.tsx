@@ -10,21 +10,14 @@ export interface SeatMapTableProps {
 const SeatMapTable: React.FC<SeatMapTableProps> = () => {
     const columns: ColumnsType<EventModel> = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            width: '20%',
-        },
-        {
             title: 'Name',
             dataIndex: 'name',
             sorter: true,
-            width: '20%',
         },
         {
             title: 'Venue Type',
             dataIndex: 'venueType',
             sorter: true,
-            width: '20%',
         },
     ];
 
