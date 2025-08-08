@@ -27,6 +27,7 @@ public class EventResponseDto extends AbstractDto {
 	private String name;
 	private String description;
 	private EventStatus status;
+	private Boolean isGenerated;
 
 	// Time-related properties
 	private LocalDateTime startTime;

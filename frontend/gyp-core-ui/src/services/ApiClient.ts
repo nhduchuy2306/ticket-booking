@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from "axios";
 
 const AUTH_SERVICE_PATH = "auths";
 const EVENT_SERVICE_PATH = "events";
+const TICKET_SERVICE_PATH = "tickets";
 
 const apiClient: AxiosInstance = axios.create({
     baseURL: "http://localhost:9999",
@@ -33,4 +34,4 @@ apiClient.interceptors.response.use(
         }
 );
 
-export { apiClient, AUTH_SERVICE_PATH, EVENT_SERVICE_PATH }
+export { apiClient, AUTH_SERVICE_PATH, EVENT_SERVICE_PATH, TICKET_SERVICE_PATH };

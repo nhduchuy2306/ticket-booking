@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping(TicketGenerationController.TICKET_GENERATION_CONTROLLER_PATH)
 public class TicketGenerationController {
-	public static final String TICKET_GENERATION_CONTROLLER_PATH = "/ticketgenerations";
+	public static final String TICKET_GENERATION_CONTROLLER_PATH = "/ticket-generations";
 
-	private static final String GENERATE_TICKET_PATH = "generateticket";
+	private static final String GENERATE_TICKET_PATH = "generate-ticket";
 
 	private static final String EVENT_ID_PARAM = "eventId";
 

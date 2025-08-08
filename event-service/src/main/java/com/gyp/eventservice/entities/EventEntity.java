@@ -60,6 +60,9 @@ public class EventEntity extends AbstractEntity {
 	@Column(name = "organization_id")
 	private String organizationId;
 
+	@Column(name = "is_generated")
+	private Boolean isGenerated;
+
 	@ManyToOne
 	@JoinColumn(name = "venue_map_id")
 	private VenueMapEntity venueMapEntity;

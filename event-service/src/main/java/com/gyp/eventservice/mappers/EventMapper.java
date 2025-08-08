@@ -43,6 +43,7 @@ public interface EventMapper extends AbstractMapper {
 	List<EventResponseDto> toResponseDtoList(List<EventEntity> entities);
 
 	// Create new entity from request
+	@Mapping(target = "isGenerated", ignore = true)
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "time.startTime", source = "startTime")
 	@Mapping(target = "time.endTime", source = "endTime")
@@ -58,6 +59,7 @@ public interface EventMapper extends AbstractMapper {
 	EventEntity toEntity(EventRequestDto dto);
 
 	// Update existing entity from request
+	@Mapping(target = "isGenerated", ignore = true)
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "time.startTime", source = "startTime")
 	@Mapping(target = "time.endTime", source = "endTime")

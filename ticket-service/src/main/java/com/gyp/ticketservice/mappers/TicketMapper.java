@@ -29,6 +29,8 @@ public interface TicketMapper extends AbstractMapper {
 
 	List<TicketResponseDto> toResponses(List<TicketEntity> entities);
 
+	List<TicketResponseDto> toResponseList(List<TicketEntity> ticketEntities);
+
 	@Named("mapTicketTypeSummary")
 	default TicketTypeSummaryDto mapTicketTypeSummary(TicketTypeEntity entity) {
 		TicketTypeSummaryDto ticketTypeSummaryDto = new TicketTypeSummaryDto();

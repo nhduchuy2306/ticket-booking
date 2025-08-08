@@ -10,7 +10,6 @@ CREATE TABLE tickettype
     quantity_available INT,
     sale_start_date    DATETIME,
     sale_end_date      DATETIME,
-    is_seat_based      BOOLEAN DEFAULT FALSE,
     create_user        VARCHAR(255),
     change_user        VARCHAR(255),
     create_timestamp   DATETIME,

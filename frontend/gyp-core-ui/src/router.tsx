@@ -17,6 +17,7 @@ import SaleChannelPage from "./pages/salechannel/SaleChannelPage.tsx";
 import SeasonPage from "./pages/season/SeasonPage.tsx";
 import SeatMapForm from "./pages/seatmap/SeatMapForm.tsx";
 import SeatMapPage from "./pages/seatmap/SeatMapPage.tsx";
+import TicketPage from "./pages/ticket/TicketPage.tsx";
 import TicketTypePage from "./pages/tickettype/TicketTypePage.tsx";
 import UserAccountForm from "./pages/useraccount/UserAccountForm.tsx";
 import UserAccountPage from "./pages/useraccount/UserAccountPage.tsx";
@@ -143,6 +144,13 @@ const EventServiceRouter = [
     }
 ];
 
+const TicketServiceRouter = [
+    {
+        path: 'ticket',
+        element: <TicketPage/>
+    }
+];
+
 const SaleChannelServiceRouter = [
     {
         path: 'sale-channel',
@@ -187,6 +195,7 @@ export const router = createBrowserRouter([
         children: [
             ...UserServiceRouter,
             ...EventServiceRouter,
+            ...TicketServiceRouter,
             ...SaleChannelServiceRouter,
             ...ConfigurationRouter
         ],

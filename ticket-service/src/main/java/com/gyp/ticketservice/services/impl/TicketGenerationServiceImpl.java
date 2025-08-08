@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.gyp.common.enums.event.TicketStatus;
 import com.gyp.common.exceptions.ResourceNotFoundException;
+import com.gyp.common.models.EventGenerationTicketEM;
 import com.gyp.seatmapservice.grpc.seatmap.SeatMapRequest;
 import com.gyp.ticketservice.dtos.seatmap.Row;
 import com.gyp.ticketservice.dtos.seatmap.Seat;
@@ -17,6 +18,7 @@ import com.gyp.ticketservice.dtos.ticketgeneration.TicketGenerationSummaryDto;
 import com.gyp.ticketservice.entities.TicketEntity;
 import com.gyp.ticketservice.mappers.TicketMapper;
 import com.gyp.ticketservice.messages.grpcs.SeatMapServiceGrpcClient;
+import com.gyp.ticketservice.messages.producers.EventGeneratedProducer;
 import com.gyp.ticketservice.repositories.TicketRepository;
 import com.gyp.ticketservice.services.TicketGenerationService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class TicketGenerationServiceImpl implements TicketGenerationService {
 	private final TicketRepository ticketRepository;
 	private final SeatMapServiceGrpcClient seatMapServiceGrpcClient;
 	private final TicketMapper ticketMapper;
+	private final EventGeneratedProducer eventGeneratedProducer;
 
 	@Override
 	public TicketGenerationSummaryDto validateTicket(String ticketNumber) {
@@ -53,24 +56,33 @@ public class TicketGenerationServiceImpl implements TicketGenerationService {
 
 	@Override
 	public void generateTicketBaseOnEventConfiguration(String eventId) {
-		var request = SeatMapRequest.newBuilder().setEventId(eventId).build();
-		SeatMapDto seatMapDto = seatMapServiceGrpcClient.getSeatMap(request);
-		SeatConfig seatConfig = seatMapDto.getSeatConfig();
+		try {
+			var request = SeatMapRequest.newBuilder().setEventId(eventId).build();
+			SeatMapDto seatMapDto = seatMapServiceGrpcClient.getSeatMap(request);
+			SeatConfig seatConfig = seatMapDto.getSeatConfig();
 
-		List<Section> sections = seatConfig.getSections();
-		if(CollectionUtils.isEmpty(sections)) {
-			throw new ResourceNotFoundException("No sections found in seat configuration for event: " + eventId);
-		}
+			List<Section> sections = seatConfig.getSections();
+			if(CollectionUtils.isEmpty(sections)) {
+				throw new ResourceNotFoundException("No sections found in seat configuration for event: " + eventId);
+			}
 
-		for(Section section : sections) {
-			List<Row> rows = section.getRows();
-			List<Table> tables = section.getTables();
-			if(!CollectionUtils.isEmpty(rows)) {
-				generateRowTickets(eventId, seatMapDto, section, rows);
+			for(Section section : sections) {
+				List<Row> rows = section.getRows();
+				List<Table> tables = section.getTables();
+				if(!CollectionUtils.isEmpty(rows)) {
+					generateRowTickets(eventId, seatMapDto, section, rows);
+				}
+				if(!CollectionUtils.isEmpty(tables)) {
+					generateTableTickets(eventId, seatMapDto, section, tables);
+				}
 			}
-			if(!CollectionUtils.isEmpty(tables)) {
-				generateTableTickets(eventId, seatMapDto, section, tables);
-			}
+			EventGenerationTicketEM eventGenerationTicketEM = EventGenerationTicketEM.builder()
+					.isTicketGenerated(true)
+					.eventId(eventId)
+					.build();
+			eventGeneratedProducer.send(eventGenerationTicketEM);
+		} catch(Exception e) {
+			throw new ResourceNotFoundException("Error generating tickets for event: " + eventId, e);
 		}
 	}
 

@@ -6,8 +6,6 @@ option java_multiple_files = true;
 option java_package = "com.gyp.tickettype.grpc.tickettype";
 option java_outer_classname = "TicketTypeServiceProto";
 
-import "google/protobuf/empty.proto";
-
 service TicketTypeService {
   rpc GetTicketType(TicketTypeRequest) returns (TicketTypeResponseList);
 }

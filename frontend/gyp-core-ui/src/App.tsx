@@ -11,11 +11,10 @@ import { LiaFirstOrder } from "react-icons/lia";
 import { PiSeat } from "react-icons/pi";
 import { useSelector } from "react-redux";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import "./app.scss";
-import AppConfigurationPage from "./pages/configuration/AppConfigurationPage.tsx";
 import ProfilePage from "./pages/profile/ProfilePage.tsx";
 import { findMenuPath, getItem, getLabelByKey, MenuItem } from "./services/AppService.ts";
 import { RootState } from "./states/store.ts";
+import "./app.scss";
 
 const {Content, Sider} = Layout;
 
@@ -123,7 +122,6 @@ const App: React.FC = () => {
                        width={280}
                        theme="light">
                     <ProfilePage collapsed={collapsed}/>
-                    <AppConfigurationPage collapsed={collapsed}/>
                     <Menu
                             className="w-full h-full"
                             theme="light"
