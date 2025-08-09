@@ -9,6 +9,7 @@ import com.gyp.common.models.EventEventModel;
 import com.gyp.eventservice.dtos.event.EventRequestDto;
 import com.gyp.eventservice.dtos.event.EventResponseDto;
 import com.gyp.eventservice.services.criteria.EventSearchCriteria;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface EventService extends Validatable {
 	List<EventEventModel> getListEventModel();
@@ -19,7 +20,12 @@ public interface EventService extends Validatable {
 
 	EventResponseDto createEvent(EventRequestDto request);
 
+	EventResponseDto createEvent(EventRequestDto request, MultipartFile file);
+
 	EventResponseDto updateEvent(String eventId, EventRequestDto request) throws ResourceNotFoundException;
+
+	EventResponseDto updateEvent(String eventId, EventRequestDto request, MultipartFile file)
+			throws ResourceNotFoundException;
 
 	EventResponseDto publishEvent(String eventId);
 

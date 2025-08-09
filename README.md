@@ -34,8 +34,11 @@ to PDF, QR code and use this at the event.
 - Integrate with third-party payment gateways
 - Manage invoices
 
-#### 1.3. SaleChannel Service
-
+#### 1.4. SaleChannel Service
+- Create and manage sale channels (online, offline) -> Create Box Office channel, Create Online channel
+- Manage sale channels (online, offline)
+- Track sales by channel
+- Integrate with third-party sales platforms (if needed)
 ---
 
 ### 2. Supporting Services

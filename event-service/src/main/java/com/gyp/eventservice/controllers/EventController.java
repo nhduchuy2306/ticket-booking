@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,6 +35,7 @@ public class EventController extends AbstractValidatableController {
 	public static final String EVENT_CONTROLLER_RESOURCE_PATH = "/events";
 
 	private static final String ACTIVE_PATH = "/active";
+	private static final String WITH_UPLOAD_PATH = "/with-upload";
 
 	private final EventService eventService;
 	private final DataIntegrityService dataIntegrityService;
@@ -69,10 +72,33 @@ public class EventController extends AbstractValidatableController {
 		return ResponseEntity.ok(eventService.createEvent(eventRequestDto));
 	}
 
+	@PostMapping(WITH_UPLOAD_PATH)
+	public ResponseEntity<?> createEventWithUpload(
+			@RequestPart(value = "event", required = false) EventRequestDto eventRequestDto,
+			@RequestPart(value = "file", required = false) MultipartFile file) {
+		var event = eventService.createEvent(eventRequestDto, file);
+		if(event == null) {
+			return ResponseEntity.badRequest().body("Event creation failed due to missing file or event data.");
+		}
+		return ResponseEntity.ok(event);
+	}
+
 	@PutMapping("/{" + ID_PARAM + "}")
 	public ResponseEntity<?> updateEvent(@PathVariable(ID_PARAM) String id,
 			@RequestBody @Valid EventRequestDto eventRequestDto) {
 		return ResponseEntity.ok(eventService.updateEvent(id, eventRequestDto));
+	}
+
+	@PutMapping(WITH_UPLOAD_PATH + "/{" + ID_PARAM + "}")
+	public ResponseEntity<?> updateEventWithUpload(
+			@PathVariable(ID_PARAM) String id,
+			@RequestPart(value = "event", required = false) EventRequestDto eventRequestDto,
+			@RequestPart(value = "file", required = false) MultipartFile file) {
+		var event = eventService.updateEvent(id, eventRequestDto, file);
+		if(event == null) {
+			return ResponseEntity.badRequest().body("Event update failed due to missing file or event data.");
+		}
+		return ResponseEntity.ok(event);
 	}
 
 	@DeleteMapping("/{" + ID_PARAM + "}")

@@ -1,15 +1,13 @@
 package com.gyp.eventservice.services.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.enums.event.EventStatus;
-import com.gyp.common.exceptions.ResourceDuplicateException;
 import com.gyp.common.exceptions.ResourceNotFoundException;
 import com.gyp.common.models.EventEventModel;
+import com.gyp.common.services.UploadService;
 import com.gyp.common.services.ValidationService;
-import com.gyp.common.utils.PropertyName;
 import com.gyp.common.utils.SecurityUtils;
 import com.gyp.common.validators.criteria.ValidationInfo;
 import com.gyp.common.validators.rulecheck.CheckFactory;
@@ -26,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -35,6 +34,7 @@ public class EventServiceImpl implements EventService {
 	private final ValidationService validationService;
 	private final EventMapper eventMapper;
 	private final CheckFactory checkFactory;
+	private final UploadService uploadService;
 
 	@Override
 	public List<EventEventModel> getListEventModel() {
@@ -57,16 +57,34 @@ public class EventServiceImpl implements EventService {
 		EventEntity entity = eventRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + id));
 		if(entity != null) {
-			return eventMapper.toResponseDto(entity);
+			String logoUrl = uploadService.getFileUrl(entity.getLogoUrl());
+			var event = eventMapper.toResponseDto(entity);
+			event.setLogoUrl(logoUrl);
+			return event;
 		}
 		return null;
 	}
 
 	@Override
 	public EventResponseDto createEvent(EventRequestDto request) {
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		EventEntity eventEntity = eventMapper.toEntity(request);
+		eventEntity.setOrganizationId(organizationId);
 		var saveEvent = eventRepository.save(eventEntity);
 		return eventMapper.toResponseDto(saveEvent);
+	}
+
+	@Override
+	public EventResponseDto createEvent(EventRequestDto request, MultipartFile file) {
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
+		EventEntity eventEntity = eventMapper.toEntity(request);
+		if(file != null) {
+			String fileName = uploadService.upload(file);
+			eventEntity.setLogoUrl(fileName);
+		}
+		eventEntity.setOrganizationId(organizationId);
+		EventEntity savedEvent = eventRepository.save(eventEntity);
+		return eventMapper.toResponseDto(savedEvent);
 	}
 
 	@Override
@@ -78,6 +96,31 @@ public class EventServiceImpl implements EventService {
 		existingEvent.setOrganizationId(organizationId);
 		EventEntity updatedEvent = eventRepository.save(existingEvent);
 		return eventMapper.toResponseDto(updatedEvent);
+	}
+
+	@Override
+	public EventResponseDto updateEvent(String eventId, EventRequestDto request, MultipartFile file)
+			throws ResourceNotFoundException {
+		try {
+			String organizationId = SecurityUtils.getCurrentOrganizationId();
+			EventEntity existingEvent = eventRepository.findById(eventId)
+					.orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + eventId));
+			eventMapper.updateEntityFromDto(request, existingEvent);
+			if(file != null) {
+				// Delete old logo if it exists
+				if(existingEvent.getLogoUrl() != null) {
+					uploadService.deleteFile(existingEvent.getLogoUrl());
+				}
+				String fileName = uploadService.upload(file);
+				existingEvent.setLogoUrl(fileName);
+			}
+			existingEvent.setOrganizationId(organizationId);
+			EventEntity updatedEvent = eventRepository.save(existingEvent);
+			return eventMapper.toResponseDto(updatedEvent);
+		} catch(Exception e) {
+			log.error("Error updating event with id: {}", eventId, e);
+			throw new ResourceNotFoundException("Failed to update event with id: " + eventId, e);
+		}
 	}
 
 	@Override

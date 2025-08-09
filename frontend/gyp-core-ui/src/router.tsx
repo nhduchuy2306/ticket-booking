@@ -8,6 +8,7 @@ import ConfigurationPage from "./pages/configuration/ConfigurationPage.tsx";
 import ErrorPage from "./pages/error/ErrorPage.tsx";
 import EventForm from "./pages/event/EventForm.tsx";
 import EventPage from "./pages/event/EventPage.tsx";
+import EventImagePage from "./pages/eventimage/EventImagePage.tsx";
 import LandingPage from "./pages/landing/LandingPage.tsx";
 import OrganizationPage from "./pages/organization/OrganizationPage.tsx";
 import OverviewPage from "./pages/OverviewPage.tsx";
@@ -100,6 +101,10 @@ const EventServiceRouter = [
                 element: <EventForm mode={Mode.EDIT.key}/>
             }
         ],
+    },
+    {
+        path: 'event-image',
+        element: <EventImagePage/>,
     },
     {
         path: 'venue',

@@ -1,6 +1,6 @@
 package com.gyp.ticketservice.controllers;
 
-import com.gyp.ticketservice.services.MinioUploadService;
+import com.gyp.common.services.UploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,11 +15,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileController {
 	public static final String FILE_CONTROLLER_PATH = "/files";
 
-	private final MinioUploadService minioUploadService;
+	private final UploadService uploadService;
 
 	@PostMapping("/upload")
 	public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) {
-		String filename = minioUploadService.upload(file);
+		String filename = uploadService.upload(file);
 		return ResponseEntity.ok(filename);
 	}
 }

@@ -2,6 +2,7 @@ import { Button, Flex, notification, Tooltip } from "antd";
 import React from "react";
 import { BiArrowBack } from "react-icons/bi";
 import { BaseService } from "../../../services/BaseService.ts";
+import { createSuccessNotification } from "../../notification/Notification.ts";
 import { FormState } from "../models/LayoutModel.ts";
 import { useSinglePageContext } from "./SinglePageContext.tsx";
 
@@ -46,10 +47,16 @@ const SinglePageForm: React.FC<SinglePageFormProps> = ({
 
             if (isCreateMode) {
                 await service.create(values);
-                notification.success({message: successMessages.create});
+                createSuccessNotification(
+                        "Item created successfully",
+                        successMessages.create || "Item created successfully"
+                );
             } else if (isEditMode && entity) {
                 await service.update(values, entity.id);
-                notification.success({message: successMessages.update});
+                createSuccessNotification(
+                        "Item updated successfully",
+                        successMessages.update || "Item updated successfully"
+                );
             }
 
             // Navigate back to table after successful save

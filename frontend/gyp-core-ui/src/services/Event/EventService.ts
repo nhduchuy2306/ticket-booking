@@ -6,6 +6,7 @@ import { BaseService } from "../BaseService.ts";
 const EVENTS_PATH = "events";
 const SYNC_EVENT_PATH = "syncevent";
 const ACTIVE_PATH = "active";
+const WITH_UPLOAD_PATH = "with-upload";
 
 const getAllEvents = async (): Promise<EventResponseDto[]> => {
     const response = await apiClient.get(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}`);
@@ -40,6 +41,34 @@ const syncEvents = async (): Promise<void> => {
     await apiClient.get(`/${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${SYNC_EVENT_PATH}`);
 }
 
+const createEventWithUpload = async (body: EventRequestDto, file: File): Promise<EventResponseDto> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('event', new Blob([JSON.stringify(body)], { type: "application/json" }));
+
+    const response = await apiClient.post(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${WITH_UPLOAD_PATH}`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+
+    return response.data;
+}
+
+const updateEventWithUpload = async (id: string, body: EventRequestDto, file: File): Promise<EventResponseDto> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('event', new Blob([JSON.stringify(body)], { type: "application/json" }));
+
+    const response = await apiClient.put(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${WITH_UPLOAD_PATH}/${id}`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+
+    return response.data;
+}
+
 const navigate = (navigator: NavigateFunction, path: string, entity?: EventResponseDto) => {
     if (path === '/create') {
         navigator('/event/create');
@@ -59,6 +88,8 @@ export const EventService = {
     createEvent,
     deleteEvent,
     updateEvent,
+    createEventWithUpload,
+    updateEventWithUpload,
     getActiveEvents,
     navigate
 }

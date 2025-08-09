@@ -10,6 +10,7 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -63,6 +64,9 @@ public class EventEntity extends AbstractEntity {
 	@Column(name = "is_generated")
 	private Boolean isGenerated;
 
+	@Column(name = "logo_url")
+	private String logoUrl;
+
 	@ManyToOne
 	@JoinColumn(name = "venue_map_id")
 	private VenueMapEntity venueMapEntity;
@@ -90,4 +94,8 @@ public class EventEntity extends AbstractEntity {
 	@ManyToOne
 	@JoinColumn(name = "season_id")
 	private SeasonEntity seasonEntity;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "eventEntity", fetch = FetchType.LAZY)
+	private List<EventImageEntity> eventImageEntityList = new ArrayList<>();
 }

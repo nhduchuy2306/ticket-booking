@@ -1,10 +1,9 @@
-package com.gyp.salechannelservice.entities;
+package com.gyp.eventservice.entities;
 
 import java.io.Serial;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,30 +19,27 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
+@Table(name = "EVENTIMAGE")
 @Entity
-@Table(name = "EVENTSALECHANNEL")
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventSaleChannelEntity extends AbstractEntity {
+public class EventImageEntity extends AbstractEntity {
 	@Serial
-	private static final long serialVersionUID = 6400689172046626809L;
+	private static final long serialVersionUID = 862554781830627178L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "id")
 	private String id;
 
-	@Column(name = "event_id")
-	private Long eventId;
+	@Column(name = "name")
+	private String name;
+
+	@Column(name = "image_url")
+	private String imageUrl;
 
 	@ManyToOne
-	@JoinColumn(name = "sale_channel_id")
-	private SaleChannelEntity saleChannelEntity;
-
-	@Column(name = "custom_url")
-	private String customUrl;
-
-	@Column(name = "is_published")
-	private Boolean isPublished;
+	@JoinColumn(name = "event_id")
+	private EventEntity eventEntity;
 }

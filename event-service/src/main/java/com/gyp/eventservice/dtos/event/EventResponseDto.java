@@ -28,6 +28,7 @@ public class EventResponseDto extends AbstractDto {
 	private String description;
 	private EventStatus status;
 	private Boolean isGenerated;
+	private String logoUrl;
 
 	// Time-related properties
 	private LocalDateTime startTime;
