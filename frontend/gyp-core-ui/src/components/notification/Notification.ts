@@ -9,8 +9,8 @@ export const NotificationType = Object.freeze({
 });
 
 export const createNotification = (
-        title: string,
-        message: string,
+        title?: string,
+        message?: string,
         type: keyof typeof NotificationType = "SUCCESS",
         placement: NotificationPlacement = "bottomRight"
 ) => {
@@ -24,16 +24,16 @@ export const createNotification = (
 }
 
 export const createErrorNotification = (
-        title: string,
-        message: string,
+        title?: string,
+        message?: string,
         placement: NotificationPlacement = "bottomRight"
 ) => {
     createNotification(title, message, "ERROR", placement);
 }
 
 export const createSuccessNotification = (
-        title: string,
-        message: string,
+        title?: string,
+        message?: string,
         placement: NotificationPlacement = "bottomRight"
 ) => {
     createNotification(title, message, "SUCCESS", placement);

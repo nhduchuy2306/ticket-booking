@@ -41,32 +41,36 @@ const syncEvents = async (): Promise<void> => {
     await apiClient.get(`/${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${SYNC_EVENT_PATH}`);
 }
 
-const createEventWithUpload = async (body: EventRequestDto, file: File): Promise<EventResponseDto> => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('event', new Blob([JSON.stringify(body)], { type: "application/json" }));
-
+const createEventWithUpload = async (
+        body: EventRequestDto, logoFile: File | null): Promise<EventResponseDto> => {
+    const formData = createFormData(body, logoFile);
     const response = await apiClient.post(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${WITH_UPLOAD_PATH}`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
     });
-
     return response.data;
 }
 
-const updateEventWithUpload = async (id: string, body: EventRequestDto, file: File): Promise<EventResponseDto> => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('event', new Blob([JSON.stringify(body)], { type: "application/json" }));
-
+const updateEventWithUpload = async (
+        id: string, body: EventRequestDto, logoFile: File | null
+): Promise<EventResponseDto> => {
+    const formData = createFormData(body, logoFile);
     const response = await apiClient.put(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${WITH_UPLOAD_PATH}/${id}`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
     });
-
     return response.data;
+}
+
+const createFormData = (body: EventRequestDto, logoFile: File | null) => {
+    const formData = new FormData();
+    if (logoFile) {
+        formData.append('logo', logoFile);
+    }
+    formData.append('event', new Blob([JSON.stringify(body)], {type: "application/json"}));
+    return formData;
 }
 
 const navigate = (navigator: NavigateFunction, path: string, entity?: EventResponseDto) => {

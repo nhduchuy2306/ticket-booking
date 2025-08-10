@@ -19,7 +19,7 @@ public class FileController {
 
 	@PostMapping("/upload")
 	public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) {
-		String filename = uploadService.upload(file);
+		String filename = uploadService.upload(file).getLeft();
 		return ResponseEntity.ok(filename);
 	}
 }

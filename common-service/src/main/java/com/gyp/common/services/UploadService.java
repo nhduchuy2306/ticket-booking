@@ -1,9 +1,10 @@
 package com.gyp.common.services;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UploadService {
-	String upload(MultipartFile file);
+	Pair<String, String> upload(MultipartFile file);
 
 	String getFileUrl(String filename);
 

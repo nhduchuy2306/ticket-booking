@@ -13,6 +13,7 @@ import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +27,7 @@ public class UploadServiceImpl implements UploadService {
 	private final MinioClient minioClient;
 
 	@Override
-	public String upload(MultipartFile file) {
+	public Pair<String, String> upload(MultipartFile file) {
 		try {
 			boolean exists = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
 			if(!exists) {
@@ -34,6 +35,7 @@ public class UploadServiceImpl implements UploadService {
 			}
 
 			String filename = UUID.randomUUID() + "-" + file.getOriginalFilename();
+			String originalFilename = file.getOriginalFilename();
 
 			minioClient.putObject(PutObjectArgs.builder()
 					.bucket(bucket)
@@ -41,7 +43,7 @@ public class UploadServiceImpl implements UploadService {
 					.stream(file.getInputStream(), file.getSize(), -1)
 					.contentType(file.getContentType())
 					.build());
-			return filename;
+			return Pair.of(filename, originalFilename);
 		} catch(Exception e) {
 			throw new RuntimeException("Error uploading file", e);
 		}

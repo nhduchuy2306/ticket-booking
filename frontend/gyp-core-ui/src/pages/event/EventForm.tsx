@@ -1,19 +1,7 @@
-import {
-    Button,
-    Checkbox,
-    DatePicker,
-    Form,
-    GetProp,
-    Input,
-    Modal,
-    notification,
-    Select,
-    Upload,
-    UploadFile,
-    UploadProps
-} from "antd";
+import { Button, Checkbox, DatePicker, Form, Input, notification, Select, UploadFile } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import ImageUpload from "../../components/dataupload/ImageUpload.tsx";
 import SinglePageForm from "../../components/layout/singlepage/SinglePageForm.tsx";
 import SinglePageLayout from "../../components/layout/singlepage/SinglePageLayout.tsx";
 import MetaData from "../../components/metadata/MetaData.tsx";
@@ -31,8 +19,6 @@ import { EventService, EventServiceAdapter } from "../../services/Event/EventSer
 import { SeasonService } from "../../services/Event/SeasonService.ts";
 import { VenueMapService } from "../../services/Event/VenueMapService.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
-
-type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
 const EventStatus = Object.freeze({
     DRAFT: Object.freeze({key: 'DRAFT', value: 'Draft'}),
@@ -53,12 +39,11 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
     const [venueMaps, setVenueMaps] = useState<VenueMapResponseDto[]>([]);
     const [seasons, setSeasons] = useState<SeasonResponseDto[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [fileList, setFileList] = useState<UploadFile[]>([]);
-    const [selectedFile, setSelectedFile] = useState<File | null>(null); // Store the actual file
+    const [logoFileList, setLogoFileList] = useState<UploadFile[]>([]);
+    const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
     const {id} = useParams();
     const [form] = Form.useForm();
     const navigate = useNavigate();
-    const [modal, modalContextHolder] = Modal.useModal();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -93,7 +78,7 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                     if (response) {
                         setData(response);
                         if (response.logoUrl) {
-                            setFileList([{
+                            setLogoFileList([{
                                 uid: '-1',
                                 name: 'Current Logo',
                                 status: 'done',
@@ -136,57 +121,10 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
         }
     }, [data, form, mode]);
 
-    // Custom upload onChange handler that prevents automatic upload
-    const onChange: UploadProps['onChange'] = ({fileList: newFileList}) => {
-        setFileList(newFileList);
-
-        // Store the actual file for later upload
-        if (newFileList.length > 0 && newFileList[0].originFileObj) {
-            setSelectedFile(newFileList[0].originFileObj as File);
-        } else {
-            setSelectedFile(null);
-        }
-    };
-
-    // Prevent automatic upload
-    const beforeUpload = (file: File) => {
-        // Validate file type and size here if needed
-        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-        if (!isJpgOrPng) {
-            notification.error({message: 'You can only upload JPG/PNG files!'});
-            return false;
-        }
-
-        const isLt2M = file.size / 1024 / 1024 < 2;
-        if (!isLt2M) {
-            notification.error({message: 'Image must be smaller than 2MB!'});
-            return false;
-        }
-
-        // Return false to prevent automatic upload
-        return false;
-    };
-
-    const onPreview = async (file: UploadFile) => {
-        let src = file.url as string;
-        if (!src && file.originFileObj) {
-            src = await new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file.originFileObj as FileType);
-                reader.onload = () => resolve(reader.result as string);
-            });
-        }
-        modal.info({
-            title: 'Image Preview',
-            content: (
-                    <div style={{textAlign: 'center'}}>
-                        <img src={src} alt="Preview" style={{maxWidth: '100%', maxHeight: '80vh'}}/>
-                    </div>
-            ),
-            onOk() {
-            },
-            width: 600,
-        });
+    // Handle logo file changes
+    const handleLogoFileChange = (newFileList: UploadFile[], files: File[]) => {
+        setLogoFileList(newFileList);
+        setSelectedLogoFile(files.length > 0 ? files[0] : null);
     };
 
     // Custom submit handler that integrates with your API
@@ -205,16 +143,16 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
             };
 
             if (mode === Mode.CREATE.key) {
-                if (selectedFile) {
-                    await EventService.createEventWithUpload(adaptedValues, selectedFile);
+                if (selectedLogoFile) {
+                    await EventService.createEventWithUpload(adaptedValues, selectedLogoFile);
                 } else {
                     await EventService.createEvent(adaptedValues);
                 }
                 createSuccessNotification("Event", "Event created successfully");
                 handleBack();
             } else if (mode === Mode.EDIT.key) {
-                if (selectedFile) {
-                    await EventService.updateEventWithUpload(id!, adaptedValues, selectedFile);
+                if (selectedLogoFile) {
+                    await EventService.updateEventWithUpload(id!, adaptedValues, selectedLogoFile);
                 } else {
                     await EventService.updateEvent(id!, adaptedValues);
                 }
@@ -230,8 +168,8 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
     };
 
     const handleBack = () => {
-        setSelectedFile(null);
-        setFileList([]);
+        setSelectedLogoFile(null);
+        setLogoFileList([]);
         navigate('/event');
     };
 
@@ -373,17 +311,15 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                             label="Logo"
                             name="logoUrl"
                     >
-                        <Upload
-                                listType="picture-card"
-                                fileList={fileList}
-                                onChange={onChange}
-                                onPreview={onPreview}
-                                beforeUpload={beforeUpload}
+                        <ImageUpload
+                                fileList={logoFileList}
+                                onFileChange={handleLogoFileChange}
                                 disabled={isReadOnly}
                                 maxCount={1}
-                        >
-                            {fileList.length < 1 && !isReadOnly && '+ Upload'}
-                        </Upload>
+                                maxSizeMB={2}
+                                acceptedTypes={['image/jpeg', 'image/png']}
+                                uploadText="+ Upload Logo"
+                        />
                     </Form.Item>
 
                     {isReadOnly &&
@@ -429,7 +365,6 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                             showBackButton={true}
                     />
                 </SinglePageLayout>
-                {modalContextHolder}
             </div>
     );
 }

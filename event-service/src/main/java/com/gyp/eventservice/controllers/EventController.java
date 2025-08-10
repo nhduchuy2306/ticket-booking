@@ -75,7 +75,7 @@ public class EventController extends AbstractValidatableController {
 	@PostMapping(WITH_UPLOAD_PATH)
 	public ResponseEntity<?> createEventWithUpload(
 			@RequestPart(value = "event", required = false) EventRequestDto eventRequestDto,
-			@RequestPart(value = "file", required = false) MultipartFile file) {
+			@RequestPart(value = "logo", required = false) MultipartFile file) {
 		var event = eventService.createEvent(eventRequestDto, file);
 		if(event == null) {
 			return ResponseEntity.badRequest().body("Event creation failed due to missing file or event data.");
@@ -93,7 +93,7 @@ public class EventController extends AbstractValidatableController {
 	public ResponseEntity<?> updateEventWithUpload(
 			@PathVariable(ID_PARAM) String id,
 			@RequestPart(value = "event", required = false) EventRequestDto eventRequestDto,
-			@RequestPart(value = "file", required = false) MultipartFile file) {
+			@RequestPart(value = "logo", required = false) MultipartFile file) {
 		var event = eventService.updateEvent(id, eventRequestDto, file);
 		if(event == null) {
 			return ResponseEntity.badRequest().body("Event update failed due to missing file or event data.");

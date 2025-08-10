@@ -2,7 +2,7 @@ import { Breadcrumb, Layout, Menu } from 'antd';
 import { SelectInfo } from "rc-menu/lib/interface";
 import React, { useEffect, useState } from 'react';
 import { AiOutlineUser, AiOutlineUsergroupAdd } from "react-icons/ai";
-import { BiBuilding, BiCategory, BiMoney } from "react-icons/bi";
+import { BiBuilding, BiCategory, BiImage, BiMoney } from "react-icons/bi";
 import { BsCalendar3, BsTicket } from "react-icons/bs";
 import { CiLocationOn, CiSettings, CiShop } from "react-icons/ci";
 import { GrShareOption } from "react-icons/gr";
@@ -26,6 +26,7 @@ const menuItems: MenuItem[] = [
     ]),
     getItem('Event Service', 'event-service', <BsCalendar3/>, [
         getItem('Event', 'event', <BsCalendar3/>),
+        getItem('Event Image', 'event-image', <BiImage/>),
         getItem('Category', 'category', <BiCategory/>),
         getItem('Venue', 'venue', <CiLocationOn/>),
         getItem('Venue Map', 'venue-map', <CiLocationOn/>),

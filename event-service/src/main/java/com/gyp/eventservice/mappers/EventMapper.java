@@ -21,7 +21,8 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring",
-		mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG)
+		mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG,
+		uses = { EventImageMapper.class })
 public interface EventMapper extends AbstractMapper {
 	// To response DTO
 	@Mapping(target = "season", source = "seasonEntity")
@@ -43,6 +44,8 @@ public interface EventMapper extends AbstractMapper {
 	List<EventResponseDto> toResponseDtoList(List<EventEntity> entities);
 
 	// Create new entity from request
+	@Mapping(target = "eventImageEntityList", ignore = true)
+	@Mapping(target = "logoUrl", ignore = true)
 	@Mapping(target = "isGenerated", ignore = true)
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "time.startTime", source = "startTime")

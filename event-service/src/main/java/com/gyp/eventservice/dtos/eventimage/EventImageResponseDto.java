@@ -1,5 +1,6 @@
 package com.gyp.eventservice.dtos.eventimage;
 
+import com.gyp.eventservice.dtos.AbstractDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventImageResponseDto {
+public class EventImageResponseDto extends AbstractDto {
 	private String id;
 	private String name;
 	private String imageUrl;

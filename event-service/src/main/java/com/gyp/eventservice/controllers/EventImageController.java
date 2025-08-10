@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,16 +28,24 @@ public class EventImageController extends AbstractController {
 		return ResponseEntity.ok(eventImageService.getEventImages());
 	}
 
+	@GetMapping("/{" + ID_PARAM + "}")
+	public ResponseEntity<?> getEventById(@PathVariable(ID_PARAM) String id) {
+		return ResponseEntity.ok(eventImageService.getEventImageById(id));
+	}
+
 	@PostMapping
-	public ResponseEntity<?> createEventImage(@RequestBody EventImageRequestDto dto) {
-		var createdEventImage = eventImageService.createEventImageDto(dto);
+	public ResponseEntity<?> createEventImage(
+			@RequestPart(value = "data", required = false) EventImageRequestDto dto,
+			@RequestPart(value = "image", required = false) MultipartFile imageFile) {
+		var createdEventImage = eventImageService.createEventImageDto(dto, imageFile);
 		return ResponseEntity.ok(createdEventImage);
 	}
 
 	@PutMapping("/{" + ID_PARAM + "}")
 	public ResponseEntity<?> updateEventImage(@PathVariable(ID_PARAM) String id,
-			@RequestBody EventImageRequestDto dto) {
-		var updatedEventImage = eventImageService.updateEventImage(id, dto);
+			@RequestPart(value = "data", required = false) EventImageRequestDto dto,
+			@RequestPart(value = "image", required = false) MultipartFile imageFile) {
+		var updatedEventImage = eventImageService.updateEventImage(id, dto, imageFile);
 		return ResponseEntity.ok(updatedEventImage);
 	}
 
