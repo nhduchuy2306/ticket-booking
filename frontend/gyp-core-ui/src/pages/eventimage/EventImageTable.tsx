@@ -14,9 +14,9 @@ const EventImageTable: React.FC<EventImageTableProps> = () => {
             key: 'name',
         },
         {
-            title: 'Description',
-            dataIndex: 'description',
-            key: 'description',
+            title: 'Event',
+            dataIndex: 'eventName',
+            key: 'eventName',
         },
     ];
 

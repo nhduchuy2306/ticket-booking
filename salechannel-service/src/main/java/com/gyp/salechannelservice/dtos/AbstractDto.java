@@ -1,10 +1,7 @@
 package com.gyp.salechannelservice.dtos;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import com.gyp.common.intefaces.Dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,11 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class AbstractDto implements Dto, Serializable {
-	@Serial
-	private static final long serialVersionUID = -3017492350036450891L;
-
-	private String id;
+public class AbstractDto {
 	private String createUser;
 	private LocalDateTime createTimestamp;
 	private String changeUser;

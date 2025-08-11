@@ -8,39 +8,37 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
+@Table(name = "SALECHANNELORDER")
 @Getter
 @Setter
-@Entity
-@Table(name = "BOXOFFICES")
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoxOfficesEntity extends AbstractEntity {
+public class SaleChannelOrderEntity extends AbstractEntity {
 	@Serial
-	private static final long serialVersionUID = 7274240468414096444L;
+	private static final long serialVersionUID = 515280665575915623L;
 
 	@Id
-	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
 
-	@Column(name = "location_name")
-	private String locationName;
-
-	@Column(name = "location_address")
-	private String locationAddress;
-
-	@Column(name = "opening_hours")
-	private String openingHours;
-
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "sale_channel_id", nullable = false)
-	private SaleChannelEntity saleChannelEntity;
+	private SaleChannelEntity saleChannel;
+
+	@Column(name = "order_id", nullable = false)
+	private String orderId;
+
+	@Column(name = "revenue", nullable = false)
+	private Double revenue;
 }

@@ -10,7 +10,7 @@ import com.gyp.salechannelservice.dtos.salechannel.SaleChannelResponseDto;
 public interface SaleChannelService {
 	SaleChannelResponseDto createSaleChannel(SaleChannelRequestDto saleChannel);
 
-	SaleChannelResponseDto updateSaleChannel(String id, SaleChannelResponseDto saleChannel);
+	SaleChannelResponseDto updateSaleChannel(String id, SaleChannelRequestDto saleChannel);
 
 	Optional<SaleChannelResponseDto> getSaleChannelById(String id);
 

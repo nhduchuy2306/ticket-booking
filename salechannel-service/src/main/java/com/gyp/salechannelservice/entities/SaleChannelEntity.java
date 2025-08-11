@@ -8,14 +8,15 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gyp.common.enums.salechannel.SaleChannelStatus;
 import com.gyp.common.enums.salechannel.SaleChannelType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,11 +39,11 @@ public class SaleChannelEntity extends AbstractEntity {
 	private String id;
 
 	@Column(name = "channel_name")
-	private String channelName;
+	private String name;
 
 	@Column(name = "channel_type")
 	@Enumerated(EnumType.STRING)
-	private SaleChannelType channelType;
+	private SaleChannelType type;
 
 	@Column(name = "description")
 	private String description;
@@ -50,14 +51,18 @@ public class SaleChannelEntity extends AbstractEntity {
 	@Column(name = "commission_rate")
 	private Double commissionRate;
 
-	@Column(name = "is_active")
-	private Boolean isActive;
+	@Column(name = "status")
+	@Enumerated(EnumType.STRING)
+	private SaleChannelStatus status;
 
-	@ManyToMany
-	@JoinTable(
-			name = "channel_event",
-			joinColumns = @JoinColumn(name = "channel_id"),
-			inverseJoinColumns = @JoinColumn(name = "event_id")
-	)
-	private List<EventInfoEntity> eventInfoEntityList = new ArrayList<>();
+	@Column(name = "event_id")
+	private String eventId;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "saleChannelEntity", fetch = FetchType.LAZY)
+	private List<SaleChannelEventEntity> saleChannelEventEntityList = new ArrayList<>();
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "saleChannelEntity", fetch = FetchType.LAZY)
+	private List<SaleChannelConfigEntity> saleChannelConfigEntityList = new ArrayList<>();
 }
