@@ -1,15 +1,34 @@
 import React from "react";
+import { DoublePageForm } from "../../components/layout/doulepage/DoublePageForm.tsx";
+import DoublePageLayout from "../../components/layout/doulepage/DoublePageLayout.tsx";
+import { SaleChannelServiceAdapter } from "../../services/SaleChannel/SaleChannelService.ts";
+import SaleChannelForm from "./SaleChannelForm.tsx";
+import SaleChannelTable from "./SaleChannelTable.tsx";
 
 interface SaleChannelPageProps {
-    // Define any props if needed
 }
 
 const SaleChannelPage: React.FC<SaleChannelPageProps> = () => {
     return (
-        <div className="w-full h-full bg-white p-4">
-            <h1 className="text-2xl font-bold mb-4">Sale Channel</h1>
-            <p>This is the Sale Channel Page.</p>
-        </div>
+            <DoublePageLayout>
+                <SaleChannelTable/>
+                <DoublePageForm
+                        service={SaleChannelServiceAdapter}
+                        successMessages={{
+                            create: "Sale Channel created successfully",
+                            update: "Sale Channel updated successfully"
+                        }}
+                >
+                    {({entity, mode, onSave, onCancel}) => (
+                            <SaleChannelForm
+                                    entity={entity}
+                                    mode={mode}
+                                    onSave={onSave}
+                                    onCancel={onCancel}
+                            />
+                    )}
+                </DoublePageForm>
+            </DoublePageLayout>
     );
 }
 

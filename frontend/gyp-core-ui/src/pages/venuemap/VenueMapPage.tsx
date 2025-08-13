@@ -16,8 +16,8 @@ const VenueMapPage: React.FC<VenueMapPageProps> = () => {
                 <DoublePageForm
                         service={VenueMapServiceAdapter}
                         successMessages={{
-                            create: "Category created successfully",
-                            update: "Category updated successfully"
+                            create: "Venue map created successfully",
+                            update: "Venue map updated successfully"
                         }}
                 >
                     {({entity, mode, onSave, onCancel}) => (

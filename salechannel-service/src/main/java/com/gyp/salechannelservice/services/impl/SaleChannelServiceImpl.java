@@ -27,6 +27,7 @@ public class SaleChannelServiceImpl implements SaleChannelService {
 	@Override
 	public SaleChannelResponseDto createSaleChannel(SaleChannelRequestDto saleChannel) {
 		var entity = saleChannelMapper.toEntity(saleChannel);
+		entity.setStatus(SaleChannelStatus.ACTIVE);
 		var savedEntity = saleChannelRepository.save(entity);
 		return saleChannelMapper.toResponseDto(savedEntity);
 	}
