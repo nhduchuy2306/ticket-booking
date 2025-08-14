@@ -33,7 +33,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
 	private final ObjectMapper objectMapper;
 
-	private String[] publicEndpoints = { "/auths/login", "/auths/logout", "^/[^/]+/v3/api-docs$" };
+	private String[] publicEndpoints = { "/auths/login", "/auths/logout", "^/[^/]+/v3/api-docs$", "/auths/sso/login" };
 
 	@Value("${jwt.secret.token}")
 	private String jwtSecretKey;
