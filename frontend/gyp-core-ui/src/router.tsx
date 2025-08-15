@@ -1,7 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from "./App.tsx";
 import { Mode } from "./configs/Constants.ts";
-import LoginPage from "./pages/auth/./LoginPage.tsx";
 import RegisterPage from "./pages/auth/RegisterPage.tsx";
 import CategoryPage from "./pages/category/CategoryPage.tsx";
 import ConfigurationPage from "./pages/configuration/ConfigurationPage.tsx";
@@ -28,16 +27,15 @@ import VenueMapPage from "./pages/venuemap/VenueMapPage.tsx";
 
 const AuthServiceRouter = [
     {
-        path: 'login',
-        element: <LoginPage/>,
+        path: 'callback',
+        element: <ProtectRoute/>,
         errorElement: <ErrorPage/>,
     },
     {
-        path: 'sign-up',
+        path: 'register',
         element: <RegisterPage/>,
-        errorElement: <ErrorPage/>,
-    },
-
+        errorElement: <ErrorPage/>
+    }
 ];
 
 const UserServiceRouter = [

@@ -33,7 +33,9 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
 	private final ObjectMapper objectMapper;
 
-	private String[] publicEndpoints = { "/auths/login", "/auths/logout", "^/[^/]+/v3/api-docs$", "/auths/sso/login" };
+	private static final String[] PUBLIC_ENDPOINTS = {
+			"/auths/login", "/auths/logout", "/auths/token", "^/[^/]+/v3/api-docs$", "/auths/iam/oauth/login"
+	};
 
 	@Value("${jwt.secret.token}")
 	private String jwtSecretKey;
@@ -84,12 +86,12 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 	}
 
 	private boolean isMatchPublicEndpoint(ServerHttpRequest request) {
-		return Arrays.stream(publicEndpoints)
+		return Arrays.stream(PUBLIC_ENDPOINTS)
 				.anyMatch(s -> request.getURI().getPath().matches(s));
 	}
 
 	private boolean isContainPublicEndpoint(ServerHttpRequest request) {
-		return Arrays.stream(publicEndpoints)
+		return Arrays.stream(PUBLIC_ENDPOINTS)
 				.anyMatch(s -> request.getURI().getPath().contains(s));
 	}
 

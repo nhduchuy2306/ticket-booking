@@ -3,6 +3,8 @@ package com.gyp.authservice.services.impl;
 import com.gyp.authservice.dtos.auth.LoginRequestDto;
 import com.gyp.authservice.dtos.auth.LoginResponseDto;
 import com.gyp.authservice.dtos.auth.RegisterRequestDto;
+import com.gyp.authservice.dtos.auth.TokenRequestDto;
+import com.gyp.authservice.dtos.auth.TokenResponse;
 import com.gyp.authservice.dtos.useraccount.UserAccountResponseDto;
 import com.gyp.authservice.entities.UserAccountEntity;
 import com.gyp.authservice.mappers.UserAccountMapper;
@@ -21,7 +23,6 @@ public class AuthServiceImpl implements AuthService {
 	private final UserAccountRepository userAccountRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
-
 	private final UserAccountMapper userAccountMapper;
 
 	@Override
@@ -53,5 +54,44 @@ public class AuthServiceImpl implements AuthService {
 			return userAccountMapper.toResponseDto(userAccountEntity);
 		}
 		return null;
+	}
+
+	@Override
+	public TokenResponse exchangeCodeForToken(TokenRequestDto request) {
+		try {
+			String authCode = (String)jwtTokenProvider.getClaim(request.getCode(), "type");
+			String clientId = (String)jwtTokenProvider.getClaim(request.getCode(), "clientId");
+
+			if(!JwtTokenProvider.AUTH_CODE.equals(authCode)) {
+				log.error("Invalid auth code type: {}", authCode);
+				return null;
+			}
+
+			if(!request.getClientId().equals(clientId)) {
+				log.error("Client ID mismatch: expected {}, got {}", request.getClientId(), clientId);
+				return null;
+			}
+
+			String userAccountId = (String)jwtTokenProvider.getClaim(request.getCode(), "sub");
+			UserAccountEntity userAccountEntity = userAccountRepository.findById(userAccountId)
+					.orElse(null);
+
+			if(userAccountEntity == null) {
+				log.error("User account not found for ID: {}", userAccountId);
+				return null;
+			}
+
+			UserAccountResponseDto userAccountResponseDto = userAccountMapper.toResponseDto(userAccountEntity);
+			String token = jwtTokenProvider.generateToken(userAccountResponseDto);
+			return TokenResponse.builder()
+					.token(token)
+					.userId(userAccountResponseDto.getId())
+					.name(userAccountResponseDto.getName())
+					.organizationId(userAccountResponseDto.getOrganizationId())
+					.build();
+		} catch(Exception e) {
+			log.error("Error exchanging code for token: {}", e.getMessage());
+			return null;
+		}
 	}
 }

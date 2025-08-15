@@ -3,6 +3,8 @@ package com.gyp.authservice.controllers;
 import com.gyp.authservice.dtos.auth.LoginRequestDto;
 import com.gyp.authservice.dtos.auth.LoginResponseDto;
 import com.gyp.authservice.dtos.auth.RegisterRequestDto;
+import com.gyp.authservice.dtos.auth.TokenRequestDto;
+import com.gyp.authservice.dtos.auth.TokenResponse;
 import com.gyp.authservice.dtos.useraccount.UserAccountResponseDto;
 import com.gyp.authservice.services.AuthService;
 import com.gyp.common.controllers.AbstractController;
@@ -17,10 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController extends AbstractController {
 	private static final String LOGIN_PATH = "login";
 	private static final String REGISTER_PATH = "register";
+	private static final String TOKEN_PATH = "token";
 
 	private final AuthService authService;
 
-	@PostMapping(AuthController.LOGIN_PATH)
+	@PostMapping(LOGIN_PATH)
 	public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) {
 		LoginResponseDto loginResponseDto = authService.login(loginRequestDto);
 		if(loginResponseDto == null) {
@@ -29,12 +32,25 @@ public class AuthController extends AbstractController {
 		return ResponseEntity.ok(loginResponseDto);
 	}
 
-	@PostMapping(AuthController.REGISTER_PATH)
+	@PostMapping(REGISTER_PATH)
 	public ResponseEntity<?> register(@RequestBody RegisterRequestDto registerRequestDto) {
 		UserAccountResponseDto dto = authService.register(registerRequestDto);
 		if(dto == null) {
 			return ResponseEntity.badRequest().body("Registration failed");
 		}
 		return ResponseEntity.ok(dto);
+	}
+
+	@PostMapping(TOKEN_PATH)
+	public ResponseEntity<?> exchangeToken(@RequestBody TokenRequestDto request) {
+		try {
+			TokenResponse tokenResponse = authService.exchangeCodeForToken(request);
+			if(tokenResponse == null) {
+				return ResponseEntity.badRequest().body("Invalid token request");
+			}
+			return ResponseEntity.ok(tokenResponse);
+		} catch(Exception e) {
+			return ResponseEntity.badRequest().build();
+		}
 	}
 }

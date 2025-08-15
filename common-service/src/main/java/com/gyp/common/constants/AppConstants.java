@@ -67,6 +67,8 @@ public final class AppConstants {
 	public static final String DASH = "-";
 	public static final String DOT = ".";
 	public static final String MINUS = "-";
+	public static final String QUESTION_MARK = "?";
+	public static final String EQUALS = "=";
 
 	// ========== BRACKETS ==========
 	public static final String SQUARE_BRACKET_OPEN = "[";

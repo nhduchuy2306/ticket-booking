@@ -35,9 +35,9 @@ public class JwtTokenProvider {
 	@Value("${jwt.secret.token}")
 	private String jwtSecretKey;
 
-	public String generateToken(UserAccountResponseDto dto) {
-		JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
+	public static final String AUTH_CODE = "auth_code";
 
+	public String generateToken(UserAccountResponseDto dto) {
 		JWTClaimsSet jwtClaimsSet = new Builder()
 				.subject(dto.getUsername())
 				.issuer("auth-service")
@@ -49,9 +49,23 @@ public class JwtTokenProvider {
 				.claim("organizationId", dto.getOrganizationId())
 				.claim("userId", dto.getId())
 				.build();
+		return signJwt(jwtClaimsSet);
+	}
 
-		Payload payload = new Payload(jwtClaimsSet.toJSONObject());
+	public String generateAuthCode(UserAccountResponseDto user, String clientId) {
+		JWTClaimsSet jwtClaimsSet = new Builder()
+				.subject(user.getId())
+				.claim("clientId", clientId)
+				.claim("type", AUTH_CODE)
+				.issueTime(new Date())
+				.expirationTime(new Date(Instant.now().plusSeconds(300).toEpochMilli()))
+				.build();
+		return signJwt(jwtClaimsSet);
+	}
 
+	private String signJwt(JWTClaimsSet claims) {
+		JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
+		Payload payload = new Payload(claims.toJSONObject());
 		JWSObject jwsObject = new JWSObject(jwsHeader, payload);
 		try {
 			jwsObject.sign(new MACSigner(jwtSecretKey.getBytes()));
@@ -72,6 +86,18 @@ public class JwtTokenProvider {
 		Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
 		boolean isValid = signedJWT.verify(jwsVerifier);
 		return isValid && expirationTime.after(new Date());
+	}
+
+	public Object getClaim(String token, String key) throws JOSEException, ParseException {
+		SignedJWT signedJWT = SignedJWT.parse(token);
+		if(!signedJWT.verify(new MACVerifier(jwtSecretKey.getBytes()))) {
+			throw new IllegalArgumentException("Invalid token signature");
+		}
+		var jwtClaimsSet = signedJWT.getJWTClaimsSet();
+		if(jwtClaimsSet == null) {
+			throw new IllegalArgumentException("JWT claims set is null");
+		}
+		return jwtClaimsSet.getClaim(key);
 	}
 
 	private String buildAuthoritiesScope(UserAccountResponseDto dto) {

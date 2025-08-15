@@ -1,0 +1,38 @@
+package com.gyp.authservice.services.impl;
+
+import com.gyp.authservice.dtos.useraccount.UserAccountResponseDto;
+import com.gyp.authservice.entities.UserAccountEntity;
+import com.gyp.authservice.mappers.UserAccountMapper;
+import com.gyp.authservice.repositories.UserAccountRepository;
+import com.gyp.authservice.services.IamService;
+import com.gyp.authservice.services.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class IamServiceImpl implements IamService {
+	private final UserAccountRepository userAccountRepository;
+	private final PasswordEncoder passwordEncoder;
+	private final UserAccountMapper userAccountMapper;
+	private final JwtTokenProvider jwtTokenProvider;
+
+	@Override
+	public UserAccountResponseDto validateUser(String username, String password) {
+		UserAccountEntity userAccountEntity = userAccountRepository.findByUsername(username)
+				.orElse(null);
+		if(userAccountEntity != null) {
+			String userAccountPassword = userAccountEntity.getPassword();
+			if(passwordEncoder.matches(password, userAccountPassword)) {
+				return userAccountMapper.toResponseDto(userAccountEntity);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public String generateAuthCode(UserAccountResponseDto user, String clientId) {
+		return jwtTokenProvider.generateAuthCode(user, clientId);
+	}
+}

@@ -9,12 +9,12 @@ const {Title} = Typography;
 
 const RegisterPage: React.FC = () => {
     const [form] = Form.useForm();
-    const [loginErrors, setLoginErrors] = useState<string[]>([]);
+    const [registerErrors, setRegisterErrors] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const navigate = useNavigate();
 
     const onFinish = async (values: RegisterModel) => {
-        setLoginErrors([]);
+        setRegisterErrors([]);
         setLoading(true);
         try {
             const response = await AuthService.register(values);
@@ -25,7 +25,7 @@ const RegisterPage: React.FC = () => {
                 navigate('/test');
             }
         } catch (error) {
-            setLoginErrors(['LoginPage failed. Please try again.']);
+            setRegisterErrors(['LoginPage failed. Please try again.']);
         } finally {
             setLoading(false);
         }
@@ -52,9 +52,9 @@ const RegisterPage: React.FC = () => {
                                 onFinishFailed={onFinishFailed}
                                 layout="vertical"
                         >
-                            {loginErrors.length > 0 && (
+                            {registerErrors.length > 0 && (
                                     <Form.Item>
-                                        <Form.ErrorList errors={loginErrors}/>
+                                        <Form.ErrorList errors={registerErrors}/>
                                     </Form.Item>
                             )}
 
