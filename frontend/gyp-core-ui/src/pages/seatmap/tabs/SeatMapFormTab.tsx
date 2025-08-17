@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { useSinglePageContext } from "../../../components/layout/singlepage/SinglePageContext.tsx";
 import MetaData from "../../../components/metadata/MetaData.tsx";
 import { createErrorNotification, createSuccessNotification } from "../../../components/notification/Notification.ts";
-import { Mode } from "../../../configs/Constants.ts";
+import { Mode } from "../../../models/enums/Mode.ts";
 import { SeatMapRequestDto } from "../../../models/generated/event-service-models";
 import { SeatMapService, SeatMapServiceAdapter } from "../../../services/Event/SeatMapService.ts";
 import { useSeatMapFormContext } from "../SeatMapFormContext.tsx";

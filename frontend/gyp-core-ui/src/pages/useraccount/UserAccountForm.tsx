@@ -5,7 +5,7 @@ import DataTransfer from "../../components/data-transfer/DataTransfer.tsx";
 import { RoleItemModel } from "../../components/data-transfer/DataTransferModel.ts";
 import SinglePageForm from "../../components/layout/singlepage/SinglePageForm.tsx";
 import SinglePageLayout from "../../components/layout/singlepage/SinglePageLayout.tsx";
-import { Mode } from "../../configs/Constants.ts";
+import { Mode } from "../../models/enums/Mode.ts";
 import {
     OrganizationResponseDto,
     UserAccountRequestDto,

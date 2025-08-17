@@ -13,7 +13,9 @@ public class SwaggerConfiguration {
 	@Bean
 	public OpenAPI customOpenAPI() {
 		return new OpenAPI()
-				.servers(List.of(new Server().url("https://localhost:9004").description("Salechannel Service")))
+				.servers(List.of(
+						new Server().url("http://localhost:9999/salechannels").description("Sale channel Service"),
+						new Server().url("http://localhost:9004").description("Sale channel Service")))
 				.info(new Info().title("SaleChannel Service API")
 						.version("1.0")
 						.description("API Documentation"));

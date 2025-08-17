@@ -1,6 +1,6 @@
 import { Flex } from "antd";
 import React, { useState } from "react";
-import { FormState } from "../models/LayoutModel.ts";
+import { FormState } from "../../../models/enums/FormState.ts";
 import { DoublePageContext, DoublePageContextProps } from "./DoublePageContext.tsx";
 
 export interface DoublePageLayoutProps {

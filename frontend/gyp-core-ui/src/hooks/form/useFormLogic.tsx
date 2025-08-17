@@ -1,6 +1,6 @@
 import { Form } from "antd";
 import { useEffect } from "react";
-import { FormState } from "../../components/layout/models/LayoutModel.ts";
+import { FormState } from "../../models/enums/FormState.ts";
 
 export interface UseFormLogicProps<T> {
     entity?: T;

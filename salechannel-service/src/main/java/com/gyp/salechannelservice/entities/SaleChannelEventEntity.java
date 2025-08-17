@@ -1,12 +1,9 @@
 package com.gyp.salechannelservice.entities;
 
 import java.io.Serial;
-import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,7 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-import com.gyp.common.enums.salechannel.SaleChannelEventStatus;
+import com.gyp.common.entities.AbstractEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,14 +39,4 @@ public class SaleChannelEventEntity extends AbstractEntity {
 
 	@Column(name = "event_id", nullable = false)
 	private String eventId;
-
-	@Column(name = "start_sale_at", nullable = false)
-	private LocalDateTime startSaleAt;
-
-	@Column(name = "end_sale_at", nullable = false)
-	private LocalDateTime endSaleAt;
-
-	@Column(name = "status")
-	@Enumerated(EnumType.STRING)
-	private SaleChannelEventStatus status;
 }

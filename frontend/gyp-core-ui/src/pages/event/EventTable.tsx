@@ -3,7 +3,7 @@ import { ColumnsType } from "antd/es/table";
 import React from "react";
 import { RiLoopLeftFill } from "react-icons/ri";
 import SinglePageTable from "../../components/layout/singlepage/SinglePageTable.tsx";
-import { EventModel } from "../../models/EventService/EventModel.ts";
+import { EventResponseDto } from "../../models/generated/event-service-models";
 import { EventService, EventServiceAdapter } from "../../services/Event/EventService.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
 
@@ -11,7 +11,7 @@ export interface EventTableProps {
 }
 
 const EventTable: React.FC<EventTableProps> = () => {
-    const columns: ColumnsType<EventModel> = [
+    const columns: ColumnsType<EventResponseDto> = [
         {
             title: 'Name',
             dataIndex: 'name',

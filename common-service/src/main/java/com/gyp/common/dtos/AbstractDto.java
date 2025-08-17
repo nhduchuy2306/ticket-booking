@@ -1,4 +1,4 @@
-package com.gyp.salechannelservice.dtos;
+package com.gyp.common.dtos;
 
 import java.time.LocalDateTime;
 
@@ -9,8 +9,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class AbstractDto {
 	private String createUser;
 	private LocalDateTime createTimestamp;

@@ -1,8 +1,8 @@
 import { Button, Form, Input, Space } from "antd";
 import React, { useEffect } from "react";
 import { handleReset, handleSubmit } from "../../components/layout/LayoutUtils.ts";
-import { FormState } from "../../components/layout/models/LayoutModel.ts";
 import MetaData from "../../components/metadata/MetaData.tsx";
+import { FormState } from "../../models/enums/FormState.ts";
 import { OrganizationRequestDto, OrganizationResponseDto } from "../../models/generated/auth-service-models";
 
 export interface OrganizationFormProps {

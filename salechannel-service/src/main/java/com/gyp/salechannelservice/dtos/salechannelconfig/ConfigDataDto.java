@@ -13,7 +13,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ConfigData {
+public class ConfigDataDto {
 	private String theme;
 	private String primaryColor;
 	private String secondaryColor;

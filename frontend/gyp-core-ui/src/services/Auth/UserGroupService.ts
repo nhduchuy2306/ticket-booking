@@ -1,5 +1,8 @@
-import { UserGroupPermissionModel } from "../../models/AuthService/UserGroupModel.ts";
-import { UserGroupRequestDto, UserGroupResponseDto } from "../../models/generated/auth-service-models";
+import {
+    ApplicationPermissionDto,
+    UserGroupRequestDto,
+    UserGroupResponseDto
+} from "../../models/generated/auth-service-models";
 import { apiClient, AUTH_SERVICE_PATH } from "../ApiClient.ts";
 import { BaseService } from "../BaseService.ts";
 
@@ -30,7 +33,7 @@ const deleteUserGroup = async (id: string): Promise<void> => {
     await apiClient.delete(`/${AUTH_SERVICE_PATH}/${USER_GROUP_PATH}/${id}`);
 }
 
-const getApplicationPermissions = async (): Promise<UserGroupPermissionModel[]> => {
+const getApplicationPermissions = async (): Promise<ApplicationPermissionDto[]> => {
     const res = await apiClient.get(`/${AUTH_SERVICE_PATH}/${USER_GROUP_PATH}/${USER_GROUP_ACTIONS_PATH}`);
     return res.data;
 }

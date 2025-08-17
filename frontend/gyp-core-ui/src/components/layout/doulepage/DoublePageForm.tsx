@@ -1,7 +1,7 @@
 import { notification } from "antd";
 import React, { useEffect } from "react";
+import { FormState } from "../../../models/enums/FormState.ts";
 import { createSuccessNotification } from "../../notification/Notification.ts";
-import { FormState } from "../models/LayoutModel.ts";
 import { useDoublePageContext } from "./DoublePageContext.tsx";
 import { BaseService } from "../../../services/BaseService.ts";
 

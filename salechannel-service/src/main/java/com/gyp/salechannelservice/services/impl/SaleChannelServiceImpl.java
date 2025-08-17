@@ -96,53 +96,6 @@ public class SaleChannelServiceImpl implements SaleChannelService {
 	}
 
 	@Override
-	public List<SaleChannelResponseDto> getSaleChannelsForEvent(String eventId) {
-		if(eventId == null || eventId.isBlank()) {
-			log.warn("Event ID is null or blank.");
-			return List.of();
-		}
-		List<SaleChannelResponseDto> responseList = saleChannelRepository.findAllByEventId(eventId)
-				.stream()
-				.map(saleChannelMapper::toResponseDto)
-				.toList();
-		if(responseList.isEmpty()) {
-			log.warn("No sale channels found for event ID: {}", eventId);
-		}
-		return responseList;
-	}
-
-	@Override
-	public void assignEventToChannel(String channelId, String eventId) {
-		var saleChannel = saleChannelRepository.findById(channelId)
-				.orElseThrow(() -> new ResourceNotFoundException("Sale channel not found with id: " + channelId));
-		if(StringUtils.isEmpty(eventId)) {
-			log.warn("Event ID is null or blank for channel ID: {}", channelId);
-			throw new IllegalArgumentException("Event ID cannot be null or blank.");
-		}
-
-		saleChannel.setEventId(eventId);
-		saleChannelRepository.save(saleChannel);
-	}
-
-	@Override
-	public void removeEventFromChannel(String channelId, String eventId) {
-		var saleChannel = saleChannelRepository.findById(channelId)
-				.orElseThrow(() -> new ResourceNotFoundException("Sale channel not found with id: " + channelId));
-		if(StringUtils.isEmpty(eventId)) {
-			log.warn("Event ID is null or blank for channel ID: {}", channelId);
-			throw new IllegalArgumentException("Event ID cannot be null or blank.");
-		}
-
-		if(!eventId.equals(saleChannel.getEventId())) {
-			log.warn("Event ID {} does not match the channel's event ID {}", eventId, saleChannel.getEventId());
-			throw new IllegalArgumentException("Event ID does not match the channel's event ID.");
-		}
-
-		saleChannel.setEventId(null);
-		saleChannelRepository.save(saleChannel);
-	}
-
-	@Override
 	public void activateChannel(String id) {
 		var saleChannel = saleChannelRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Sale channel not found with id: " + id));
@@ -166,10 +119,6 @@ public class SaleChannelServiceImpl implements SaleChannelService {
 		}
 		var saleChannel = saleChannelRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Sale channel not found with id: " + id));
-		if(saleChannel.getEventId() != null) {
-			log.warn("Cannot delete sale channel with ID {} as it is associated with an event.", id);
-			throw new IllegalStateException("Cannot delete sale channel as it is associated with an event.");
-		}
 		saleChannelRepository.delete(saleChannel);
 	}
 }

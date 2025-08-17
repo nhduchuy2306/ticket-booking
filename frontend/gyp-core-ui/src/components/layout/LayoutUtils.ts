@@ -1,5 +1,5 @@
 import { FormInstance } from "antd";
-import { FormState } from "./models/LayoutModel.ts";
+import { FormState } from "../../models/enums/FormState.ts";
 
 export const isFormReadOnly = (mode: string): boolean => {
     return mode === FormState.READ_ONLY.key;

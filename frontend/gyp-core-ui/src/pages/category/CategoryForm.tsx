@@ -1,7 +1,7 @@
 import { Button, Form, Input, Space } from "antd";
 import React, { useEffect } from "react";
-import { FormState } from "../../components/layout/models/LayoutModel.ts";
 import MetaData from "../../components/metadata/MetaData.tsx";
+import { FormState } from "../../models/enums/FormState.ts";
 import { CategoryRequestDto, CategoryResponseDto } from "../../models/generated/event-service-models";
 
 export interface CategoryFormProps {

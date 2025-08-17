@@ -1,6 +1,7 @@
 package com.gyp.salechannelservice.entities;
 
 import java.io.Serial;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gyp.common.entities.AbstractEntity;
 import com.gyp.common.enums.salechannel.SaleChannelStatus;
 import com.gyp.common.enums.salechannel.SaleChannelType;
 import lombok.AllArgsConstructor;
@@ -55,8 +57,14 @@ public class SaleChannelEntity extends AbstractEntity {
 	@Enumerated(EnumType.STRING)
 	private SaleChannelStatus status;
 
-	@Column(name = "event_id")
-	private String eventId;
+	@Column(name = "organization_id", nullable = false)
+	private String organizationId;
+
+	@Column(name = "start_sale_at", nullable = false)
+	private LocalDateTime startSaleAt;
+
+	@Column(name = "end_sale_at", nullable = false)
+	private LocalDateTime endSaleAt;
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "saleChannelEntity", fetch = FetchType.LAZY)

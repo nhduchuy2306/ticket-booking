@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from "./App.tsx";
-import { Mode } from "./configs/Constants.ts";
+import { Mode } from "./models/enums/Mode.ts";
 import RegisterPage from "./pages/auth/RegisterPage.tsx";
 import CategoryPage from "./pages/category/CategoryPage.tsx";
 import ConfigurationPage from "./pages/configuration/ConfigurationPage.tsx";

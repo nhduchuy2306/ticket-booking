@@ -1,4 +1,3 @@
-# Create `organization` table
 CREATE TABLE IF NOT EXISTS organization
 (
     id               VARCHAR(255) PRIMARY KEY,
@@ -10,7 +9,6 @@ CREATE TABLE IF NOT EXISTS organization
     change_timestamp DATETIME
 );
 
-# Create `useraccount` table
 CREATE TABLE IF NOT EXISTS useraccount
 (
     id               VARCHAR(255) PRIMARY KEY,
@@ -28,14 +26,13 @@ CREATE TABLE IF NOT EXISTS useraccount
     FOREIGN KEY (organization_id) REFERENCES organization (id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-# Create `usergroup` table
 CREATE TABLE IF NOT EXISTS usergroup
 (
     id                     VARCHAR(255) PRIMARY KEY,
     name                   VARCHAR(255),
     description            TEXT,
     administrator          BOOLEAN,
-    organization_id       VARCHAR(255),
+    organization_id        VARCHAR(255),
     user_group_permissions TEXT,
     create_user            VARCHAR(255),
     change_user            VARCHAR(255),
@@ -44,7 +41,6 @@ CREATE TABLE IF NOT EXISTS usergroup
     FOREIGN KEY (organization_id) REFERENCES organization (id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-# Create join table for the many-to-many relationship
 CREATE TABLE IF NOT EXISTS userpermissions
 (
     user_group_id   VARCHAR(255) NOT NULL,

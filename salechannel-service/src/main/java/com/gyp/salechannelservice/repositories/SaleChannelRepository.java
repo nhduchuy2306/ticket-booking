@@ -13,6 +13,4 @@ public interface SaleChannelRepository extends JpaRepository<SaleChannelEntity, 
 	List<SaleChannelEntity> findByStatus(SaleChannelStatus status);
 
 	List<SaleChannelEntity> findByType(SaleChannelType type);
-
-	List<SaleChannelEntity> findAllByEventId(String eventId);
 }

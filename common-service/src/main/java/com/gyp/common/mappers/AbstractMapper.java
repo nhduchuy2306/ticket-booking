@@ -1,15 +1,13 @@
-package com.gyp.salechannelservice.mappers;
+package com.gyp.common.mappers;
 
 import java.time.LocalDateTime;
 
-import com.gyp.salechannelservice.dtos.AbstractDto;
-import com.gyp.salechannelservice.entities.AbstractEntity;
+import com.gyp.common.dtos.AbstractDto;
+import com.gyp.common.entities.AbstractEntity;
 import org.apache.commons.lang3.ObjectUtils;
-import org.mapstruct.Mapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-@Mapper(componentModel = "spring")
 public interface AbstractMapper {
 	default void mapAbstractFields(AbstractEntity source, AbstractDto target) {
 		if(source == null || target == null) {

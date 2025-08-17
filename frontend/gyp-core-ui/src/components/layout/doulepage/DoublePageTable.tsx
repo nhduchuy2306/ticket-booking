@@ -3,7 +3,7 @@ import { Button, Flex, Modal, notification, Table, TableProps, Tooltip } from "a
 import { ColumnType } from "antd/es/table/interface";
 import React, { useEffect, useState } from "react";
 import { BiPlus } from "react-icons/bi";
-import { ThemeColors } from "../../../configs/Constants.ts";
+import { ThemeColors } from "../../../models/enums/ThemeColors.ts";
 import { BaseService } from "../../../services/BaseService.ts";
 import { useDoublePageContext } from "./DoublePageContext.tsx";
 

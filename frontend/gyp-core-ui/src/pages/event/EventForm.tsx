@@ -6,7 +6,8 @@ import SinglePageForm from "../../components/layout/singlepage/SinglePageForm.ts
 import SinglePageLayout from "../../components/layout/singlepage/SinglePageLayout.tsx";
 import MetaData from "../../components/metadata/MetaData.tsx";
 import { createErrorNotification, createSuccessNotification } from "../../components/notification/Notification.ts";
-import { Mode } from "../../configs/Constants.ts";
+import { EventStatus } from "../../models/enums/EventStatus.ts";
+import { Mode } from "../../models/enums/Mode.ts";
 import {
     CategoryResponseDto,
     EventRequestDto,
@@ -19,15 +20,6 @@ import { EventService, EventServiceAdapter } from "../../services/Event/EventSer
 import { SeasonService } from "../../services/Event/SeasonService.ts";
 import { VenueMapService } from "../../services/Event/VenueMapService.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
-
-const EventStatus = Object.freeze({
-    DRAFT: Object.freeze({key: 'DRAFT', value: 'Draft'}),
-    PENDING_APPROVAL: Object.freeze({key: 'PENDING_APPROVAL', value: 'Pending Approval'}),
-    PUBLISHED: Object.freeze({key: 'PUBLISHED', value: 'Published'}),
-    CANCELLED: Object.freeze({key: 'CANCELLED', value: 'Cancelled'}),
-    COMPLETED: Object.freeze({key: 'COMPLETED', value: 'Completed'}),
-    POSTPONED: Object.freeze({key: 'POSTPONED', value: 'Postponed'}),
-});
 
 interface EventFormProps {
     mode: string;

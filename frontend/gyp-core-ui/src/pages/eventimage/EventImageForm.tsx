@@ -4,8 +4,8 @@ import ImageUpload from "../../components/dataupload/ImageUpload.tsx";
 import { useDoublePageContext } from "../../components/layout/doulepage/DoublePageContext.tsx";
 import MetaData from "../../components/metadata/MetaData.tsx";
 import { createErrorNotification, createSuccessNotification } from "../../components/notification/Notification.ts";
-import { Mode } from "../../configs/Constants.ts";
 import { useFormLogic } from "../../hooks/form/useFormLogic.tsx";
+import { Mode } from "../../models/enums/Mode.ts";
 import {
     EventImageRequestDto,
     EventImageResponseDto,

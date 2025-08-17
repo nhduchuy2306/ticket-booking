@@ -1,18 +1,23 @@
 import { Button, Checkbox, Form, Input, Space } from "antd";
 import React, { useEffect, useState } from "react";
-import { FormState } from "../../components/layout/models/LayoutModel.ts";
 import MetaData from "../../components/metadata/MetaData.tsx";
 import PermissionTable from "../../components/permission/PermissionTable.tsx";
 import { SPLITTER_CHARACTER } from "../../configs/Constants.ts";
-import { UserGroupPermissionModel, UserGroupPermissions } from "../../models/AuthService/UserGroupModel.ts";
-import { UserGroupRequestDto, UserGroupResponseDto } from "../../models/generated/auth-service-models";
+import { FormState } from "../../models/enums/FormState.ts";
+import {
+    ApplicationPermissionDto,
+    PermissionItem,
+    UserGroupPermissions,
+    UserGroupRequestDto,
+    UserGroupResponseDto
+} from "../../models/generated/auth-service-models";
 
 interface UserGroupFormProps {
     entity: UserGroupResponseDto;
     mode: string;
     onSave: (values: UserGroupRequestDto) => Promise<void>;
     onCancel: () => void;
-    allPermissions: UserGroupPermissionModel[];
+    allPermissions: ApplicationPermissionDto[];
 }
 
 const UserGroupForm: React.FC<UserGroupFormProps> = ({entity, mode, onSave, onCancel, allPermissions,}) => {
@@ -83,7 +88,7 @@ const UserGroupForm: React.FC<UserGroupFormProps> = ({entity, mode, onSave, onCa
             permissionItems: Array.from(permissionMap.entries()).map(([applicationId, actions]) => ({
                 applicationId,
                 actions,
-            }))
+            } as PermissionItem))
         };
     };
 

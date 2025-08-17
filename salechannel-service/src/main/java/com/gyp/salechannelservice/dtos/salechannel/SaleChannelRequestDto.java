@@ -1,5 +1,7 @@
 package com.gyp.salechannelservice.dtos.salechannel;
 
+import java.time.LocalDateTime;
+
 import com.gyp.common.enums.salechannel.SaleChannelStatus;
 import com.gyp.common.enums.salechannel.SaleChannelType;
 import lombok.AllArgsConstructor;
@@ -19,5 +21,6 @@ public class SaleChannelRequestDto {
 	private SaleChannelStatus status;
 	private String description;
 	private Double commissionRate;
-	private String eventId;
+	private LocalDateTime startSaleAt;
+	private LocalDateTime endSaleAt;
 }

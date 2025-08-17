@@ -14,6 +14,7 @@ import com.gyp.eventservice.dtos.event.EventRequestDto;
 import com.gyp.eventservice.dtos.event.EventResponseDto;
 import com.gyp.eventservice.entities.EventEntity;
 import com.gyp.eventservice.mappers.EventMapper;
+import com.gyp.eventservice.messages.producers.AssignSaleChannelToEventProducer;
 import com.gyp.eventservice.repositories.EventImageRepository;
 import com.gyp.eventservice.repositories.EventRepository;
 import com.gyp.eventservice.services.EventService;
@@ -37,6 +38,7 @@ public class EventServiceImpl implements EventService {
 	private final ValidationService validationService;
 	private final EventMapper eventMapper;
 	private final UploadService uploadService;
+	private final AssignSaleChannelToEventProducer assignSaleChannelToEventProducer;
 
 	@Override
 	public List<EventEventModel> getListEventModel() {
@@ -74,8 +76,12 @@ public class EventServiceImpl implements EventService {
 		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		EventEntity eventEntity = eventMapper.toEntity(request);
 		eventEntity.setOrganizationId(organizationId);
-		var saveEvent = eventRepository.save(eventEntity);
-		return eventMapper.toResponseDto(saveEvent);
+		var savedEvent = eventRepository.save(eventEntity);
+		if(request.getSaleChannelIds() != null && !request.getSaleChannelIds().isEmpty()) {
+			assignSaleChannelToEventProducer.assignSaleChannelToEventProducer(savedEvent.getId(),
+					request.getSaleChannelIds());
+		}
+		return eventMapper.toResponseDto(savedEvent);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -87,9 +93,12 @@ public class EventServiceImpl implements EventService {
 			String fileName = uploadService.upload(file).getLeft();
 			eventEntity.setLogoUrl(fileName);
 		}
-
 		eventEntity.setOrganizationId(organizationId);
 		EventEntity savedEvent = eventRepository.save(eventEntity);
+		if(request.getSaleChannelIds() != null && !request.getSaleChannelIds().isEmpty()) {
+			assignSaleChannelToEventProducer.assignSaleChannelToEventProducer(savedEvent.getId(),
+					request.getSaleChannelIds());
+		}
 		return eventMapper.toResponseDto(savedEvent);
 	}
 
@@ -101,6 +110,10 @@ public class EventServiceImpl implements EventService {
 		eventMapper.updateEntityFromDto(request, existingEvent);
 		existingEvent.setOrganizationId(organizationId);
 		EventEntity updatedEvent = eventRepository.save(existingEvent);
+		if(request.getSaleChannelIds() != null && !request.getSaleChannelIds().isEmpty()) {
+			assignSaleChannelToEventProducer.assignSaleChannelToEventProducer(updatedEvent.getId(),
+					request.getSaleChannelIds());
+		}
 		return eventMapper.toResponseDto(updatedEvent);
 	}
 
@@ -123,6 +136,10 @@ public class EventServiceImpl implements EventService {
 			}
 			existingEvent.setOrganizationId(organizationId);
 			EventEntity updatedEvent = eventRepository.save(existingEvent);
+			if(request.getSaleChannelIds() != null && !request.getSaleChannelIds().isEmpty()) {
+				assignSaleChannelToEventProducer.assignSaleChannelToEventProducer(updatedEvent.getId(),
+						request.getSaleChannelIds());
+			}
 			return eventMapper.toResponseDto(updatedEvent);
 		} catch(Exception e) {
 			log.error("Error updating event with id: {}", eventId, e);

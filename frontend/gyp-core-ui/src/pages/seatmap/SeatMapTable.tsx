@@ -1,14 +1,14 @@
 import { ColumnsType } from "antd/es/table";
 import React from "react";
 import SinglePageTable from "../../components/layout/singlepage/SinglePageTable.tsx";
-import { EventModel } from "../../models/EventService/EventModel.ts";
+import { EventResponseDto } from "../../models/generated/event-service-models";
 import { SeatMapServiceAdapter } from "../../services/Event/SeatMapService.ts";
 
 export interface SeatMapTableProps {
 }
 
 const SeatMapTable: React.FC<SeatMapTableProps> = () => {
-    const columns: ColumnsType<EventModel> = [
+    const columns: ColumnsType<EventResponseDto> = [
         {
             title: 'Name',
             dataIndex: 'name',

@@ -1,8 +1,8 @@
 import { Button, DatePicker, Form, Input, InputNumber, notification, Select, Space, Switch } from "antd";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { FormState } from "../../components/layout/models/LayoutModel.ts";
 import MetaData from "../../components/metadata/MetaData.tsx";
+import { FormState } from "../../models/enums/FormState.ts";
 import {
     EventResponseDto,
     TicketTypeRequestDto,

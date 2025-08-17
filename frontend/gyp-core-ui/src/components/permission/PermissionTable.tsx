@@ -1,11 +1,11 @@
 import { Flex, Tree, TreeDataNode, TreeProps } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import { SPLITTER_CHARACTER } from "../../configs/Constants.ts";
-import { UserGroupPermissionModel } from "../../models/AuthService/UserGroupModel.ts";
+import { ApplicationPermissionDto } from "../../models/generated/auth-service-models";
 
 export interface PermissionTableProps {
     selectedPermissions?: React.Key[],
-    allPermissions?: UserGroupPermissionModel[];
+    allPermissions?: ApplicationPermissionDto[];
     isAdmin: boolean;
     disabled: boolean;
     onChange?: (value: React.Key[]) => void;

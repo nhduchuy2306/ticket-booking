@@ -3,7 +3,7 @@ import { FormListFieldData } from "antd/es/form/FormList";
 import React from "react";
 import Accordion from "../../components/accoridion/Accordion.tsx";
 import AccordionItem from "../../components/accoridion/AccordionItem.tsx";
-import { FormState } from "../../components/layout/models/LayoutModel.ts";
+import { FormState } from "../../models/enums/FormState.ts";
 import { VenueMapResponseDto } from "../../models/generated/event-service-models";
 
 export interface VenueFormAccordionProps {

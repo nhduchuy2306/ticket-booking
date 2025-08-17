@@ -1,7 +1,7 @@
 import { Button, Checkbox, Form, Input, Space } from "antd";
 import React, { useEffect } from "react";
 import { handleReset, handleSubmit } from "../../components/layout/LayoutUtils.ts";
-import { FormState } from "../../components/layout/models/LayoutModel.ts";
+import { FormState } from "../../models/enums/FormState.ts";
 import { SeasonRequestDto, SeasonResponseDto } from "../../models/generated/event-service-models";
 
 export interface SeasonFormProps {

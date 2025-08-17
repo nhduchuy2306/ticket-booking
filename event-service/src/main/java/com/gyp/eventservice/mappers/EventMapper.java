@@ -62,6 +62,8 @@ public interface EventMapper extends AbstractMapper {
 	EventEntity toEntity(EventRequestDto dto);
 
 	// Update existing entity from request
+	@Mapping(target = "logoUrl", ignore = true)
+	@Mapping(target = "eventImageEntityList", ignore = true)
 	@Mapping(target = "isGenerated", ignore = true)
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "time.startTime", source = "startTime")

@@ -2,7 +2,7 @@ import { notification } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import SinglePageLayout from "../../components/layout/singlepage/SinglePageLayout.tsx";
-import { Mode } from "../../configs/Constants.ts";
+import { Mode } from "../../models/enums/Mode.ts";
 import { SeatMapResponseDto } from "../../models/generated/event-service-models";
 import { SeatMapService } from "../../services/Event/SeatMapService.ts";
 import SeatMapDetailForm from "./SeatMapDetailForm.tsx";

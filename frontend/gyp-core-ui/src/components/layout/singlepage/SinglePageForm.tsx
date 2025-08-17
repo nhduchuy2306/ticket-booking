@@ -1,9 +1,9 @@
 import { Button, Flex, notification, Tooltip } from "antd";
 import React from "react";
 import { BiArrowBack } from "react-icons/bi";
+import { FormState } from "../../../models/enums/FormState.ts";
 import { BaseService } from "../../../services/BaseService.ts";
 import { createSuccessNotification } from "../../notification/Notification.ts";
-import { FormState } from "../models/LayoutModel.ts";
 import { useSinglePageContext } from "./SinglePageContext.tsx";
 
 export interface SinglePageFormProps {
