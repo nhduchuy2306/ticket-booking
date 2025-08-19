@@ -76,6 +76,8 @@ const siderStyle: React.CSSProperties = {
     scrollbarGutter: 'stable'
 };
 
+const DEFAULT_PATH = 'user-account';
+
 const App: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -86,12 +88,14 @@ const App: React.FC = () => {
 
     useEffect(() => {
         const pathParts = location.pathname.split('/');
-        const path = pathParts.length > 1 ? pathParts[1] : '';
+        let path = pathParts.length > 1 ? pathParts[1] : '';
         if (boxOfficeMode && boxOfficeMenuItems.every(item => item.key !== path)) {
             navigate("/");
-        } else {
-            setSelectedKey(path);
+        } else if (path === '') {
+            path = DEFAULT_PATH;
+            navigate(`/${DEFAULT_PATH}`);
         }
+        setSelectedKey(path);
 
         const menuPath = findMenuPath(menuItems, path);
         if (menuPath && menuPath.length > 1) {

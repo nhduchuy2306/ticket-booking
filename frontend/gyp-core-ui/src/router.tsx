@@ -10,7 +10,6 @@ import EventPage from "./pages/event/EventPage.tsx";
 import EventImagePage from "./pages/eventimage/EventImagePage.tsx";
 import LandingPage from "./pages/landing/LandingPage.tsx";
 import OrganizationPage from "./pages/organization/OrganizationPage.tsx";
-import OverviewPage from "./pages/OverviewPage.tsx";
 import ProfileDetailPage from "./pages/profile/ProfileDetailPage.tsx";
 import ProtectRoute from "./pages/ProtectRoute.tsx";
 import SaleChannelPage from "./pages/salechannel/SaleChannelPage.tsx";
@@ -35,14 +34,10 @@ const AuthServiceRouter = [
         path: 'register',
         element: <RegisterPage/>,
         errorElement: <ErrorPage/>
-    }
+    },
 ];
 
 const UserServiceRouter = [
-    {
-        index: true,
-        element: <OverviewPage/>
-    },
     {
         path: 'profile-detail',
         element: <ProfileDetailPage/>
