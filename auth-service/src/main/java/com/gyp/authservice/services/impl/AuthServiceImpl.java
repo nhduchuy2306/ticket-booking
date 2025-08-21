@@ -33,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
 			String password = userAccountEntity.getPassword();
 			if(passwordEncoder.matches(loginRequestDto.getPassword(), password)) {
 				UserAccountResponseDto dto = userAccountMapper.toResponseDto(userAccountEntity);
-				String token = jwtTokenProvider.generateToken(dto);
+				String token = jwtTokenProvider.generateTokenWithPermissions(dto);
 				return LoginResponseDto.builder()
 						.token(token)
 						.userId(dto.getId())
@@ -82,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
 			}
 
 			UserAccountResponseDto userAccountResponseDto = userAccountMapper.toResponseDto(userAccountEntity);
-			String token = jwtTokenProvider.generateToken(userAccountResponseDto);
+			String token = jwtTokenProvider.generateTokenWithPermissions(userAccountResponseDto);
 			return TokenResponse.builder()
 					.token(token)
 					.userId(userAccountResponseDto.getId())

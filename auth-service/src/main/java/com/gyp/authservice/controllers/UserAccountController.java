@@ -6,15 +6,13 @@ import com.gyp.authservice.dtos.useraccount.UserAccountRequestDto;
 import com.gyp.authservice.messages.producers.UserAccountProducer;
 import com.gyp.authservice.services.UserAccountService;
 import com.gyp.authservice.services.criteria.UserAccountSearchCriteria;
-import com.gyp.common.annotations.RequestPermission;
 import com.gyp.common.controllers.AbstractController;
 import com.gyp.common.dtos.pagination.PaginatedDto;
-import com.gyp.common.enums.permission.ActionPermission;
-import com.gyp.common.enums.permission.ApplicationPermission;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,8 +36,9 @@ public class UserAccountController extends AbstractController {
 	private final UserAccountProducer userAccountProducer;
 
 	@GetMapping
-	@RequestPermission(application = ApplicationPermission.USER_ACCOUNT, actions = { ActionPermission.READ })
-	@RequestPermission(application = ApplicationPermission.USER_GROUP, actions = { ActionPermission.READ })
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT.getApplicationId(), #ActionPerm.READ.name()) or "
+					+ "@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.READ.name())")
 	public ResponseEntity<?> getListUserAccount(
 			@RequestParam(value = "sortBy", required = false) String sortBy,
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
@@ -57,8 +56,9 @@ public class UserAccountController extends AbstractController {
 	}
 
 	@GetMapping("/{" + ID_PARAM + "}")
-	@RequestPermission(application = ApplicationPermission.USER_ACCOUNT, actions = { ActionPermission.READ })
-	@RequestPermission(application = ApplicationPermission.USER_GROUP, actions = { ActionPermission.READ })
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT.getApplicationId(), #ActionPerm.READ.name()) or "
+					+ "@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.READ.name())")
 	public ResponseEntity<?> getUserAccountById(@PathVariable(ID_PARAM) String id) {
 		if(StringUtils.isEmpty(id)) {
 			return ResponseEntity.badRequest().body("Id is required");
@@ -67,16 +67,18 @@ public class UserAccountController extends AbstractController {
 	}
 
 	@PostMapping
-	@RequestPermission(application = ApplicationPermission.USER_ACCOUNT, actions = { ActionPermission.CREATE })
-	@RequestPermission(application = ApplicationPermission.USER_GROUP, actions = { ActionPermission.CREATE })
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT.getApplicationId(), #ActionPerm.CREATE.name()) or "
+					+ "@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.CREATE.name())")
 	public ResponseEntity<?> createUserAccount(@RequestBody UserAccountRequestDto request) {
 		var response = userAccountService.createUserAccount(request);
 		return createResponseOk(response);
 	}
 
 	@PutMapping("/{" + ID_PARAM + "}")
-	@RequestPermission(application = ApplicationPermission.USER_ACCOUNT, actions = { ActionPermission.CREATE })
-	@RequestPermission(application = ApplicationPermission.USER_GROUP, actions = { ActionPermission.CREATE })
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT.getApplicationId(), #ActionPerm.CREATE.name()) or "
+					+ "@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.CREATE.name())")
 	public ResponseEntity<?> createUserAccount(
 			@PathVariable(ID_PARAM) String id,
 			@RequestBody UserAccountRequestDto request
@@ -86,16 +88,18 @@ public class UserAccountController extends AbstractController {
 	}
 
 	@DeleteMapping("/{" + ID_PARAM + "}")
-	@RequestPermission(application = ApplicationPermission.USER_ACCOUNT, actions = { ActionPermission.CREATE })
-	@RequestPermission(application = ApplicationPermission.USER_GROUP, actions = { ActionPermission.CREATE })
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT.getApplicationId(), #ActionPerm.DELETE.name()) or "
+					+ "@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.DELETE.name())")
 	public ResponseEntity<?> deleteUserAccount(@PathVariable(ID_PARAM) String id) {
 		var response = userAccountService.deleteUserAccount(id);
 		return createResponseOk(response);
 	}
 
 	@GetMapping(SYNC_ORGANIZER_PATH)
-	@RequestPermission(application = ApplicationPermission.USER_ACCOUNT, actions = { ActionPermission.SYNC })
-	@RequestPermission(application = ApplicationPermission.USER_GROUP, actions = { ActionPermission.READ })
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT.getApplicationId(), #ActionPerm.SYNC.name()) or "
+					+ "@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.READ.name())")
 	public ResponseEntity<?> syncOrganizer() {
 		userAccountProducer.syncUserAccount();
 		return createResponseOk("Sync Organizer!!");

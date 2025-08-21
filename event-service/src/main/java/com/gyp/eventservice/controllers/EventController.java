@@ -4,11 +4,8 @@ import java.util.Optional;
 
 import jakarta.validation.Valid;
 
-import com.gyp.common.annotations.RequestPermission;
 import com.gyp.common.controllers.AbstractValidatableController;
 import com.gyp.common.dtos.pagination.PaginatedDto;
-import com.gyp.common.enums.permission.ActionPermission;
-import com.gyp.common.enums.permission.ApplicationPermission;
 import com.gyp.common.services.DataIntegrityService;
 import com.gyp.eventservice.dtos.event.EventRequestDto;
 import com.gyp.eventservice.services.EventService;
@@ -16,6 +13,7 @@ import com.gyp.eventservice.services.criteria.EventSearchCriteria;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +39,8 @@ public class EventController extends AbstractValidatableController {
 	private final DataIntegrityService dataIntegrityService;
 
 	@GetMapping
-	@RequestPermission(application = ApplicationPermission.EVENT, actions = { ActionPermission.READ })
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT.getApplicationId(), #ActionPerm.READ.name())")
 	public ResponseEntity<?> getAllEvents(
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
 			@RequestParam(value = "size", required = false) Optional<Integer> size) {
@@ -57,22 +56,29 @@ public class EventController extends AbstractValidatableController {
 	}
 
 	@GetMapping("/{" + ID_PARAM + "}")
-	@RequestPermission(application = ApplicationPermission.EVENT, actions = { ActionPermission.READ })
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT.getApplicationId(), #ActionPerm.READ.name())")
 	public ResponseEntity<?> getEventById(@PathVariable(ID_PARAM) String id) {
 		return ResponseEntity.ok(eventService.getEventById(id));
 	}
 
 	@GetMapping(ACTIVE_PATH)
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT.getApplicationId(), #ActionPerm.READ.name())")
 	public ResponseEntity<?> getAllActiveEvents() {
 		return ResponseEntity.ok(eventService.getAllActiveEvents());
 	}
 
 	@PostMapping
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT.getApplicationId(), #ActionPerm.CREATE.name())")
 	public ResponseEntity<?> createEvent(@RequestBody @Valid EventRequestDto eventRequestDto) {
 		return ResponseEntity.ok(eventService.createEvent(eventRequestDto));
 	}
 
 	@PostMapping(WITH_UPLOAD_PATH)
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT.getApplicationId(), #ActionPerm.CREATE.name())")
 	public ResponseEntity<?> createEventWithUpload(
 			@RequestPart(value = "event", required = false) EventRequestDto eventRequestDto,
 			@RequestPart(value = "logo", required = false) MultipartFile file) {
@@ -84,12 +90,16 @@ public class EventController extends AbstractValidatableController {
 	}
 
 	@PutMapping("/{" + ID_PARAM + "}")
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT.getApplicationId(), #ActionPerm.UPDATE.name())")
 	public ResponseEntity<?> updateEvent(@PathVariable(ID_PARAM) String id,
 			@RequestBody @Valid EventRequestDto eventRequestDto) {
 		return ResponseEntity.ok(eventService.updateEvent(id, eventRequestDto));
 	}
 
 	@PutMapping(WITH_UPLOAD_PATH + "/{" + ID_PARAM + "}")
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT.getApplicationId(), #ActionPerm.UPDATE.name())")
 	public ResponseEntity<?> updateEventWithUpload(
 			@PathVariable(ID_PARAM) String id,
 			@RequestPart(value = "event", required = false) EventRequestDto eventRequestDto,
@@ -102,6 +112,8 @@ public class EventController extends AbstractValidatableController {
 	}
 
 	@DeleteMapping("/{" + ID_PARAM + "}")
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT.getApplicationId(), #ActionPerm.DELETE.name())")
 	public ResponseEntity<?> deleteEvent(@PathVariable(ID_PARAM) String id) {
 		eventService.deleteEvent(id);
 		return ResponseEntity.noContent().build();
@@ -109,6 +121,8 @@ public class EventController extends AbstractValidatableController {
 
 	@Override
 	@GetMapping("/{" + ID_PARAM + "}/" + REFERENCES_PATH)
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT.getApplicationId(), #ActionPerm.READ.name())")
 	public ResponseEntity<?> getReferences(@PathVariable(ID_PARAM) String id) {
 		if(StringUtils.isEmpty(id)) {
 			return ResponseEntity.badRequest().body("Event ID must not be null or empty");
@@ -122,6 +136,8 @@ public class EventController extends AbstractValidatableController {
 	}
 
 	@Override
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT.getApplicationId(), #ActionPerm.CREATE.name())")
 	@GetMapping(VALIDATION_PATH)
 	public ResponseEntity<?> getValidationDetails() {
 		return ResponseEntity.ok(eventService.validate(EventRequestDto.class));
