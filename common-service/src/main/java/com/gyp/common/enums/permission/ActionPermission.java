@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum ActionPermission {
+	ALL("all"),
 	CREATE("create"),
 	READ("read"),
 	UPDATE("update"),

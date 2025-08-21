@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 public enum ApplicationPermission {
-	ADMIN("Admin", "app.admin", actions()),
+	ADMIN("Admin", "app.admin", actions(ActionPermission.ALL)),
 	USER_GROUP("User Group", "app.user.group",
 			actions(ActionPermission.CREATE, ActionPermission.READ, ActionPermission.UPDATE, ActionPermission.DELETE)),
 	USER_ACCOUNT("User Account", "app.user.account",

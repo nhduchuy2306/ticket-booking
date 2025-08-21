@@ -5,13 +5,11 @@ import java.util.Optional;
 import com.gyp.authservice.dtos.usergroup.UserGroupRequestDto;
 import com.gyp.authservice.services.UserGroupService;
 import com.gyp.authservice.services.criteria.UserGroupSearchCriteria;
-import com.gyp.common.annotations.RequestPermission;
 import com.gyp.common.controllers.AbstractController;
 import com.gyp.common.dtos.pagination.PaginatedDto;
-import com.gyp.common.enums.permission.ActionPermission;
-import com.gyp.common.enums.permission.ApplicationPermission;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +31,8 @@ public class UserGroupController extends AbstractController {
 	private final UserGroupService userGroupService;
 
 	@GetMapping
-	@RequestPermission(application = ApplicationPermission.USER_GROUP, actions = { ActionPermission.READ })
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.READ.name())")
 	public ResponseEntity<?> getListUserGroup(
 			@RequestParam(value = "sortBy", required = false) String sortBy,
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
@@ -51,7 +50,8 @@ public class UserGroupController extends AbstractController {
 	}
 
 	@GetMapping("/{" + ID_PARAM + "}")
-	@RequestPermission(application = ApplicationPermission.USER_GROUP, actions = { ActionPermission.READ })
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.READ.name())")
 	public ResponseEntity<?> getUserGroupById(@PathVariable(ID_PARAM) String id) {
 		var res = userGroupService.getUserGroupById(id);
 		if(res == null) {
@@ -61,20 +61,23 @@ public class UserGroupController extends AbstractController {
 	}
 
 	@GetMapping(USER_GROUP_ACTION_LIST_PATH)
-	@RequestPermission(application = ApplicationPermission.USER_GROUP, actions = { ActionPermission.READ })
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.READ.name())")
 	public ResponseEntity<?> getUserGroupList() {
 		return createResponseOk(userGroupService.getListApplicationPermissions());
 	}
 
 	@PostMapping
-	@RequestPermission(application = ApplicationPermission.USER_GROUP, actions = { ActionPermission.CREATE })
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.CREATE.name())")
 	public ResponseEntity<?> createUserGroup(@RequestBody UserGroupRequestDto userGroupRequestDto) {
 		var res = userGroupService.createUserGroup(userGroupRequestDto);
 		return ResponseEntity.ok(res);
 	}
 
 	@PutMapping("/{" + ID_PARAM + "}")
-	@RequestPermission(application = ApplicationPermission.USER_GROUP, actions = { ActionPermission.UPDATE })
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.UPDATE.name())")
 	public ResponseEntity<?> updateUserGroup(@PathVariable(ID_PARAM) String id,
 			@RequestBody UserGroupRequestDto userGroupRequestDto) {
 		var res = userGroupService.updateUserGroup(userGroupRequestDto, id);
@@ -82,7 +85,8 @@ public class UserGroupController extends AbstractController {
 	}
 
 	@DeleteMapping("/{" + ID_PARAM + "}")
-	@RequestPermission(application = ApplicationPermission.USER_GROUP, actions = { ActionPermission.DELETE })
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.DELETE.name())")
 	public ResponseEntity<?> deleteUserGroup(@PathVariable(ID_PARAM) String id) {
 		try {
 			var res = userGroupService.deleteUserGroup(id);

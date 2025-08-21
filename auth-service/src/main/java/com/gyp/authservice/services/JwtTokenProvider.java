@@ -16,7 +16,6 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSObject;
-import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -37,8 +36,42 @@ public class JwtTokenProvider {
 
 	public static final String AUTH_CODE = "auth_code";
 
+	public String generateTokenWithPermissions(UserAccountResponseDto dto) {
+		try {
+			// Get user permissions from database
+			Map<String, List<String>> appIdAndActions = getAppIdAndActions(dto);
+
+			// Build JWT claims with permissions
+			JWTClaimsSet.Builder claimsBuilder = new JWTClaimsSet.Builder()
+					.subject(dto.getId())
+					.issuer("auth-service")
+					.expirationTime(new Date(System.currentTimeMillis() + 3600000)) // 1 hour
+					.issueTime(new Date());
+
+			// Add permissions to JWT
+			if(!appIdAndActions.isEmpty()) {
+				claimsBuilder.claim("permissions", appIdAndActions);
+			}
+
+			// Add other user info
+			claimsBuilder.claim("organizationId", dto.getOrganizationId());
+			claimsBuilder.claim("userId", dto.getId());
+
+			JWTClaimsSet claims = claimsBuilder.build();
+
+			// Sign and return token
+			SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS512), claims);
+
+			signedJWT.sign(new MACSigner(jwtSecretKey.getBytes()));
+			return signedJWT.serialize();
+
+		} catch(Exception e) {
+			throw new RuntimeException("Error generating JWT token", e);
+		}
+	}
+
 	public String generateToken(UserAccountResponseDto dto) {
-		JWTClaimsSet jwtClaimsSet = new Builder()
+		JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
 				.subject(dto.getUsername())
 				.issuer("auth-service")
 				.issueTime(new Date())
@@ -75,19 +108,6 @@ public class JwtTokenProvider {
 		}
 	}
 
-	public String getUsername(String token) throws ParseException {
-		SignedJWT signedJWT = SignedJWT.parse(token);
-		return signedJWT.getJWTClaimsSet().getSubject();
-	}
-
-	public boolean validateToken(String token) throws JOSEException, ParseException {
-		JWSVerifier jwsVerifier = new MACVerifier(jwtSecretKey.getBytes());
-		SignedJWT signedJWT = SignedJWT.parse(token);
-		Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-		boolean isValid = signedJWT.verify(jwsVerifier);
-		return isValid && expirationTime.after(new Date());
-	}
-
 	public Object getClaim(String token, String key) throws JOSEException, ParseException {
 		SignedJWT signedJWT = SignedJWT.parse(token);
 		if(!signedJWT.verify(new MACVerifier(jwtSecretKey.getBytes()))) {
@@ -108,8 +128,24 @@ public class JwtTokenProvider {
 			}
 		}
 
+		Map<String, List<String>> appIdAndActions = getAppIdAndActions(dto);
+		try {
+			return Serialization.serializeToString(appIdAndActions);
+		} catch(JsonProcessingException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	private Map<String, List<String>> getAppIdAndActions(UserAccountResponseDto dto) {
 		Map<String, List<String>> appIdAndActions = new HashMap<>();
 		var userGroupList = dto.getUserGroupList();
+		if(userGroupList.size() == 1) {
+			var firstElement = userGroupList.getFirst();
+			if(BooleanUtils.isTrue(firstElement.getAdministrator())) {
+				appIdAndActions.computeIfAbsent(ApplicationPermission.ADMIN.getApplicationId(), k -> List.of());
+			}
+		}
+
 		userGroupList.forEach(userGroup -> {
 			var permissionItems = userGroup.getUserGroupPermissions().getPermissionItems();
 			permissionItems.forEach(permissionItem -> {
@@ -118,12 +154,7 @@ public class JwtTokenProvider {
 				appIdAndActions.computeIfAbsent(appId, k -> actions.stream().map(Enum::name).toList());
 			});
 		});
-
-		try {
-			return Serialization.serializeToString(appIdAndActions);
-		} catch(JsonProcessingException e) {
-			throw new IllegalArgumentException(e);
-		}
+		return appIdAndActions;
 	}
 }
 
