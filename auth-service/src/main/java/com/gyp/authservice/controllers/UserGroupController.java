@@ -3,11 +3,14 @@ package com.gyp.authservice.controllers;
 import java.util.Optional;
 
 import com.gyp.authservice.dtos.usergroup.UserGroupRequestDto;
+import com.gyp.authservice.services.UserAccountService;
 import com.gyp.authservice.services.UserGroupService;
 import com.gyp.authservice.services.criteria.UserGroupSearchCriteria;
 import com.gyp.common.controllers.AbstractController;
 import com.gyp.common.dtos.pagination.PaginatedDto;
+import com.gyp.common.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,8 +30,10 @@ public class UserGroupController extends AbstractController {
 	public static final String USER_GROUP_CONTROLLER_PATH = "usergroups";
 
 	private static final String USER_GROUP_ACTION_LIST_PATH = "/usergroupactions";
+	private static final String USER_ACCOUNT_PATH = "useraccounts";
 
 	private final UserGroupService userGroupService;
+	private final UserAccountService userAccountService;
 
 	@GetMapping
 	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP, #ActionPerm.READ)")
@@ -56,6 +61,16 @@ public class UserGroupController extends AbstractController {
 			return ResponseEntity.notFound().build();
 		}
 		return createResponseOk(res);
+	}
+
+	@GetMapping("/{" + ID_PARAM + "}/" + USER_ACCOUNT_PATH)
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP, #ActionPerm.READ)")
+	public ResponseEntity<?> getUserAccountByUserGroupId(@PathVariable(ID_PARAM) String id) {
+		if(StringUtils.isEmpty(id)) {
+			return ResponseEntity.badRequest().body("Id is required");
+		}
+		String userAccountId = SecurityUtils.getCurrentUserId();
+		return createResponseOk(userAccountService.getUserAccountByUserGroupId(id, userAccountId));
 	}
 
 	@GetMapping(USER_GROUP_ACTION_LIST_PATH)

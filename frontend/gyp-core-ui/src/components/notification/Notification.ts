@@ -13,7 +13,7 @@ export const createNotification = (
         message: title,
         description: message,
         placement: placement,
-        duration: 3,
+        duration: 5,
     });
 }
 

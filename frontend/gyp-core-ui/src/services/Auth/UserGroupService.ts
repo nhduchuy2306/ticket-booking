@@ -1,5 +1,6 @@
 import {
     ApplicationPermissionDto,
+    UserAccountResponseDto,
     UserGroupRequestDto,
     UserGroupResponseDto
 } from "../../models/generated/auth-service-models";
@@ -8,6 +9,7 @@ import { BaseService } from "../BaseService.ts";
 
 const USER_GROUP_PATH = "usergroups";
 const USER_GROUP_ACTIONS_PATH = "usergroupactions";
+const USER_ACCOUNT_PATH = "useraccounts";
 
 export class UserGroupService {
     static getAllUserGroups = async (): Promise<UserGroupResponseDto[]> => {
@@ -36,6 +38,11 @@ export class UserGroupService {
 
     static getApplicationPermissions = async (): Promise<ApplicationPermissionDto[]> => {
         const res = await apiClient.get(`/${AUTH_SERVICE_PATH}/${USER_GROUP_PATH}/${USER_GROUP_ACTIONS_PATH}`);
+        return res.data;
+    }
+
+    static getUserAccountByUserGroupId = async (userGroupId: string): Promise<UserAccountResponseDto> => {
+        const res = await apiClient.get(`/${AUTH_SERVICE_PATH}/${USER_GROUP_PATH}/${userGroupId}/${USER_ACCOUNT_PATH}`);
         return res.data;
     }
 }

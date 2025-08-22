@@ -1,10 +1,11 @@
-import { Button, Form, Input, notification, Select } from "antd";
+import { Button, Form, Input, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import DataTransfer from "../../components/data-transfer/DataTransfer.tsx";
 import { RoleItemModel } from "../../components/data-transfer/DataTransferModel.ts";
 import SinglePageForm from "../../components/layout/singlepage/SinglePageForm.tsx";
 import SinglePageLayout from "../../components/layout/singlepage/SinglePageLayout.tsx";
+import { createErrorNotification } from "../../components/notification/Notification.ts";
 import { Mode } from "../../models/enums/Mode.ts";
 import {
     OrganizationResponseDto,
@@ -52,7 +53,7 @@ const UserAccountForm: React.FC<UserAccountFormProps> = ({mode}) => {
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
-                notification.error({message: "Failed to fetch data"});
+                createErrorNotification("Error", "Failed to fetch user account data. Please try again later.");
             } finally {
                 setIsLoading(false);
             }

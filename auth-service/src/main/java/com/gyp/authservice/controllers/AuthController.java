@@ -8,8 +8,10 @@ import com.gyp.authservice.dtos.auth.TokenResponse;
 import com.gyp.authservice.dtos.useraccount.UserAccountResponseDto;
 import com.gyp.authservice.services.AuthService;
 import com.gyp.common.controllers.AbstractController;
+import com.gyp.common.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +22,7 @@ public class AuthController extends AbstractController {
 	private static final String LOGIN_PATH = "login";
 	private static final String REGISTER_PATH = "register";
 	private static final String TOKEN_PATH = "token";
+	private static final String REFRESH_TOKEN_PATH = "refresh-token";
 
 	private final AuthService authService;
 
@@ -47,6 +50,20 @@ public class AuthController extends AbstractController {
 			TokenResponse tokenResponse = authService.exchangeCodeForToken(request);
 			if(tokenResponse == null) {
 				return ResponseEntity.badRequest().body("Invalid token request");
+			}
+			return ResponseEntity.ok(tokenResponse);
+		} catch(Exception e) {
+			return ResponseEntity.badRequest().build();
+		}
+	}
+
+	@GetMapping(REFRESH_TOKEN_PATH)
+	public ResponseEntity<?> refreshToken() {
+		try {
+			String userId = SecurityUtils.getCurrentUserId();
+			TokenResponse tokenResponse = authService.refreshToken(userId);
+			if(tokenResponse == null) {
+				return ResponseEntity.badRequest().body("Invalid refresh token request");
 			}
 			return ResponseEntity.ok(tokenResponse);
 		} catch(Exception e) {

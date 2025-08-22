@@ -94,4 +94,18 @@ public class AuthServiceImpl implements AuthService {
 			return null;
 		}
 	}
+
+	@Override
+	public TokenResponse refreshToken(String userId) {
+		UserAccountEntity userAccountEntity = userAccountRepository.findById(userId)
+				.orElse(null);
+		UserAccountResponseDto userAccountResponseDto = userAccountMapper.toResponseDto(userAccountEntity);
+		String token = jwtTokenProvider.generateTokenWithPermissions(userAccountResponseDto);
+		return TokenResponse.builder()
+				.token(token)
+				.userId(userAccountResponseDto.getId())
+				.name(userAccountResponseDto.getName())
+				.organizationId(userAccountResponseDto.getOrganizationId())
+				.build();
+	}
 }

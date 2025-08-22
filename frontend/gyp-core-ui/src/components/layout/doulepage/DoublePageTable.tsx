@@ -1,10 +1,11 @@
 import type { TableColumnsType } from 'antd';
-import { Button, Flex, Modal, notification, Table, TableProps, Tooltip } from "antd";
+import { Button, Flex, Modal, Table, TableProps, Tooltip } from "antd";
 import { ColumnType } from "antd/es/table/interface";
 import React, { useEffect, useState } from "react";
 import { BiPlus } from "react-icons/bi";
 import { ThemeColors } from "../../../models/enums/ThemeColors.ts";
 import { BaseService } from "../../../services/BaseService.ts";
+import { createErrorNotification, createSuccessNotification } from "../../notification/Notification.ts";
 import { useDoublePageContext } from "./DoublePageContext.tsx";
 
 export interface DoublePageTableProps {
@@ -83,13 +84,10 @@ export const DoublePageTable: React.FC<DoublePageTableProps> = ({
                 await service.delete(entity.id);
                 await new Promise(resolve => setTimeout(resolve, 300));
                 void fetchData();
-                notification.success({message: "Delete successfully"});
+                createSuccessNotification("Delete", "Item deleted successfully");
             }
         } catch (error: any) {
-            modal.error({
-                title: "Error",
-                content: error.response?.data || "Failed to delete item",
-            });
+            createErrorNotification("Error", error.response?.data || "Failed to delete item");
         }
     };
 

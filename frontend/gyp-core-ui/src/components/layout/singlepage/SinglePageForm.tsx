@@ -1,9 +1,9 @@
-import { Button, Flex, notification, Tooltip } from "antd";
+import { Button, Flex, Tooltip } from "antd";
 import React from "react";
 import { BiArrowBack } from "react-icons/bi";
 import { FormState } from "../../../models/enums/FormState.ts";
 import { BaseService } from "../../../services/BaseService.ts";
-import { createSuccessNotification } from "../../notification/Notification.ts";
+import { createErrorNotification, createSuccessNotification } from "../../notification/Notification.ts";
 import { useSinglePageContext } from "./SinglePageContext.tsx";
 
 export interface SinglePageFormProps {
@@ -63,7 +63,7 @@ const SinglePageForm: React.FC<SinglePageFormProps> = ({
             handleBack();
         } catch (error) {
             console.error('Failed to save:', error);
-            notification.error({message: "Failed to save item"});
+            createErrorNotification("Error", "Failed to save item. Please try again later.");
         } finally {
             setIsLoading(false);
         }

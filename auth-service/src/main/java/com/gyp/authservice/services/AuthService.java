@@ -13,4 +13,6 @@ public interface AuthService {
 	UserAccountResponseDto register(RegisterRequestDto registerRequestDto);
 
 	TokenResponse exchangeCodeForToken(TokenRequestDto request);
+
+	TokenResponse refreshToken(String userId);
 }

@@ -1,4 +1,4 @@
-import { Button, Form, Input, notification, Select, Tooltip, Upload, UploadProps } from "antd";
+import { Button, Form, Input, Select, Tooltip, Upload, UploadProps } from "antd";
 import React, { useEffect, useState } from "react";
 import { BiArrowBack, BiCloudUpload } from "react-icons/bi";
 import { useParams } from "react-router-dom";
@@ -42,14 +42,14 @@ const SeatMapFormTab: React.FC<SeatMapFormTabProps> = ({mode}) => {
         try {
             if (isCreateMode) {
                 await SeatMapServiceAdapter.create(values);
-                notification.success({message: "Seat Map created successfully"});
+                createSuccessNotification("Seat Map", "Seat Map created successfully");
             } else if (isEditMode && entity) {
                 await SeatMapServiceAdapter.update(values, entity.id);
-                notification.success({message: "Seat Map updated successfully"});
+                createSuccessNotification("Seat Map", "Seat Map updated successfully");
             }
         } catch (error) {
             console.error('Failed to save:', error);
-            notification.error({message: "Failed to save item"});
+            createErrorNotification("Seat Map", "Failed to save seat map. Please try again.");
         } finally {
             setIsLoading(false);
         }

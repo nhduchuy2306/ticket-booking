@@ -16,6 +16,8 @@ public interface UserAccountService {
 
 	UserAccountResponseDto getUserAccountById(String id);
 
+	UserAccountResponseDto getUserAccountByUserGroupId(String userGroupId, String userAccountId);
+
 	UserAccountResponseDto createUserAccount(UserAccountRequestDto request);
 
 	List<UserAccountEventModel> getOrganizerAccounts();

@@ -37,4 +37,11 @@ public interface UserAccountRepository extends JpaRepository<UserAccountEntity, 
 			""", nativeQuery = true)
 	List<UserAccountEntity> findAllWithAppEventCrudPermissions();
 
+	@Query("""
+				SELECT u FROM UserAccountEntity u
+				JOIN FETCH u.userGroupEntityList ug
+				WHERE ug.id = :userGroupId
+				AND u.id = :userAccountId
+			""")
+	Optional<UserAccountEntity> findByUserGroupId(String userGroupId, String userAccountId);
 }

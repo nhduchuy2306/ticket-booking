@@ -1,6 +1,7 @@
-import { Button, Form, Input, InputNumber, notification, Select, Space } from "antd";
+import { Button, Form, Input, InputNumber, Select, Space } from "antd";
 import React, { useEffect, useState } from "react";
 import MetaData from "../../components/metadata/MetaData.tsx";
+import { createErrorNotification } from "../../components/notification/Notification.ts";
 import { useFormLogic } from "../../hooks/form/useFormLogic.tsx";
 import {
     SeatMapResponseDto,
@@ -50,7 +51,7 @@ const VenueMapForm: React.FC<VenueMapFormProps> = ({entity, mode, onSave, onCanc
                 }
             } catch (error) {
                 console.error("Failed to fetch seat maps:", error);
-                notification.error({message: "Error fetching seat maps"});
+                createErrorNotification("Error", "Failed to fetch seat maps or venues. Please try again later.");
             }
         }
         void fetchData();

@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from "axios";
+import { createErrorNotification } from "../components/notification/Notification.ts";
 import { IamService } from "./Iam/IamService.ts";
 
 const BASE_URL = "http://localhost:9999";
@@ -32,6 +33,12 @@ apiClient.interceptors.response.use(
             if (error.response?.status === 401) {
                 IamService.removeToken();
                 IamService.redirectToLogin();
+            } else if (error.response?.status === 403) {
+                createErrorNotification("Access Denied", "You do not have permission to access this resource.");
+            } else if (error.response?.status === 404) {
+                createErrorNotification("Not Found", "The requested resource could not be found.");
+            } else {
+                createErrorNotification("Error", error.message || "An unexpected error occurred");
             }
             return Promise.reject(error);
         }

@@ -1,9 +1,8 @@
-import { notification } from "antd";
 import React, { useEffect } from "react";
 import { FormState } from "../../../models/enums/FormState.ts";
-import { createSuccessNotification } from "../../notification/Notification.ts";
-import { useDoublePageContext } from "./DoublePageContext.tsx";
 import { BaseService } from "../../../services/BaseService.ts";
+import { createErrorNotification, createSuccessNotification } from "../../notification/Notification.ts";
+import { useDoublePageContext } from "./DoublePageContext.tsx";
 
 export interface DoublePageFormProps {
     service: BaseService<any, any>;
@@ -51,12 +50,12 @@ export const DoublePageForm: React.FC<DoublePageFormProps> = ({
                 }
             } catch (error) {
                 console.error("Failed to fetch data:", error);
-                notification.error({message: "Failed to fetch item"});
+                createErrorNotification("Error", "Failed to fetch item. Please try again later.");
             } finally {
                 setIsLoading(false);
             }
         };
-        if(selectedEntity) {
+        if (selectedEntity) {
             void getDataById(selectedEntity?.id)
         } else {
             setDataById(null);
@@ -81,7 +80,7 @@ export const DoublePageForm: React.FC<DoublePageFormProps> = ({
             handleClearForm();
         } catch (error) {
             console.error("Failed to save:", error);
-            notification.error({message: "Failed to save item"});
+            createErrorNotification("Error", "Failed to save item. Please try again later.");
         } finally {
             setIsLoading(false);
         }

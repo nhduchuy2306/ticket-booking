@@ -40,6 +40,8 @@ public enum ApplicationPermission {
 	TICKET_GENERATION("Ticket Generation", "app.ticket.generation",
 			actions(ActionPermission.CREATE, ActionPermission.READ, ActionPermission.UPDATE, ActionPermission.DELETE,
 					ActionPermission.GENERATE)),
+	SALE_CHANNEL("Sale Channel", "app.sale.channel",
+			actions(ActionPermission.CREATE, ActionPermission.READ, ActionPermission.UPDATE, ActionPermission.DELETE)),
 	CONFIGURATION("Configuration", "app.configuration",
 			actions(ActionPermission.CREATE, ActionPermission.READ, ActionPermission.UPDATE, ActionPermission.DELETE,
 					ActionPermission.IMPORT, ActionPermission.EXPORT));

@@ -1,5 +1,6 @@
-import { Button, Form, Input, notification } from "antd";
+import { Button, Form, Input } from "antd";
 import React, { useEffect, useState } from "react";
+import { createErrorNotification, createSuccessNotification } from "../../components/notification/Notification.ts";
 import { UserAccountResponseDto } from "../../models/generated/auth-service-models";
 import { UserAccountService } from "../../services/Auth/UserAccountService.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
@@ -20,11 +21,11 @@ const ProfileDetailPage: React.FC = () => {
                         setData(response);
                     }
                 } else {
-                    notification.error({message: "User ID not found"});
+                    createErrorNotification("Error", "User ID not found in local storage. Please log in again.");
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
-                notification.error({message: "Failed to fetch data"});
+                createErrorNotification("Error", "Failed to fetch user profile data. Please try again later.");
             } finally {
                 setIsLoading(false);
             }
@@ -55,12 +56,12 @@ const ProfileDetailPage: React.FC = () => {
                 userGroupList: []
             };
             await UserAccountService.updateUserAccount(adaptedValues, id);
-            notification.success({message: "Profile updated successfully"});
+            createSuccessNotification("Profile", "Profile updated successfully");
         } catch (error) {
             if (error instanceof Error) {
-                notification.error({message: error.message});
+                createErrorNotification("Error", error.message);
             } else {
-                notification.error({message: "Failed to update profile"});
+                createErrorNotification("Error", "Failed to update profile. Please try again later.");
             }
         }
     };

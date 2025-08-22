@@ -6,95 +6,95 @@ const TOKEN_PATH = "token";
 const REDIRECT_URL = 'http://localhost:3000/callback';
 const RESPONSE_URL = 'http://localhost:3000/user-account';
 const AUTH_SERVICE_URL = `http://localhost:9999/auths/iam/oauth/login?redirect_uri=${encodeURIComponent(REDIRECT_URL)}&client_id=${CLIENT_ID}`;
+const REFRESH_TOKEN_PATH = "refresh-token";
 
-const getToken = (): string | null => {
-    return localStorage.getItem(TOKEN_KEY);
-}
+export class IamService {
+    static getToken = (): string | null => {
+        return localStorage.getItem(TOKEN_KEY);
+    }
 
-const setToken = (token: string): void => {
-    localStorage.setItem(TOKEN_KEY, token);
-}
+    static setToken = (token: string): void => {
+        localStorage.setItem(TOKEN_KEY, token);
+    }
 
-const setOrganizationId = (organizationId: string): void => {
-    localStorage.setItem('organizationId', organizationId);
-}
+    static setOrganizationId = (organizationId: string): void => {
+        localStorage.setItem('organizationId', organizationId);
+    }
 
-const getOrganizationId = (): string | null => {
-    return localStorage.getItem('organizationId');
-}
+    static getOrganizationId = (): string | null => {
+        return localStorage.getItem('organizationId');
+    }
 
-const setUserId = (userId: string): void => {
-    localStorage.setItem('userId', userId);
-}
+    static setUserId = (userId: string): void => {
+        localStorage.setItem('userId', userId);
+    }
 
-const getUserId = (): string | null => {
-    return localStorage.getItem('userId');
-}
+    static getUserId = (): string | null => {
+        return localStorage.getItem('userId');
+    }
 
-const setName = (username: string): void => {
-    localStorage.setItem('name', username);
-}
+    static setName = (username: string): void => {
+        localStorage.setItem('name', username);
+    }
 
-const getName = (): string | null => {
-    return localStorage.getItem('name');
-}
+    static getName = (): string | null => {
+        return localStorage.getItem('name');
+    }
 
-const removeToken = (): void => {
-    localStorage.removeItem(TOKEN_KEY);
-}
+    static removeToken = (): void => {
+        localStorage.removeItem(TOKEN_KEY);
+    }
 
-const redirectToLogin = (): void => {
-    window.location.href = AUTH_SERVICE_URL;
-}
+    static clearLocalStorage = (): void => {
+        localStorage.clear();
+    }
 
-const handleAuthCallback = async (authCode: string): Promise<void> => {
-    try {
-        const response = await apiClient.post(`${AUTH_SERVICE_PATH}/${TOKEN_PATH}`, {
-            clientId: CLIENT_ID,
-            code: authCode
-        });
-        if (response.data && response.data.token) {
-            if (response.data.token) {
-                setToken(response.data.token);
-                window.location.href = RESPONSE_URL;
+    static redirectToLogin = (): void => {
+        this.clearLocalStorage();
+        window.location.href = AUTH_SERVICE_URL;
+    }
+
+    static handleAuthCallback = async (authCode: string): Promise<void> => {
+        try {
+            const response = await apiClient.post(`${AUTH_SERVICE_PATH}/${TOKEN_PATH}`, {
+                clientId: CLIENT_ID,
+                code: authCode
+            });
+            if (response.data && response.data.token) {
+                if (response.data.token) {
+                    this.setToken(response.data.token);
+                    window.location.href = RESPONSE_URL;
+                }
+                if (response.data.organizationId) {
+                    this.setOrganizationId(response.data.organizationId);
+                }
+                if (response.data.userId) {
+                    this.setUserId(response.data.userId);
+                }
+                if (response.data.name) {
+                    this.setName(response.data.name);
+                }
+            } else {
+                console.error('No token received in response');
             }
-            if (response.data.organizationId) {
-                setOrganizationId(response.data.organizationId);
-            }
-            if (response.data.userId) {
-                setUserId(response.data.userId);
-            }
-            if (response.data.name) {
-                setName(response.data.name);
-            }
-        } else {
-            console.error('No token received in response');
+        } catch (error) {
+            console.error('Error handling auth callback:', error);
         }
-    } catch (error) {
-        console.error('Error handling auth callback:', error);
     }
-}
 
-const checkExistingAuth = async (): Promise<void> => {
-    const token = getToken();
-    if (!token) {
-        redirectToLogin();
+    static handleRefreshToken = async (): Promise<void> => {
+        const token = await apiClient.get(`${AUTH_SERVICE_PATH}/${REFRESH_TOKEN_PATH}`);
+        if (token && token.data && token.data.token) {
+            this.setToken(token.data.token);
+        } else {
+            console.error('No token received in refresh response');
+        }
     }
-}
 
-export const IamService = {
-    getToken,
-    setToken,
-    removeToken,
-    setOrganizationId,
-    getOrganizationId,
-    setUserId,
-    getUserId,
-    setName,
-    getName,
-    handleAuthCallback,
-    checkExistingAuth,
-    redirectToLogin,
-    CLIENT_ID,
-    TOKEN_KEY,
+    static checkExistingAuth = async (): Promise<void> => {
+        const token = this.getToken();
+        if (!token) {
+            this.redirectToLogin();
+        }
+    }
 }

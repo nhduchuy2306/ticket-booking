@@ -11,6 +11,8 @@ import {
     UserGroupRequestDto,
     UserGroupResponseDto
 } from "../../models/generated/auth-service-models";
+import { UserGroupService } from "../../services/Auth/UserGroupService.ts";
+import { IamService } from "../../services/Iam/IamService.ts";
 
 interface UserGroupFormProps {
     entity: UserGroupResponseDto;
@@ -49,10 +51,10 @@ const UserGroupForm: React.FC<UserGroupFormProps> = ({entity, mode, onSave, onCa
 
     const initializeForm = () => {
         if (entity) {
-            const {administrator, name, description} = entity;
+            const {administrator, name, description, id} = entity;
             const initialPermissions = extractPermissionKeys();
 
-            form.setFieldsValue({administrator, name, description});
+            form.setFieldsValue({administrator, name, description, id});
             form.setFieldsValue({userGroupPermissions: initialPermissions});
             setSelectedPermissions(initialPermissions);
         }
@@ -96,6 +98,15 @@ const UserGroupForm: React.FC<UserGroupFormProps> = ({entity, mode, onSave, onCa
         const values = await form.validateFields();
         values.userGroupPermissions = buildPermissions(form.getFieldValue("userGroupPermissions"));
         await onSave(values);
+        if (!isCreateMode) {
+            const userAccount = await UserGroupService.getUserAccountByUserGroupId(entity.id);
+            if (userAccount) {
+                const userId = IamService.getUserId();
+                if (userId && userAccount.id === userId) {
+                    await IamService.handleRefreshToken();
+                }
+            }
+        }
         resetForm();
     };
 
@@ -109,6 +120,10 @@ const UserGroupForm: React.FC<UserGroupFormProps> = ({entity, mode, onSave, onCa
 
     return (
             <Form form={form} layout="vertical" size="middle" onFinish={handleSubmit} disabled={isReadOnly}>
+                <Form.Item name="id" label="Id" hidden={isCreateMode}>
+                    <Input disabled/>
+                </Form.Item>
+
                 <Form.Item
                         name="name"
                         label="Name"

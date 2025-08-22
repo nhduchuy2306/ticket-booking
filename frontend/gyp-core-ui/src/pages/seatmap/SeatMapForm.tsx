@@ -1,7 +1,7 @@
-import { notification } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import SinglePageLayout from "../../components/layout/singlepage/SinglePageLayout.tsx";
+import { createErrorNotification } from "../../components/notification/Notification.ts";
 import { Mode } from "../../models/enums/Mode.ts";
 import { SeatMapResponseDto } from "../../models/generated/event-service-models";
 import { SeatMapService } from "../../services/Event/SeatMapService.ts";
@@ -30,7 +30,7 @@ const SeatMapForm: React.FC<SeatMapFormProps> = ({mode}) => {
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
-                notification.error({message: "Failed to fetch data"});
+                createErrorNotification("Error", "Failed to fetch seat map data. Please try again later.");
             }
         };
         void fetchData();

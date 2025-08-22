@@ -2,6 +2,7 @@ import { Button, Flex, Modal, notification, Table, TableProps, Tooltip } from "a
 import React, { useEffect, useState } from "react";
 import { BiPlus } from "react-icons/bi";
 import { BaseService } from "../../../services/BaseService.ts";
+import { createErrorNotification, createSuccessNotification } from "../../notification/Notification.ts";
 import { useSinglePageContext } from "./SinglePageContext.tsx";
 
 export interface SinglePageTableProps {
@@ -82,12 +83,10 @@ const SinglePageTable: React.FC<SinglePageTableProps> = ({
                 await new Promise(resolve => setTimeout(resolve, 300));
                 void fetchData();
                 notification.success({message: "Delete successfully"});
+                createSuccessNotification("Delete", "Item deleted successfully");
             }
         } catch (error: any) {
-            modal.error({
-                title: "Error",
-                content: error.response?.data || "Failed to delete item",
-            });
+            createErrorNotification("Error", error.response?.data || "Failed to delete item");
         }
     };
 

@@ -1,4 +1,4 @@
-import { Button, Checkbox, DatePicker, Form, Input, notification, Select, UploadFile } from "antd";
+import { Button, Checkbox, DatePicker, Form, Input, Select, UploadFile } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ImageUpload from "../../components/dataupload/ImageUpload.tsx";
@@ -83,7 +83,7 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
-                notification.error({message: "Failed to fetch data"});
+                createErrorNotification("Error", "Failed to fetch event data. Please try again later.");
             } finally {
                 setIsLoading(false);
             }

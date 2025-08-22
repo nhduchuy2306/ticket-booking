@@ -1,7 +1,8 @@
-import { Button, DatePicker, Form, Input, InputNumber, notification, Select, Space, Switch } from "antd";
+import { Button, DatePicker, Form, Input, InputNumber, Select, Space, Switch } from "antd";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import MetaData from "../../components/metadata/MetaData.tsx";
+import { createErrorNotification } from "../../components/notification/Notification.ts";
 import { FormState } from "../../models/enums/FormState.ts";
 import {
     EventResponseDto,
@@ -43,7 +44,7 @@ const TicketTypeForm: React.FC<TicketTypeFormProps> = ({entity, mode, onSave, on
                 setEvents([]);
             }
         } catch (error) {
-            notification.error({message: "Failed to fetch events"});
+            createErrorNotification("Error", "Failed to fetch events. Please try again later.");
         }
     }
 

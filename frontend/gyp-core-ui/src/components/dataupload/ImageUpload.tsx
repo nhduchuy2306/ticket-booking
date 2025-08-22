@@ -1,5 +1,6 @@
-import { Modal, notification, Upload, UploadFile, UploadProps } from "antd";
+import { Modal, Upload, UploadFile, UploadProps } from "antd";
 import React from "react";
+import { createErrorNotification } from "../notification/Notification.ts";
 
 type FileType = Parameters<NonNullable<UploadProps['beforeUpload']>>[0];
 
@@ -45,18 +46,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             const acceptedTypesString = acceptedTypes.map(type =>
                     type.split('/')[1].toUpperCase()
             ).join('/');
-            notification.error({
-                message: `You can only upload ${acceptedTypesString} files!`
-            });
+            createErrorNotification("Invalid File Type", `You can only upload ${acceptedTypesString} files!`);
             return false;
         }
 
         // Validate file size
         const isValidSize = file.size / 1024 / 1024 < maxSizeMB;
         if (!isValidSize) {
-            notification.error({
-                message: `Image must be smaller than ${maxSizeMB}MB!`
-            });
+            createErrorNotification("File Size Error", `Image must be smaller than ${maxSizeMB}MB!`);
             return false;
         }
 

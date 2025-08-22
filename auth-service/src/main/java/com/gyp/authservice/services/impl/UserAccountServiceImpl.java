@@ -1,6 +1,7 @@
 package com.gyp.authservice.services.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.gyp.authservice.dtos.useraccount.UserAccountRequestDto;
@@ -62,6 +63,13 @@ public class UserAccountServiceImpl implements UserAccountService {
 			return userAccountMapper.toResponseDto(userAccountEntity);
 		}
 		return null;
+	}
+
+	@Override
+	public UserAccountResponseDto getUserAccountByUserGroupId(String userGroupId, String userAccountId) {
+		Optional<UserAccountEntity> userAccountEntity = userAccountRepository.findByUserGroupId(userGroupId,
+				userAccountId);
+		return userAccountEntity.map(userAccountMapper::toResponseDto).orElse(null);
 	}
 
 	@Override
