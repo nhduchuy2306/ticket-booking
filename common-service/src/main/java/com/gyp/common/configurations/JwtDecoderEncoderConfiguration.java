@@ -11,12 +11,9 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 
 @Configuration
-public class JwtDecoderConfiguration {
-	@Value("${jwt.secret.token}")
-	private String jwtSecretKey;
-
+public class JwtDecoderEncoderConfiguration {
 	@Bean
-	public JwtDecoder jwtDecoder() {
+	public JwtDecoder jwtDecoder(@Value("${jwt.secret.token}") String jwtSecretKey) {
 		SecretKeySpec secretKeySpec = new SecretKeySpec(jwtSecretKey.getBytes(), JWSAlgorithm.HS512.getName());
 		return NimbusJwtDecoder
 				.withSecretKey(secretKeySpec)

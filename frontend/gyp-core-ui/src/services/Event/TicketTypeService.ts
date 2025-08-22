@@ -4,36 +4,30 @@ import { BaseService } from "../BaseService.ts";
 
 const TICKET_TYPE_PATH = "ticket-types";
 
-const getAllTicketTypes = async (): Promise<TicketTypeResponseDto[]> => {
-    const res = await apiClient.get(`/${EVENT_SERVICE_PATH}/${TICKET_TYPE_PATH}`);
-    return res.data;
-}
+export class TicketTypeService {
+    static getAllTicketTypes = async (): Promise<TicketTypeResponseDto[]> => {
+        const res = await apiClient.get(`/${EVENT_SERVICE_PATH}/${TICKET_TYPE_PATH}`);
+        return res.data;
+    }
 
-const getTicketTypeById = async (id: string): Promise<TicketTypeResponseDto> => {
-    const res = await apiClient.get(`/${EVENT_SERVICE_PATH}/${TICKET_TYPE_PATH}/${id}`);
-    return res.data;
-}
+    static getTicketTypeById = async (id: string): Promise<TicketTypeResponseDto> => {
+        const res = await apiClient.get(`/${EVENT_SERVICE_PATH}/${TICKET_TYPE_PATH}/${id}`);
+        return res.data;
+    }
 
-const createTicketType = async (body: TicketTypeRequestDto): Promise<TicketTypeResponseDto> => {
-    const res = await apiClient.post(`/${EVENT_SERVICE_PATH}/${TICKET_TYPE_PATH}`, body);
-    return res.data;
-}
+    static createTicketType = async (body: TicketTypeRequestDto): Promise<TicketTypeResponseDto> => {
+        const res = await apiClient.post(`/${EVENT_SERVICE_PATH}/${TICKET_TYPE_PATH}`, body);
+        return res.data;
+    }
 
-const updateTicketType = async (body: TicketTypeRequestDto, id: string): Promise<TicketTypeResponseDto> => {
-    const res = await apiClient.put(`/${EVENT_SERVICE_PATH}/${TICKET_TYPE_PATH}/${id}`, body);
-    return res.data;
-}
+    static updateTicketType = async (body: TicketTypeRequestDto, id: string): Promise<TicketTypeResponseDto> => {
+        const res = await apiClient.put(`/${EVENT_SERVICE_PATH}/${TICKET_TYPE_PATH}/${id}`, body);
+        return res.data;
+    }
 
-const deleteTicketType = async (id: string): Promise<void> => {
-    await apiClient.delete(`/${EVENT_SERVICE_PATH}/${TICKET_TYPE_PATH}/${id}`);
-}
-
-export const TicketTypeService = {
-    getAllTicketTypes,
-    createTicketType,
-    updateTicketType,
-    deleteTicketType,
-    getTicketTypeById,
+    static deleteTicketType = async (id: string): Promise<void> => {
+        await apiClient.delete(`/${EVENT_SERVICE_PATH}/${TICKET_TYPE_PATH}/${id}`);
+    }
 }
 
 export const TicketTypeServiceAdapter: BaseService<TicketTypeRequestDto, TicketTypeResponseDto> = {

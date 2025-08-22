@@ -3,6 +3,7 @@ package com.gyp.ticketservice.controllers;
 import com.gyp.ticketservice.services.TicketGenerationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,8 @@ public class TicketGenerationController {
 	private final TicketGenerationService ticketGenerationService;
 
 	@GetMapping("/{" + EVENT_ID_PARAM + "}/" + GENERATE_TICKET_PATH)
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.TICKET_GENERATION, #ActionPerm.GENERATE)")
 	public ResponseEntity<?> generateTickets(@PathVariable(EVENT_ID_PARAM) String eventId) {
 		try {
 			ticketGenerationService.generateTicketBaseOnEventConfiguration(eventId);
@@ -32,6 +35,8 @@ public class TicketGenerationController {
 	}
 
 	@DeleteMapping("/{" + EVENT_ID_PARAM + "}/" + GENERATE_TICKET_PATH)
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.TICKET_GENERATION, #ActionPerm.DELETE)")
 	public ResponseEntity<?> deleteTicketsGeneration(@PathVariable(EVENT_ID_PARAM) String eventId) {
 		try {
 			ticketGenerationService.deleteTicketsGeneration(eventId);

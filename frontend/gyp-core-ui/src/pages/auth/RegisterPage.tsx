@@ -1,7 +1,7 @@
 import { Button, Col, Form, Input, Row, Typography } from "antd";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { RegisterModel } from "../../models/AuthService/LoginModel.ts";
+import { RegisterRequestDto } from "../../models/generated/auth-service-models";
 import { AuthService } from "../../services/Auth/AuthService.ts";
 import "./register.scss";
 
@@ -13,7 +13,7 @@ const RegisterPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const navigate = useNavigate();
 
-    const onFinish = async (values: RegisterModel) => {
+    const onFinish = async (values: RegisterRequestDto) => {
         setRegisterErrors([]);
         setLoading(true);
         try {

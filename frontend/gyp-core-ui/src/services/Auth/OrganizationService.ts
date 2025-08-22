@@ -4,36 +4,30 @@ import { BaseService } from "../BaseService.ts";
 
 const ORGANIZATION_PATH = "organizations";
 
-const getAllOrganizations = async (): Promise<OrganizationResponseDto[]> => {
-    const res = await apiClient.get(`/${AUTH_SERVICE_PATH}/${ORGANIZATION_PATH}`);
-    return res.data;
-}
+export class OrganizationService {
+    static getAllOrganizations = async (): Promise<OrganizationResponseDto[]> => {
+        const res = await apiClient.get(`/${AUTH_SERVICE_PATH}/${ORGANIZATION_PATH}`);
+        return res.data;
+    }
 
-const getOrganizationById = async (id: string): Promise<OrganizationResponseDto> => {
-    const res = await apiClient.get(`/${AUTH_SERVICE_PATH}/${ORGANIZATION_PATH}/${id}`);
-    return res.data;
-}
+    static getOrganizationById = async (id: string): Promise<OrganizationResponseDto> => {
+        const res = await apiClient.get(`/${AUTH_SERVICE_PATH}/${ORGANIZATION_PATH}/${id}`);
+        return res.data;
+    }
 
-const createOrganization = async (body: OrganizationRequestDto): Promise<OrganizationResponseDto> => {
-    const res = await apiClient.post(`/${AUTH_SERVICE_PATH}/${ORGANIZATION_PATH}`, body);
-    return res.data;
-}
+    static createOrganization = async (body: OrganizationRequestDto): Promise<OrganizationResponseDto> => {
+        const res = await apiClient.post(`/${AUTH_SERVICE_PATH}/${ORGANIZATION_PATH}`, body);
+        return res.data;
+    }
 
-const updateOrganization = async (body: OrganizationRequestDto, id: string): Promise<OrganizationResponseDto> => {
-    const res = await apiClient.put(`/${AUTH_SERVICE_PATH}/${ORGANIZATION_PATH}/${id}`, body);
-    return res.data;
-}
+    static updateOrganization = async (body: OrganizationRequestDto, id: string): Promise<OrganizationResponseDto> => {
+        const res = await apiClient.put(`/${AUTH_SERVICE_PATH}/${ORGANIZATION_PATH}/${id}`, body);
+        return res.data;
+    }
 
-const deleteOrganization = async (id: string): Promise<void> => {
-    await apiClient.delete(`/${AUTH_SERVICE_PATH}/${ORGANIZATION_PATH}/${id}`);
-}
-
-export const OrganizationService = {
-    getAllOrganizations,
-    getOrganizationById,
-    createOrganization,
-    updateOrganization,
-    deleteOrganization,
+    static deleteOrganization = async (id: string): Promise<void> => {
+        await apiClient.delete(`/${AUTH_SERVICE_PATH}/${ORGANIZATION_PATH}/${id}`);
+    }
 }
 
 export const OrganizationServiceAdapter: BaseService<OrganizationRequestDto, OrganizationResponseDto> = {

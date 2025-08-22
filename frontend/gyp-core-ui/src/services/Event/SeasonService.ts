@@ -4,36 +4,30 @@ import { BaseService } from "../BaseService.ts";
 
 const SEASON_PATH = "seasons";
 
-const getAllSeasons = async (): Promise<SeasonResponseDto[]> => {
-    const res = await apiClient.get(`/${EVENT_SERVICE_PATH}/${SEASON_PATH}`);
-    return res.data;
-}
+export class SeasonService {
+    static getAllSeasons = async (): Promise<SeasonResponseDto[]> => {
+        const res = await apiClient.get(`/${EVENT_SERVICE_PATH}/${SEASON_PATH}`);
+        return res.data;
+    }
 
-const getSeasonById = async (id: string): Promise<SeasonResponseDto> => {
-    const res = await apiClient.get(`/${EVENT_SERVICE_PATH}/${SEASON_PATH}/${id}`);
-    return res.data;
-}
+    static getSeasonById = async (id: string): Promise<SeasonResponseDto> => {
+        const res = await apiClient.get(`/${EVENT_SERVICE_PATH}/${SEASON_PATH}/${id}`);
+        return res.data;
+    }
 
-const createSeason = async (body: SeasonRequestDto): Promise<SeasonResponseDto> => {
-    const res = await apiClient.post(`/${EVENT_SERVICE_PATH}/${SEASON_PATH}`, body);
-    return res.data;
-}
+    static createSeason = async (body: SeasonRequestDto): Promise<SeasonResponseDto> => {
+        const res = await apiClient.post(`/${EVENT_SERVICE_PATH}/${SEASON_PATH}`, body);
+        return res.data;
+    }
 
-const updateSeason = async (body: SeasonRequestDto, id: string): Promise<SeasonResponseDto> => {
-    const res = await apiClient.put(`/${EVENT_SERVICE_PATH}/${SEASON_PATH}/${id}`, body);
-    return res.data;
-}
+    static updateSeason = async (body: SeasonRequestDto, id: string): Promise<SeasonResponseDto> => {
+        const res = await apiClient.put(`/${EVENT_SERVICE_PATH}/${SEASON_PATH}/${id}`, body);
+        return res.data;
+    }
 
-const deleteSeason = async (id: string): Promise<void> => {
-    await apiClient.delete(`/${EVENT_SERVICE_PATH}/${SEASON_PATH}/${id}`);
-}
-
-export const SeasonService = {
-    getAllSeasons,
-    createSeason,
-    updateSeason,
-    deleteSeason,
-    getSeasonById,
+    static deleteSeason = async (id: string): Promise<void> => {
+        await apiClient.delete(`/${EVENT_SERVICE_PATH}/${SEASON_PATH}/${id}`);
+    }
 }
 
 export const SeasonServiceAdapter: BaseService<SeasonRequestDto, SeasonResponseDto> = {

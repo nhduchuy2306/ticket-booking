@@ -37,6 +37,9 @@ public enum ApplicationPermission {
 	VENUE_MAP("Venue Map", "app.venue.map",
 			actions(ActionPermission.CREATE, ActionPermission.READ, ActionPermission.UPDATE, ActionPermission.DELETE,
 					ActionPermission.IMPORT, ActionPermission.EXPORT)),
+	TICKET_GENERATION("Ticket Generation", "app.ticket.generation",
+			actions(ActionPermission.CREATE, ActionPermission.READ, ActionPermission.UPDATE, ActionPermission.DELETE,
+					ActionPermission.GENERATE)),
 	CONFIGURATION("Configuration", "app.configuration",
 			actions(ActionPermission.CREATE, ActionPermission.READ, ActionPermission.UPDATE, ActionPermission.DELETE,
 					ActionPermission.IMPORT, ActionPermission.EXPORT));

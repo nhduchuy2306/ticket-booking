@@ -11,6 +11,7 @@ public enum ActionPermission {
 	EXPORT("export"),
 	IMPORT("import"),
 	LOGIN("login"),
+	GENERATE("generate"),
 	LOGOUT("logout"),
 	SYNC("sync");
 
