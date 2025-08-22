@@ -9,6 +9,7 @@ import com.gyp.eventservice.services.VenueMapService;
 import com.gyp.eventservice.services.criteria.VenueMapSearchCriteria;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,7 @@ public class VenueMapController extends AbstractController {
 	private final VenueMapService venueMapService;
 
 	@GetMapping
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.VENUE_MAP, #ActionPerm.READ)")
 	public ResponseEntity<?> getAllVenueMaps(
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
 			@RequestParam(value = "size", required = false) Optional<Integer> size) {
@@ -47,6 +49,7 @@ public class VenueMapController extends AbstractController {
 	}
 
 	@GetMapping("/{" + ID_PARAM + "}")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.VENUE_MAP, #ActionPerm.READ)")
 	public ResponseEntity<?> getVenueMapById(@PathVariable(ID_PARAM) String id) {
 		var venueMap = venueMapService.getVenueMapById(id);
 		if(venueMap != null) {
@@ -56,6 +59,7 @@ public class VenueMapController extends AbstractController {
 	}
 
 	@PostMapping
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.VENUE_MAP, #ActionPerm.CREATE)")
 	public ResponseEntity<?> createVenueMap(@RequestBody VenueMapRequestDto venueMapRequestDto) {
 		var createdVenueMap = venueMapService.createVenueMap(venueMapRequestDto);
 		if(createdVenueMap != null) {
@@ -65,6 +69,7 @@ public class VenueMapController extends AbstractController {
 	}
 
 	@PutMapping("/{" + ID_PARAM + "}")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.VENUE_MAP, #ActionPerm.UPDATE)")
 	public ResponseEntity<?> updateVenueMap(@PathVariable(ID_PARAM) String id,
 			@RequestBody VenueMapRequestDto venueMapRequestDto) {
 		var updatedVenueMap = venueMapService.updateVenueMap(id, venueMapRequestDto);
@@ -75,6 +80,7 @@ public class VenueMapController extends AbstractController {
 	}
 
 	@DeleteMapping("/{" + ID_PARAM + "}")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.VENUE_MAP, #ActionPerm.DELETE)")
 	public ResponseEntity<?> deleteVenueMap(@PathVariable(ID_PARAM) String id) {
 		try {
 			venueMapService.deleteVenueMap(id);

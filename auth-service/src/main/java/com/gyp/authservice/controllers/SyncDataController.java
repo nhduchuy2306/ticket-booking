@@ -4,6 +4,7 @@ import com.gyp.authservice.messages.producers.UserAccountProducer;
 import com.gyp.common.controllers.AbstractController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ public class SyncDataController extends AbstractController {
 	private final UserAccountProducer userAccountProducer;
 
 	@GetMapping(SYNC_USER_ACCOUNT_PATH)
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT, #ActionPerm.SYNC)")
 	public ResponseEntity<?> syncUserAccount() {
 		userAccountProducer.syncUserAccount();
 		return ResponseEntity.ok("Sync user account data successfully");

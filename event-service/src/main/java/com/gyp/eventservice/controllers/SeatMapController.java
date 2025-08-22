@@ -13,6 +13,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +40,7 @@ public class SeatMapController extends AbstractController {
 	private final DirectoryService directoryService;
 
 	@GetMapping
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.SEAT_MAP, #ActionPerm.READ)")
 	public ResponseEntity<?> getAllSeatMaps() {
 		try {
 			return ResponseEntity.ok(seatMapService.getAllSeatMaps());
@@ -48,6 +50,7 @@ public class SeatMapController extends AbstractController {
 	}
 
 	@GetMapping("/{" + ID_PARAM + "}")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.SEAT_MAP, #ActionPerm.READ)")
 	public ResponseEntity<?> getSeatMapById(@PathVariable(ID_PARAM) String seatMapId) {
 		try {
 			return ResponseEntity.ok(seatMapService.getSeatMapById(seatMapId));
@@ -57,6 +60,7 @@ public class SeatMapController extends AbstractController {
 	}
 
 	@PostMapping
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.SEAT_MAP, #ActionPerm.CREATE)")
 	public ResponseEntity<?> createSeatMap(@RequestBody SeatMapRequestDto seatMapDto) {
 		try {
 			return ResponseEntity.ok(seatMapService.createSeatMap(seatMapDto));
@@ -66,6 +70,7 @@ public class SeatMapController extends AbstractController {
 	}
 
 	@PutMapping("/{" + ID_PARAM + "}")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.SEAT_MAP, #ActionPerm.UPDATE)")
 	public ResponseEntity<?> updateSeatMap(@PathVariable(ID_PARAM) String seatMapId,
 			@RequestBody SeatMapRequestDto seatMapDto) {
 		try {
@@ -76,6 +81,7 @@ public class SeatMapController extends AbstractController {
 	}
 
 	@DeleteMapping("/{" + ID_PARAM + "}")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.SEAT_MAP, #ActionPerm.DELETE)")
 	public ResponseEntity<?> deleteSeatMap(@PathVariable(ID_PARAM) String seatMapId) {
 		try {
 			seatMapService.deleteSeatMap(seatMapId);
@@ -86,6 +92,7 @@ public class SeatMapController extends AbstractController {
 	}
 
 	@PostMapping(value = UPLOAD_PATH, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.SEAT_MAP, #ActionPerm.IMPORT)")
 	public ResponseEntity<String> uploadSeatMap(@RequestParam("file") MultipartFile file) {
 		try {
 			String content = new String(file.getBytes(), StandardCharsets.UTF_8);
@@ -97,6 +104,7 @@ public class SeatMapController extends AbstractController {
 	}
 
 	@GetMapping(DOWNLOAD_TEMPLATE_PATH + "/{" + FILE_PARAM + "}")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.SEAT_MAP, #ActionPerm.EXPORT)")
 	public ResponseEntity<Resource> downloadTemplate(@PathVariable(FILE_PARAM) String fileName) {
 		try {
 			Resource resource = directoryService.getFileByFileName(fileName);

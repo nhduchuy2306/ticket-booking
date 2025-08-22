@@ -2,15 +2,14 @@ package com.gyp.eventservice.controllers;
 
 import java.util.Optional;
 
-import com.gyp.common.controllers.AbstractValidatableController;
+import com.gyp.common.controllers.AbstractController;
 import com.gyp.common.dtos.pagination.PaginatedDto;
-import com.gyp.common.services.DataIntegrityService;
 import com.gyp.eventservice.dtos.season.SeasonRequestDto;
 import com.gyp.eventservice.services.SeasonService;
 import com.gyp.eventservice.services.criteria.SeasonSearchCriteria;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,13 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(SeasonController.SEASON_CONTROLLER_RESOURCE_PATH)
-public class SeasonController extends AbstractValidatableController {
+public class SeasonController extends AbstractController {
 	public static final String SEASON_CONTROLLER_RESOURCE_PATH = "/seasons";
 
 	private final SeasonService seasonService;
-	private final DataIntegrityService dataIntegrityService;
 
 	@GetMapping
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.SEASON, #ActionPerm.READ)")
 	public ResponseEntity<?> getAllSeasons(
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
 			@RequestParam(value = "size", required = false) Optional<Integer> size) {
@@ -46,49 +45,34 @@ public class SeasonController extends AbstractValidatableController {
 	}
 
 	@GetMapping("/{" + ID_PARAM + "}")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.SEASON, #ActionPerm.READ)")
 	public ResponseEntity<?> getActiveSeason(@PathVariable(ID_PARAM) String seasonId) {
 		return ResponseEntity.ok(seasonService.getSeasonById(seasonId));
 	}
 
 	@GetMapping("/active")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.SEASON, #ActionPerm.READ)")
 	public ResponseEntity<?> getActiveSeason() {
 		return ResponseEntity.ok(seasonService.getActiveSeason());
 	}
 
 	@PostMapping
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.SEASON, #ActionPerm.CREATE)")
 	public ResponseEntity<?> createSeason(@RequestBody SeasonRequestDto seasonRequestDto) {
 		return ResponseEntity.ok(seasonService.createSeason(seasonRequestDto));
 	}
 
 	@PutMapping("/{" + ID_PARAM + "}")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.SEASON, #ActionPerm.UPDATE)")
 	public ResponseEntity<?> updateSeason(@PathVariable(ID_PARAM) String seasonId,
 			@RequestBody SeasonRequestDto seasonRequestDto) {
 		return ResponseEntity.ok(seasonService.updateSeason(seasonId, seasonRequestDto));
 	}
 
 	@DeleteMapping("/{" + ID_PARAM + "}")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.SEASON, #ActionPerm.DELETE)")
 	public ResponseEntity<?> deleteSeason(@PathVariable(ID_PARAM) String seasonId) {
 		seasonService.deleteSeason(seasonId);
 		return ResponseEntity.noContent().build();
-	}
-
-	@Override
-	@GetMapping("/{" + ID_PARAM + "}" + REFERENCES_PATH)
-	public ResponseEntity<?> getReferences(@PathVariable("id") String id) {
-		if(StringUtils.isEmpty(id)) {
-			return ResponseEntity.badRequest().body("Season ID must not be null or empty");
-		}
-		var references = dataIntegrityService.findReferences(
-				"event_service",
-				"season",
-				id
-		);
-		return ResponseEntity.ok(references);
-	}
-
-	@Override
-	@GetMapping(VALIDATION_PATH)
-	public ResponseEntity<?> getValidationDetails() {
-		return ResponseEntity.ok(seasonService.validate(SeasonRequestDto.class));
 	}
 }

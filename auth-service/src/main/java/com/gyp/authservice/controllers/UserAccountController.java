@@ -36,9 +36,10 @@ public class UserAccountController extends AbstractController {
 	private final UserAccountProducer userAccountProducer;
 
 	@GetMapping
-	@PreAuthorize(
-			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT.getApplicationId(), #ActionPerm.READ.name()) or "
-					+ "@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.READ.name())")
+	@PreAuthorize("""
+			@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT, #ActionPerm.READ) or
+			@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP, #ActionPerm.READ)
+			""")
 	public ResponseEntity<?> getListUserAccount(
 			@RequestParam(value = "sortBy", required = false) String sortBy,
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
@@ -56,9 +57,10 @@ public class UserAccountController extends AbstractController {
 	}
 
 	@GetMapping("/{" + ID_PARAM + "}")
-	@PreAuthorize(
-			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT.getApplicationId(), #ActionPerm.READ.name()) or "
-					+ "@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.READ.name())")
+	@PreAuthorize("""
+			@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT, #ActionPerm.READ) or
+			@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP, #ActionPerm.READ)
+			""")
 	public ResponseEntity<?> getUserAccountById(@PathVariable(ID_PARAM) String id) {
 		if(StringUtils.isEmpty(id)) {
 			return ResponseEntity.badRequest().body("Id is required");
@@ -67,18 +69,20 @@ public class UserAccountController extends AbstractController {
 	}
 
 	@PostMapping
-	@PreAuthorize(
-			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT.getApplicationId(), #ActionPerm.CREATE.name()) or "
-					+ "@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.CREATE.name())")
+	@PreAuthorize("""
+			@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT, #ActionPerm.CREATE) or
+			@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP, #ActionPerm.CREATE)
+			""")
 	public ResponseEntity<?> createUserAccount(@RequestBody UserAccountRequestDto request) {
 		var response = userAccountService.createUserAccount(request);
 		return createResponseOk(response);
 	}
 
 	@PutMapping("/{" + ID_PARAM + "}")
-	@PreAuthorize(
-			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT.getApplicationId(), #ActionPerm.CREATE.name()) or "
-					+ "@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.CREATE.name())")
+	@PreAuthorize("""
+			@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT, #ActionPerm.CREATE) or
+			@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP, #ActionPerm.CREATE)
+			""")
 	public ResponseEntity<?> createUserAccount(
 			@PathVariable(ID_PARAM) String id,
 			@RequestBody UserAccountRequestDto request
@@ -88,18 +92,20 @@ public class UserAccountController extends AbstractController {
 	}
 
 	@DeleteMapping("/{" + ID_PARAM + "}")
-	@PreAuthorize(
-			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT.getApplicationId(), #ActionPerm.DELETE.name()) or "
-					+ "@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.DELETE.name())")
+	@PreAuthorize("""
+			@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT, #ActionPerm.DELETE) or
+			@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP, #ActionPerm.DELETE)
+			""")
 	public ResponseEntity<?> deleteUserAccount(@PathVariable(ID_PARAM) String id) {
 		var response = userAccountService.deleteUserAccount(id);
 		return createResponseOk(response);
 	}
 
 	@GetMapping(SYNC_ORGANIZER_PATH)
-	@PreAuthorize(
-			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT.getApplicationId(), #ActionPerm.SYNC.name()) or "
-					+ "@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.READ.name())")
+	@PreAuthorize("""
+			@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_ACCOUNT, #ActionPerm.SYNC) or
+			@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP, #ActionPerm.READ)
+			""")
 	public ResponseEntity<?> syncOrganizer() {
 		userAccountProducer.syncUserAccount();
 		return createResponseOk("Sync Organizer!!");

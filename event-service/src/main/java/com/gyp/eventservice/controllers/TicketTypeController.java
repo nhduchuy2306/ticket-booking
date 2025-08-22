@@ -10,6 +10,7 @@ import com.gyp.eventservice.services.criteria.TicketTypeSearchCriteria;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ public class TicketTypeController extends AbstractController {
 	private final TicketTypeService ticketTypeService;
 
 	@GetMapping
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.TICKET_TYPE, #ActionPerm.READ)")
 	public ResponseEntity<?> getTicketTypes(
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
 			@RequestParam(value = "size", required = false) Optional<Integer> size) {
@@ -44,23 +46,27 @@ public class TicketTypeController extends AbstractController {
 	}
 
 	@GetMapping("/{" + ID_PARAM + "}")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.TICKET_TYPE, #ActionPerm.READ)")
 	public ResponseEntity<?> getTicketTypeById(@PathVariable("id") String id) {
 		return ResponseEntity.ok(ticketTypeService.getTicketTypeById(id));
 	}
 
 	@PostMapping
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.TICKET_TYPE, #ActionPerm.CREATE)")
 	public ResponseEntity<?> createTicketType(@RequestBody TicketTypeRequestDto ticketTypeRequestDto) {
 		var ticketType = ticketTypeService.createTicketType(ticketTypeRequestDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(ticketType);
 	}
 
 	@PutMapping("/{" + ID_PARAM + "}")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.TICKET_TYPE, #ActionPerm.UPDATE)")
 	public ResponseEntity<?> updateTicketTypeById(@PathVariable("id") String id,
 			@RequestBody TicketTypeRequestDto requestDto) {
 		return ResponseEntity.ok(ticketTypeService.updateTicketType(id, requestDto));
 	}
 
 	@DeleteMapping("/{" + ID_PARAM + "}")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.TICKET_TYPE, #ActionPerm.DELETE)")
 	public ResponseEntity<?> deleteTicketTypeById(@PathVariable("id") String id) {
 		ticketTypeService.deleteTicketType(id);
 		return ResponseEntity.noContent().build();

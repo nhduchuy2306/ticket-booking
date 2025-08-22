@@ -5,6 +5,7 @@ import com.gyp.eventservice.dtos.eventimage.EventImageRequestDto;
 import com.gyp.eventservice.services.EventImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,16 +25,19 @@ public class EventImageController extends AbstractController {
 	private final EventImageService eventImageService;
 
 	@GetMapping
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT_IMAGE, #ActionPerm.READ)")
 	public ResponseEntity<?> getAllEventImages() {
 		return ResponseEntity.ok(eventImageService.getEventImages());
 	}
 
 	@GetMapping("/{" + ID_PARAM + "}")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT_IMAGE, #ActionPerm.READ)")
 	public ResponseEntity<?> getEventById(@PathVariable(ID_PARAM) String id) {
 		return ResponseEntity.ok(eventImageService.getEventImageById(id));
 	}
 
 	@PostMapping
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT_IMAGE, #ActionPerm.CREATE)")
 	public ResponseEntity<?> createEventImage(
 			@RequestPart(value = "data", required = false) EventImageRequestDto dto,
 			@RequestPart(value = "image", required = false) MultipartFile imageFile) {
@@ -42,6 +46,7 @@ public class EventImageController extends AbstractController {
 	}
 
 	@PutMapping("/{" + ID_PARAM + "}")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT_IMAGE, #ActionPerm.UPDATE)")
 	public ResponseEntity<?> updateEventImage(@PathVariable(ID_PARAM) String id,
 			@RequestPart(value = "data", required = false) EventImageRequestDto dto,
 			@RequestPart(value = "image", required = false) MultipartFile imageFile) {
@@ -50,6 +55,7 @@ public class EventImageController extends AbstractController {
 	}
 
 	@DeleteMapping("/{" + ID_PARAM + "}")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT_IMAGE, #ActionPerm.DELETE)")
 	public ResponseEntity<?> deleteEventImage(@PathVariable(ID_PARAM) String id) {
 		eventImageService.deleteEventImage(id);
 		return ResponseEntity.noContent().build();

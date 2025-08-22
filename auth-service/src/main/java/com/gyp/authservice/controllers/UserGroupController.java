@@ -31,8 +31,7 @@ public class UserGroupController extends AbstractController {
 	private final UserGroupService userGroupService;
 
 	@GetMapping
-	@PreAuthorize(
-			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.READ.name())")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP, #ActionPerm.READ)")
 	public ResponseEntity<?> getListUserGroup(
 			@RequestParam(value = "sortBy", required = false) String sortBy,
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
@@ -50,8 +49,7 @@ public class UserGroupController extends AbstractController {
 	}
 
 	@GetMapping("/{" + ID_PARAM + "}")
-	@PreAuthorize(
-			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.READ.name())")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP, #ActionPerm.READ)")
 	public ResponseEntity<?> getUserGroupById(@PathVariable(ID_PARAM) String id) {
 		var res = userGroupService.getUserGroupById(id);
 		if(res == null) {
@@ -61,23 +59,20 @@ public class UserGroupController extends AbstractController {
 	}
 
 	@GetMapping(USER_GROUP_ACTION_LIST_PATH)
-	@PreAuthorize(
-			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.READ.name())")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP, #ActionPerm.READ)")
 	public ResponseEntity<?> getUserGroupList() {
 		return createResponseOk(userGroupService.getListApplicationPermissions());
 	}
 
 	@PostMapping
-	@PreAuthorize(
-			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.CREATE.name())")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP, #ActionPerm.CREATE)")
 	public ResponseEntity<?> createUserGroup(@RequestBody UserGroupRequestDto userGroupRequestDto) {
 		var res = userGroupService.createUserGroup(userGroupRequestDto);
 		return ResponseEntity.ok(res);
 	}
 
 	@PutMapping("/{" + ID_PARAM + "}")
-	@PreAuthorize(
-			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.UPDATE.name())")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP, #ActionPerm.UPDATE)")
 	public ResponseEntity<?> updateUserGroup(@PathVariable(ID_PARAM) String id,
 			@RequestBody UserGroupRequestDto userGroupRequestDto) {
 		var res = userGroupService.updateUserGroup(userGroupRequestDto, id);
@@ -85,8 +80,7 @@ public class UserGroupController extends AbstractController {
 	}
 
 	@DeleteMapping("/{" + ID_PARAM + "}")
-	@PreAuthorize(
-			"@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP.getApplicationId(), #ActionPerm.DELETE.name())")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.USER_GROUP, #ActionPerm.DELETE)")
 	public ResponseEntity<?> deleteUserGroup(@PathVariable(ID_PARAM) String id) {
 		try {
 			var res = userGroupService.deleteUserGroup(id);

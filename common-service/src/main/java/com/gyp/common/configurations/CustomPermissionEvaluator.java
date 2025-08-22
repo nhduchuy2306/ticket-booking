@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import com.gyp.common.enums.permission.ActionPermission;
 import com.gyp.common.enums.permission.ApplicationPermission;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
@@ -33,17 +34,18 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
 				return true;
 			}
 
-			String appId = targetDomainObject.toString();
-			String action = permission.toString();
+			if(targetDomainObject instanceof ApplicationPermission applicationPermission
+					&& permission instanceof ActionPermission actionPermission) {
+				String appId = applicationPermission.getApplicationId();
+				String action = actionPermission.name();
 
-			List<String> actions = items.get(appId);
-			if(actions == null || actions.isEmpty()) {
-				return false;
+				List<String> actions = items.get(appId);
+				if(actions == null || actions.isEmpty()) {
+					return false;
+				}
+				return actions.contains(action);
 			}
-
-			return actions.contains(action);
 		}
-
 		return false;
 	}
 
