@@ -15,7 +15,6 @@ import com.gyp.eventservice.dtos.event.EventResponseDto;
 import com.gyp.eventservice.entities.EventEntity;
 import com.gyp.eventservice.mappers.EventMapper;
 import com.gyp.eventservice.messages.producers.AssignSaleChannelToEventProducer;
-import com.gyp.eventservice.repositories.EventImageRepository;
 import com.gyp.eventservice.repositories.EventRepository;
 import com.gyp.eventservice.services.EventService;
 import com.gyp.eventservice.services.criteria.EventSearchCriteria;
@@ -27,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -34,7 +34,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
 	private final EventRepository eventRepository;
-	private final EventImageRepository eventImageRepository;
 	private final ValidationService validationService;
 	private final EventMapper eventMapper;
 	private final UploadService uploadService;
@@ -61,10 +60,10 @@ public class EventServiceImpl implements EventService {
 		EventEntity entity = eventRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + id));
 		if(entity != null) {
+			var event = eventMapper.toResponseDto(entity);
 			String logoUrl = StringUtils.isNotEmpty(entity.getLogoUrl())
 					? uploadService.getFileUrl(entity.getLogoUrl())
 					: null;
-			var event = eventMapper.toResponseDto(entity);
 			event.setLogoUrl(logoUrl);
 			return event;
 		}
@@ -77,7 +76,7 @@ public class EventServiceImpl implements EventService {
 		EventEntity eventEntity = eventMapper.toEntity(request);
 		eventEntity.setOrganizationId(organizationId);
 		var savedEvent = eventRepository.save(eventEntity);
-		if(request.getSaleChannelIds() != null && !request.getSaleChannelIds().isEmpty()) {
+		if(CollectionUtils.isEmpty(request.getSaleChannelIds())) {
 			assignSaleChannelToEventProducer.assignSaleChannelToEventProducer(savedEvent.getId(),
 					request.getSaleChannelIds());
 		}

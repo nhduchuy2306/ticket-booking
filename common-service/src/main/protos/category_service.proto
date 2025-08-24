@@ -7,8 +7,10 @@ option java_package = "com.gyp.eventservice.grpc.category";
 option java_outer_classname = "CategoryServiceProto";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 service CategoryService {
+  rpc GetAllCategories (google.protobuf.Empty) returns (GetAllCategoriesResponse);
   rpc CreateCategory (CreateCategoryRequest) returns (CreateCategoryResponse);
   rpc GetCategory (GetCategoryRequest) returns (GetCategoryResponse);
   rpc UpdateCategory (UpdateCategoryRequest) returns (UpdateCategoryResponse);
@@ -36,6 +38,10 @@ message GetCategoryResponse {
   string name = 2;
   string description = 3;
   google.protobuf.Timestamp created_at = 4;
+}
+
+message GetAllCategoriesResponse {
+  repeated GetCategoryResponse categories = 1;
 }
 
 message UpdateCategoryRequest {

@@ -25,6 +25,7 @@ import org.mapstruct.Named;
 		uses = { EventImageMapper.class })
 public interface EventMapper extends AbstractMapper {
 	// To response DTO
+	@Mapping(target = "saleChannelIds", ignore = true)
 	@Mapping(target = "season", source = "seasonEntity")
 	@Mapping(target = "startTime", source = "time.startTime")
 	@Mapping(target = "endTime", source = "time.endTime")
@@ -58,7 +59,6 @@ public interface EventMapper extends AbstractMapper {
 	@Mapping(target = "ticketTypeEntityList", ignore = true)
 	@Mapping(target = "eventPromotionEntityList", ignore = true)
 	@Mapping(target = "eventApprovalEntityList", ignore = true)
-	@Named("toEntity")
 	EventEntity toEntity(EventRequestDto dto);
 
 	// Update existing entity from request
@@ -76,7 +76,6 @@ public interface EventMapper extends AbstractMapper {
 	@Mapping(target = "ticketTypeEntityList", ignore = true)
 	@Mapping(target = "eventPromotionEntityList", ignore = true)
 	@Mapping(target = "eventApprovalEntityList", ignore = true)
-	@Named("updateEntityFromDto")
 	void updateEntityFromDto(EventRequestDto dto, @MappingTarget EventEntity entity);
 
 	@Mapping(target = "endTime", source = "entity.time.endTime")

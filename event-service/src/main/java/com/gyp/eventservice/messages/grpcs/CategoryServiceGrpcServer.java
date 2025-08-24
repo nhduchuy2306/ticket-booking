@@ -1,7 +1,9 @@
 package com.gyp.eventservice.messages.grpcs;
 
+import com.google.protobuf.Empty;
 import com.gyp.common.exceptions.ResourceNotFoundException;
 import com.gyp.eventservice.grpc.category.CategoryServiceGrpc.CategoryServiceImplBase;
+import com.gyp.eventservice.grpc.category.GetAllCategoriesResponse;
 import com.gyp.eventservice.grpc.category.GetCategoryRequest;
 import com.gyp.eventservice.grpc.category.GetCategoryResponse;
 import com.gyp.eventservice.repositories.CategoryRepository;
@@ -16,8 +18,6 @@ public class CategoryServiceGrpcServer extends CategoryServiceImplBase {
 
 	@Override
 	public void getCategory(GetCategoryRequest request, StreamObserver<GetCategoryResponse> responseObserver) {
-		super.getCategory(request, responseObserver);
-
 		var category = categoryRepository.findById(request.getId())
 				.orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 
@@ -27,6 +27,20 @@ public class CategoryServiceGrpcServer extends CategoryServiceImplBase {
 				.setDescription(category.getDescription())
 				.build();
 
+		responseObserver.onNext(response);
+		responseObserver.onCompleted();
+	}
+
+	@Override
+	public void getAllCategories(Empty request, StreamObserver<GetAllCategoriesResponse> responseObserver) {
+		var categories = categoryRepository.findAll();
+		var response = GetAllCategoriesResponse.newBuilder()
+				.addAllCategories(categories.stream().map(category ->
+						GetCategoryResponse.newBuilder()
+								.setId(category.getId())
+								.setName(category.getName())
+								.setDescription(category.getDescription())
+								.build()).toList()).build();
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();
 	}

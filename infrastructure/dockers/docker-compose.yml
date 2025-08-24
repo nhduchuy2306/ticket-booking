@@ -173,6 +173,7 @@ services:
     container_name: salechannel-service
     ports:
       - "9004:9004"
+      - "39004:39004"
     environment:
       SPRING_PROFILES_ACTIVE: prod
     depends_on:

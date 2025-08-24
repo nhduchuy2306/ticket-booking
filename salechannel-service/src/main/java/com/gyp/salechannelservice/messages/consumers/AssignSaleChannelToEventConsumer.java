@@ -6,6 +6,7 @@ import com.gyp.common.kafkatopics.TopicConstants;
 import com.gyp.salechannelservice.services.SaleChannelEventService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,7 @@ public class AssignSaleChannelToEventConsumer {
 			}
 			List<String> saleChannelIdList = List.of(saleChannelIds.split(","));
 
-			if(saleChannelIdList.isEmpty()) {
+			if(CollectionUtils.isEmpty(saleChannelIdList)) {
 				log.info("No existing sale channels found for event {}. Creating new entries.", eventId);
 			} else {
 				log.info("Found existing sale channels for event {}: {}", eventId, saleChannelIdList);

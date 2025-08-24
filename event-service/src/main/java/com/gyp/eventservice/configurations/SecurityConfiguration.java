@@ -26,9 +26,7 @@ public class SecurityConfiguration {
 		http.authorizeHttpRequests(request ->
 				request.requestMatchers(PUBLIC_ENDPOINTS).permitAll()
 						.anyRequest().authenticated());
-
-		http.oauth2ResourceServer(oauth2 ->
-				oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder)));
+		http.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder)));
 		return http.build();
 	}
 }

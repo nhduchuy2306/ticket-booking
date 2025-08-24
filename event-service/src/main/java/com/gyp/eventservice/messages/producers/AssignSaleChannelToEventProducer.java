@@ -3,7 +3,6 @@ package com.gyp.eventservice.messages.producers;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import com.gyp.common.kafkatopics.EventServiceTopic;
 import com.gyp.common.kafkatopics.TopicConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
