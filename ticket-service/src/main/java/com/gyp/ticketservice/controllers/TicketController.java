@@ -4,9 +4,7 @@ import java.util.Optional;
 
 import com.gyp.common.controllers.AbstractController;
 import com.gyp.common.dtos.pagination.PaginatedDto;
-import com.gyp.seatmapservice.grpc.seatmap.SeatMapRequest;
 import com.gyp.ticketservice.dtos.ticketgeneration.TicketGenerationSummaryDto;
-import com.gyp.ticketservice.messages.grpcs.SeatMapServiceGrpcClient;
 import com.gyp.ticketservice.services.TicketGenerationService;
 import com.gyp.ticketservice.services.TicketService;
 import com.gyp.ticketservice.services.criteria.TicketSearchCriteria;
@@ -32,7 +30,6 @@ public class TicketController extends AbstractController {
 
 	private final TicketGenerationService ticketGenerationService;
 	private final TicketService ticketService;
-	private final SeatMapServiceGrpcClient seatMapServiceGrpcClient;
 
 	@GetMapping("/" + VALIDATE_TICKET_PATH)
 	public ResponseEntity<?> validateTicket(@RequestParam(TICKET_NUMBER_PARAM) String ticketNumber) {
@@ -41,16 +38,6 @@ public class TicketController extends AbstractController {
 			return ResponseEntity.ok().body(ticketGenerationSummaryDto);
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-	}
-
-	@GetMapping("/seatmap")
-	public ResponseEntity<?> getSeatMap(@RequestParam("eventId") String eventId) {
-		var seatMap = seatMapServiceGrpcClient.getSeatMap(
-				SeatMapRequest.newBuilder().setEventId(eventId).build());
-		if(seatMap != null) {
-			return ResponseEntity.ok().body(seatMap);
-		}
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	}
 
 	@GetMapping

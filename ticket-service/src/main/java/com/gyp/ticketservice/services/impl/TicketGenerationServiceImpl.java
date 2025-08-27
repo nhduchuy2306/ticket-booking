@@ -7,7 +7,6 @@ import com.gyp.common.enums.event.TicketStatus;
 import com.gyp.common.exceptions.ResourceNotFoundException;
 import com.gyp.common.models.EventGenerationTicketEM;
 import com.gyp.common.utils.SecurityUtils;
-import com.gyp.seatmapservice.grpc.seatmap.SeatMapRequest;
 import com.gyp.ticketservice.dtos.seatmap.Row;
 import com.gyp.ticketservice.dtos.seatmap.Seat;
 import com.gyp.ticketservice.dtos.seatmap.SeatConfig;
@@ -17,7 +16,6 @@ import com.gyp.ticketservice.dtos.seatmap.Table;
 import com.gyp.ticketservice.dtos.ticketgeneration.TicketGenerationResponseDto;
 import com.gyp.ticketservice.dtos.ticketgeneration.TicketGenerationSummaryDto;
 import com.gyp.ticketservice.entities.TicketEntity;
-import com.gyp.ticketservice.messages.grpcs.SeatMapServiceGrpcClient;
 import com.gyp.ticketservice.messages.producers.EventGeneratedProducer;
 import com.gyp.ticketservice.repositories.TicketRepository;
 import com.gyp.ticketservice.services.TicketGenerationService;
@@ -33,19 +31,10 @@ import org.springframework.util.CollectionUtils;
 @RequiredArgsConstructor
 public class TicketGenerationServiceImpl implements TicketGenerationService {
 	private final TicketRepository ticketRepository;
-	private final SeatMapServiceGrpcClient seatMapServiceGrpcClient;
 	private final EventGeneratedProducer eventGeneratedProducer;
 
 	@Override
 	public TicketGenerationSummaryDto validateTicket(String ticketNumber) {
-		//		Optional<TicketEntity> ticketGeneration = ticketRepository.findByTicketNumber(ticketNumber);
-		//		if(ticketGeneration.isPresent()) {
-		//			LocalDateTime eventDateTime = ticketGeneration.get().getEventDateTime();
-		//			LocalDateTime current = LocalDateTime.now();
-		//			if(eventDateTime.toLocalDate().isEqual(current.toLocalDate())) {
-		//				return ticketGenerationMapper.toSummary(ticketGeneration.get());
-		//			}
-		//		}
 		return null;
 	}
 
@@ -57,10 +46,8 @@ public class TicketGenerationServiceImpl implements TicketGenerationService {
 	}
 
 	@Override
-	public void generateTicketBaseOnEventConfiguration(String eventId) {
+	public void generateTicketBaseOnEventConfiguration(SeatMapDto seatMapDto, String eventId) {
 		try {
-			var request = SeatMapRequest.newBuilder().setEventId(eventId).build();
-			SeatMapDto seatMapDto = seatMapServiceGrpcClient.getSeatMap(request);
 			SeatConfig seatConfig = seatMapDto.getSeatConfig();
 
 			List<Section> sections = seatConfig.getSections();

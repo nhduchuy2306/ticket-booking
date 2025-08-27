@@ -1,0 +1,117 @@
+# ===============================
+# Server Configuration
+# ===============================
+server:
+  port: 9999
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      global-cors:
+        cors-configurations:
+          '[/**]':
+            allowed-origin-patterns: "*"
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowed-headers: "*"
+            allow-credentials: true
+            max-age: 3600
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      routes:
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auths/**
+          filters:
+            - RewritePath=/auths(?<segment>/?.*), ${segment}
+        - id: event-service
+          uri: lb://EVENT-SERVICE
+          predicates:
+            - Path=/events/**
+          filters:
+            - RewritePath=/events(?<segment>/?.*), ${segment}
+        - id: ticket-service
+          uri: lb://TICKET-SERVICE
+          predicates:
+            - Path=/tickets/**
+          filters:
+            - RewritePath=/tickets(?<segment>/?.*), ${segment}
+        - id: salechannel-service
+          uri: lb://SALECHANNEL-SERVICE
+          predicates:
+            - Path=/salechannels/**
+          filters:
+            - RewritePath=/salechannels(?<segment>/?.*), ${segment}
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/orders/**
+          filters:
+            - RewritePath=/orders(?<segment>/?.*), ${segment}
+        - id: notification-service
+          uri: lb://NOTIFICATION-SERVICE
+          predicates:
+            - Path=/notifications/**
+          filters:
+            - RewritePath=/notifications(?<segment>/?.*), ${segment}
+        - id: bff-service
+          uri: lb://BFF-SERVICE
+          predicates:
+            - Path=/bff/**
+          filters:
+            - RewritePath=/bff(?<segment>/?.*), ${segment}
+
+# ===============================
+# Eureka Discovery
+# ===============================
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
+    instance-id: ${spring.application.name}:${server.port}
+
+# ===============================
+# Logging Configuration
+# ===============================
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory: DEBUG
+
+# ===============================
+# Swagger Configuration
+# ===============================
+springdoc:
+  api-docs:
+    groups:
+      enabled: true
+  swagger-ui:
+    urls:
+      - name: auth-service
+        url: /auths/v3/api-docs
+      - name: event-service
+        url: /events/v3/api-docs
+      - name: ticket-service
+        url: /tickets/v3/api-docs
+      - name: salechannel-service
+        url: /salechannels/v3/api-docs
+      - name: order-service
+        url: /orders/v3/api-docs
+      - name: notification-service
+        url: /notifications/v3/api-docs

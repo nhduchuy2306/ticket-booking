@@ -5,6 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gyp.common.converters.Serialization;
 import com.gyp.common.models.SeatMapEventModel;
+import com.gyp.common.models.SeatMapTicketEM;
 import com.gyp.eventservice.dtos.seatmap.SeatConfig;
 import com.gyp.eventservice.dtos.seatmap.SeatMapRequestDto;
 import com.gyp.eventservice.dtos.seatmap.SeatMapResponseDto;
@@ -35,6 +36,13 @@ public interface SeatMapMapper extends AbstractMapper {
 	@Mapping(target = "stageConfig", source = "stageConfigRaw")
 	@Mapping(target = "seatConfig", source = "seatConfigRaw")
 	SeatMapEventModel toSeatMapEventModel(SeatMapEntity seatMapEntity);
+
+	@Mapping(target = "eventName", ignore = true)
+	@Mapping(target = "eventId", ignore = true)
+	@Mapping(target = "eventDateTime", ignore = true)
+	@Mapping(target = "stageConfig", source = "stageConfigRaw")
+	@Mapping(target = "seatConfig", source = "seatConfigRaw")
+	SeatMapTicketEM toSeatMapTicketEM(SeatMapEntity seatMapEntity);
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "venueMapEntityList", ignore = true)

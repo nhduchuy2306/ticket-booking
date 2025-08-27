@@ -3,18 +3,18 @@ package com.gyp.eventservice.services;
 import java.util.List;
 
 import com.gyp.common.dtos.pagination.PaginatedDto;
+import com.gyp.common.exceptions.ResourceNotFoundException;
 import com.gyp.common.intefaces.Validatable;
-import com.gyp.eventservice.exceptions.VenueNotFoundException;
-import com.gyp.eventservice.services.criteria.VenueSearchCriteria;
 import com.gyp.eventservice.dtos.venue.VenueRequestDto;
 import com.gyp.eventservice.dtos.venue.VenueResponseDto;
+import com.gyp.eventservice.services.criteria.VenueSearchCriteria;
 
 public interface VenueService extends Validatable {
 	List<VenueResponseDto> getAllVenues();
 
 	List<VenueResponseDto> getAllVenues(VenueSearchCriteria criteria, PaginatedDto pagination);
 
-	VenueResponseDto getVenueById(String venueId) throws VenueNotFoundException;
+	VenueResponseDto getVenueById(String venueId) throws ResourceNotFoundException;
 
 	VenueResponseDto getVenueByName(String venueName);
 

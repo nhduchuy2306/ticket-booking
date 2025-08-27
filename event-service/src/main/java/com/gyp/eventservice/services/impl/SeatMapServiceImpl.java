@@ -29,6 +29,7 @@ import com.gyp.eventservice.dtos.seatmap.StageConfig;
 import com.gyp.eventservice.dtos.seatmap.Table;
 import com.gyp.eventservice.dtos.seatmap.VenueMap;
 import com.gyp.eventservice.mappers.SeatMapMapper;
+import com.gyp.eventservice.messages.producers.GenerateSeatMapTicketProducer;
 import com.gyp.eventservice.repositories.SeatMapRepository;
 import com.gyp.eventservice.repositories.VenueRepository;
 import com.gyp.eventservice.services.SeatMapService;
@@ -43,8 +44,8 @@ import org.springframework.stereotype.Service;
 public class SeatMapServiceImpl implements SeatMapService {
 	private final SeatMapTemplateService seatMapTemplateService;
 	private final SeatMapRepository seatMapRepository;
-	private final VenueRepository venueRepository;
 	private final SeatMapMapper seatMapMapper;
+	private final GenerateSeatMapTicketProducer generateSeatMapTicketProducer;
 
 	@Override
 	public String convertOrganizerJson(String content) {
@@ -233,6 +234,11 @@ public class SeatMapServiceImpl implements SeatMapService {
 		return seatMaps.stream()
 				.map(seatMapMapper::toSeatMapEventModel)
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public void generateSeatMapTicket(String eventId) {
+		generateSeatMapTicketProducer.generateSeatMapTicket(eventId);
 	}
 
 	private Seat findSeatById(VenueMap venueMap, String seatId) {

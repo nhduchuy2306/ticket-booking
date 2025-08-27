@@ -48,4 +48,6 @@ public interface SeatMapService {
 	void deleteSeatMap(String seatMapId);
 
 	List<SeatMapEventModel> getListSeatMapModel();
+
+	void generateSeatMapTicket(String eventId);
 }

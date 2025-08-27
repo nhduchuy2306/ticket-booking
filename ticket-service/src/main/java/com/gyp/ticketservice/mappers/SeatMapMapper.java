@@ -2,7 +2,7 @@ package com.gyp.ticketservice.mappers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gyp.common.converters.Serialization;
-import com.gyp.seatmapservice.grpc.seatmap.SeatMapResponse;
+import com.gyp.common.models.SeatMapTicketEM;
 import com.gyp.ticketservice.dtos.seatmap.SeatConfig;
 import com.gyp.ticketservice.dtos.seatmap.SeatMapDto;
 import com.gyp.ticketservice.dtos.seatmap.StageConfig;
@@ -16,7 +16,7 @@ import org.mapstruct.Named;
 public interface SeatMapMapper extends AbstractMapper {
 	@Mapping(target = "stageConfig", source = "seatMapResponse.stageConfig", qualifiedByName = "mapStageConfig")
 	@Mapping(target = "seatConfig", source = "seatMapResponse.seatConfig", qualifiedByName = "mapSeatConfig")
-	SeatMapDto toDto(SeatMapResponse seatMapResponse);
+	SeatMapDto toDto(SeatMapTicketEM seatMapResponse);
 
 	@Named("mapStageConfig")
 	default StageConfig mapStageConfig(String stage) throws JsonProcessingException {

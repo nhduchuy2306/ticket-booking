@@ -104,6 +104,7 @@ to PDF, QR code and use this at the event.
 - Observability -> 9007
 - Configuration -> 9008
 - DiscoveryService -> port:9761
+- BffService -> port:9010
 - ApiGateway -> 9999
 # Other Service
 - Zipkin -> 9411

@@ -51,11 +51,4 @@ public class EventResponseDto extends AbstractDto {
 	private boolean isEventInProgress;
 	private boolean isEventCompleted;
 	private String organizationId;
-	private List<SaleChannelModel> saleChannelIds;
-
-	@Builder
-	public static class SaleChannelModel {
-		private String id;
-		private String name;
-	}
 }

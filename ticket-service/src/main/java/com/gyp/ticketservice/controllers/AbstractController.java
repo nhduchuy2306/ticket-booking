@@ -1,5 +1,0 @@
-package com.gyp.ticketservice.controllers;
-
-public class AbstractController {
-	protected final String ID_PARAM = "id";
-}

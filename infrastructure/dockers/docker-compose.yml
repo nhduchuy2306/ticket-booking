@@ -140,12 +140,23 @@ services:
     networks:
       - gyp-net
 
+  bff-service:
+    build: ../../bff-service
+    container_name: bff-service
+    ports:
+      - "9010:9010"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    depends_on:
+      - discovery-service
+    networks:
+      - gyp-net
+
   event-service:
     build: ../../event-service
     container_name: event-service
     ports:
       - "9001:9001"
-      - "39001:39001"
     environment:
       SPRING_PROFILES_ACTIVE: prod
     depends_on:
@@ -173,7 +184,6 @@ services:
     container_name: salechannel-service
     ports:
       - "9004:9004"
-      - "39004:39004"
     environment:
       SPRING_PROFILES_ACTIVE: prod
     depends_on:

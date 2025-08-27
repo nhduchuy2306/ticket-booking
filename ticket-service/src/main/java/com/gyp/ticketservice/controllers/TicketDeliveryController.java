@@ -3,6 +3,7 @@ package com.gyp.ticketservice.controllers;
 import java.io.IOException;
 import java.util.Objects;
 
+import com.gyp.common.controllers.AbstractController;
 import com.gyp.common.services.MailService;
 import com.gyp.ticketservice.dtos.mail.TicketMailConfirmRequestDto;
 import com.gyp.ticketservice.services.QRCodeService;

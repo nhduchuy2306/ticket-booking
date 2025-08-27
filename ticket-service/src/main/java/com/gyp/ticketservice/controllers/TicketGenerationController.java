@@ -1,5 +1,6 @@
 package com.gyp.ticketservice.controllers;
 
+import com.gyp.common.controllers.AbstractController;
 import com.gyp.ticketservice.services.TicketGenerationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(TicketGenerationController.TICKET_GENERATION_CONTROLLER_PATH)
-public class TicketGenerationController {
+public class TicketGenerationController extends AbstractController {
 	public static final String TICKET_GENERATION_CONTROLLER_PATH = "/ticket-generations";
 
 	private static final String GENERATE_TICKET_PATH = "generate-ticket";
@@ -22,17 +23,17 @@ public class TicketGenerationController {
 
 	private final TicketGenerationService ticketGenerationService;
 
-	@GetMapping("/{" + EVENT_ID_PARAM + "}/" + GENERATE_TICKET_PATH)
-	@PreAuthorize(
-			"@permissionEvaluator.hasPermission(authentication, #AppPerm.TICKET_GENERATION, #ActionPerm.GENERATE)")
-	public ResponseEntity<?> generateTickets(@PathVariable(EVENT_ID_PARAM) String eventId) {
-		try {
-			ticketGenerationService.generateTicketBaseOnEventConfiguration(eventId);
-			return ResponseEntity.ok("Ticket generated successfully for event ID: " + eventId);
-		} catch(Exception e) {
-			return ResponseEntity.status(500).body("Error generating ticket: " + e.getMessage());
-		}
-	}
+//	@GetMapping("/{" + EVENT_ID_PARAM + "}/" + GENERATE_TICKET_PATH)
+//	@PreAuthorize(
+//			"@permissionEvaluator.hasPermission(authentication, #AppPerm.TICKET_GENERATION, #ActionPerm.GENERATE)")
+//	public ResponseEntity<?> generateTickets(@PathVariable(EVENT_ID_PARAM) String eventId) {
+//		try {
+//			ticketGenerationService.generateTicketBaseOnEventConfiguration(eventId);
+//			return ResponseEntity.ok("Ticket generated successfully for event ID: " + eventId);
+//		} catch(Exception e) {
+//			return ResponseEntity.status(500).body("Error generating ticket: " + e.getMessage());
+//		}
+//	}
 
 	@DeleteMapping("/{" + EVENT_ID_PARAM + "}/" + GENERATE_TICKET_PATH)
 	@PreAuthorize(

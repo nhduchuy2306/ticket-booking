@@ -15,8 +15,12 @@ import com.gyp.eventservice.mappers.CategoryMapper;
 import com.gyp.eventservice.repositories.CategoryRepository;
 import com.gyp.eventservice.services.CategoryService;
 import com.gyp.eventservice.services.criteria.CategorySearchCriteria;
+import com.gyp.eventservice.services.specifications.CategorySpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -42,16 +46,11 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public List<CategoryResponseDto> getAllCategories(CategorySearchCriteria criteria, PaginatedDto pagination) {
-		if(criteria == null) {
-			criteria = new CategorySearchCriteria();
-		}
-		if(pagination == null) {
-			pagination = new PaginatedDto();
-		}
-
-		List<CategoryEntity> categories = categoryRepository.getCategories(criteria, pagination);
-		return categoryMapper.toResponseDtoList(categories);
+	public List<CategoryResponseDto> getAllCategories(CategorySearchCriteria criteria, PaginatedDto paginatedDto) {
+		Specification<CategoryEntity> specification = CategorySpecification.createSearchCategorySpecification(criteria);
+		Pageable pageable = PageRequest.of(paginatedDto.getPage(), paginatedDto.getSize());
+		var categories = categoryRepository.findAll(specification, pageable);
+		return categories.getContent().stream().map(categoryMapper::toResponseDto).toList();
 	}
 
 	@Override

@@ -9,9 +9,6 @@ import com.gyp.common.kafkatopics.AuthServiceTopic;
 import com.gyp.common.models.UserAccountEventModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -19,9 +16,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class UserAccountProducer {
-	@Value("${app.sync-on-startup:false}")
-	private boolean syncOnStartup;
-
 	private final KafkaTemplate<String, String> kafkaTemplate;
 	private final UserAccountService userAccountService;
 
@@ -34,24 +28,6 @@ public class UserAccountProducer {
 		} catch(JsonProcessingException e) {
 			log.error("Fail", e);
 			throw new RuntimeException(e);
-		}
-	}
-
-	public void createOrganizer(UserAccountEventModel model) {
-		try {
-			String dataString = Serialization.serializeToString(model);
-			kafkaTemplate.send(AuthServiceTopic.ORGANIZER_CREATE_COMMAND, dataString);
-		} catch(JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@EventListener(ApplicationReadyEvent.class)
-	public void onStartUp() {
-		if(syncOnStartup) {
-			syncUserAccount();
-		} else {
-			log.info("Skipping user account sync on startup in development environment");
 		}
 	}
 }

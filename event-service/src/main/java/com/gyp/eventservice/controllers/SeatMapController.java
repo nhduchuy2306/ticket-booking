@@ -33,8 +33,10 @@ public class SeatMapController extends AbstractController {
 
 	private static final String UPLOAD_PATH = "/upload";
 	private static final String DOWNLOAD_TEMPLATE_PATH = "/downloadtemplate";
+	private static final String GENERATE_SEAT_MAP_TICKET_PATH = "/generateseatmapticket";
 
 	private static final String FILE_PARAM = "fileName";
+	private static final String EVENT_ID_PARAM = "eventId";
 
 	private final SeatMapService seatMapService;
 	private final DirectoryService directoryService;
@@ -121,6 +123,18 @@ public class SeatMapController extends AbstractController {
 					.body(resource);
 		} catch(Exception e) {
 			return ResponseEntity.internalServerError().build();
+		}
+	}
+
+	@GetMapping(GENERATE_SEAT_MAP_TICKET_PATH + "/{" + EVENT_ID_PARAM + "}")
+	@PreAuthorize(
+			"@permissionEvaluator.hasPermission(authentication, #AppPerm.TICKET_GENERATION, #ActionPerm.GENERATE)")
+	public ResponseEntity<?> generateSeatMapTicket(@PathVariable(EVENT_ID_PARAM) String eventId) {
+		try {
+			seatMapService.generateSeatMapTicket(eventId);
+			return ResponseEntity.ok("Seat map ticket generation initiated for event ID: " + eventId);
+		} catch(Exception e) {
+			return ResponseEntity.status(500).body("Error generating seat map ticket: " + e.getMessage());
 		}
 	}
 }

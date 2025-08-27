@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: bff-service
+
+server:
+  port: 9010
+
+# ===============================
+# Eureka Discovery
+# ===============================
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-service:9761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    hostname: discovery-service
+    instance-id: ${spring.application.name}:${server.port}

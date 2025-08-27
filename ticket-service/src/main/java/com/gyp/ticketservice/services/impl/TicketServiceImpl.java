@@ -2,7 +2,7 @@ package com.gyp.ticketservice.services.impl;
 
 import java.util.List;
 
-import com.gyp.common.dtos.pagination.PaginatedDto;
+import com.gyp.common.exceptions.ResourceNotFoundException;
 import com.gyp.common.services.AbstractService;
 import com.gyp.ticketservice.dtos.ticket.TicketResponseDto;
 import com.gyp.ticketservice.entities.TicketEntity;
@@ -26,7 +26,8 @@ public class TicketServiceImpl extends AbstractService implements TicketService 
 
 	@Override
 	public TicketResponseDto getTicketById(String id) {
-		TicketEntity ticketEntity = ticketRepository.findTicketById(id);
+		TicketEntity ticketEntity = ticketRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + id));
 		if(ticketEntity != null) {
 			return ticketMapper.toResponse(ticketEntity);
 		}

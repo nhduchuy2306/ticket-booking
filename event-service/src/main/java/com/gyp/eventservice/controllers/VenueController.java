@@ -6,7 +6,6 @@ import com.gyp.common.controllers.AbstractController;
 import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.services.DataIntegrityService;
 import com.gyp.eventservice.dtos.venue.VenueRequestDto;
-import com.gyp.eventservice.exceptions.VenueNotFoundException;
 import com.gyp.eventservice.services.VenueService;
 import com.gyp.eventservice.services.criteria.VenueSearchCriteria;
 import lombok.RequiredArgsConstructor;
@@ -58,8 +57,6 @@ public class VenueController extends AbstractController {
 			return ResponseEntity.ok(venueService.getVenueById(venueId));
 		} catch(RuntimeException e) {
 			return ResponseEntity.status(404).body(e.getMessage());
-		} catch(VenueNotFoundException e) {
-			throw new RuntimeException(e);
 		}
 	}
 

@@ -3,13 +3,13 @@ package com.gyp.eventservice.services.impl;
 import java.util.List;
 
 import com.gyp.common.dtos.pagination.PaginatedDto;
+import com.gyp.common.exceptions.ResourceNotFoundException;
 import com.gyp.common.services.ValidationService;
 import com.gyp.common.utils.SecurityUtils;
 import com.gyp.common.validators.criteria.ValidationInfo;
 import com.gyp.eventservice.dtos.venue.VenueRequestDto;
 import com.gyp.eventservice.dtos.venue.VenueResponseDto;
 import com.gyp.eventservice.entities.VenueEntity;
-import com.gyp.eventservice.exceptions.VenueNotFoundException;
 import com.gyp.eventservice.mappers.VenueMapper;
 import com.gyp.eventservice.repositories.VenueRepository;
 import com.gyp.eventservice.services.VenueService;
@@ -49,10 +49,10 @@ public class VenueServiceImpl implements VenueService {
 	}
 
 	@Override
-	public VenueResponseDto getVenueById(String venueId) throws VenueNotFoundException {
+	public VenueResponseDto getVenueById(String venueId) throws ResourceNotFoundException {
 		return venueRepository.findById(venueId)
 				.map(venueMapper::toResponseDto)
-				.orElseThrow(() -> new VenueNotFoundException("Venue not found with id: " + venueId));
+				.orElseThrow(() -> new ResourceNotFoundException("Venue not found with id: " + venueId));
 	}
 
 	@Override
