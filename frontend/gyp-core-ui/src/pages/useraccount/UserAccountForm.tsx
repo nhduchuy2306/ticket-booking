@@ -2,7 +2,7 @@ import { Button, Form, Input, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import DataTransfer from "../../components/data-transfer/DataTransfer.tsx";
-import { RoleItemModel } from "../../components/data-transfer/DataTransferModel.ts";
+import { DataItemModel } from "../../components/data-transfer/DataTransferModel.ts";
 import SinglePageForm from "../../components/layout/singlepage/SinglePageForm.tsx";
 import SinglePageLayout from "../../components/layout/singlepage/SinglePageLayout.tsx";
 import { createErrorNotification } from "../../components/notification/Notification.ts";
@@ -78,7 +78,7 @@ const UserAccountForm: React.FC<UserAccountFormProps> = ({mode}) => {
         }
     }, [data, form, mode]);
 
-    const buildUserRoleItem = (userGroups: UserGroupResponseDto[]): RoleItemModel[] => {
+    const buildUserRoleItem = (userGroups: UserGroupResponseDto[]): DataItemModel[] => {
         return userGroups.map((group) => ({
             key: group.id,
             title: group.name,
@@ -99,7 +99,7 @@ const UserAccountForm: React.FC<UserAccountFormProps> = ({mode}) => {
             const adaptedValues = {
                 ...validatedValues,
                 dob: values.dob ? DateUtils.toIsoDateTime(values.dob) : null,
-                userGroupList: values?.roles.map((role: RoleItemModel) => role.key)
+                userGroupList: values?.roles.map((role: DataItemModel) => role.key)
             };
             delete adaptedValues.roles;
             await onSave(adaptedValues);
@@ -179,15 +179,16 @@ const UserAccountForm: React.FC<UserAccountFormProps> = ({mode}) => {
 
                     <Form.Item name="roles" label="Role Assignment">
                         <DataTransfer
-                                onChange={(data: RoleItemModel[]) => {
+                                onChange={(data: DataItemModel[]) => {
                                     form.setFieldsValue({roles: data});
                                 }}
                                 dataSource={buildUserRoleItem(userGroups)}
                                 selectedKeys={data?.userGroupList?.map(item => item.id) || []}
+                                titles={['Available Roles', 'Assigned Roles']}
                         />
                     </Form.Item>
 
-                    <div className="flex justify-end items-center gap-1.5">
+                    <div className="flex justify-end items-center gap-1.5 absolute bottom-14 right-14">
                         <Button type="default" onClick={handleBack}>Cancel</Button>
                         {!isReadOnly &&
                             <Button

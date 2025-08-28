@@ -6,6 +6,8 @@ import java.util.concurrent.CompletableFuture;
 import com.gyp.common.kafkatopics.TopicConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
@@ -18,7 +20,10 @@ public class AssignSaleChannelToEventProducer {
 
 	public void assignSaleChannelToEventProducer(String eventId, List<String> saleChannelIds) {
 		try {
-			String dataString = String.join(",", saleChannelIds);
+			String dataString = StringUtils.EMPTY;
+			if(CollectionUtils.isNotEmpty(saleChannelIds)) {
+				dataString = String.join(",", saleChannelIds);
+			}
 			CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(
 					TopicConstants.ASSIGN_SALE_CHANNEL_TO_EVENT, eventId, dataString);
 			future.whenComplete((result, throwable) -> {
@@ -36,6 +41,5 @@ public class AssignSaleChannelToEventProducer {
 			log.error("Error while sending sale channels for event {}: {}", eventId, e.getMessage());
 			throw new RuntimeException("Failed to assign sale channels to event", e);
 		}
-
 	}
 }

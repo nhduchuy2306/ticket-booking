@@ -68,6 +68,14 @@ public class SaleChannelServiceImpl implements SaleChannelService {
 	}
 
 	@Override
+	public List<SaleChannelResponseDto> getAllSaleChannelsByEventId(String eventId) {
+		return saleChannelRepository.findAllByEventId(eventId)
+				.stream()
+				.map(saleChannelMapper::toResponseDto)
+				.toList();
+	}
+
+	@Override
 	public List<SaleChannelResponseDto> getActiveSaleChannels() {
 		List<SaleChannelResponseDto> responseList = saleChannelRepository.findByStatus(SaleChannelStatus.ACTIVE)
 				.stream()

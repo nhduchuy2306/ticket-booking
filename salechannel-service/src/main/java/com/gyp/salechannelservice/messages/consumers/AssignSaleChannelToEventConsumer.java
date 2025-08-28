@@ -9,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -18,7 +21,8 @@ public class AssignSaleChannelToEventConsumer {
 	private final SaleChannelEventService saleChannelEventService;
 
 	@KafkaListener(topics = TopicConstants.ASSIGN_SALE_CHANNEL_TO_EVENT)
-	public void assignSaleChannelToEventConsumer(String eventId, String saleChannelIds) {
+	public void assignSaleChannelToEventConsumer(@Header(KafkaHeaders.RECEIVED_KEY) String eventId,
+			@Payload String saleChannelIds) {
 		try {
 			log.info("Received sale channels for event {}: {}", eventId, saleChannelIds);
 
@@ -30,15 +34,19 @@ public class AssignSaleChannelToEventConsumer {
 
 			if(CollectionUtils.isEmpty(saleChannelIdList)) {
 				log.info("No existing sale channels found for event {}. Creating new entries.", eventId);
+
+				saleChannelIdList.forEach(saleChannelId -> {
+					saleChannelEventService.removeEventFromChannel(saleChannelId, eventId);
+				});
 			} else {
 				log.info("Found existing sale channels for event {}: {}", eventId, saleChannelIdList);
 
 				saleChannelIdList.forEach(saleChannelId -> {
-					saleChannelEventService.removeEventFromChannel(eventId, saleChannelId);
+					saleChannelEventService.removeEventFromChannel(saleChannelId, eventId);
 				});
 
 				saleChannelIdList.forEach(saleChannelId -> {
-					saleChannelEventService.assignEventToChannel(eventId, saleChannelId);
+					saleChannelEventService.assignEventToChannel(saleChannelId, eventId);
 				});
 			}
 		} catch(Exception e) {

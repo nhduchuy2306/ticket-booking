@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class SaleChannelController extends AbstractController {
 	public static final String SALE_CHANNEL_CONTROLLER_PATH = "/sale-channels";
 
+	private static final String EVENTS_PATH = "/events";
+
 	private final SaleChannelService saleChannelService;
 
 	@GetMapping
@@ -52,5 +54,11 @@ public class SaleChannelController extends AbstractController {
 	public ResponseEntity<?> delete(@PathVariable(ID_PARAM) String id) {
 		saleChannelService.deleteSaleChannel(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping(EVENTS_PATH + "/{" + ID_PARAM + "}")
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT, #ActionPerm.READ)")
+	public ResponseEntity<?> getSaleChannelsByEventId(@PathVariable(ID_PARAM) String eventId) {
+		return ResponseEntity.ok(saleChannelService.getAllSaleChannelsByEventId(eventId));
 	}
 }

@@ -175,7 +175,7 @@ const UserGroupForm: React.FC<UserGroupFormProps> = ({entity, mode, onSave, onCa
                 }
 
                 {!isReadOnly && (
-                        <Form.Item>
+                        <div className="absolute bottom-10 right-14">
                             <Space className="float-right">
                                 <Button type="default" className="bg-red-500" onClick={handleReset}>
                                     Reset
@@ -187,7 +187,7 @@ const UserGroupForm: React.FC<UserGroupFormProps> = ({entity, mode, onSave, onCa
                                     {isCreateMode ? "Create" : "Update"}
                                 </Button>
                             </Space>
-                        </Form.Item>
+                        </div>
                 )}
             </Form>
     );

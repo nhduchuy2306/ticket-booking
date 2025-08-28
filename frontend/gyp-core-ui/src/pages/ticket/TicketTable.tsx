@@ -25,7 +25,6 @@ const TicketTable: React.FC<TicketTableProps> = ({eventId, refreshTrigger}) => {
                 const response = await TicketService.getAllGeneratedTickets(eventId);
                 if (response) {
                     setGeneratedTickets(response);
-                    setIsLoading(false);
                 } else {
                     setGeneratedTickets([]);
                 }
@@ -36,6 +35,8 @@ const TicketTable: React.FC<TicketTableProps> = ({eventId, refreshTrigger}) => {
                         "Failed to fetch generated tickets",
                         "An error occurred while fetching the generated tickets."
                 );
+            } finally {
+                setIsLoading(false);
             }
         }
         void fetchGeneratedTickets();

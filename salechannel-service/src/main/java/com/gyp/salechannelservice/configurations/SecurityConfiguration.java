@@ -25,7 +25,7 @@ public class SecurityConfiguration {
 		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.authorizeHttpRequests(request ->
 				request.requestMatchers(PUBLIC_ENDPOINTS).permitAll()
-						.anyRequest().permitAll()
+						.anyRequest().authenticated()
 		);
 
 		http.oauth2ResourceServer(oauth2 ->

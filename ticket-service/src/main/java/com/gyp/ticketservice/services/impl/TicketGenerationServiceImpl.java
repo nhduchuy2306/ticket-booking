@@ -59,10 +59,10 @@ public class TicketGenerationServiceImpl implements TicketGenerationService {
 				List<Row> rows = section.getRows();
 				List<Table> tables = section.getTables();
 				if(!CollectionUtils.isEmpty(rows)) {
-					generateRowTickets(eventId, seatMapDto, section, rows);
+					generateRowTickets(eventId, seatMapDto, section, rows, seatMapDto.getOrganizationId());
 				}
 				if(!CollectionUtils.isEmpty(tables)) {
-					generateTableTickets(eventId, seatMapDto, section, tables);
+					generateTableTickets(eventId, seatMapDto, section, tables, seatMapDto.getOrganizationId());
 				}
 			}
 			EventGenerationTicketEM eventGenerationTicketEM = EventGenerationTicketEM.builder()
@@ -71,7 +71,7 @@ public class TicketGenerationServiceImpl implements TicketGenerationService {
 					.build();
 			eventGeneratedProducer.send(eventGenerationTicketEM);
 		} catch(Exception e) {
-			throw new ResourceNotFoundException("Error generating tickets for event: " + eventId, e);
+			throw new IllegalArgumentException("Error generating tickets for event: " + eventId, e);
 		}
 	}
 
@@ -99,7 +99,8 @@ public class TicketGenerationServiceImpl implements TicketGenerationService {
 		}
 	}
 
-	private void generateRowTickets(String eventId, SeatMapDto seatMapDto, Section section, List<Row> rows) {
+	private void generateRowTickets(String eventId, SeatMapDto seatMapDto, Section section, List<Row> rows,
+			String organizationId) {
 		for(Row row : rows) {
 			List<Seat> seats = row.getSeats();
 			if(CollectionUtils.isEmpty(seats)) {
@@ -107,11 +108,12 @@ public class TicketGenerationServiceImpl implements TicketGenerationService {
 						"No seats found in row: " + row.getName() + " for section: " + section.getName());
 			}
 			String seatInfo = section.getName() + "-" + row.getName() + "-";
-			generateSeatTickets(eventId, seatMapDto, seats, seatInfo);
+			generateSeatTickets(eventId, seatMapDto, seats, seatInfo, organizationId);
 		}
 	}
 
-	private void generateTableTickets(String eventId, SeatMapDto seatMapDto, Section section, List<Table> tables) {
+	private void generateTableTickets(String eventId, SeatMapDto seatMapDto, Section section, List<Table> tables,
+			String organizationId) {
 		for(Table table : tables) {
 			List<Seat> seats = table.getSeats();
 			if(CollectionUtils.isEmpty(seats)) {
@@ -119,12 +121,12 @@ public class TicketGenerationServiceImpl implements TicketGenerationService {
 						"No seats found in table: " + table.getName() + " for section: " + section.getName());
 			}
 			String seatInfo = section.getName() + "-" + table.getName() + "-";
-			generateSeatTickets(eventId, seatMapDto, seats, seatInfo);
+			generateSeatTickets(eventId, seatMapDto, seats, seatInfo, organizationId);
 		}
 	}
 
-	private void generateSeatTickets(String eventId, SeatMapDto seatMapDto, List<Seat> seats, String seatInfoPrefix) {
-		String organizationId = SecurityUtils.getCurrentOrganizationId();
+	private void generateSeatTickets(String eventId, SeatMapDto seatMapDto, List<Seat> seats, String seatInfoPrefix,
+			String organizationId) {
 		for(Seat seat : seats) {
 			TicketEntity ticketEntity = TicketEntity.builder()
 					.eventId(eventId)

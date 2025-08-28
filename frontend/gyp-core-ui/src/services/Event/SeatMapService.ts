@@ -10,6 +10,7 @@ import { BaseService } from "../BaseService.ts";
 
 const SEAT_MAP_PATH = "seat-maps";
 const SEAT_MAPS_UPLOAD_PATH = `/${SEAT_MAP_PATH}/upload`;
+const GENERATE_SEAT_MAP_TICKET_PATH = "/generateseatmapticket";
 
 export class SeatMapService {
     static getAllSeatMaps = async (): Promise<SeatMapResponseDto[]> => {
@@ -42,6 +43,11 @@ export class SeatMapService {
                 'Content-Type': 'multipart/form-data'
             }
         });
+        return response.data;
+    }
+
+    static generateSeatMapTicket = async (eventId: string): Promise<void> => {
+        const response = await apiClient.get(`${EVENT_SERVICE_PATH}/${SEAT_MAP_PATH}${GENERATE_SEAT_MAP_TICKET_PATH}/${eventId}`);
         return response.data;
     }
 

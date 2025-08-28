@@ -1,5 +1,6 @@
 package com.gyp.eventservice.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gyp.common.dtos.pagination.PaginatedDto;
@@ -21,12 +22,12 @@ import com.gyp.eventservice.services.criteria.EventSearchCriteria;
 import com.gyp.eventservice.services.specifications.EventSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -76,10 +77,7 @@ public class EventServiceImpl implements EventService {
 		EventEntity eventEntity = eventMapper.toEntity(request);
 		eventEntity.setOrganizationId(organizationId);
 		var savedEvent = eventRepository.save(eventEntity);
-		if(CollectionUtils.isEmpty(request.getSaleChannelIds())) {
-			assignSaleChannelToEventProducer.assignSaleChannelToEventProducer(savedEvent.getId(),
-					request.getSaleChannelIds());
-		}
+		updateSaleChannels(savedEvent.getId(), request.getSaleChannelIds());
 		return eventMapper.toResponseDto(savedEvent);
 	}
 
@@ -94,10 +92,7 @@ public class EventServiceImpl implements EventService {
 		}
 		eventEntity.setOrganizationId(organizationId);
 		EventEntity savedEvent = eventRepository.save(eventEntity);
-		if(request.getSaleChannelIds() != null && !request.getSaleChannelIds().isEmpty()) {
-			assignSaleChannelToEventProducer.assignSaleChannelToEventProducer(savedEvent.getId(),
-					request.getSaleChannelIds());
-		}
+		updateSaleChannels(savedEvent.getId(), request.getSaleChannelIds());
 		return eventMapper.toResponseDto(savedEvent);
 	}
 
@@ -109,10 +104,7 @@ public class EventServiceImpl implements EventService {
 		eventMapper.updateEntityFromDto(request, existingEvent);
 		existingEvent.setOrganizationId(organizationId);
 		EventEntity updatedEvent = eventRepository.save(existingEvent);
-		if(request.getSaleChannelIds() != null && !request.getSaleChannelIds().isEmpty()) {
-			assignSaleChannelToEventProducer.assignSaleChannelToEventProducer(updatedEvent.getId(),
-					request.getSaleChannelIds());
-		}
+		updateSaleChannels(eventId, request.getSaleChannelIds());
 		return eventMapper.toResponseDto(updatedEvent);
 	}
 
@@ -135,10 +127,7 @@ public class EventServiceImpl implements EventService {
 			}
 			existingEvent.setOrganizationId(organizationId);
 			EventEntity updatedEvent = eventRepository.save(existingEvent);
-			if(request.getSaleChannelIds() != null && !request.getSaleChannelIds().isEmpty()) {
-				assignSaleChannelToEventProducer.assignSaleChannelToEventProducer(updatedEvent.getId(),
-						request.getSaleChannelIds());
-			}
+			updateSaleChannels(eventId, request.getSaleChannelIds());
 			return eventMapper.toResponseDto(updatedEvent);
 		} catch(Exception e) {
 			log.error("Error updating event with id: {}", eventId, e);
@@ -201,5 +190,13 @@ public class EventServiceImpl implements EventService {
 			return ValidationInfo.empty();
 		}
 		return validationInfo;
+	}
+
+	private void updateSaleChannels(String eventId, List<String> saleChannelIds) {
+		if(CollectionUtils.isNotEmpty(saleChannelIds)) {
+			assignSaleChannelToEventProducer.assignSaleChannelToEventProducer(eventId, saleChannelIds);
+		} else {
+			assignSaleChannelToEventProducer.assignSaleChannelToEventProducer(eventId, new ArrayList<>());
+		}
 	}
 }

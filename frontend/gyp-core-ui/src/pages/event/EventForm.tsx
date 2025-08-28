@@ -1,6 +1,8 @@
-import { Button, Checkbox, DatePicker, Form, Input, Select, UploadFile } from "antd";
+import { Button, Checkbox, DatePicker, Form, Input, Select, Spin, UploadFile } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import DataTransfer from "../../components/data-transfer/DataTransfer.tsx";
+import { DataItemModel } from "../../components/data-transfer/DataTransferModel.ts";
 import ImageUpload from "../../components/dataupload/ImageUpload.tsx";
 import SinglePageForm from "../../components/layout/singlepage/SinglePageForm.tsx";
 import SinglePageLayout from "../../components/layout/singlepage/SinglePageLayout.tsx";
@@ -15,10 +17,12 @@ import {
     SeasonResponseDto,
     VenueMapResponseDto
 } from "../../models/generated/event-service-models";
+import { SaleChannelResponseDto } from "../../models/generated/sale-channel-service-models";
 import { CategoryService } from "../../services/Event/CategoryService.ts";
 import { EventService, EventServiceAdapter } from "../../services/Event/EventService.ts";
 import { SeasonService } from "../../services/Event/SeasonService.ts";
 import { VenueMapService } from "../../services/Event/VenueMapService.ts";
+import { SaleChannelService } from "../../services/SaleChannel/SaleChannelService.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
 
 interface EventFormProps {
@@ -33,6 +37,8 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [logoFileList, setLogoFileList] = useState<UploadFile[]>([]);
     const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
+    const [saleChannelsByEvent, setSaleChannelsByEvent] = useState<SaleChannelResponseDto[]>([]);
+    const [saleChannels, setSaleChannels] = useState<SaleChannelResponseDto[]>([]);
     const {id} = useParams();
     const [form] = Form.useForm();
     const navigate = useNavigate();
@@ -63,6 +69,20 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                     setSeasons(seasonResponse);
                 } else {
                     setSeasons([]);
+                }
+
+                const saleChannelResponse = await SaleChannelService.getAllSaleChannels();
+                if (saleChannelResponse) {
+                    setSaleChannels(saleChannelResponse);
+                } else {
+                    setSaleChannels([]);
+                }
+
+                const saleChannelsByEventResponse = id ? await SaleChannelService.getSaleChannelsByEventId(id) : [];
+                if (saleChannelsByEventResponse) {
+                    setSaleChannelsByEvent(saleChannelsByEventResponse);
+                } else {
+                    setSaleChannelsByEvent([]);
                 }
 
                 if (id && (mode === Mode.EDIT.key || mode === Mode.READ_ONLY.key)) {
@@ -106,12 +126,21 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                 categories: data.categories ? data.categories.map(category => category.id) : [],
                 venueMapId: data.venueMap?.id,
                 seasonId: data.season?.id,
-                status: data.status
+                status: data.status,
+                saleChannelIds: saleChannelsByEvent?.map(item => item.id) || [],
             });
         } else {
             form.resetFields();
         }
     }, [data, form, mode]);
+
+    const buildSaleChannelItem = (saleChannelList: SaleChannelResponseDto[]): DataItemModel[] => {
+        return saleChannelList.map((saleChannelItem) => ({
+            key: saleChannelItem.id,
+            title: saleChannelItem.name,
+            description: saleChannelItem.description || "",
+        }));
+    };
 
     // Handle logo file changes
     const handleLogoFileChange = (newFileList: UploadFile[], files: File[]) => {
@@ -132,6 +161,9 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                 doorOpenTime: values.doorOpenTime ? DateUtils.toIsoDateTime(values.doorOpenTime) : null,
                 doorCloseTime: values.doorCloseTime ? DateUtils.toIsoDateTime(values.doorCloseTime) : null,
                 categoryIds: validatedValues.categories || [],
+                saleChannelIds: validatedValues.saleChannelIds.map((saleChannel: {
+                    key: string
+                }) => saleChannel.key) || [],
             };
 
             if (mode === Mode.CREATE.key) {
@@ -253,6 +285,17 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                         />
                     </Form.Item>
 
+                    <Form.Item name="saleChannelIds" label="Sale Channels">
+                        <DataTransfer
+                                onChange={(data: DataItemModel[]) => {
+                                    form.setFieldsValue({saleChannelIds: data});
+                                }}
+                                dataSource={buildSaleChannelItem(saleChannels)}
+                                selectedKeys={saleChannelsByEvent?.map(item => item.id) || []}
+                                titles={['Available Sale Channels', 'Assigned Sale Channels']}
+                        />
+                    </Form.Item>
+
                     <Form.Item
                             name="startTime"
                             label="Start Time"
@@ -326,7 +369,7 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                         />
                     }
                     {!isReadOnly &&
-                        <div className="flex justify-end items-center gap-1.5">
+                        <div className="flex justify-end items-center gap-1.5 absolute bottom-4 right-4">
                             <Button type="default" onClick={handleBack}>Cancel</Button>
                             <Button
                                 type="primary"
@@ -342,21 +385,23 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
 
     return (
             <div className="bg-white">
-                <SinglePageLayout onNavigate={(path: string, entity?: EventResponseDto) =>
-                        EventService.navigate(navigate, path, entity)}
-                >
-                    <SinglePageForm
-                            service={EventServiceAdapter}
-                            renderForm={renderForm}
-                            entity={data}
-                            mode={mode}
-                            successMessages={{
-                                create: "Event created successfully",
-                                update: "Event updated successfully"
-                            }}
-                            showBackButton={true}
-                    />
-                </SinglePageLayout>
+                <Spin spinning={isLoading} size="large">
+                    <SinglePageLayout onNavigate={(path: string, entity?: EventResponseDto) =>
+                            EventService.navigate(navigate, path, entity)}
+                    >
+                        <SinglePageForm
+                                service={EventServiceAdapter}
+                                renderForm={renderForm}
+                                entity={data}
+                                mode={mode}
+                                successMessages={{
+                                    create: "Event created successfully",
+                                    update: "Event updated successfully"
+                                }}
+                                showBackButton={true}
+                        />
+                    </SinglePageLayout>
+                </Spin>
             </div>
     );
 }

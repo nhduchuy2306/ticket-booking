@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { createErrorNotification, createSuccessNotification } from "../../components/notification/Notification.ts";
 import { EventResponseDto } from "../../models/generated/event-service-models";
 import { EventService } from "../../services/Event/EventService.ts";
-import { TicketService } from "../../services/Ticket/TicketService.ts";
+import { SeatMapService } from "../../services/Event/SeatMapService.ts";
 
 interface TicketFormProps {
     onShowTicket?: (eventId: string) => void;
@@ -53,7 +53,7 @@ const TicketForm: React.FC<TicketFormProps> = ({onShowTicket}) => {
     const handleGenerateTicket = async () => {
         try {
             const eventId = form.getFieldValue("eventId");
-            await TicketService.generateTicket(eventId);
+            await SeatMapService.generateSeatMapTicket(eventId);
             setIsGenerated(true);
             createSuccessNotification(
                     "Ticket generated successfully",

@@ -3,6 +3,7 @@ import { apiClient, SALE_CHANNEL_SERVICE_PATH } from "../ApiClient.ts";
 import { BaseService } from "../BaseService.ts";
 
 const SALE_CHANNEL_PATH = "sale-channels";
+const EVENT_PATH = "events";
 
 export class SaleChannelService {
     static getAllSaleChannels = async (): Promise<SaleChannelResponseDto[]> => {
@@ -27,6 +28,11 @@ export class SaleChannelService {
 
     static deleteSaleChannel = async (id: string): Promise<void> => {
         await apiClient.delete(`/${SALE_CHANNEL_SERVICE_PATH}/${SALE_CHANNEL_PATH}/${id}`);
+    }
+
+    static getSaleChannelsByEventId = async (eventId: string): Promise<SaleChannelResponseDto[]> => {
+        const res = await apiClient.get(`/${SALE_CHANNEL_SERVICE_PATH}/${SALE_CHANNEL_PATH}/${EVENT_PATH}/${eventId}`);
+        return res.data;
     }
 }
 

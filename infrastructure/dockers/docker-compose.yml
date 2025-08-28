@@ -95,9 +95,29 @@ services:
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_SERVER_URL: http://localhost:19000
     command: server /data --console-address ":9001"
     volumes:
       - ./minio_data:/data
+    networks:
+      - gyp-net
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3.3
+    container_name: keycloak
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_DB: mysql
+      KC_DB_URL: jdbc:mysql://mysql:3306/keycloak
+      KC_DB_USERNAME: root
+      KC_DB_PASSWORD: 12345
+      KC_HOSTNAME_STRICT: "false"
+    ports:
+      - "18080:8080"
+    command: start-dev
+    depends_on:
+      - mysql
     networks:
       - gyp-net
 

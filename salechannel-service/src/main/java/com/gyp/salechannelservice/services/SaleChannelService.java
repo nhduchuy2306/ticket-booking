@@ -16,6 +16,8 @@ public interface SaleChannelService {
 
 	List<SaleChannelResponseDto> getAllSaleChannels();
 
+	List<SaleChannelResponseDto> getAllSaleChannelsByEventId(String eventId);
+
 	List<SaleChannelResponseDto> getActiveSaleChannels();
 
 	List<SaleChannelResponseDto> getSaleChannelsByType(SaleChannelType type);

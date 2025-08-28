@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface SaleChannelEventRepository extends JpaRepository<SaleChannelEventEntity, String> {
 	Optional<SaleChannelEventEntity> findByEventIdAndSaleChannelEntity_Id(String eventId, String saleChannelId);
 
-	List<SaleChannelEventEntity> findByEventId(String eventId);
+	List<SaleChannelEventEntity> findAllByEventId(String eventId);
 }
