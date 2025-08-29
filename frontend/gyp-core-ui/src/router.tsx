@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from "./App.tsx";
+import GypApp from "./GypApp.tsx";
 import { Mode } from "./models/enums/Mode.ts";
 import RegisterPage from "./pages/auth/RegisterPage.tsx";
 import CategoryPage from "./pages/category/CategoryPage.tsx";
@@ -197,6 +198,11 @@ export const router = createBrowserRouter([
             ...SaleChannelServiceRouter,
             ...ConfigurationRouter
         ],
+    },
+    {
+        path: '/gyp',
+        element: <GypApp/>,
+        errorElement: <ErrorPage/>,
     },
     ...OtherRouter,
 ]);
