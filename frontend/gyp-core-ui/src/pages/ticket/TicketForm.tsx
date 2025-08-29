@@ -4,6 +4,7 @@ import { createErrorNotification, createSuccessNotification } from "../../compon
 import { EventResponseDto } from "../../models/generated/event-service-models";
 import { EventService } from "../../services/Event/EventService.ts";
 import { SeatMapService } from "../../services/Event/SeatMapService.ts";
+import { TicketService } from "../../services/Ticket/TicketService.ts";
 
 interface TicketFormProps {
     onShowTicket?: (eventId: string) => void;
@@ -12,6 +13,8 @@ interface TicketFormProps {
 const TicketForm: React.FC<TicketFormProps> = ({onShowTicket}) => {
     const [events, setEvents] = useState<EventResponseDto[]>([]);
     const [isGenerated, setIsGenerated] = useState<boolean>(false);
+    const [isOnSale, setIsOnSale] = useState<boolean>(false);
+    const [selectedEvent, setSelectedEvent] = useState<EventResponseDto | null>(null);
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -32,15 +35,13 @@ const TicketForm: React.FC<TicketFormProps> = ({onShowTicket}) => {
 
     const handleEventSelect = (value: string) => {
         const event = events.find(event => event.id === value);
-        if (event?.isGenerated) {
-            setIsGenerated(true);
-        } else {
-            setIsGenerated(false);
-        }
+        setIsGenerated(event?.isGenerated || false);
+        setSelectedEvent(event || null);
+        setIsOnSale(event?.status === "ON_SALE");
     }
 
     const handleShowTicket = async () => {
-        const eventId = form.getFieldValue("eventId");
+        const eventId = selectedEvent?.id;
         if (!eventId) {
             createErrorNotification("No event selected", "Please select an event to show the ticket.");
             return;
@@ -67,6 +68,10 @@ const TicketForm: React.FC<TicketFormProps> = ({onShowTicket}) => {
         }
     }
 
+    const handleSaleTicket = async () => {
+        await TicketService.startSaleTicket(selectedEvent?.id);
+    }
+
     return (
             <Form
                     form={form}
@@ -74,7 +79,7 @@ const TicketForm: React.FC<TicketFormProps> = ({onShowTicket}) => {
                     onFinish={handleGenerateTicket}
             >
                 <Form.Item
-                        name="eventId"
+                        name="event"
                         label="Event"
                         rules={[{required: true, message: "Please select an event"}]}
                 >
@@ -82,7 +87,7 @@ const TicketForm: React.FC<TicketFormProps> = ({onShowTicket}) => {
                             className="!w-full !mr-1"
                             options={events.map(event => ({
                                 label: event.name,
-                                value: event.id
+                                value: event.id,
                             }))}
                             onSelect={handleEventSelect}
                     />
@@ -90,7 +95,9 @@ const TicketForm: React.FC<TicketFormProps> = ({onShowTicket}) => {
                 <Form.Item>
                     <Flex gap={5} justify="flex-end">
                         {isGenerated && <Button type="default" onClick={handleShowTicket}>Show</Button>}
-                        <Button type="primary" htmlType="submit" disabled={isGenerated}>Generate</Button>
+                        {isGenerated && !isOnSale &&
+                            <Button type="primary" onClick={handleSaleTicket}>Sale Ticket</Button>}
+                        {!isGenerated && <Button type="primary" htmlType="submit">Generate</Button>}
                     </Flex>
                 </Form.Item>
             </Form>

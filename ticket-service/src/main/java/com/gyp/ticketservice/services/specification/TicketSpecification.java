@@ -20,6 +20,7 @@ public final class TicketSpecification {
 	private static final String TICKET_TYPE = "ticketType";
 	private static final String SEAT_NUMBER = "seatNumber";
 	private static final String ORDER_BY = "orderBy";
+	private static final String ORGANIZATION_ID = "organizationId";
 
 	public static Specification<TicketEntity> createTicketSpecification(TicketSearchCriteria criteria) {
 		return (root, query, criteriaBuilder) -> {
@@ -31,7 +32,10 @@ public final class TicketSpecification {
 				predicates.add(criteriaBuilder.equal(root.get(TICKET_ID), criteria.getTicketId()));
 			}
 			if(StringUtils.isNotEmpty(criteria.getOrganizationId())) {
-				predicates.add(criteriaBuilder.equal(root.get("organizationId"), criteria.getOrganizationId()));
+				predicates.add(criteriaBuilder.equal(root.get(ORGANIZATION_ID), criteria.getOrganizationId()));
+			}
+			if(StringUtils.isNotEmpty(criteria.getStatus())) {
+				predicates.add(criteriaBuilder.equal(root.get(STATUS), criteria.getStatus()));
 			}
 			return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		};

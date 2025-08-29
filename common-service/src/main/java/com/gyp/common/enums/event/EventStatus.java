@@ -2,13 +2,14 @@ package com.gyp.common.enums.event;
 
 public enum EventStatus {
 	DRAFT,
-	PENDING_APPROVAL, // If we need to wait for approval
+	ON_SALE,
+	PENDING_APPROVAL,
 	PUBLISHED,
 	CANCELLED,
 	POSTPONED,
 	COMPLETED;
 
 	public boolean isPublished() {
-		return this.equals(PUBLISHED);
+		return equals(PUBLISHED);
 	}
 }
