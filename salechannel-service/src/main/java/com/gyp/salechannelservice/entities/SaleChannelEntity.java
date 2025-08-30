@@ -13,6 +13,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -53,6 +54,10 @@ public class SaleChannelEntity extends AbstractEntity {
 	@Column(name = "commission_rate")
 	private Double commissionRate;
 
+	@Lob
+	@Column(name = "sale_channel_config", columnDefinition = "text")
+	private String saleChannelConfig;
+
 	@Column(name = "status")
 	@Enumerated(EnumType.STRING)
 	private SaleChannelStatus status;
@@ -69,8 +74,4 @@ public class SaleChannelEntity extends AbstractEntity {
 	@JsonIgnore
 	@OneToMany(mappedBy = "saleChannelEntity", fetch = FetchType.LAZY)
 	private List<SaleChannelEventEntity> saleChannelEventEntityList = new ArrayList<>();
-
-	@JsonIgnore
-	@OneToMany(mappedBy = "saleChannelEntity", fetch = FetchType.LAZY)
-	private List<SaleChannelConfigEntity> saleChannelConfigEntityList = new ArrayList<>();
 }

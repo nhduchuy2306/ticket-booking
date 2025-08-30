@@ -16,7 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
 	private static final String[] PUBLIC_ENDPOINTS = {
 			"/v3/api-docs/**", "/v3/api-docs**", "/swagger-ui/**",
-			"/swagger-ui.html", "/swagger-resources/**", "/webjars/**"
+			"/swagger-ui.html", "/swagger-resources/**", "/webjars/**",
+			"/sale-channels/active"
 	};
 
 	@Bean

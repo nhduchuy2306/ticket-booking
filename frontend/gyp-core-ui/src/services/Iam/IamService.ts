@@ -1,100 +1,128 @@
 import { apiClient, AUTH_SERVICE_PATH } from "../ApiClient.ts";
 
-const TOKEN_KEY = 'tọken';
-const CLIENT_ID = 'gyp-core-ui';
+const STORAGE_KEYS = {
+    TOKEN: "token",
+    ORG_ID: "organizationId",
+    USER_ID: "userId",
+    NAME: "name",
+    REDIRECT: "postLoginRedirect",
+};
+
+const CLIENT_ID = "gyp-core-ui";
 const TOKEN_PATH = "token";
-const REDIRECT_URL = 'http://localhost:3000/callback';
-const RESPONSE_URL = 'http://localhost:3000/user-account';
-const AUTH_SERVICE_URL = `http://localhost:9999/auths/iam/oauth/login?redirect_uri=${encodeURIComponent(REDIRECT_URL)}&client_id=${CLIENT_ID}`;
 const REFRESH_TOKEN_PATH = "refresh-token";
 
+const REDIRECT_URL = "http://localhost:3000/callback";
+const DEFAULT_RESPONSE_URL = "http://localhost:3000/user-account";
+
 export class IamService {
-    static getToken = (): string | null => {
-        return localStorage.getItem(TOKEN_KEY);
+    private static getAuthServiceUrl(): string {
+        const {VITE_REDIRECT_URL, VITE_CLIENT_ID, VITE_API_GATEWAY_URL} = import.meta.env;
+        const redirectUri = encodeURIComponent(VITE_REDIRECT_URL || REDIRECT_URL);
+        const clientId = VITE_CLIENT_ID || CLIENT_ID;
+        const prefixUrl = VITE_API_GATEWAY_URL || "";
+        return `${prefixUrl}/auths/iam/oauth/login?redirect_uri=${redirectUri}&client_id=${clientId}`;
     }
 
-    static setToken = (token: string): void => {
-        localStorage.setItem(TOKEN_KEY, token);
+    // ---- Local Storage Helpers ----
+    private static setItem(key: string, value: string): void {
+        localStorage.setItem(key, value);
     }
 
-    static setOrganizationId = (organizationId: string): void => {
-        localStorage.setItem('organizationId', organizationId);
+    private static getItem(key: string): string | null {
+        return localStorage.getItem(key);
     }
 
-    static getOrganizationId = (): string | null => {
-        return localStorage.getItem('organizationId');
+    private static removeItem(key: string): void {
+        localStorage.removeItem(key);
     }
 
-    static setUserId = (userId: string): void => {
-        localStorage.setItem('userId', userId);
-    }
-
-    static getUserId = (): string | null => {
-        return localStorage.getItem('userId');
-    }
-
-    static setName = (username: string): void => {
-        localStorage.setItem('name', username);
-    }
-
-    static getName = (): string | null => {
-        return localStorage.getItem('name');
-    }
-
-    static removeToken = (): void => {
-        localStorage.removeItem(TOKEN_KEY);
-    }
-
-    static clearLocalStorage = (): void => {
+    private static clear(): void {
         localStorage.clear();
     }
 
+    // ---- Token Management ----
+    static getToken = (): string | null => this.getItem(STORAGE_KEYS.TOKEN);
+
+    static setToken = (token: string): void =>
+            this.setItem(STORAGE_KEYS.TOKEN, token);
+
+    static removeToken = (): void => this.removeItem(STORAGE_KEYS.TOKEN);
+
+    // ---- User Metadata ----
+    static setOrganizationId = (id: string): void =>
+            this.setItem(STORAGE_KEYS.ORG_ID, id);
+
+    static getOrganizationId = (): string | null =>
+            this.getItem(STORAGE_KEYS.ORG_ID);
+
+    static setUserId = (id: string): void =>
+            this.setItem(STORAGE_KEYS.USER_ID, id);
+
+    static getUserId = (): string | null => this.getItem(STORAGE_KEYS.USER_ID);
+
+    static setName = (name: string): void =>
+            this.setItem(STORAGE_KEYS.NAME, name);
+
+    static getName = (): string | null => this.getItem(STORAGE_KEYS.NAME);
+
+    // ---- Redirect Management ----
+    static setCurrentRedirect = (url: string): void =>
+            this.setItem(STORAGE_KEYS.REDIRECT, url);
+
+    static getCurrentRedirect = (): string | null =>
+            this.getItem(STORAGE_KEYS.REDIRECT);
+
+    // ---- Auth Flow ----
     static redirectToLogin = (): void => {
-        this.clearLocalStorage();
-        window.location.href = AUTH_SERVICE_URL;
-    }
+        this.clear();
+        const currentUrl = window.location.pathname + window.location.search;
+        this.setCurrentRedirect(currentUrl);
+        window.location.href = this.getAuthServiceUrl();
+    };
 
     static handleAuthCallback = async (authCode: string): Promise<void> => {
         try {
-            const response = await apiClient.post(`${AUTH_SERVICE_PATH}/${TOKEN_PATH}`, {
+            const {data} = await apiClient.post(`${AUTH_SERVICE_PATH}/${TOKEN_PATH}`, {
                 clientId: CLIENT_ID,
-                code: authCode
+                code: authCode,
             });
-            if (response.data && response.data.token) {
-                if (response.data.token) {
-                    this.setToken(response.data.token);
-                    window.location.href = RESPONSE_URL;
-                }
-                if (response.data.organizationId) {
-                    this.setOrganizationId(response.data.organizationId);
-                }
-                if (response.data.userId) {
-                    this.setUserId(response.data.userId);
-                }
-                if (response.data.name) {
-                    this.setName(response.data.name);
-                }
-            } else {
-                console.error('No token received in response');
+
+            if (!data?.token) {
+                console.error("No token received in response");
+                return;
             }
+
+            this.setToken(data.token);
+
+            if (data.organizationId) this.setOrganizationId(data.organizationId);
+            if (data.userId) this.setUserId(data.userId);
+            if (data.name) this.setName(data.name);
+
+            window.location.href = this.getCurrentRedirect() || DEFAULT_RESPONSE_URL;
         } catch (error) {
-            console.error('Error handling auth callback:', error);
+            console.error("Error handling auth callback:", error);
         }
-    }
+    };
 
     static handleRefreshToken = async (): Promise<void> => {
-        const token = await apiClient.get(`${AUTH_SERVICE_PATH}/${REFRESH_TOKEN_PATH}`);
-        if (token && token.data && token.data.token) {
-            this.setToken(token.data.token);
-        } else {
-            console.error('No token received in refresh response');
+        try {
+            const {data} = await apiClient.get(
+                    `${AUTH_SERVICE_PATH}/${REFRESH_TOKEN_PATH}`
+            );
+            if (!data?.token) {
+                console.error("No token received in refresh response");
+                return;
+            }
+            this.setToken(data.token);
+        } catch (error) {
+            console.error("Error refreshing token:", error);
         }
-    }
+    };
 
-    static checkExistingAuth = async (): Promise<void> => {
-        const token = this.getToken();
-        if (!token) {
+    static checkExistingAuth = (): void => {
+        if (!this.getToken()) {
             this.redirectToLogin();
         }
-    }
+    };
 }

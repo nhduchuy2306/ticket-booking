@@ -1,9 +1,10 @@
 import { SaleChannelRequestDto, SaleChannelResponseDto } from "../../models/generated/sale-channel-service-models";
-import { apiClient, SALE_CHANNEL_SERVICE_PATH } from "../ApiClient.ts";
+import { apiClient, apiWithoutAuth, SALE_CHANNEL_SERVICE_PATH } from "../ApiClient.ts";
 import { BaseService } from "../BaseService.ts";
 
 const SALE_CHANNEL_PATH = "sale-channels";
 const EVENT_PATH = "events";
+const ACTIVE_PATH = "active";
 
 export class SaleChannelService {
     static getAllSaleChannels = async (): Promise<SaleChannelResponseDto[]> => {
@@ -32,6 +33,11 @@ export class SaleChannelService {
 
     static getSaleChannelsByEventId = async (eventId: string): Promise<SaleChannelResponseDto[]> => {
         const res = await apiClient.get(`/${SALE_CHANNEL_SERVICE_PATH}/${SALE_CHANNEL_PATH}/${EVENT_PATH}/${eventId}`);
+        return res.data;
+    }
+
+    static getActiveSaleChannels = async (): Promise<SaleChannelResponseDto[]> => {
+        const res = await apiWithoutAuth.get(`/${SALE_CHANNEL_SERVICE_PATH}/${SALE_CHANNEL_PATH}/${ACTIVE_PATH}`);
         return res.data;
     }
 }

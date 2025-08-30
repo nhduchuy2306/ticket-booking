@@ -146,9 +146,13 @@
                                 <pattern>com.gyp.salechannelservice.dtos.**</pattern>
                             </classPatterns>
                             <mapClasses>asInterfaces</mapClasses>
-                            <mapEnum>asEnum</mapEnum>
                             <mapDate>asString</mapDate>
                             <outputKind>module</outputKind>
+                            <optionalProperties>all</optionalProperties>
+                            <optionalAnnotations>
+                                <annotation>javax.annotation.Nullable</annotation>
+                                <annotation>org.springframework.lang.Nullable</annotation>
+                            </optionalAnnotations>
                             <excludeClassPatterns>
                                 <pattern>java.io.**</pattern>
                                 <pattern>java.lang.**</pattern>

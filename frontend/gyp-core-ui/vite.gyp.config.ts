@@ -6,8 +6,8 @@ import { defineConfig } from 'vite'
 export default defineConfig({
     plugins: [react(), tailwindcss()],
     server: {
-        port: 3001,
-        open: '/gyp/',
+        port: 3000,
+        open: '/gyp',
     },
-    base: '/gyp/',
+    base: '/gyp',
 })

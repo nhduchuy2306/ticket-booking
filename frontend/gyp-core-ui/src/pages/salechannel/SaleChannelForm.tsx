@@ -1,12 +1,11 @@
 import { Button, Form, Input, Select, Space } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import MetaData from "../../components/metadata/MetaData.tsx";
-import { createErrorNotification } from "../../components/notification/Notification.ts";
 import { useFormLogic } from "../../hooks/form/useFormLogic.tsx";
-import { EventResponseDto } from "../../models/generated/event-service-models";
 import { SaleChannelRequestDto, SaleChannelResponseDto } from "../../models/generated/sale-channel-service-models";
-import { EventService } from "../../services/Event/EventService.ts";
+import BoxOfficeSaleChannelForm from "./subforms/BoxOfficeSaleChannelForm.tsx";
+import TicketShopSaleChannelForm from "./subforms/TicketShopSaleChannelForm.tsx";
 
 interface SaleChannelFormProps {
     entity: SaleChannelResponseDto;
@@ -24,32 +23,39 @@ const SaleChannelForm: React.FC<SaleChannelFormProps> = ({entity, mode, onSave, 
         handleSubmit,
         handleReset
     } = useFormLogic<SaleChannelRequestDto>({entity, mode, onSave});
-    const [events, setEvents] = useState<EventResponseDto[]>([]);
+    const saleChannelType = Form.useWatch("type", form);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Fetch Event data
-                const eventsData = await EventService.getActiveEvents();
-                if (eventsData) {
-                    setEvents(eventsData);
-                } else {
-                    setEvents([]);
-                }
-            } catch (error) {
-                console.error("Failed to fetch seat maps:", error);
-                createErrorNotification("Error fetching events");
+    const handleFinalSubmit = async (values: SaleChannelRequestDto) => {
+        if(values.saleChannelConfig) {
+            values.saleChannelConfig = {
+                ...values.saleChannelConfig,
+                type: values.type
             }
         }
-        void fetchData();
-    }, []);
+        await handleSubmit(values);
+    }
+
+    const renderSubForm = (saleChannelType?: string) => {
+        switch (saleChannelType) {
+            case 'BOX_OFFICE':
+                return <BoxOfficeSaleChannelForm/>;
+            case 'TICKET_SHOP':
+                return <TicketShopSaleChannelForm/>;
+            case 'API_PARTNER':
+                return <div>API Partner Sale Channel Form</div>;
+            case 'MOBILE_APP':
+                return <div>Mobile App Sale Channel Form</div>;
+            default:
+                return <div>No support</div>;
+        }
+    }
 
     return (
             <div className="p-6">
                 <Form
                         form={form}
                         layout="vertical"
-                        onFinish={handleSubmit}
+                        onFinish={handleFinalSubmit}
                         disabled={isReadOnly}
                 >
                     {isReadOnly && <Form.Item
@@ -108,22 +114,7 @@ const SaleChannelForm: React.FC<SaleChannelFormProps> = ({entity, mode, onSave, 
                         />
                     </Form.Item>
 
-                    <Form.Item
-                            name="eventId"
-                            label="Event"
-                            rules={[
-                                {required: true, message: 'Please Select an event'},
-                            ]}
-                    >
-                        <Select
-                                options={events.map(event => ({
-                                    label: event.name,
-                                    value: event.id
-                                }))}
-                                placeholder="Select an event"
-                                allowClear
-                        />
-                    </Form.Item>
+                    {renderSubForm(saleChannelType)}
 
                     {isReadOnly &&
                         <MetaData

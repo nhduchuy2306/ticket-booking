@@ -2,6 +2,7 @@ package com.gyp.salechannelservice.dtos.salechannelconfig;
 
 import java.util.List;
 
+import com.gyp.common.enums.salechannel.SaleChannelType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,21 +12,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class ConfigDataDto {
-	private String theme;
-	private String primaryColor;
-	private String secondaryColor;
-	private String fontFamily;
-
+@AllArgsConstructor
+public class TicketShopSaleChannelConfigDto extends BaseSaleChannelConfigDto {
+	private SaleChannelType type = SaleChannelType.TICKET_SHOP;
+	private String siteUrl;
 	private String siteTitle;
-	private String siteLogoUrl;
 	private String faviconUrl;
-
-	private String contactEmail;
-	private String contactPhone;
-	private List<String> socialLinks;
 
 	private String heroTitle;
 	private String heroSubtitle;
@@ -36,10 +29,17 @@ public class ConfigDataDto {
 	private String metaDescription;
 	private List<String> metaKeywords;
 
+	// Features
 	private boolean enableSearchEvents;
 	private boolean enableLogin;
 	private boolean enableMultiLanguage;
 	private List<String> supportedLanguages;
+
+	// Payment
+	private String paymentGateway;
+	private List<String> supportedCurrencies;
+	private boolean enableCoupons;
+	private boolean enableAffiliateProgram;
 
 	// Footer
 	private String footerText;

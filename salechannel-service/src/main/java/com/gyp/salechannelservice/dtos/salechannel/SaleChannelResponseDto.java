@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.gyp.common.dtos.AbstractDto;
 import com.gyp.common.enums.salechannel.SaleChannelStatus;
 import com.gyp.common.enums.salechannel.SaleChannelType;
+import com.gyp.salechannelservice.dtos.salechannelconfig.SaleChannelConfig;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class SaleChannelResponseDto extends AbstractDto {
 	private SaleChannelStatus status;
 	private String description;
 	private Double commissionRate;
+	private SaleChannelConfig saleChannelConfig;
 	private String organizationId;
 	private LocalDateTime startSaleAt;
 	private LocalDateTime endSaleAt;

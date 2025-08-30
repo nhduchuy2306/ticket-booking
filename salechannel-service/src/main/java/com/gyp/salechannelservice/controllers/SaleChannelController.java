@@ -22,6 +22,7 @@ public class SaleChannelController extends AbstractController {
 	public static final String SALE_CHANNEL_CONTROLLER_PATH = "/sale-channels";
 
 	private static final String EVENTS_PATH = "/events";
+	private static final String ACTIVE_PATH = "/active";
 
 	private final SaleChannelService saleChannelService;
 
@@ -60,5 +61,10 @@ public class SaleChannelController extends AbstractController {
 	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT, #ActionPerm.READ)")
 	public ResponseEntity<?> getSaleChannelsByEventId(@PathVariable(ID_PARAM) String eventId) {
 		return ResponseEntity.ok(saleChannelService.getAllSaleChannelsByEventId(eventId));
+	}
+
+	@GetMapping(ACTIVE_PATH)
+	public ResponseEntity<?> getActiveSaleChannels() {
+		return ResponseEntity.ok(saleChannelService.getActiveSaleChannels());
 	}
 }

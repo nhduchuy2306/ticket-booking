@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from "./App.tsx";
+import GypProtectRoute from "./gyp-pages/GypProtectRoute.tsx";
 import GypApp from "./GypApp.tsx";
 import { Mode } from "./models/enums/Mode.ts";
 import RegisterPage from "./pages/auth/RegisterPage.tsx";
@@ -9,7 +10,6 @@ import ErrorPage from "./pages/error/ErrorPage.tsx";
 import EventForm from "./pages/event/EventForm.tsx";
 import EventPage from "./pages/event/EventPage.tsx";
 import EventImagePage from "./pages/eventimage/EventImagePage.tsx";
-import LandingPage from "./pages/landing/LandingPage.tsx";
 import OrganizationPage from "./pages/organization/OrganizationPage.tsx";
 import ProfileDetailPage from "./pages/profile/ProfileDetailPage.tsx";
 import ProtectRoute from "./pages/ProtectRoute.tsx";
@@ -178,13 +178,6 @@ const ConfigurationRouter = [
     }
 ];
 
-const OtherRouter = [
-    {
-        path: 'ticket-box',
-        element: <LandingPage/>
-    }
-];
-
 export const router = createBrowserRouter([
     ...AuthServiceRouter,
     {
@@ -200,9 +193,8 @@ export const router = createBrowserRouter([
         ],
     },
     {
-        path: '/gyp',
-        element: <GypApp/>,
+        path: '/gyp/*',
+        element: <GypProtectRoute><GypApp/></GypProtectRoute>,
         errorElement: <ErrorPage/>,
     },
-    ...OtherRouter,
 ]);
