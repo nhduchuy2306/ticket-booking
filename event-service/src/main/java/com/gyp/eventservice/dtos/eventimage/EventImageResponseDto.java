@@ -16,6 +16,7 @@ public class EventImageResponseDto extends AbstractDto {
 	private String id;
 	private String name;
 	private String imageUrl;
+	private byte[] imageBufferArray;
 	private String eventId;
 	private String eventName;
 }

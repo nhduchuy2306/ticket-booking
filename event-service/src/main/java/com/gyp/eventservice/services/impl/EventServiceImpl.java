@@ -62,10 +62,7 @@ public class EventServiceImpl implements EventService {
 				.orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + id));
 		if(entity != null) {
 			var event = eventMapper.toResponseDto(entity);
-			String logoUrl = StringUtils.isNotEmpty(entity.getLogoUrl())
-					? uploadService.getFileUrl(entity.getLogoUrl())
-					: null;
-			event.setLogoUrl(logoUrl);
+			setImageUrl(entity, event);
 			return event;
 		}
 		return null;
@@ -183,6 +180,19 @@ public class EventServiceImpl implements EventService {
 	}
 
 	@Override
+	public List<EventResponseDto> getAllEventsOnSale() {
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
+		return eventRepository.findAllEventsOnSale(organizationId)
+				.stream()
+				.map(item -> {
+					var event = eventMapper.toResponseDto(item);
+					setImageUrl(item, event);
+					return event;
+				})
+				.toList();
+	}
+
+	@Override
 	public ValidationInfo validate(Class<?> clazz) {
 		var validationInfo = validationService.extractValidationInfo(clazz);
 		if(validationInfo == null) {
@@ -198,5 +208,16 @@ public class EventServiceImpl implements EventService {
 		} else {
 			assignSaleChannelToEventProducer.assignSaleChannelToEventProducer(eventId, new ArrayList<>());
 		}
+	}
+
+	private void setImageUrl(EventEntity entity, EventResponseDto event) {
+		String logoUrl = StringUtils.isNotEmpty(entity.getLogoUrl())
+				? uploadService.getFileUrl(entity.getLogoUrl())
+				: null;
+		event.setLogoUrl(logoUrl);
+		byte[] logoBufferArray = StringUtils.isNotEmpty(entity.getLogoUrl())
+				? uploadService.getFileData(entity.getLogoUrl())
+				: null;
+		event.setLogoBufferArray(logoBufferArray);
 	}
 }

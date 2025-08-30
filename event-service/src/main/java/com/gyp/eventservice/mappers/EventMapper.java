@@ -25,6 +25,7 @@ import org.mapstruct.Named;
 		uses = { EventImageMapper.class })
 public interface EventMapper extends AbstractMapper {
 	// To response DTO
+	@Mapping(target = "logoBufferArray", ignore = true)
 	@Mapping(target = "season", source = "seasonEntity")
 	@Mapping(target = "startTime", source = "time.startTime")
 	@Mapping(target = "endTime", source = "time.endTime")

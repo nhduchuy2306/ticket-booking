@@ -53,6 +53,7 @@ public class EventImageServiceImpl implements EventImageService {
 		var imageUrl = eventImage.getImageUrl();
 		if(imageUrl != null) {
 			eventImage.setImageUrl(uploadService.getFileUrl(imageUrl));
+			eventImage.setImageBufferArray(uploadService.getFileData(imageUrl));
 		}
 		return eventImage;
 	}

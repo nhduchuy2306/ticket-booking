@@ -3,7 +3,7 @@ package com.gyp.eventservice.repositories;
 import java.util.List;
 
 import com.gyp.eventservice.entities.EventEntity;
-import com.gyp.eventservice.entities.SeasonEntity;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -18,5 +18,13 @@ public interface EventRepository extends JpaRepository<EventEntity, String>, Jpa
 			AND e.organizationId = :organizationId
 			ORDER BY e.time.startTime ASC
 			""")
-	List<EventEntity> findAllActiveEvents(String organizationId);
+	List<EventEntity> findAllActiveEvents(@Param("organizationId") String organizationId);
+
+	@Query("""
+			SELECT e FROM EventEntity e
+			WHERE e.status = 'ON_SALE'
+			AND e.organizationId = :organizationId
+			ORDER BY e.time.startTime ASC
+			""")
+	List<EventEntity> findAllEventsOnSale(@Param("organizationId") String organizationId);
 }

@@ -32,6 +32,7 @@ public class EventController extends AbstractController {
 
 	private static final String ACTIVE_PATH = "/active";
 	private static final String WITH_UPLOAD_PATH = "/with-upload";
+	private static final String ON_SALE_PATH = "/on-sale";
 
 	private final EventService eventService;
 
@@ -106,5 +107,10 @@ public class EventController extends AbstractController {
 	public ResponseEntity<?> deleteEvent(@PathVariable(ID_PARAM) String id) {
 		eventService.deleteEvent(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping(ON_SALE_PATH)
+	public ResponseEntity<?> getAllEventsOnSale() {
+		return ResponseEntity.ok(eventService.getAllEventsOnSale());
 	}
 }

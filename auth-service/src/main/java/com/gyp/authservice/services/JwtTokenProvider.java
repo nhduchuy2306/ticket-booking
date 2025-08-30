@@ -45,7 +45,7 @@ public class JwtTokenProvider {
 			JWTClaimsSet.Builder claimsBuilder = new JWTClaimsSet.Builder()
 					.subject(dto.getId())
 					.issuer("auth-service")
-					.expirationTime(new Date(System.currentTimeMillis() + 3600000)) // 1 hour
+					.expirationTime(new Date(Instant.now().plus(1, ChronoUnit.DAYS).toEpochMilli()))
 					.issueTime(new Date());
 
 			// Add permissions to JWT

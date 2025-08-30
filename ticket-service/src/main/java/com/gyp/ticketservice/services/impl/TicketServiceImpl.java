@@ -5,12 +5,15 @@ import java.util.List;
 import jakarta.transaction.Transactional;
 
 import com.gyp.common.dtos.pagination.PaginatedDto;
+import com.gyp.common.enums.event.EventStatus;
 import com.gyp.common.enums.event.TicketStatus;
 import com.gyp.common.exceptions.ResourceNotFoundException;
+import com.gyp.common.models.EventOnSaleEM;
 import com.gyp.common.services.AbstractService;
 import com.gyp.ticketservice.dtos.ticket.TicketResponseDto;
 import com.gyp.ticketservice.entities.TicketEntity;
 import com.gyp.ticketservice.mappers.TicketMapper;
+import com.gyp.ticketservice.messages.producers.EventOnSaleProducer;
 import com.gyp.ticketservice.repositories.TicketRepository;
 import com.gyp.ticketservice.services.TicketService;
 import com.gyp.ticketservice.services.criteria.TicketSearchCriteria;
@@ -28,6 +31,7 @@ import org.springframework.stereotype.Service;
 public class TicketServiceImpl extends AbstractService implements TicketService {
 	private final TicketRepository ticketRepository;
 	private final TicketMapper ticketMapper;
+	private final EventOnSaleProducer eventOnSaleProducer;
 
 	@Override
 	public TicketResponseDto getTicketById(String id) {
@@ -73,6 +77,7 @@ public class TicketServiceImpl extends AbstractService implements TicketService 
 			if(updated == 0) {
 				throw new ResourceNotFoundException("No tickets found for event ID: " + eventId);
 			}
+			eventOnSaleProducer.send(new EventOnSaleEM(EventStatus.ON_SALE, eventId));
 		} else {
 			throw new IllegalArgumentException("Event ID cannot be null or empty");
 		}
