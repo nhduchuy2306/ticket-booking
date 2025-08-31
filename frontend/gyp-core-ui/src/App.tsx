@@ -15,7 +15,6 @@ import ProfilePage from "./pages/profile/ProfilePage.tsx";
 import { findMenuPath, getItem, getLabelByKey, MenuItem } from "./services/AppService.ts";
 import { IamService } from "./services/Iam/IamService.ts";
 import { RootState } from "./states/store.ts";
-import "./app.scss";
 
 const {Content, Sider} = Layout;
 

@@ -34,11 +34,7 @@ const GypApp: React.FC = () => {
     return useRoutes([
         {
             index: true,
-            element: (
-                    <>
-                        <LandingPage/>
-                    </>
-            ),
+            element: <LandingPage/>,
         },
         ...routes,
         {

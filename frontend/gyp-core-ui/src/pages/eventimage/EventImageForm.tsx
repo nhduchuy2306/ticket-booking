@@ -56,10 +56,10 @@ const EventImageForm: React.FC<EventImageFormProps> = ({entity, mode, onSave, on
         if (entity && entity.imageUrl) {
             setImageFileList([{
                 uid: '-1',
-                name: entity.imageUrl.split('/').pop() || 'image.jpg',
+                name: entity.imageUrl || 'image.jpg',
                 status: 'done',
                 url: entity.imageUrl,
-                thumbUrl: entity.imageUrl
+                thumbUrl: entity.imageBufferArray
             }]);
             setSelectedImageFile(null);
         } else {
@@ -154,10 +154,8 @@ const EventImageForm: React.FC<EventImageFormProps> = ({entity, mode, onSave, on
                                 fileList={imageFileList}
                                 onFileChange={handleImageFileChange}
                                 disabled={isReadOnly}
-                                maxCount={1}
-                                maxSizeMB={2}
                                 acceptedTypes={['image/jpeg', 'image/png']}
-                                uploadText="+ Upload Image"
+                                multiple={false}
                         />
                     </Form.Item>
 

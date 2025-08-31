@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Logo: React.FC = () => {
     return (
-            <Link to="/ticket-box" className="inline-flex" aria-label="Cruip">
+            <Link to="/gyp" className="inline-flex" aria-label="Cruip">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28">
                     <path
                             className="fill-blue-500"

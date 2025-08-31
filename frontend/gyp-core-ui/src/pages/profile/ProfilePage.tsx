@@ -49,7 +49,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({collapsed = false}) => {
                                 <CgProfile className="w-6 h-6 text-white"/>
                             </div>
                         </Tooltip>
-                        <div className="w-2 h-2 bg-green-400 rounded-full mx-auto mt-1"></div>
                     </div>
 
                     {/* Box Office Switch - Vertical */}
@@ -78,8 +77,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({collapsed = false}) => {
                 {/* Profile Section */}
                 <div className="flex items-center gap-3 flex-1" onClick={handleProfileClick}>
                     <div className="flex items-center gap-1">
-                        <div className="!ml-2">
-                            <div className="w-2 h-2 bg-green-400 rounded-full float-right "></div>
+                        <div className="!mr-2">
                             <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-orange-400 rounded-full flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
                                 <CgProfile className="w-6 h-6 text-white"/>
                             </div>

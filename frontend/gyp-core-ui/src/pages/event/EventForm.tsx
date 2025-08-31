@@ -86,15 +86,16 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                 }
 
                 if (id && (mode === Mode.EDIT.key || mode === Mode.READ_ONLY.key)) {
-                    const response = await EventService.getEventById(id);
-                    if (response) {
-                        setData(response);
-                        if (response.logoUrl) {
+                    const eventResponse = await EventService.getEventById(id);
+                    if (eventResponse) {
+                        setData(eventResponse);
+                        if (eventResponse.logoUrl) {
                             setLogoFileList([{
                                 uid: '-1',
-                                name: 'Current Logo',
+                                name: eventResponse.logoUrl || 'current_logo',
                                 status: 'done',
-                                url: response.logoUrl,
+                                url: eventResponse.logoUrl,
+                                thumbUrl: eventResponse.logoBufferArray,
                             }]);
                         }
                     }
@@ -350,10 +351,8 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                                 fileList={logoFileList}
                                 onFileChange={handleLogoFileChange}
                                 disabled={isReadOnly}
-                                maxCount={1}
-                                maxSizeMB={2}
                                 acceptedTypes={['image/jpeg', 'image/png']}
-                                uploadText="+ Upload Logo"
+                                multiple={false}
                         />
                     </Form.Item>
 

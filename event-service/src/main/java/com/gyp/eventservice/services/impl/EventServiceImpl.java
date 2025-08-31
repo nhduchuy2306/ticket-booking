@@ -211,10 +211,6 @@ public class EventServiceImpl implements EventService {
 	}
 
 	private void setImageUrl(EventEntity entity, EventResponseDto event) {
-		String logoUrl = StringUtils.isNotEmpty(entity.getLogoUrl())
-				? uploadService.getFileUrl(entity.getLogoUrl())
-				: null;
-		event.setLogoUrl(logoUrl);
 		byte[] logoBufferArray = StringUtils.isNotEmpty(entity.getLogoUrl())
 				? uploadService.getFileData(entity.getLogoUrl())
 				: null;

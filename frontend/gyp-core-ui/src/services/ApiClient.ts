@@ -12,10 +12,6 @@ const apiClient: AxiosInstance = axios.create({
     baseURL: BASE_URL,
 });
 
-const apiWithoutAuth: AxiosInstance = axios.create({
-    baseURL: BASE_URL,
-});
-
 apiClient.interceptors.request.use(
         (config) => {
             const token = IamService.getToken();
@@ -48,4 +44,29 @@ apiClient.interceptors.response.use(
         }
 );
 
-export { apiClient, apiWithoutAuth, AUTH_SERVICE_PATH, EVENT_SERVICE_PATH, TICKET_SERVICE_PATH, SALE_CHANNEL_SERVICE_PATH };
+const apiWithoutAuth: AxiosInstance = axios.create({
+    baseURL: BASE_URL,
+});
+
+apiWithoutAuth.interceptors.response.use(
+        (response) => {
+            return response;
+        },
+        (error) => {
+            if (error.response?.status === 404) {
+                createErrorNotification("Not Found", "The requested resource could not be found.");
+            } else {
+                createErrorNotification("Error", error.message || "An unexpected error occurred");
+            }
+            return Promise.reject(error);
+        }
+);
+
+export {
+    apiClient,
+    apiWithoutAuth,
+    AUTH_SERVICE_PATH,
+    EVENT_SERVICE_PATH,
+    TICKET_SERVICE_PATH,
+    SALE_CHANNEL_SERVICE_PATH
+};

@@ -7,6 +7,7 @@ const EVENTS_PATH = "events";
 const SYNC_EVENT_PATH = "syncevent";
 const ACTIVE_PATH = "active";
 const WITH_UPLOAD_PATH = "with-upload";
+const ON_SALE_PATH = "on-sale";
 
 export class EventService {
     static getAllEvents = async (): Promise<EventResponseDto[]> => {
@@ -65,15 +66,6 @@ export class EventService {
         return response.data;
     }
 
-    static createFormData = (body: EventRequestDto, logoFile: File | null) => {
-        const formData = new FormData();
-        if (logoFile) {
-            formData.append('logo', logoFile);
-        }
-        formData.append('event', new Blob([JSON.stringify(body)], {type: "application/json"}));
-        return formData;
-    }
-
     static navigate = (navigator: NavigateFunction, path: string, entity?: EventResponseDto) => {
         if (path === '/create') {
             navigator('/event/create');
@@ -84,6 +76,20 @@ export class EventService {
         } else {
             navigator('/event');
         }
+    }
+
+    static getOnSaleEvents = async (): Promise<EventResponseDto[]> => {
+        const response = await apiClient.get(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${ON_SALE_PATH}`);
+        return response.data;
+    }
+
+    private static createFormData = (body: EventRequestDto, logoFile: File | null) => {
+        const formData = new FormData();
+        if (logoFile) {
+            formData.append('logo', logoFile);
+        }
+        formData.append('event', new Blob([JSON.stringify(body)], {type: "application/json"}));
+        return formData;
     }
 }
 
