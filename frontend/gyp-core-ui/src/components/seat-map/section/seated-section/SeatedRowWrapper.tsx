@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Arc, Group, Text } from "react-konva";
 import { ArcProperties, Position, Row } from "../../../../models/generated/event-service-models";
 import { useSeatMapContext } from "../../context/SeatMapContext.tsx";
-import SeatMapSeatedSeat from "./SeatMapSeatedSeat.tsx";
+import SeatedSeat from "./SeatedSeat.tsx";
 
 export interface SeatMapSeatedSectionProps {
     row: Row;
@@ -10,7 +10,7 @@ export interface SeatMapSeatedSectionProps {
     sectionArcProperties?: ArcProperties;
 }
 
-const SeatMapSeatedSection: React.FC<SeatMapSeatedSectionProps> = (props) => {
+const SeatedRowWrapper: React.FC<SeatMapSeatedSectionProps> = (props) => {
     const [row, setRow] = useState<Row>(props.row);
     const {showSeatNumbers} = useSeatMapContext();
 
@@ -108,7 +108,7 @@ const SeatMapSeatedSection: React.FC<SeatMapSeatedSectionProps> = (props) => {
         if (!row?.seats || row.seats.length === 0) return null;
 
         return row.seats.map((seat) => (
-                <SeatMapSeatedSeat
+                <SeatedSeat
                         key={seat.id}
                         seat={seat}
                         rowName={row.name}
@@ -128,4 +128,4 @@ const SeatMapSeatedSection: React.FC<SeatMapSeatedSectionProps> = (props) => {
     );
 }
 
-export default SeatMapSeatedSection;
+export default SeatedRowWrapper;

@@ -4,12 +4,9 @@ export const TableColors = Object.freeze({
 });
 
 export const SeatColors = Object.freeze({
-    AVAILABLE: Object.freeze({key: 'AVAILABLE', color: '#4CAF50'}),
-    RESERVED: Object.freeze({key: 'RESERVED', color: '#FF9800'}),
-    SOLD: Object.freeze({key: 'SOLD', color: '#F44336'}),
-    BLOCKED: Object.freeze({key: 'BLOCKED', color: '#9E9E9E'}),
-    SELECTED: Object.freeze({key: 'SELECTED', color: '#2196F3'}),
-    DISABLED: Object.freeze({key: 'DISABLED', color: '#BDBDBD'}),
+    AVAILABLE: Object.freeze({key: 'AVAILABLE', color: '#FFFFFF'}),
+    RESERVED: Object.freeze({key: 'RESERVED', color: '#00FF00'}),
+    SOLD: Object.freeze({key: 'SOLD', color: '#FF0000'}),
 });
 
 export const SeatSizes = Object.freeze({
@@ -22,4 +19,14 @@ export const SeatSizes = Object.freeze({
 export const TableSizes = Object.freeze({
     ROUND: Object.freeze({key: 'ROUND', size: 50}),
     RECTANGLE: Object.freeze({key: 'RECTANGLE', size: 60}),
+});
+
+export const SelectedType = Object.freeze({
+    VENUE_CONTAINER: Object.freeze({key: 'VENUE_CONTAINER', value: 'Venue Container'}),
+    SECTION_CONTAINER: Object.freeze({key: 'SECTION_CONTAINER', value: 'Section Container'}),
+    SEATED_ROW_WRAPPER: Object.freeze({key: 'SEATED_ROW_WRAPPER', value: 'Seated Row Wrapper'}),
+    SEATED_SEAT: Object.freeze({key: 'SEATED_SEAT', value: 'Seated Seat'}),
+    STANDING_AREA: Object.freeze({key: 'STANDING_AREA', value: 'Standing Area'}),
+    TABLE_ROW_WRAPPER: Object.freeze({key: 'TABLE_ROW_WRAPPER', value: 'Table Row Wrapper'}),
+    TABLE_SEAT: Object.freeze({key: 'TABLE_SEAT', value: 'Table Seat'}),
 });

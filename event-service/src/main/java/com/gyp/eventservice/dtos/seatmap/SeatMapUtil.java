@@ -167,7 +167,7 @@ public final class SeatMapUtil {
 	 */
 	private static SeatConfig deepCopySeatConfig(SeatConfig seatConfig) {
 		SeatConfig cloned = new SeatConfig();
-		cloned.setSeatTypeColors(seatConfig.getSeatTypeColors());
+		cloned.setSeatTypes(seatConfig.getSeatTypes());
 
 		// Deep copy sections
 		List<Section> clonedSections = seatConfig.getSections()

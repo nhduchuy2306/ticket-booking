@@ -1,5 +1,6 @@
 package com.gyp.eventservice.controllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.gyp.common.controllers.AbstractController;
@@ -26,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(TicketTypeController.TICKET_TYPE_CONTROLLER_PATH)
 public class TicketTypeController extends AbstractController {
 	public static final String TICKET_TYPE_CONTROLLER_PATH = "/ticket-types";
+
+	private static final String TICKET_TYPE_IDS_PARAM = "ids";
 
 	private final TicketTypeService ticketTypeService;
 
@@ -70,5 +73,13 @@ public class TicketTypeController extends AbstractController {
 	public ResponseEntity<?> deleteTicketTypeById(@PathVariable("id") String id) {
 		ticketTypeService.deleteTicketType(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping(TICKET_TYPE_IDS_PARAM)
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.TICKET_TYPE, #ActionPerm.READ)")
+	public ResponseEntity<?> getTicketTypesByIds(@RequestParam(value = TICKET_TYPE_IDS_PARAM) String ids) {
+		String[] parts = ids.split(",");
+		var idList = List.of(parts);
+		return ResponseEntity.ok(ticketTypeService.getTicketTypesByIds(idList));
 	}
 }

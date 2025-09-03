@@ -53,19 +53,16 @@ public class Seat extends BaseSeatMap implements Positionable, Styleable, Intera
 
 		switch(status) {
 			case AVAILABLE:
-				visualStyle.setFillColor("#00FF00"); // Green color for available seats
+				visualStyle.setFillColor("#FFFFFF"); // White color for available seats
 				break;
 			case RESERVED:
-				visualStyle.setFillColor("#FFFF00"); // Yellow color for reserved seats
+				visualStyle.setFillColor("#00FF00"); // Green color for reserved seats
 				break;
 			case SOLD:
 				visualStyle.setFillColor("#FF0000"); // Red color for sold seats
 				break;
-			case BLOCKED:
-				visualStyle.setFillColor("#0000FF"); // Blue color for blocked seats
-				break;
 			default:
-				visualStyle.setFillColor("#FFFFFF"); // Default to white if status is unknown
+				visualStyle.setFillColor("#CCCCCC"); // Default gray color
 				break;
 		}
 

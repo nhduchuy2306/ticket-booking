@@ -1,8 +1,8 @@
 import { Tabs, TabsProps } from "antd";
 import React from "react";
 import 'antd/dist/reset.css';
+import SeatMapEditorTab from "./tabs/SeatMapEditorTab.tsx";
 import SeatMapFormTab from "./tabs/SeatMapFormTab.tsx";
-import SeatMapRendererTab from "./tabs/SeatMapRendererTab.tsx";
 
 export interface SeatMapDetailFormProps {
     mode: string;
@@ -18,7 +18,7 @@ const SeatMapDetailForm: React.FC<SeatMapDetailFormProps> = ({mode}) => {
         {
             key: 'seat-map-layout',
             label: 'Seat Map Layout',
-            children: <SeatMapRendererTab mode={mode}/>,
+            children: <SeatMapEditorTab mode={mode}/>,
         },
     ];
 

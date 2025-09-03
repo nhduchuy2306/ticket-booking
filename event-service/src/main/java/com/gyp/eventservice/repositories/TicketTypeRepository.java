@@ -14,4 +14,6 @@ public interface TicketTypeRepository
 	Optional<TicketTypeEntity> findByName(String ticketTypeName);
 
 	List<TicketTypeEntity> findAllByEventEntityId(String eventId);
+
+	List<TicketTypeEntity> findAllByIdIn(List<String> ids);
 }

@@ -1,4 +1,5 @@
-import { Button, DatePicker, Form, Input, InputNumber, Select, Space, Switch } from "antd";
+import { Button, ColorPicker, DatePicker, Form, Input, InputNumber, Select, Space, Switch } from "antd";
+import { AggregationColor } from "antd/es/color-picker/color";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import MetaData from "../../components/metadata/MetaData.tsx";
@@ -116,6 +117,15 @@ const TicketTypeForm: React.FC<TicketTypeFormProps> = ({entity, mode, onSave, on
                                 placeholder="Enter ticket price"
                                 style={{width: '100%'}}
                         />
+                    </Form.Item>
+
+                    <Form.Item
+                            name="color"
+                            label="Color"
+                            rules={[{required: true, message: 'Please select a color'}]}
+                            getValueFromEvent={(color: AggregationColor) => color.toHexString()}
+                    >
+                        <ColorPicker defaultValue="#1677ff" showText />
                     </Form.Item>
 
                     <Form.Item

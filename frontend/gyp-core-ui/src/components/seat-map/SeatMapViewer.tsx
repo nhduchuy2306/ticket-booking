@@ -13,12 +13,12 @@ import VenueSeatMapHeader from "./layout/VenueSeatMapHeader.tsx";
 import VenueStageContainer from "./layout/VenueStageContainer.tsx";
 import { SelectedTypeModel } from "./models/SeatMapModels.ts";
 
-export interface SeatMapEditorProps {
+export interface SeatMapViewerProps {
     venueMap?: VenueMap;
     title?: string;
 }
 
-const SeatMapEditor: React.FC<SeatMapEditorProps> = ({venueMap, title}) => {
+const SeatMapViewer: React.FC<SeatMapViewerProps> = ({venueMap, title}) => {
     const [venueData, setVenueData] = useState<VenueMap>({});
     const [seatTypes, setSeatTypes] = useState<TicketTypeResponseDto[]>([]);
     const [stageConfig, setStageConfig] = useState<StageConfig>({});
@@ -196,4 +196,4 @@ const SeatMapEditor: React.FC<SeatMapEditorProps> = ({venueMap, title}) => {
     );
 };
 
-export default SeatMapEditor;
+export default SeatMapViewer;

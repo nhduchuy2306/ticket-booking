@@ -103,4 +103,13 @@ public class TicketTypeServiceImpl implements TicketTypeService {
 		}
 		return null;
 	}
+
+	@Override
+	public List<TicketTypeResponseDto> getTicketTypesByIds(List<String> ids) {
+		var ticketTypes = ticketTypeRepository.findAllByIdIn(ids);
+		if(!ticketTypes.isEmpty()) {
+			return ticketTypeMapper.toResponseDtoList(ticketTypes);
+		}
+		return null;
+	}
 }

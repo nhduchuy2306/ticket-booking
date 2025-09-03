@@ -85,6 +85,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
     /** Delete file */
     const onDelete = (file: UploadFile) => {
+        if(disabled) return;
         const newFileList = fileList.filter((item) => item.uid !== file.uid);
         onFileChange(newFileList, []);
     };
@@ -107,13 +108,13 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                                 <div className="w-full flex items-center justify-between">
                                     <div className="flex-1 flex items-center gap-3 cursor-pointer"
                                          onClick={() => onPreview(file)}>
-                                        <img src={UploadUtils.base64ToArrayBuffer(file.thumbUrl || '')} alt={file.name} width={20}/>
+                                        <img src={UploadUtils.base64ToArrayBuffer(file.thumbUrl || '')} alt={file.name}
+                                             width={20}/>
                                         <span className="text-[15px] truncate">{file.name}</span>
                                     </div>
-                                    <AiOutlineDelete
-                                            onClick={() => onDelete(file)}
-                                            className="text-red-500 text-xl cursor-pointer"
-                                    />
+                                    <div onClick={() => onDelete(file)}>
+                                        <AiOutlineDelete className="text-red-500 text-xl cursor-pointer"/>
+                                    </div>
                                 </div>
                             </Card>
                     ))}

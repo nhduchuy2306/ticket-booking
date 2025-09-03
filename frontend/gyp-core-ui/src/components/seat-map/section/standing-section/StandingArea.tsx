@@ -1,13 +1,17 @@
+import Konva from "konva";
 import React, { useEffect, useState } from "react";
 import { Group, Rect, Text } from "react-konva";
 import { Section } from "../../../../models/generated/event-service-models";
+import { SelectedType } from "../../constants/SeatMapContants.ts";
+import { useSeatMapContext } from "../../context/SeatMapContext.tsx";
 
-export interface SeatMapTableSectionProps {
+interface StandingAreaProps {
     standingSection: Section
 }
 
-const SeatMapStandingSection: React.FC<SeatMapTableSectionProps> = (props) => {
+const StandingArea: React.FC<StandingAreaProps> = (props) => {
     const [standingSection, setStandingSection] = useState<Section>(props.standingSection);
+    const {setSelectedType} = useSeatMapContext();
 
     useEffect(() => {
         const data = props.standingSection;
@@ -28,8 +32,20 @@ const SeatMapStandingSection: React.FC<SeatMapTableSectionProps> = (props) => {
     const borderColor = "#2E7D32";
     const textColor = "#2C3E50";
 
+    const handleStandingAreaClick = (evt: Konva.KonvaEventObject<MouseEvent>) => {
+        evt.evt.preventDefault();
+        evt.evt.stopPropagation();
+
+        if (setSelectedType) {
+            setSelectedType({
+                type: SelectedType.SEATED_SEAT.key,
+                data: standingSection
+            });
+        }
+    }
+
     return (
-            <Group x={positionX} y={positionY}>
+            <Group x={positionX} y={positionY} onClick={handleStandingAreaClick}>
                 <Rect
                         width={dimensionsWidth}
                         height={dimensionsHeight}
@@ -62,4 +78,4 @@ const SeatMapStandingSection: React.FC<SeatMapTableSectionProps> = (props) => {
     );
 }
 
-export default SeatMapStandingSection;
+export default StandingArea;

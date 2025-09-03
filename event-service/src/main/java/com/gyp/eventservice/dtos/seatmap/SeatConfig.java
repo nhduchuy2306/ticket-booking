@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class SeatConfig {
-	private Map<String, String> seatTypeColors = new HashMap<>();
+	private List<String> seatTypes = new ArrayList<>();
 	private List<Section> sections = new ArrayList<>();
 
 	public void addSection(Section section) {

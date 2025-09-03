@@ -1,17 +1,17 @@
 import React from "react";
-import SeatMapRenderer from "../../../components/seat-map/SeatMapRenderer.tsx";
+import SeatMapEditor from "../../../components/seat-map/SeatMapEditor.tsx";
 import { useSeatMapFormContext } from "../SeatMapFormContext.tsx";
 
-export interface SeatMapRendererTabProps {
+export interface SeatMapEditorTabTabProps {
     mode: string;
 }
 
-const SeatMapRendererTab: React.FC<SeatMapRendererTabProps> = () => {
+const SeatMapEditorTab: React.FC<SeatMapEditorTabTabProps> = () => {
     const {entity} = useSeatMapFormContext();
 
     return (
-            <div className="bg-white overflow-auto! h-[calc(100vh-100px)]!">
-                <SeatMapRenderer
+            <div className="bg-white !h-screen">
+                <SeatMapEditor
                         venueMap={{
                             seatConfig: entity?.seatConfig,
                             stageConfig: entity?.stageConfig,
@@ -22,4 +22,4 @@ const SeatMapRendererTab: React.FC<SeatMapRendererTabProps> = () => {
     );
 }
 
-export default SeatMapRendererTab;
+export default SeatMapEditorTab;

@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Circle, Group, Rect, Text } from "react-konva";
 import { Position, Table } from "../../../../models/generated/event-service-models";
 import { TableColors } from "../../constants/SeatMapContants.ts";
-import { calculateCircleSeats, calculateRectangleSeats } from "../../utils/SeatUtils.ts";
-import SeatMapTableSeat from "./SeatMapTableSeat.tsx";
+import { SeatUtils } from "../../utils/SeatUtils.ts";
+import TableSeat from "./TableSeat.tsx";
 
-export interface SeatMapTableSectionProps {
+interface TableRowWrapperProps {
     table: Table
 }
 
-const SeatMapTableSection: React.FC<SeatMapTableSectionProps> = (props) => {
+const TableRowWrapper: React.FC<TableRowWrapperProps> = (props) => {
     const [table, setTable] = useState<Table>(props.table);
 
     useEffect(() => {
@@ -74,15 +74,15 @@ const SeatMapTableSection: React.FC<SeatMapTableSectionProps> = (props) => {
         let seatPositions: Position[] = [];
 
         if (shape === "RECTANGLE") {
-            seatPositions = calculateRectangleSeats(seats, width, height);
+            seatPositions = SeatUtils.calculateRectangleSeats(seats, width, height);
         } else if (shape === "ROUND") {
-            seatPositions = calculateCircleSeats(seats, width, height);
+            seatPositions = SeatUtils.calculateCircleSeats(seats, width, height);
         } else {
             return renderCustomShapeWarning();
         }
 
         return seats.map((seat, index) => (
-                <SeatMapTableSeat
+                <TableSeat
                         key={seat.id}
                         index={index}
                         seat={seat}
@@ -120,4 +120,4 @@ const SeatMapTableSection: React.FC<SeatMapTableSectionProps> = (props) => {
     );
 }
 
-export default SeatMapTableSection;
+export default TableRowWrapper;

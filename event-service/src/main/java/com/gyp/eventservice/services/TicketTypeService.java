@@ -28,4 +28,6 @@ public interface TicketTypeService {
 	TicketTypeResponseDto toggleTicketTypeStatus(String ticketTypeId);
 
 	List<TicketTypeEventModel> getListTicketTypeModel();
+
+	List<TicketTypeResponseDto> getTicketTypesByIds(List<String> ids);
 }

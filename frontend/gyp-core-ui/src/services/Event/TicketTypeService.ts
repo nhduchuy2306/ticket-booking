@@ -28,6 +28,13 @@ export class TicketTypeService {
     static deleteTicketType = async (id: string): Promise<void> => {
         await apiClient.delete(`/${EVENT_SERVICE_PATH}/${TICKET_TYPE_PATH}/${id}`);
     }
+
+    static getTicketTypesByIds = async (ids: string[]): Promise<TicketTypeResponseDto[]> => {
+        const res = await apiClient.get(`/${EVENT_SERVICE_PATH}/${TICKET_TYPE_PATH}`, {
+            params: {ids: ids.join(",")}
+        });
+        return res.data;
+    }
 }
 
 export const TicketTypeServiceAdapter: BaseService<TicketTypeRequestDto, TicketTypeResponseDto> = {
