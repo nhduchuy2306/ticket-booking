@@ -1,17 +1,17 @@
 import React from "react";
+import SeatMapViewer from "../../../components/seat-map/seat-map-viewer/SeatMapViewer.tsx";
 import { useSeatMapFormContext } from "../SeatMapFormContext.tsx";
-import SeatMapEditor from "../../../components/seat-map/seat-map-editor/SeatMapEditor.tsx";
 
-export interface SeatMapEditorTabProps {
+export interface SeatMapViewerTabProps {
     mode: string;
 }
 
-const SeatMapEditorTab: React.FC<SeatMapEditorTabProps> = () => {
+const SeatMapViewerTab: React.FC<SeatMapViewerTabProps> = () => {
     const {entity} = useSeatMapFormContext();
 
     return (
             <div className="bg-white !h-screen">
-                <SeatMapEditor
+                <SeatMapViewer
                         venueMap={{
                             seatConfig: entity?.seatConfig,
                             stageConfig: entity?.stageConfig,
@@ -22,4 +22,4 @@ const SeatMapEditorTab: React.FC<SeatMapEditorTabProps> = () => {
     );
 }
 
-export default SeatMapEditorTab;
+export default SeatMapViewerTab;

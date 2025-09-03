@@ -16,8 +16,13 @@ const SeatMapDetailForm: React.FC<SeatMapDetailFormProps> = ({mode}) => {
             children: <SeatMapFormTab mode={mode}/>,
         },
         {
-            key: 'seat-map-layout',
-            label: 'Seat Map Layout',
+            key: 'seat-map-editor',
+            label: 'Seat Map Editor',
+            children: <SeatMapEditorTab mode={mode}/>,
+        },
+        {
+            key: 'seat-map-viewer',
+            label: 'Seat Map Viewer',
             children: <SeatMapEditorTab mode={mode}/>,
         },
     ];
