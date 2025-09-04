@@ -5,26 +5,26 @@ import {
     TicketTypeResponseDto,
     VenueMap
 } from "../../../../models/generated/event-service-models";
-import { SelectedTypeModel } from "../models/SeatMapModels.ts";
+import { SelectedSeatModel } from "../../models/SeatMapModels.ts";
 
-export interface SeatMapContextProps {
+interface SeatMapViewerContextProps {
+    eventId?: string,
+    seatMapId?: string,
     venueData: VenueMap,
     stageConfig: StageConfig,
     seatConfig: SeatConfig,
     seatTypes?: TicketTypeResponseDto[],
     showSeatNumbers: boolean,
-    selectedSeats: string[],
-    setSelectedSeats: Dispatch<SetStateAction<string[]>>,
+    selectedSeats: SelectedSeatModel[],
+    setSelectedSeats: Dispatch<SetStateAction<SelectedSeatModel[]>>,
     draggable?: boolean,
     setDraggable?: Dispatch<SetStateAction<boolean>>,
-    selectedType?: SelectedTypeModel,
-    setSelectedType?: Dispatch<SetStateAction<SelectedTypeModel | undefined>>,
 }
 
-export const SeatMapContext = createContext<SeatMapContextProps | undefined>(undefined);
+export const SeatMapViewerContext = createContext<SeatMapViewerContextProps | undefined>(undefined);
 
-export const useSeatMapContext = (): SeatMapContextProps => {
-    const context = useContext(SeatMapContext);
+export const useSeatMapViewerContext = (): SeatMapViewerContextProps => {
+    const context = useContext(SeatMapViewerContext);
     if (!context) {
         throw new Error("useSeatMapContext must be used within a SeatMapProvider");
     }

@@ -1,9 +1,7 @@
-import Konva from "konva";
 import React, { useEffect, useState } from "react";
 import { Circle, Group, Text } from "react-konva";
-import { Dimension, Position, Seat, TableShape } from "../../../../../models/generated/event-service-models";
-import { SelectedType } from "../../../constants/SeatMapContants.ts";
-import { useSeatMapContext } from "../../context/SeatMapContext.tsx";
+import { Dimension, Position, Seat, Section, TableShape } from "../../../../../models/generated/event-service-models";
+import { useSeatMapViewerContext } from "../../context/SeatMapViewerContext.tsx";
 import { EventUtils } from "../../utils/EventUtils.ts";
 import { SeatUtils } from "../../utils/SeatUtils.ts";
 
@@ -14,12 +12,13 @@ interface TableSeatProps {
     rowPosition?: Position,
     tableShape?: TableShape,
     tableDimensions?: Dimension,
-    calculatedPosition?: Position
+    calculatedPosition?: Position,
+    section?: Section,
 }
 
 const TableSeat: React.FC<TableSeatProps> = (props) => {
     const [seat, setSeat] = useState<Seat>(props.seat);
-    const {selectedSeats, setSelectedSeats, setDraggable, setSelectedType} = useSeatMapContext();
+    const {selectedSeats, setSelectedSeats, setDraggable} = useSeatMapViewerContext();
 
     useEffect(() => {
         const data = props.seat;
@@ -28,31 +27,17 @@ const TableSeat: React.FC<TableSeatProps> = (props) => {
         }
     }, [props.seat]);
 
-    const isSelected = selectedSeats.includes(seat.id);
+    const isSelected = selectedSeats.find((s) => s.seat.id === seat.id) !== undefined;
     const seatRadius = 10;
 
     const seatX = props.calculatedPosition?.x || seat.position?.x || 0;
     const seatY = props.calculatedPosition?.y || seat.position?.y || 0;
 
-    const handleTableClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
-        e.evt.preventDefault();
-        e.evt.stopPropagation();
-
-        if (setSelectedType) {
-            setSelectedType({
-                type: SelectedType.SEATED_SEAT.key,
-                data: seat
-            });
-        }
-
-        EventUtils.handleClick(e, seat, isSelected, selectedSeats, setSelectedSeats)
-    }
-
     return (
             <Group
                     x={seatX}
                     y={seatY}
-                    onClick={handleTableClick}
+                    onClick={(e) => EventUtils.handleClick(e, seat, isSelected, selectedSeats, setSelectedSeats, props?.section)}
                     onMouseDown={() => EventUtils.handleMouseDown(setDraggable)}
                     onMouseUp={() => EventUtils.handleMouseUp(setDraggable)}
                     opacity={seat.visualStyle?.opacity || 1}

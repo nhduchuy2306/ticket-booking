@@ -54,6 +54,10 @@ const TicketForm: React.FC<TicketFormProps> = ({onShowTicket}) => {
     const handleGenerateTicket = async () => {
         try {
             const eventId = form.getFieldValue("eventId");
+            if (!eventId) {
+                createErrorNotification("No event selected", "Please select an event to generate the ticket.");
+                return;
+            }
             await SeatMapService.generateSeatMapTicket(eventId);
             setIsGenerated(true);
             createSuccessNotification(
@@ -79,7 +83,7 @@ const TicketForm: React.FC<TicketFormProps> = ({onShowTicket}) => {
                     onFinish={handleGenerateTicket}
             >
                 <Form.Item
-                        name="event"
+                        name="eventId"
                         label="Event"
                         rules={[{required: true, message: "Please select an event"}]}
                 >

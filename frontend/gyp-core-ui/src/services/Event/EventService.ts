@@ -1,6 +1,6 @@
 import { NavigateFunction } from "react-router-dom";
 import { EventRequestDto, EventResponseDto } from "../../models/generated/event-service-models";
-import { apiClient, EVENT_SERVICE_PATH } from "../ApiClient.ts";
+import { apiClient, apiWithoutAuth, EVENT_SERVICE_PATH } from "../ApiClient.ts";
 import { BaseService } from "../BaseService.ts";
 
 const EVENTS_PATH = "events";
@@ -16,7 +16,7 @@ export class EventService {
     }
 
     static getEventById = async (id: string): Promise<EventResponseDto> => {
-        const response = await apiClient.get(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${id}`);
+        const response = await apiWithoutAuth.get(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${id}`);
         return response.data;
     }
 
@@ -79,7 +79,7 @@ export class EventService {
     }
 
     static getOnSaleEvents = async (): Promise<EventResponseDto[]> => {
-        const response = await apiClient.get(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${ON_SALE_PATH}`);
+        const response = await apiWithoutAuth.get(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${ON_SALE_PATH}`);
         return response.data;
     }
 

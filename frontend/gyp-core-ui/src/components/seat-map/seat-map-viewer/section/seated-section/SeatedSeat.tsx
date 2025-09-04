@@ -1,9 +1,8 @@
-import Konva from "konva";
 import React, { useEffect, useState } from "react";
 import { Circle, Group, Text } from "react-konva";
-import { ArcProperties, Position, Seat } from "../../../../../models/generated/event-service-models";
-import { SeatSizes, SelectedType } from "../../../constants/SeatMapContants.ts";
-import { useSeatMapContext } from "../../context/SeatMapContext.tsx";
+import { ArcProperties, Position, Seat, Section } from "../../../../../models/generated/event-service-models";
+import { SeatSizes } from "../../../constants/SeatMapContants.ts";
+import { useSeatMapViewerContext } from "../../context/SeatMapViewerContext.tsx";
 import { EventUtils } from "../../utils/EventUtils.ts";
 import { SeatUtils } from "../../utils/SeatUtils.ts";
 
@@ -13,11 +12,12 @@ export interface SeatMapSeatedSeatProps {
     rowPosition?: Position,
     isArcRow?: boolean,
     rowArcProperties?: ArcProperties,
+    section?: Section
 }
 
 const SeatedSeat: React.FC<SeatMapSeatedSeatProps> = (props) => {
     const [seat, setSeat] = useState<Seat>(props.seat);
-    const {selectedSeats, setSelectedSeats, setDraggable, showSeatNumbers, setSelectedType} = useSeatMapContext();
+    const {selectedSeats, setSelectedSeats, setDraggable, showSeatNumbers} = useSeatMapViewerContext();
 
     useEffect(() => {
         const data = props.seat;
@@ -26,34 +26,21 @@ const SeatedSeat: React.FC<SeatMapSeatedSeatProps> = (props) => {
         }
     }, [props.seat]);
 
-    const isSelected = selectedSeats.includes(seat.id);
+    const isSelected = selectedSeats.find((s) => s.seat.id === seat.id) !== undefined;
 
     // Use the seat's predefined position for arc layouts
     const positionX = seat.position?.x || 0;
     const positionY = seat.position?.y || 0;
 
-    const handleClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
-        e.evt.preventDefault();
-        e.evt.stopPropagation();
-
-        if (setSelectedType) {
-            setSelectedType({
-                type: SelectedType.SEATED_SEAT.key,
-                data: seat
-            });
-        }
-        EventUtils.handleClick(e, seat, isSelected, selectedSeats, setSelectedSeats);
-    }
-
     return (
             <>
                 {showSeatNumbers &&
                     <Group x={positionX} y={positionY}
-                           onClick={handleClick}
+                           onClick={(e) => EventUtils.handleClick(e, seat, isSelected, selectedSeats, setSelectedSeats, props?.section)}
                            onMouseDown={() => EventUtils.handleMouseDown(setDraggable)}
                            onMouseUp={() => EventUtils.handleMouseUp(setDraggable)}
-                           onMouseEnter={EventUtils.handleMouseEnterEvent}
-                           onMouseLeave={EventUtils.handleMouseLeaveEvent}>
+                           onMouseEnter={(e) => EventUtils.handleSeatMouseEnterEvent(e, seat)}
+                           onMouseLeave={(e) => EventUtils.handleSeatMouseLeaveEvent(e, seat)}>
                         <Circle
                             x={0}
                             y={0}
@@ -61,6 +48,8 @@ const SeatedSeat: React.FC<SeatMapSeatedSeatProps> = (props) => {
                             offsetY={-20}
                             radius={SeatSizes.MEDIUM.size / 4}
                             fill={SeatUtils.getSeatColor(seat, isSelected)}
+                            stroke={"#676767"}
+                            strokeWidth={1}
                         />
                         <Text
                             x={0}

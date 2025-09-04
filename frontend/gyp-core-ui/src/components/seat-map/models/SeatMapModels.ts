@@ -4,3 +4,16 @@ export interface SelectedTypeModel {
     type: string;
     data: Section | Seat | Table | undefined;
 }
+
+export interface SelectedSeatModel {
+    seat: Seat;
+    section?: Section;
+}
+
+export interface OrderDetailModel {
+    eventId?: string;
+    seatMapId?: string;
+    selectedSeats?: SelectedSeatModel[];
+    totalPrice?: number;
+    ticketTypeMap?: Map<string, number>;
+}

@@ -181,8 +181,7 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public List<EventResponseDto> getAllEventsOnSale() {
-		String organizationId = SecurityUtils.getCurrentOrganizationId();
-		return eventRepository.findAllEventsOnSale(organizationId)
+		return eventRepository.findAllEventsOnSale()
 				.stream()
 				.map(item -> {
 					var event = eventMapper.toResponseDto(item);

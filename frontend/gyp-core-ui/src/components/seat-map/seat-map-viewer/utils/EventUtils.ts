@@ -1,9 +1,36 @@
 import Konva from "konva";
 import { Dispatch, SetStateAction } from "react";
-import { Seat } from "../../../../models/generated/event-service-models";
+import { Seat, Section } from "../../../../models/generated/event-service-models";
+import { SelectedSeatModel } from "../../models/SeatMapModels.ts";
 
 export class EventUtils {
-    static handleMouseEnterEvent(evt: Konva.KonvaEventObject<MouseEvent>) {
+    static handleSeatMouseEnterEvent(evt: Konva.KonvaEventObject<MouseEvent>, seat: Seat) {
+        evt.evt.preventDefault();
+        evt.evt.stopPropagation();
+        const container = evt.target.getStage()?.container();
+        if (container) {
+            if (seat.status === "AVAILABLE" || seat.status === "RESERVED") {
+                container.style.cursor = 'pointer';
+            } else {
+                container.style.cursor = 'not-allowed';
+            }
+        }
+    }
+
+    static handleSeatMouseLeaveEvent(evt: Konva.KonvaEventObject<MouseEvent>, seat: Seat) {
+        evt.evt.preventDefault();
+        evt.evt.stopPropagation();
+        const container = evt.target.getStage()?.container();
+        if (container) {
+            if (seat.status === "AVAILABLE" || seat.status === "RESERVED") {
+                container.style.cursor = 'default';
+            } else {
+                container.style.cursor = 'not-allowed';
+            }
+        }
+    }
+
+    static handleItemMouseEnterEvent(evt: Konva.KonvaEventObject<MouseEvent>) {
         evt.evt.preventDefault();
         evt.evt.stopPropagation();
         const container = evt.target.getStage()?.container();
@@ -12,7 +39,7 @@ export class EventUtils {
         }
     }
 
-    static handleMouseLeaveEvent(evt: Konva.KonvaEventObject<MouseEvent>) {
+    static handleItemMouseLeaveEvent(evt: Konva.KonvaEventObject<MouseEvent>) {
         evt.evt.preventDefault();
         evt.evt.stopPropagation();
         const container = evt.target.getStage()?.container();
@@ -33,18 +60,23 @@ export class EventUtils {
 
     static handleClick = (
             e: Konva.KonvaEventObject<MouseEvent>,
-            seat: Seat, isSelected: boolean,
-            selectedSeats: string[],
-            setSelectedSeats: Dispatch<SetStateAction<string[]>>,
+            seat: Seat,
+            isSelected: boolean,
+            selectedSeats: SelectedSeatModel[],
+            setSelectedSeats: Dispatch<SetStateAction<SelectedSeatModel[]>>,
+            section?: Section,
     ) => {
         e.evt.preventDefault();
         e.evt.stopPropagation();
 
         if (seat.status === "AVAILABLE" || seat.status === "RESERVED") {
             if (isSelected) {
-                setSelectedSeats(selectedSeats.filter(id => id !== seat.id));
+                setSelectedSeats(selectedSeats.filter((s) => s.seat.id !== seat.id));
             } else {
-                setSelectedSeats([...selectedSeats, seat.id]);
+                setSelectedSeats([...selectedSeats, {
+                    section: section,
+                    seat: seat
+                }]);
             }
         }
     }

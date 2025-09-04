@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Arc, Group, Rect, Text } from "react-konva";
 import { Section } from "../../../../models/generated/event-service-models";
 import { SelectedType } from "../../constants/SeatMapContants.ts";
-import { useSeatMapContext } from "../context/SeatMapContext.tsx";
+import { useSeatMapEditorContext } from "../context/SeatMapEditorContext.tsx";
 import { EventUtils } from "../utils/EventUtils.ts";
 import { SeatUtils } from "../utils/SeatUtils.ts";
 import SeatedRowWrapper from "./seated-section/SeatedRowWrapper.tsx";
@@ -16,7 +16,7 @@ export interface SectionContainerProps {
 
 const SectionContainer: React.FC<SectionContainerProps> = (props) => {
     const [section, setSection] = useState<Section>(props.section);
-    const {seatTypes, showSeatNumbers, setDraggable, setSelectedType} = useSeatMapContext();
+    const {seatTypes, showSeatNumbers, setDraggable, setSelectedType} = useSeatMapEditorContext();
 
     useEffect(() => {
         const data = props.section;

@@ -1,13 +1,14 @@
 import React from "react";
+import SectionPriceComponent from "../../common/SectionPriceComponent.tsx";
 import { SelectedType } from "../../constants/SeatMapContants.ts";
-import { useSeatMapContext } from "../context/SeatMapContext.tsx";
+import { useSeatMapEditorContext } from "../context/SeatMapEditorContext.tsx";
 
 interface SeatMapConfigEditorProps {
     title?: string;
 }
 
 const SeatMapConfigEditor: React.FC<SeatMapConfigEditorProps> = ({title}) => {
-    const {selectedType, seatTypes} = useSeatMapContext();
+    const {seatTypes, selectedType} = useSeatMapEditorContext();
 
     const getEditor = () => {
         switch (selectedType?.type) {
@@ -30,19 +31,7 @@ const SeatMapConfigEditor: React.FC<SeatMapConfigEditorProps> = ({title}) => {
 
     return (
             <div className="flex-1 flex-col items-center justify-center bg-[#38383d] h-full">
-                <p className="text-white text-center text-2xl font-bold !m-2">{title}</p>
-                <div className="flex flex-col items-start justify-center gap-2 !m-4">
-                    {seatTypes?.map((seatType) => (
-                            <div key={seatType.id} className="flex items-center justify-between w-full">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-6 h-4 rounded border"
-                                         style={{backgroundColor: seatType.color}}></div>
-                                    <span className="capitalize text-white">{seatType.name}</span>
-                                </div>
-                                <div className="text-white font-bold">${seatType.price}</div>
-                            </div>
-                    ))}
-                </div>
+                <SectionPriceComponent title={title} seatTypes={seatTypes}/>
                 <div>{getEditor()}</div>
             </div>
     );

@@ -3,6 +3,7 @@ import React from "react";
 import 'antd/dist/reset.css';
 import SeatMapEditorTab from "./tabs/SeatMapEditorTab.tsx";
 import SeatMapFormTab from "./tabs/SeatMapFormTab.tsx";
+import SeatMapViewerTab from "./tabs/SeatMapViewerTab.tsx";
 
 export interface SeatMapDetailFormProps {
     mode: string;
@@ -23,7 +24,7 @@ const SeatMapDetailForm: React.FC<SeatMapDetailFormProps> = ({mode}) => {
         {
             key: 'seat-map-viewer',
             label: 'Seat Map Viewer',
-            children: <SeatMapEditorTab mode={mode}/>,
+            children: <SeatMapViewerTab mode={mode}/>,
         },
     ];
 

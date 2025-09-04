@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Circle, Group, Text } from "react-konva";
 import { Dimension, Position, Seat, TableShape } from "../../../../../models/generated/event-service-models";
 import { SelectedType } from "../../../constants/SeatMapContants.ts";
-import { useSeatMapContext } from "../../context/SeatMapContext.tsx";
+import { useSeatMapEditorContext } from "../../context/SeatMapEditorContext.tsx";
 import { EventUtils } from "../../utils/EventUtils.ts";
 import { SeatUtils } from "../../utils/SeatUtils.ts";
 
@@ -19,7 +19,7 @@ interface TableSeatProps {
 
 const TableSeat: React.FC<TableSeatProps> = (props) => {
     const [seat, setSeat] = useState<Seat>(props.seat);
-    const {selectedSeats, setSelectedSeats, setDraggable, setSelectedType} = useSeatMapContext();
+    const {selectedSeats, setSelectedSeats, setDraggable, setSelectedType} = useSeatMapEditorContext();
 
     useEffect(() => {
         const data = props.seat;

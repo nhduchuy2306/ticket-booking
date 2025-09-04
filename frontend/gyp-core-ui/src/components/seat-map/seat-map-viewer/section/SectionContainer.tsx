@@ -1,9 +1,7 @@
-import Konva from "konva";
 import React, { useEffect, useState } from "react";
 import { Arc, Group, Rect, Text } from "react-konva";
 import { Section } from "../../../../models/generated/event-service-models";
-import { SelectedType } from "../../constants/SeatMapContants.ts";
-import { useSeatMapContext } from "../context/SeatMapContext.tsx";
+import { useSeatMapViewerContext } from "../context/SeatMapViewerContext.tsx";
 import { EventUtils } from "../utils/EventUtils.ts";
 import { SeatUtils } from "../utils/SeatUtils.ts";
 import SeatedRowWrapper from "./seated-section/SeatedRowWrapper.tsx";
@@ -16,7 +14,7 @@ export interface SectionContainerProps {
 
 const SectionContainer: React.FC<SectionContainerProps> = (props) => {
     const [section, setSection] = useState<Section>(props.section);
-    const {seatTypes, showSeatNumbers, setDraggable, setSelectedType} = useSeatMapContext();
+    const {seatTypes, showSeatNumbers} = useSeatMapViewerContext();
 
     useEffect(() => {
         const data = props.section;
@@ -47,7 +45,8 @@ const SectionContainer: React.FC<SectionContainerProps> = (props) => {
             } = arcProperties;
 
             return (
-                    <Group>
+                    <Group onMouseEnter={EventUtils.handleItemMouseEnterEvent}
+                           onMouseLeave={EventUtils.handleItemMouseLeaveEvent}>
                         <Arc
                                 x={centerX}
                                 y={centerY}
@@ -76,7 +75,8 @@ const SectionContainer: React.FC<SectionContainerProps> = (props) => {
 
         // Regular rectangular section
         return (
-                <Group>
+                <Group onMouseEnter={EventUtils.handleItemMouseEnterEvent}
+                       onMouseLeave={EventUtils.handleItemMouseLeaveEvent}>
                     <Rect x={0} y={0}
                           width={width}
                           height={height}
@@ -109,6 +109,7 @@ const SectionContainer: React.FC<SectionContainerProps> = (props) => {
                         row={row}
                         sectionPosition={section.position}
                         sectionArcProperties={section.isArc ? section.arcProperties : undefined}
+                        section={section}
                 />
         ));
     };
@@ -117,29 +118,14 @@ const SectionContainer: React.FC<SectionContainerProps> = (props) => {
         if (!section?.tables || section.tables.length === 0) return null;
 
         return section.tables.map((table) => (
-                <TableRowWrapper key={table.id} table={table}/>
+                <TableRowWrapper key={table.id} table={table} section={section}/>
         ));
     };
-
-    const handleSectionClick = (evt: Konva.KonvaEventObject<MouseEvent>) => {
-        evt.evt.preventDefault();
-        evt.evt.stopPropagation();
-
-        if (setSelectedType) {
-            setSelectedType({
-                type: SelectedType.SEATED_SEAT.key,
-                data: section
-            });
-        }
-    }
 
     switch (section.type) {
         case "SEATED":
             return (
-                    <Group x={positionX} y={positionY}
-                           onMouseDown={() => EventUtils.handleMouseDown(setDraggable)}
-                           onMouseUp={() => EventUtils.handleMouseUp(setDraggable)}
-                           onClick={handleSectionClick}>
+                    <Group x={positionX} y={positionY}>
                         {renderSectionBase()}
                         {renderSeatedRows()}
                     </Group>

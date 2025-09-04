@@ -6,7 +6,7 @@ import { Layer, Stage } from "react-konva";
 import { SeatConfig, StageConfig, TicketTypeResponseDto, VenueMap, } from "../../../models/generated/event-service-models";
 import { TicketTypeService } from "../../../services/Event/TicketTypeService.ts";
 import { createErrorNotification } from "../../notification/Notification.ts";
-import { SeatMapContext } from "./context/SeatMapContext.tsx";
+import { SeatMapEditorContext } from "./context/SeatMapEditorContext.tsx";
 import SeatMapConfigEditor from "./editors/SeatMapConfigEditor.tsx";
 import VenueSeatContainer from "./layout/VenueSeatContainer.tsx";
 import VenueSeatMapHeader from "./layout/VenueSeatMapHeader.tsx";
@@ -152,7 +152,7 @@ const SeatMapEditor: React.FC<SeatMapEditorProps> = ({venueMap, title}) => {
     };
 
     return (
-            <SeatMapContext.Provider value={{
+            <SeatMapEditorContext.Provider value={{
                 venueData: venueData,
                 stageConfig: stageConfig,
                 seatConfig: seatConfig,
@@ -192,7 +192,7 @@ const SeatMapEditor: React.FC<SeatMapEditorProps> = ({venueMap, title}) => {
                     </div>
                     <SeatMapConfigEditor title={title}/>
                 </div>
-            </SeatMapContext.Provider>
+            </SeatMapEditorContext.Provider>
     );
 };
 

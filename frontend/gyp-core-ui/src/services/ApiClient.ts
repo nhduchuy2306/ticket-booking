@@ -7,6 +7,7 @@ const AUTH_SERVICE_PATH = "auths";
 const EVENT_SERVICE_PATH = "events";
 const TICKET_SERVICE_PATH = "tickets";
 const SALE_CHANNEL_SERVICE_PATH = "salechannels";
+const ORDER_SERVICE_PATH = "orders";
 
 const apiClient: AxiosInstance = axios.create({
     baseURL: BASE_URL,
@@ -65,8 +66,10 @@ apiWithoutAuth.interceptors.response.use(
 export {
     apiClient,
     apiWithoutAuth,
+    BASE_URL,
     AUTH_SERVICE_PATH,
     EVENT_SERVICE_PATH,
     TICKET_SERVICE_PATH,
-    SALE_CHANNEL_SERVICE_PATH
+    SALE_CHANNEL_SERVICE_PATH,
+    ORDER_SERVICE_PATH
 };

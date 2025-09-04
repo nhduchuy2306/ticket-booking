@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Group, Rect, Text } from "react-konva";
 import { Section } from "../../../../../models/generated/event-service-models";
 import { SelectedType } from "../../../constants/SeatMapContants.ts";
-import { useSeatMapContext } from "../../context/SeatMapContext.tsx";
+import { useSeatMapEditorContext } from "../../context/SeatMapEditorContext.tsx";
 
 interface StandingAreaProps {
     standingSection: Section
@@ -11,7 +11,7 @@ interface StandingAreaProps {
 
 const StandingArea: React.FC<StandingAreaProps> = (props) => {
     const [standingSection, setStandingSection] = useState<Section>(props.standingSection);
-    const {setSelectedType} = useSeatMapContext();
+    const {setSelectedType} = useSeatMapEditorContext();
 
     useEffect(() => {
         const data = props.standingSection;

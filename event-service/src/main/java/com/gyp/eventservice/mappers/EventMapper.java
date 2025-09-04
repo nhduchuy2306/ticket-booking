@@ -22,7 +22,7 @@ import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring",
 		mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG,
-		uses = { EventImageMapper.class })
+		uses = { EventImageMapper.class, VenueMapMapper.class })
 public interface EventMapper extends AbstractMapper {
 	// To response DTO
 	@Mapping(target = "logoBufferArray", ignore = true)

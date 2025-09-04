@@ -2,32 +2,40 @@ import { Button } from "antd";
 import Konva from "konva";
 import React, { useEffect, useRef, useState } from "react";
 import { BiMinus, BiPlus, BiReset } from "react-icons/bi";
+import { FaArrowLeftLong } from "react-icons/fa6";
 import { Layer, Stage } from "react-konva";
-import { SeatConfig, StageConfig, TicketTypeResponseDto, VenueMap, } from "../../../models/generated/event-service-models";
+import {
+    SeatConfig,
+    StageConfig,
+    TicketTypeResponseDto,
+    VenueMap,
+} from "../../../models/generated/event-service-models";
 import { TicketTypeService } from "../../../services/Event/TicketTypeService.ts";
 import { createErrorNotification } from "../../notification/Notification.ts";
-import { SeatMapContext } from "./context/SeatMapContext.tsx";
-import SeatMapConfigEditor from "./editors/SeatMapConfigEditor.tsx";
+import { SelectedSeatModel } from "../models/SeatMapModels.ts";
+import { SeatMapViewerContext } from "./context/SeatMapViewerContext.tsx";
 import VenueSeatContainer from "./layout/VenueSeatContainer.tsx";
+import VenueSeatDetail from "./layout/VenueSeatDetail.tsx";
 import VenueSeatMapHeader from "./layout/VenueSeatMapHeader.tsx";
 import VenueStageContainer from "./layout/VenueStageContainer.tsx";
-import { SelectedTypeModel } from "./models/SeatMapModels.ts";
 
 export interface SeatMapViewerProps {
     venueMap?: VenueMap;
     title?: string;
+    onBack?: () => void;
+    eventId?: string;
+    seatMapId?: string;
 }
 
-const SeatMapViewer: React.FC<SeatMapViewerProps> = ({venueMap, title}) => {
+const SeatMapViewer: React.FC<SeatMapViewerProps> = ({venueMap, title, onBack, eventId, seatMapId}) => {
     const [venueData, setVenueData] = useState<VenueMap>({});
     const [seatTypes, setSeatTypes] = useState<TicketTypeResponseDto[]>([]);
     const [stageConfig, setStageConfig] = useState<StageConfig>({});
     const [seatConfig, setSeatConfig] = useState<SeatConfig>({});
-    const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
+    const [selectedSeats, setSelectedSeats] = useState<SelectedSeatModel[]>([]);
     const [zoomLevel, setZoomLevel] = useState(0.8);
     const [showSeatNumbers, setShowSeatNumbers] = useState(false);
     const [draggable, setDraggable] = useState(true);
-    const [selectedType, setSelectedType] = useState<SelectedTypeModel>();
 
     const stageRef = useRef<Konva.Stage>(null);
     const layerRef = useRef<Konva.Layer>(null);
@@ -114,7 +122,7 @@ const SeatMapViewer: React.FC<SeatMapViewerProps> = ({venueMap, title}) => {
         const clampedScale = Math.max(0.5, Math.min(3, scale));
         layerRef.current.scale({x: clampedScale, y: clampedScale});
         setZoomLevel(clampedScale);
-        setShowSeatNumbers(clampedScale > 1.7);
+        setShowSeatNumbers(clampedScale > 0.8);
 
         const newPos = {
             x: pointer.x - mousePointTo.x * clampedScale,
@@ -152,7 +160,7 @@ const SeatMapViewer: React.FC<SeatMapViewerProps> = ({venueMap, title}) => {
     };
 
     return (
-            <SeatMapContext.Provider value={{
+            <SeatMapViewerContext.Provider value={{
                 venueData: venueData,
                 stageConfig: stageConfig,
                 seatConfig: seatConfig,
@@ -162,18 +170,20 @@ const SeatMapViewer: React.FC<SeatMapViewerProps> = ({venueMap, title}) => {
                 setSelectedSeats: setSelectedSeats,
                 draggable: draggable,
                 setDraggable: setDraggable,
-                selectedType: selectedType,
-                setSelectedType: setSelectedType,
+                eventId: eventId,
+                seatMapId: seatMapId,
             }}>
-                <div className="w-full flex items-start gap-3 !m-2 h-full">
+                <div className="w-full flex items-start gap-3 h-full bg-black">
                     <div className="absolute z-10 flex flex-col items-center justify-center gap-3 top-8">
+                        <Button onClick={onBack} type="link" className="!text-white mb-2"
+                                icon={<FaArrowLeftLong/>}>Back</Button>
                         <Button onClick={() => handleZoomInOut(true)} type="default" icon={<BiPlus/>}
                                 className="!rounded-2xl mb-2"/>
                         <Button onClick={handleResetView} type="default" icon={<BiReset/>} className="!rounded-2xl"/>
                         <Button onClick={() => handleZoomInOut(false)} type="default" icon={<BiMinus/>}
                                 className="!rounded-2xl mb-2"/>
                     </div>
-                    <div className="rounded flex flex-col flex-1 items-center justify-center">
+                    <div className="rounded flex flex-col flex-2/3 items-center justify-center">
                         <VenueSeatMapHeader/>
                         <Stage x={0} y={0}
                                ref={stageRef}
@@ -190,9 +200,9 @@ const SeatMapViewer: React.FC<SeatMapViewerProps> = ({venueMap, title}) => {
                             </Layer>
                         </Stage>
                     </div>
-                    <SeatMapConfigEditor title={title}/>
+                    <VenueSeatDetail title={title}/>
                 </div>
-            </SeatMapContext.Provider>
+            </SeatMapViewerContext.Provider>
     );
 };
 

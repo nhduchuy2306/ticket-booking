@@ -1,10 +1,10 @@
 import { Carousel, Spin } from "antd";
 import React, { useEffect } from "react";
-import { createErrorNotification } from "../../../components/notification/Notification.ts";
-import { EventResponseDto } from "../../../models/generated/event-service-models";
-import { EventService } from "../../../services/Event/EventService.ts";
+import { createErrorNotification } from "../../components/notification/Notification.ts";
+import { EventResponseDto } from "../../models/generated/event-service-models";
+import { EventService } from "../../services/Event/EventService.ts";
 import "antd/dist/reset.css";
-import { UploadUtils } from "../../../utils/UploadUtils.ts";
+import { UploadUtils } from "../../utils/UploadUtils.ts";
 
 const PageIllustration: React.FC = () => {
     const [events, setEvents] = React.useState<EventResponseDto[]>([]);
@@ -37,24 +37,25 @@ const PageIllustration: React.FC = () => {
                     <div className="!h-[220px] !mt-3">
                         {isLoading
                                 ? <Spin size="large" className="!mt-20"/>
-                                : <Carousel autoplay style={{height: 220, width: 900}}>
-                                    {events.map((event) => {
-                                        return (
+                                : <div className="h-[220px] w-[1200px]">
+                                    <Carousel arrows>
+                                        {events.map((event) => (
                                                 <div key={event.id}
-                                                     className="relative w-[900px] h-[220px] cursor-pointer"
+                                                     className="relative w-full h-[220px] cursor-pointer"
                                                      onClick={handleEventClick(event.id!)}>
                                                     <img
                                                             src={UploadUtils.arrayBufferToBase64(event.logoBufferArray)}
                                                             alt={event.name}
-                                                            className="w-[900px] h-[210px] object-cover"
+                                                            className="w-full h-[210px] object-cover"
                                                     />
                                                     <h3 className="absolute inset-0 flex justify-center items-center bg-black/40 text-white text-xl font-bold">
                                                         {event.name}
                                                     </h3>
                                                 </div>
-                                        )
-                                    })}
-                                </Carousel>}
+                                        ))}
+                                    </Carousel>
+                                </div>
+                        }
                     </div>
                 }
             </>

@@ -1,20 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Arc, Group, Text } from "react-konva";
-import { ArcProperties, Position, Row } from "../../../../../models/generated/event-service-models";
-import { useSeatMapContext } from "../../context/SeatMapContext.tsx";
+import { ArcProperties, Position, Row, Section } from "../../../../../models/generated/event-service-models";
+import { useSeatMapViewerContext } from "../../context/SeatMapViewerContext.tsx";
 import SeatedSeat from "./SeatedSeat.tsx";
 
 export interface SeatMapSeatedSectionProps {
     row: Row;
     sectionPosition?: Position;
     sectionArcProperties?: ArcProperties;
+    section?: Section
 }
 
 const SeatedRowWrapper: React.FC<SeatMapSeatedSectionProps> = (props) => {
     const [row, setRow] = useState<Row>(props.row);
-    const {showSeatNumbers} = useSeatMapContext();
+    const {showSeatNumbers} = useSeatMapViewerContext();
 
-    React.useEffect(() => {
+    useEffect(() => {
         const data = props.row;
         if (data) {
             setRow(data);
@@ -115,6 +116,7 @@ const SeatedRowWrapper: React.FC<SeatMapSeatedSectionProps> = (props) => {
                         rowPosition={row.position}
                         isArcRow={row.isArc}
                         rowArcProperties={row.arcProperties}
+                        section={props.section}
                 />
         ));
     };

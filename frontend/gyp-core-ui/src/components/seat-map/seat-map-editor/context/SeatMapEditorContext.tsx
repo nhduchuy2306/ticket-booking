@@ -7,7 +7,7 @@ import {
 } from "../../../../models/generated/event-service-models";
 import { SelectedTypeModel } from "../models/SeatMapModels.ts";
 
-export interface SeatMapContextProps {
+interface SeatMapEditorContextProps {
     venueData: VenueMap,
     stageConfig: StageConfig,
     seatConfig: SeatConfig,
@@ -21,10 +21,10 @@ export interface SeatMapContextProps {
     setSelectedType?: Dispatch<SetStateAction<SelectedTypeModel | undefined>>,
 }
 
-export const SeatMapContext = createContext<SeatMapContextProps | undefined>(undefined);
+export const SeatMapEditorContext = createContext<SeatMapEditorContextProps | undefined>(undefined);
 
-export const useSeatMapContext = (): SeatMapContextProps => {
-    const context = useContext(SeatMapContext);
+export const useSeatMapEditorContext = (): SeatMapEditorContextProps => {
+    const context = useContext(SeatMapEditorContext);
     if (!context) {
         throw new Error("useSeatMapContext must be used within a SeatMapProvider");
     }

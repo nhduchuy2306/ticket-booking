@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Circle, Group, Text } from "react-konva";
 import { ArcProperties, Position, Seat } from "../../../../../models/generated/event-service-models";
 import { SeatSizes, SelectedType } from "../../../constants/SeatMapContants.ts";
-import { useSeatMapContext } from "../../context/SeatMapContext.tsx";
+import { useSeatMapEditorContext } from "../../context/SeatMapEditorContext.tsx";
 import { EventUtils } from "../../utils/EventUtils.ts";
 import { SeatUtils } from "../../utils/SeatUtils.ts";
 
@@ -17,7 +17,7 @@ export interface SeatMapSeatedSeatProps {
 
 const SeatedSeat: React.FC<SeatMapSeatedSeatProps> = (props) => {
     const [seat, setSeat] = useState<Seat>(props.seat);
-    const {selectedSeats, setSelectedSeats, setDraggable, showSeatNumbers, setSelectedType} = useSeatMapContext();
+    const {selectedSeats, setSelectedSeats, setDraggable, showSeatNumbers, setSelectedType} = useSeatMapEditorContext();
 
     useEffect(() => {
         const data = props.seat;

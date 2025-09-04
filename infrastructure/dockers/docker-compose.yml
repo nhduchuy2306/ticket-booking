@@ -212,6 +212,36 @@ services:
     networks:
       - gyp-net
 
+  order-service:
+    build: ../../order-service
+    container_name: order-service
+    ports:
+      - "9003:9003"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    depends_on:
+      - discovery-service
+      - mysql
+      - kafka
+      - redis
+    networks:
+      - gyp-net
+
+  web-ui:
+    build: ../../frontend/gyp-core-ui
+    container_name: web-ui
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_GATEWAY_URL=http://localhost:9999
+      - VITE_RESPONSE_URL=http://localhost:3000/user-account
+      - VITE_REDIRECT_URL=http://localhost:3000/callback
+      - VITE_CLIENT_ID=gyp-core-ui
+    depends_on:
+      - api-gateway
+    networks:
+      - gyp-net
+
 networks:
   gyp-net:
     driver: bridge

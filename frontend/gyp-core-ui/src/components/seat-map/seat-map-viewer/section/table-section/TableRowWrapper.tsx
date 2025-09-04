@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Circle, Group, Rect, Text } from "react-konva";
-import { Position, Table } from "../../../../../models/generated/event-service-models";
+import { Position, Section, Table } from "../../../../../models/generated/event-service-models";
 import { TableColors } from "../../../constants/SeatMapContants.ts";
 import { SeatUtils } from "../../utils/SeatUtils.ts";
 import TableSeat from "./TableSeat.tsx";
 
 interface TableRowWrapperProps {
-    table: Table
+    table: Table,
+    section?: Section
 }
 
 const TableRowWrapper: React.FC<TableRowWrapperProps> = (props) => {
@@ -91,6 +92,7 @@ const TableRowWrapper: React.FC<TableRowWrapperProps> = (props) => {
                         tableShape={shape}
                         tableDimensions={{width, height}}
                         calculatedPosition={seatPositions[index]}
+                        section={props.section}
                 />
         ));
     };

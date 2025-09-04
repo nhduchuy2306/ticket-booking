@@ -53,7 +53,6 @@ public class EventController extends AbstractController {
 	}
 
 	@GetMapping("/{" + ID_PARAM + "}")
-	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT, #ActionPerm.READ)")
 	public ResponseEntity<?> getEventById(@PathVariable(ID_PARAM) String id) {
 		return ResponseEntity.ok(eventService.getEventById(id));
 	}

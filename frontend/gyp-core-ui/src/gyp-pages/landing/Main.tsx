@@ -1,27 +1,69 @@
-import React from "react";
+import { Spin } from "antd";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { createErrorNotification } from "../../components/notification/Notification.ts";
+import MultiItemSlider from "../../components/slider/MultiItemSlider.tsx";
+import { EventResponseDto } from "../../models/generated/event-service-models";
+import { EventService } from "../../services/Event/EventService.ts";
+import { UploadUtils } from "../../utils/UploadUtils.ts";
 
 const Main: React.FC = () => {
+    const navigate = useNavigate();
+    const [events, setEvents] = React.useState<EventResponseDto[]>([]);
+    const [isLoading, setIsLoading] = React.useState<boolean>(true);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const eventResponse = await EventService.getOnSaleEvents();
+                if (eventResponse) {
+                    setEvents(eventResponse);
+                }
+            } catch (Error) {
+                console.error("Error fetching events:", Error);
+                createErrorNotification("Error", "Failed to fetch data.");
+            } finally {
+                setIsLoading(false);
+            }
+        }
+        void fetchData();
+    }, []);
+
     return (
             <main className="flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-4 py-16">
                 {/* Hero Section */}
-                <div className="flex flex-col items-center justify-center text-center !mb-16 !mt-8">
-                    <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                        Welcome to GYP Core UI
-                    </h1>
-                    <p className="text-xl text-gray-600 mb-8 max-w-2xl leading-relaxed">
-                        Discover amazing experiences around you. From thrilling sports events to cultural exhibitions,
-                        your next adventure is just a click away.
-                    </p>
-
-                    {/* CTA Buttons */}
-                    <div className="flex flex-col sm:flex-row gap-4 !mb-12">
-                        <button className="!p-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-8 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200">
-                            Try My Application
-                        </button>
-                        <button className="!p-2 bg-white hover:bg-gray-50 text-blue-600 font-semibold py-4 px-8 rounded-lg border-2 border-blue-600 shadow-lg transform hover:scale-105 transition-all duration-200">
-                            Register Now
-                        </button>
-                    </div>
+                <div className="flex flex-col items-center justify-center !mb-16 !mt-8 w-full h-full">
+                    <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">
+                        Special Events
+                    </h2>
+                    {isLoading
+                            ? <Spin size="large" className="!mt-20"/>
+                            : <MultiItemSlider
+                                    itemsPerView={3}
+                                    items={events.map((event) => (
+                                            <>
+                                                <div className="h-48 bg-gradient-to-br flex items-center justify-center">
+                                                    <img
+                                                            src={UploadUtils.arrayBufferToBase64(event.logoBufferArray)}
+                                                            alt={event.name}
+                                                            className="w-full h-[210px] object-cover"
+                                                    />
+                                                </div>
+                                                <div className="text-center !mt-5">
+                                                    <h4 className="font-semibold text-gray-800">
+                                                        {event.name}
+                                                    </h4>
+                                                </div>
+                                            </>
+                                    ))}
+                                    onItemClick={(index: number) => {
+                                        const event = events[index];
+                                        if (event && event.id) {
+                                            navigate(`/gyp/events/${event.id}`);
+                                        }
+                                    }}
+                            />
+                    }
                 </div>
 
                 {/* Features Grid */}
@@ -38,8 +80,8 @@ const Main: React.FC = () => {
                             </div>
                             <div className="!p-6">
                                 <h3 className="text-xl font-semibold mb-2 text-gray-800">Sports Events</h3>
-                                <p className="text-gray-600">Join thrilling football matches and sports competitions in
-                                    your area.</p>
+                                <p className="text-gray-600">Join thrilling football matches and sports competitions
+                                    in your area.</p>
                             </div>
                         </div>
 
@@ -74,7 +116,8 @@ const Main: React.FC = () => {
                             </div>
                             <div className="!p-6">
                                 <h3 className="text-xl font-semibold mb-2 text-gray-800">Venues & Events</h3>
-                                <p className="text-gray-600">Find the best stadiums and event venues for unforgettable
+                                <p className="text-gray-600">Find the best stadiums and event venues for
+                                    unforgettable
                                     experiences.</p>
                             </div>
                         </div>
