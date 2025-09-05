@@ -52,7 +52,6 @@ public class SeatMapController extends AbstractController {
 	}
 
 	@GetMapping("/{" + ID_PARAM + "}")
-	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.SEAT_MAP, #ActionPerm.READ)")
 	public ResponseEntity<?> getSeatMapById(@PathVariable(ID_PARAM) String seatMapId) {
 		try {
 			return ResponseEntity.ok(seatMapService.getSeatMapById(seatMapId));

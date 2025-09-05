@@ -29,4 +29,25 @@ public class RedisConfiguration {
 		template.afterPropertiesSet();
 		return template;
 	}
+
+	@Bean
+	public RedisTemplate<String, Integer> integerRedisTemplate(RedisConnectionFactory connectionFactory) {
+		RedisTemplate<String, Integer> template = new RedisTemplate<>();
+		template.setConnectionFactory(connectionFactory);
+
+		// Key serializer
+		template.setKeySerializer(new StringRedisSerializer());
+
+		// Value serializer
+		template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+		// Hash key serializer
+		template.setHashKeySerializer(new StringRedisSerializer());
+
+		// Hash value serializer
+		template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+		template.afterPropertiesSet();
+		return template;
+	}
 }

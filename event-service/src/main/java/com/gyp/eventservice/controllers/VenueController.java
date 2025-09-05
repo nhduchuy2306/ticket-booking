@@ -51,7 +51,6 @@ public class VenueController extends AbstractController {
 	}
 
 	@GetMapping("/{" + ID_PARAM + "}")
-	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.VENUE, #ActionPerm.READ)")
 	public ResponseEntity<?> getVenueById(@PathVariable(ID_PARAM) String venueId) {
 		try {
 			return ResponseEntity.ok(venueService.getVenueById(venueId));

@@ -1,9 +1,10 @@
-import { Button } from "antd";
+import { Button, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { OrderDetailModel } from "../../components/seat-map/models/SeatMapModels.ts";
 import { useEventData } from "../../hooks/form/useEventData.tsx";
 import { OrderService } from "../../services/Order/OrderService.ts";
+import { StoreService } from "../../services/Order/StoreService.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
 
 const EventOrderPage: React.FC = () => {
@@ -20,41 +21,61 @@ const EventOrderPage: React.FC = () => {
     const [timeLeft, setTimeLeft] = useState(15 * 60);
 
     useEffect(() => {
-        const eventSource = OrderService.getCountDownTime();
-
-        eventSource.onmessage = (event: MessageEvent) => {
-            setTimeLeft(() => {
-                const newTime = parseInt(event.data, 10);
-                console.log("Received SSE time event:", newTime);
-                if (isNaN(newTime) || newTime < 0) {
-                    return 0;
+        const sessionId = sessionStorage.getItem("countdownSessionId");
+        const init = async () => {
+            if (!sessionId) {
+                await createCountdownSession();
+            } else {
+                const response = await StoreService.getCountDownSession(sessionId);
+                if (response.status === "active") {
+                    setTimeLeft(response.duration);
+                } else {
+                    sessionStorage.removeItem("countdownSessionId");
+                    showSessionExpiredModal();
                 }
-                return newTime;
-            });
-        };
-
-        eventSource.addEventListener("time", (event: MessageEvent) => {
-            setTimeLeft(() => {
-                const newTime = parseInt(event.data, 10);
-                console.log("Received SSE time event:", newTime);
-                if (isNaN(newTime) || newTime < 0) {
-                    return 0;
-                }
-                return newTime;
-            });
-        });
-
-        eventSource.onerror = (error) => {
-            console.error("SSE error:", error);
-            eventSource.close();
-        };
-
-        return () => {
-            if (eventSource) {
-                eventSource.close();
             }
-        }
+        };
+
+        void init();
+
+        const timer = setInterval(() => {
+            setTimeLeft(prev => (prev > 0 ? prev - 1 : 0));
+        }, 1000);
+
+        return () => clearInterval(timer);
     }, []);
+
+    useEffect(() => {
+        if (timeLeft === 0) {
+            sessionStorage.removeItem("countdownSessionId");
+            showSessionExpiredModal();
+        }
+    }, [timeLeft]);
+
+    const createCountdownSession = async () => {
+        const response = await StoreService.createCountDownSession();
+        if (response?.sessionId) {
+            sessionStorage.setItem("countdownSessionId", response.sessionId);
+            setTimeLeft(response.duration);
+        }
+    };
+
+    const showSessionExpiredModal = () => {
+        Modal.confirm({
+            title: "Session Expired",
+            content: "Your previous session has expired. Please choose an option:",
+            okText: "Start New Order",
+            cancelText: "Go Home",
+            onOk: async () => {
+                navigate(-1);
+            },
+            onCancel: () => {
+                navigate("/gyp/", { replace: true });
+            },
+            maskClosable: false,
+            closable: false,
+        });
+    };
 
     // Format time as MM:SS
     const formatTime = (seconds: number) => {
@@ -71,7 +92,7 @@ const EventOrderPage: React.FC = () => {
             const vndPrice = totalPrice * 23000; // Convert to VND
             const paymentResponse = await OrderService.createPaymentEndpoint(vndPrice);
             console.log("Redirecting to payment URL:", paymentResponse);
-            if(paymentResponse) {
+            if (paymentResponse) {
                 window.location.href = paymentResponse.payUrl;
             }
         }
