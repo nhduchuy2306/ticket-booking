@@ -3,15 +3,13 @@ package com.gyp.eventservice.dtos.seatmap;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-/**
- * Lớp đại diện cho một hàng ghế
- */
 @Getter
 @Setter
 @SuperBuilder
@@ -33,6 +31,7 @@ public class Row extends BaseSeatMap implements Positionable, SeatContainer, Arc
 		seats.remove(seat);
 	}
 
+	@JsonIgnore
 	@Override
 	public int getCapacity() {
 		return seats.size();
@@ -54,9 +53,6 @@ public class Row extends BaseSeatMap implements Positionable, SeatContainer, Arc
 		this.isArc = isArc;
 	}
 
-	/**
-	 * Tạo các ghế theo hàng thẳng với khoảng cách đều
-	 */
 	public void generateLinearSeats(int seatPerRow, double startX, double spacing) {
 		for(int i = 0; i < seatPerRow; i++) {
 			Seat seat = new Seat();
@@ -66,9 +62,6 @@ public class Row extends BaseSeatMap implements Positionable, SeatContainer, Arc
 		}
 	}
 
-	/**
-	 * Tạo các ghế theo hàng vòng cung
-	 */
 	public void generateArcSeats(int count, ArcProperties arcProps) {
 		if(arcProps == null) {
 			throw new IllegalArgumentException("Arc properties cannot be null");

@@ -1,5 +1,6 @@
 package com.gyp.common.services.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.UUID;
 
@@ -54,6 +55,32 @@ public class UploadServiceImpl implements UploadService {
 	}
 
 	@Override
+	public Pair<String, String> upload(byte[] file, String originalFilename, String contentType) {
+		try {
+			boolean exists = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
+			if(!exists) {
+				minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
+			}
+
+			String filename = UUID.randomUUID() + "-" + originalFilename;
+
+			try(ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(file)) {
+				minioClient.putObject(
+						PutObjectArgs.builder()
+								.bucket(bucket)
+								.object(filename)
+								.stream(byteArrayInputStream, file.length, -1)
+								.contentType(contentType)
+								.build()
+				);
+			}
+			return Pair.of(filename, originalFilename);
+		} catch(Exception e) {
+			throw new RuntimeException("Error uploading file", e);
+		}
+	}
+
+	@Override
 	public String getFileUrl(String filename) {
 		try {
 			return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
@@ -69,6 +96,16 @@ public class UploadServiceImpl implements UploadService {
 
 	@Override
 	public byte[] getFileData(String filename) {
+		try(InputStream stream = minioClient.getObject(
+				GetObjectArgs.builder().bucket(bucket).object(filename).build())) {
+			return stream.readAllBytes();
+		} catch(Exception e) {
+			throw new RuntimeException("Error reading file from MinIO", e);
+		}
+	}
+
+	@Override
+	public byte[] getFileDataFromSpecificBucket(String filename, String bucket) {
 		try(InputStream stream = minioClient.getObject(
 				GetObjectArgs.builder().bucket(bucket).object(filename).build())) {
 			return stream.readAllBytes();

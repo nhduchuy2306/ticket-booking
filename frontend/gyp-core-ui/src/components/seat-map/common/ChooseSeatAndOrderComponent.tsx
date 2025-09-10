@@ -31,7 +31,7 @@ const ChooseSeatAndOrderComponent: React.FC<ChooseSeatAndOrderComponentProps> = 
         return selectedSeats.map(s => s.seat.id).join(", ");
     }
 
-    const getTotalPrice = () => {
+    const getTotalAmount = () => {
         if (!selectedSeats || selectedSeats.length === 0) {
             return 0;
         }
@@ -46,7 +46,7 @@ const ChooseSeatAndOrderComponent: React.FC<ChooseSeatAndOrderComponentProps> = 
             eventId,
             seatMapId,
             selectedSeats,
-            totalPrice: getTotalPrice(),
+            totalAmount: getTotalAmount(),
             ticketTypeMap: getSeatTypeMap,
         };
         navigate(`/gyp/events/${eventId}/orders`, {
@@ -65,7 +65,7 @@ const ChooseSeatAndOrderComponent: React.FC<ChooseSeatAndOrderComponentProps> = 
                         </div>
                         <div className="flex items-center justify-start gap-2 text-white font-bold">
                             <span>Total: </span>
-                            <span>${getTotalPrice()}</span>
+                            <span>${getTotalAmount()}</span>
                         </div>
                     </div>
                 }

@@ -14,4 +14,5 @@ import lombok.Setter;
 public class PaymentResponseDto {
 	private String message;
 	private String status;
+	private String orderId;
 }

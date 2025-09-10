@@ -3,15 +3,13 @@ package com.gyp.eventservice.dtos.seatmap;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-/**
- * Lớp đại diện cho một bàn
- */
 @Getter
 @Setter
 @SuperBuilder
@@ -34,9 +32,6 @@ public class Table extends BaseSeatMap implements Positionable, Dimensional, Sea
 		seats.remove(seat);
 	}
 
-	/**
-	 * Tạo ghế xung quanh bàn tròn
-	 */
 	public void generateSeatsForRoundTable(int count, double radius) {
 		double angleStep = 360.0 / count;
 
@@ -50,17 +45,14 @@ public class Table extends BaseSeatMap implements Positionable, Dimensional, Sea
 			Seat seat = new Seat();
 			seat.setName(String.valueOf(i + 1));
 			seat.setPosition(new Position(x, y));
-			this.addSeat(seat);
+			addSeat(seat);
 		}
 	}
 
-	/**
-	 * Tạo ghế xung quanh bàn chữ nhật
-	 */
 	public void generateSeatsForRectangleTable(int seatsPerLongSide, int seatsPerShortSide) {
 		int totalSeats = 2 * (seatsPerLongSide + seatsPerShortSide);
-		double width = this.dimensions.getWidth();
-		double height = this.dimensions.getHeight();
+		double width = dimensions.getWidth();
+		double height = dimensions.getHeight();
 
 		int seatCount = 0;
 
@@ -70,7 +62,7 @@ public class Table extends BaseSeatMap implements Positionable, Dimensional, Sea
 			seat.setName(String.valueOf(++seatCount));
 			double x = (width / (seatsPerLongSide + 1)) * (i + 1);
 			seat.setPosition(new Position(x, 0));
-			this.addSeat(seat);
+			addSeat(seat);
 		}
 
 		// Ghế ở cạnh phải
@@ -79,7 +71,7 @@ public class Table extends BaseSeatMap implements Positionable, Dimensional, Sea
 			seat.setName(String.valueOf(++seatCount));
 			double y = (height / (seatsPerShortSide + 1)) * (i + 1);
 			seat.setPosition(new Position(width, y));
-			this.addSeat(seat);
+			addSeat(seat);
 		}
 
 		// Ghế ở cạnh dưới
@@ -88,7 +80,7 @@ public class Table extends BaseSeatMap implements Positionable, Dimensional, Sea
 			seat.setName(String.valueOf(++seatCount));
 			double x = (width / (seatsPerLongSide + 1)) * (i + 1);
 			seat.setPosition(new Position(x, height));
-			this.addSeat(seat);
+			addSeat(seat);
 		}
 
 		// Ghế ở cạnh trái
@@ -97,7 +89,7 @@ public class Table extends BaseSeatMap implements Positionable, Dimensional, Sea
 			seat.setName(String.valueOf(++seatCount));
 			double y = (height / (seatsPerShortSide + 1)) * (i + 1);
 			seat.setPosition(new Position(0, y));
-			this.addSeat(seat);
+			addSeat(seat);
 		}
 	}
 }

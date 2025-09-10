@@ -7,14 +7,14 @@ import lombok.Getter;
  */
 @Getter
 public enum StageOrientation {
-	NORTH(0),      // Hướng Bắc (0 độ)
-	NORTHEAST(45), // Hướng Đông Bắc (45 độ)
-	EAST(90),      // Hướng Đông (90 độ)
-	SOUTHEAST(135),// Hướng Đông Nam (135 độ)
-	SOUTH(180),    // Hướng Nam (180 độ)
-	SOUTHWEST(225),// Hướng Tây Nam (225 độ)
-	WEST(270),     // Hướng Tây (270 độ)
-	NORTHWEST(315);// Hướng Tây Bắc (315 độ)
+	NORTH(0),
+	NORTHEAST(45),
+	EAST(90),
+	SOUTHEAST(135),
+	SOUTH(180),
+	SOUTHWEST(225),
+	WEST(270),
+	NORTHWEST(315);
 
 	private final double angle;
 

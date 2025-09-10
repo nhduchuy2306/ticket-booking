@@ -8,9 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-/**
- * Class define for Venue Map
- */
 @Getter
 @Setter
 @SuperBuilder
@@ -21,9 +18,6 @@ public class VenueMap extends BaseSeatMap implements Dimensional {
 	private SeatConfig seatConfig;
 	private StageConfig stageConfig;
 
-	/**
-	 * Calculate the seat quality point
-	 */
 	public void calculateSeatQualityScores() {
 		if(stageConfig == null) {
 			return;

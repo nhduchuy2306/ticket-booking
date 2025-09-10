@@ -1,6 +1,7 @@
 package com.gyp.ticketservice.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.gyp.common.enums.event.TicketStatus;
 import com.gyp.ticketservice.entities.TicketEntity;
@@ -22,4 +23,6 @@ public interface TicketRepository extends JpaRepository<TicketEntity, String>, J
 			WHERE t.eventId = :eventId
 			""")
 	int updateTicketStatusByEventId(@Param("eventId") String eventId, @Param("status") TicketStatus status);
+
+	Optional<TicketEntity> findBySeatId(String seatId);
 }

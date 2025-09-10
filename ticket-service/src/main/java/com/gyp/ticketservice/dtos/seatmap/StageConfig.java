@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,9 +25,9 @@ public class StageConfig extends BaseSeatMap implements Positionable, Dimensiona
 	private StageOrientation orientation;
 	private String description;
 	private boolean isActive = true;
-	private List<Position> customVertices = new ArrayList<>(); // For custom section
-	private double elevation = 0.0; // Height of stage (Optional)
-	private String svgPath; // For define svg image
+	private List<Position> customVertices = new ArrayList<>();
+	private double elevation = 0.0;
+	private String svgPath;
 
 	public void setOrientation(StageOrientation orientation) {
 		this.orientation = orientation;
@@ -40,9 +41,7 @@ public class StageConfig extends BaseSeatMap implements Positionable, Dimensiona
 		customVertices.add(vertex);
 	}
 
-	/**
-	 * Tính toán điểm trung tâm của sân khấu
-	 */
+	@JsonIgnore
 	public Position getCenterPosition() {
 		if(Objects.equals(shape, StageShape.CUSTOM) && !customVertices.isEmpty()) {
 			double sumX = customVertices.stream().mapToDouble(Position::getX).sum();
@@ -59,9 +58,6 @@ public class StageConfig extends BaseSeatMap implements Positionable, Dimensiona
 		);
 	}
 
-	/**
-	 * Tính toán khoảng cách từ một vị trí đến sân khấu
-	 */
 	public double calculateDistanceToStage(Position fromPosition) {
 		Position stageCenter = getCenterPosition();
 		double dx = fromPosition.getX() - stageCenter.getX();
@@ -69,9 +65,6 @@ public class StageConfig extends BaseSeatMap implements Positionable, Dimensiona
 		return Math.sqrt(dx * dx + dy * dy);
 	}
 
-	/**
-	 * Tính toán góc nhìn từ một vị trí đến sân khấu
-	 */
 	public double calculateViewingAngle(Position fromPosition) {
 		Position stageCenter = getCenterPosition();
 		double dx = stageCenter.getX() - fromPosition.getX();
@@ -86,9 +79,7 @@ public class StageConfig extends BaseSeatMap implements Positionable, Dimensiona
 		return angle;
 	}
 
-	/**
-	 * Kiếm tra xem một vị trí có nằm trong vùng tầm nhìn tốt không
-	 */
+	@JsonIgnore
 	public boolean isInOptimalViewingZone(Position seatPosition, double maxDistance, double optimalAngleRange) {
 		double distance = calculateDistanceToStage(seatPosition);
 		if(distance > maxDistance) {
@@ -107,9 +98,6 @@ public class StageConfig extends BaseSeatMap implements Positionable, Dimensiona
 		return angleDifference <= optimalAngleRange / 2;
 	}
 
-	/**
-	 * Tính điểm chất lượng cho một ghế dựa trên vị trí so với sân khấu
-	 */
 	public double calculateSeatQualityScore(Position seatPosition) {
 		double distance = calculateDistanceToStage(seatPosition);
 		double viewingAngle = calculateViewingAngle(seatPosition);
@@ -130,9 +118,7 @@ public class StageConfig extends BaseSeatMap implements Positionable, Dimensiona
 		return distanceScore * 0.6 + angleScore * 0.4;
 	}
 
-	/**
-	 * Lấy các điểm biên của sân khấu (để vẽ)
-	 */
+	@JsonIgnore
 	public List<Position> getBoundaryPoints() {
 		List<Position> points = new ArrayList<>();
 		double centerX, centerY, radius;

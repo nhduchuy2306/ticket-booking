@@ -36,6 +36,11 @@
             <version>${spring.cloud.starter.netfilx.eureka.client.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+            <version>${spring.kafka.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
             <version>${spring.boot.starter.validation.version}</version>
@@ -130,6 +135,48 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>cz.habarta.typescript-generator</groupId>
+                <artifactId>typescript-generator-maven-plugin</artifactId>
+                <version>${typescript.generator.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-ts-models</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <jsonLibrary>jackson2</jsonLibrary>
+                            <outputFile>
+                                ${project.basedir}/../frontend/gyp-core-ui/src/models/generated/order-service-models.d.ts
+                            </outputFile>
+                            <classPatterns>
+                                <pattern>com.gyp.orderservice.dtos.**</pattern>
+                            </classPatterns>
+                            <mapClasses>asInterfaces</mapClasses>
+                            <mapDate>asString</mapDate>
+                            <outputKind>module</outputKind>
+                            <optionalProperties>all</optionalProperties>
+                            <optionalAnnotations>
+                                <annotation>javax.annotation.Nullable</annotation>
+                                <annotation>org.springframework.lang.Nullable</annotation>
+                            </optionalAnnotations>
+                            <excludeClassPatterns>
+                                <pattern>java.io.**</pattern>
+                                <pattern>java.lang.**</pattern>
+                            </excludeClassPatterns>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>cz.habarta.typescript-generator</groupId>
+                        <artifactId>typescript-generator-core</artifactId>
+                        <version>${typescript.generator.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>

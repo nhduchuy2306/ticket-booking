@@ -1,5 +1,5 @@
 import { VenueRequestDto, VenueResponseDto } from "../../models/generated/event-service-models";
-import { apiClient, EVENT_SERVICE_PATH } from "../ApiClient.ts";
+import { apiClient, apiWithoutAuth, EVENT_SERVICE_PATH } from "../ApiClient.ts";
 import { BaseService } from "../BaseService.ts";
 
 const VENUE_PATH = "venues";
@@ -11,7 +11,7 @@ export class VenueService {
     }
 
     static getVenueById = async (id: string): Promise<VenueResponseDto> => {
-        const res = await apiClient.get(`/${EVENT_SERVICE_PATH}/${VENUE_PATH}/${id}`);
+        const res = await apiWithoutAuth.get(`/${EVENT_SERVICE_PATH}/${VENUE_PATH}/${id}`);
         return res.data;
     }
 

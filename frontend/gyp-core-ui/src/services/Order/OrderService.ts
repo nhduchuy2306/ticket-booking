@@ -1,13 +1,12 @@
-import { apiClient, ORDER_SERVICE_PATH } from "../ApiClient.ts";
+import { OrderRequestDto, OrderResponseDto } from "../../models/generated/order-service-models";
+import { apiWithoutAuth, ORDER_SERVICE_PATH } from "../ApiClient.ts";
 
-const PAYMENT_PATH = 'payments';
-const CREATE_PAYMENT_ENDPOINT_PATH = "createpaymentendpoint";
+const ORDERS_PATH = 'orders';
+const CREATE_ORDER_ENDPOINT_PATH = "createorder";
 
 export class OrderService {
-    static createPaymentEndpoint = async (amount: number) => {
-        const response = await apiClient.get(`${ORDER_SERVICE_PATH}/${PAYMENT_PATH}/${CREATE_PAYMENT_ENDPOINT_PATH}`, {
-            params: {amount}
-        });
+    static createOrder = async (orderRequestDto: OrderRequestDto): Promise<OrderResponseDto> => {
+        const response = await apiWithoutAuth.post(`${ORDER_SERVICE_PATH}/${ORDERS_PATH}/${CREATE_ORDER_ENDPOINT_PATH}`, orderRequestDto);
         return response.data;
     }
 }

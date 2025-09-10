@@ -24,6 +24,7 @@ public class TicketResponseDto extends AbstractDto {
 	private LocalDateTime eventDateTime;
 	private LocalDateTime reservedDateTime;
 	private String seatInfo;
+	private String seatId;
 	private TicketStatus status;
 	private String attendeeName;
 	private String attendeeEmail;

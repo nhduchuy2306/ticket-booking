@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RenderConfig {
 	private boolean useCache = true;
-	private int cacheThreshold = 100; // cache if more than 100 seats
+	private int cacheThreshold = 100;
 	private boolean enableHitTesting = true;
-	private double scaleThreshold = 0.5; // hide details when zoomed out
+	private double scaleThreshold = 0.5;
 }

@@ -1,17 +1,21 @@
-import { Button, Modal } from "antd";
+import { Button, Form, Input, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { OrderDetailModel } from "../../components/seat-map/models/SeatMapModels.ts";
 import { useEventData } from "../../hooks/form/useEventData.tsx";
+import { OrderRequestDto } from "../../models/generated/order-service-models";
 import { OrderService } from "../../services/Order/OrderService.ts";
+import { PaymentService } from "../../services/Order/PaymentService.ts";
 import { StoreService } from "../../services/Order/StoreService.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
 
 const EventOrderPage: React.FC = () => {
     const location = useLocation();
-    const {eventId, selectedSeats, totalPrice, ticketTypeMap}: OrderDetailModel = location.state?.orderDetails;
+    const {eventId, selectedSeats, totalAmount, ticketTypeMap}: OrderDetailModel = location.state?.orderDetails;
     const {event, venue} = useEventData({id: eventId});
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
+    const [form] = Form.useForm();
 
     if (!eventId || !selectedSeats) {
         navigate("/gyp/", {replace: true});
@@ -67,10 +71,10 @@ const EventOrderPage: React.FC = () => {
             okText: "Start New Order",
             cancelText: "Go Home",
             onOk: async () => {
-                navigate(-1);
+                navigate(`/gyp/events/${eventId}/choose-seats`, {replace: true});
             },
             onCancel: () => {
-                navigate("/gyp/", { replace: true });
+                navigate("/gyp/", {replace: true});
             },
             maskClosable: false,
             closable: false,
@@ -87,20 +91,97 @@ const EventOrderPage: React.FC = () => {
     const handleCompleteOrder = async () => {
         if (timeLeft <= 0) {
             alert("Time has expired. Please start over.");
-        }
-        if (totalPrice) {
-            const vndPrice = totalPrice * 23000; // Convert to VND
-            const paymentResponse = await OrderService.createPaymentEndpoint(vndPrice);
-            console.log("Redirecting to payment URL:", paymentResponse);
-            if (paymentResponse) {
-                window.location.href = paymentResponse.payUrl;
-            }
+        } else {
+            showInputEmailAndPhoneModal();
         }
     }
 
+    const showInputEmailAndPhoneModal = () => {
+        Modal.confirm({
+            title: "Enter Email and Phone",
+            content: (
+                    <Form
+                            form={form}
+                            layout="vertical"
+                            className="mt-4"
+                    >
+                        <Form.Item
+                                name="email"
+                                label="Email"
+                                rules={[
+                                    {required: true, message: 'Please enter your email!'},
+                                    {type: 'email', message: 'Please enter a valid email!'}
+                                ]}
+                        >
+                            <Input type="email" placeholder="Enter your email"/>
+                        </Form.Item>
+
+                        <Form.Item
+                                name="phone"
+                                label="Phone Number"
+                                rules={[
+                                    {required: true, message: 'Please enter your phone number!'},
+                                    {pattern: /^[+]?[\d\s-()]+$/, message: 'Please enter a valid phone number!'}
+                                ]}
+                        >
+                            <Input type="tel" placeholder="Enter your phone number"/>
+                        </Form.Item>
+                    </Form>
+            ),
+            okText: "Ok",
+            cancelText: "Cancel",
+            okButtonProps: {
+                loading: isLoading,
+            },
+            onOk: async () => {
+                try {
+                    setIsLoading(true);
+                    const values = await form.validateFields();
+
+                    if (totalAmount) {
+                        const orderRequest: OrderRequestDto = {
+                            eventId: eventId,
+                            customerEmail: values.email,
+                            totalAmount: totalAmount,
+                            orderDetails: selectedSeats?.map(seat => ({
+                                seatId: seat.seat.id,
+                                quantity: 1,
+                                price: ticketTypeMap?.get(seat.section?.ticketTypeId) || 0,
+                            })),
+                        }
+                        const pendingOrder = await OrderService.createOrder(orderRequest);
+                        if (!pendingOrder || !pendingOrder.id) {
+                            alert("Failed to create order. Please try again.");
+                            setIsLoading(false);
+                            return Promise.resolve(); // Close modal
+                        }
+
+                        const vndPrice = totalAmount * 23000; // Convert to VND
+                        const paymentResponse = await PaymentService.createPaymentEndpoint(vndPrice, pendingOrder.id);
+                        console.log("Redirecting to payment URL:", paymentResponse);
+                        if (paymentResponse) {
+                            window.location.href = paymentResponse.payUrl;
+                        }
+                    }
+                } catch (error) {
+                    console.log('Validation failed:', error);
+                    setIsLoading(false);
+                    return Promise.reject(); // Prevent modal from closing
+                } finally {
+                    setIsLoading(false);
+                    sessionStorage.removeItem("countdownSessionId");
+                }
+            },
+            onCancel: () => {
+                console.log("User cancelled input");
+            },
+            maskClosable: false,
+        });
+    };
+
     return (
-            <div className="bg-black h-full !p-6">
-                <div className="mx-auto">
+            <div className="bg-black !p-6 flex flex-grow">
+                <div className="w-full">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                         {/* Order Details Block - Left Side */}
@@ -160,7 +241,7 @@ const EventOrderPage: React.FC = () => {
                                 <div className="border-t border-gray-200 !pt-6">
                                     <div className="flex justify-between items-center">
                                         <span className="text-xl font-semibold text-gray-700">Total Price:</span>
-                                        <span className="text-2xl font-bold text-green-600">${totalPrice}</span>
+                                        <span className="text-2xl font-bold text-green-600">${totalAmount}</span>
                                     </div>
                                 </div>
 
@@ -170,7 +251,22 @@ const EventOrderPage: React.FC = () => {
                                             onClick={handleCompleteOrder}
                                     >Complete Order</Button>
                                     <Button type="default" size="large" className="flex-1/4"
-                                            onClick={() => navigate("/gyp/", {replace: true})}
+                                            onClick={() => {
+                                                Modal.confirm({
+                                                    title: "Cancel Order",
+                                                    content: "Are you sure you want to cancel your order? All selected seats will be released.",
+                                                    okText: "Yes, Cancel",
+                                                    cancelText: "No, Go Back",
+                                                    onOk: () => {
+                                                        sessionStorage.removeItem("countdownSessionId");
+                                                        navigate("/gyp/", {replace: true});
+                                                    },
+                                                    onCancel: () => {
+                                                        console.log("User chose to continue order");
+                                                    },
+                                                    maskClosable: false,
+                                                });
+                                            }}
                                     >Cancel</Button>
                                 </div>
                             </div>
@@ -218,7 +314,7 @@ const EventOrderPage: React.FC = () => {
                                     </div>
                                     <div className="flex justify-between opacity-75">
                                         <span>Total Amount:</span>
-                                        <span>${totalPrice}</span>
+                                        <span>${totalAmount}</span>
                                     </div>
                                 </div>
                             </div>

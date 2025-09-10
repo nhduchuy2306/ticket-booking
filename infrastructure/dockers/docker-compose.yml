@@ -68,7 +68,11 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
-    command: redis-server --requirepass 12345
+    environment:
+      - REDIS_PASSWORD=12345
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    volumes:
+      - ./redis_data:/bitnami/redis/data
     restart: unless-stopped
     networks:
       - gyp-net
@@ -152,6 +156,8 @@ services:
       - "9000:9000"
     environment:
       SPRING_PROFILES_ACTIVE: prod
+    env_file:
+      - ../../.env
     depends_on:
       - discovery-service
       - mysql
@@ -166,6 +172,8 @@ services:
       - "9010:9010"
     environment:
       SPRING_PROFILES_ACTIVE: prod
+    env_file:
+      - ../../.env
     depends_on:
       - discovery-service
     networks:
@@ -178,6 +186,8 @@ services:
       - "9001:9001"
     environment:
       SPRING_PROFILES_ACTIVE: prod
+    env_file:
+      - ../../.env
     depends_on:
       - discovery-service
       - mysql
@@ -192,6 +202,8 @@ services:
       - "9002:9002"
     environment:
       SPRING_PROFILES_ACTIVE: prod
+    env_file:
+      - ../../.env
     depends_on:
       - discovery-service
       - mysql
@@ -205,6 +217,8 @@ services:
       - "9004:9004"
     environment:
       SPRING_PROFILES_ACTIVE: prod
+    env_file:
+      - ../../.env
     depends_on:
       - discovery-service
       - mysql
@@ -219,6 +233,8 @@ services:
       - "9003:9003"
     environment:
       SPRING_PROFILES_ACTIVE: prod
+    env_file:
+      - ../../.env
     depends_on:
       - discovery-service
       - mysql

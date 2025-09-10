@@ -1,4 +1,4 @@
-package com.gyp.orderservice.clients.momoservice;
+package com.gyp.orderservice.clients;
 
 import java.util.Map;
 

@@ -4,6 +4,8 @@ import EventDetailPage from "./gyp-pages/events/EventDetailPage.tsx";
 import GypRootLayout from "./gyp-pages/GypRootLayout.tsx";
 import LandingPage from "./gyp-pages/landing/LandingPage.tsx";
 import EventOrderPage from "./gyp-pages/orders/EventOrderPage.tsx";
+import PaymentFailurePage from "./gyp-pages/orders/payment-status/PaymentFailurePage.tsx";
+import PaymentSuccessPage from "./gyp-pages/orders/payment-status/PaymentSuccessPage.tsx";
 import EventSeatMap from "./gyp-pages/seat-maps/EventSeatMap.tsx";
 import { TicketShopSaleChannelConfigDto } from "./models/generated/sale-channel-service-models";
 import { SaleChannelService } from "./services/SaleChannel/SaleChannelService.ts";
@@ -51,6 +53,14 @@ const GypApp: React.FC = () => {
                 {
                     path: "events/:id/orders",
                     element: <EventOrderPage/>,
+                },
+                {
+                    path: "payment/success",
+                    element: <PaymentSuccessPage/>
+                },
+                {
+                    path: "payment/failure",
+                    element: <PaymentFailurePage/>,
                 },
                 ...routes,
             ]

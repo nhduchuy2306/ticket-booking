@@ -13,4 +13,5 @@ public class TicketGenerationSummaryDto {
 	private String attendeeName;
 	private String ticketNumber;
 	private String seatInfo;
+	private String seatId;
 }

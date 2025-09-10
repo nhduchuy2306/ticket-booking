@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// This class is interaction properties
 @Setter
 @Getter
 @Builder

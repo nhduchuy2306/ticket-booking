@@ -5,7 +5,7 @@ import {
     SeatMapResponseDto,
     StageConfig
 } from "../../models/generated/event-service-models";
-import { apiClient, EVENT_SERVICE_PATH } from "../ApiClient.ts";
+import { apiClient, apiWithoutAuth, EVENT_SERVICE_PATH } from "../ApiClient.ts";
 import { BaseService } from "../BaseService.ts";
 
 const SEAT_MAP_PATH = "seat-maps";
@@ -19,7 +19,7 @@ export class SeatMapService {
     }
 
     static getSeatMapById = async (id: string): Promise<SeatMapResponseDto> => {
-        const response = await apiClient.get(`${EVENT_SERVICE_PATH}/${SEAT_MAP_PATH}/${id}`);
+        const response = await apiWithoutAuth.get(`${EVENT_SERVICE_PATH}/${SEAT_MAP_PATH}/${id}`);
         return response.data;
     }
 

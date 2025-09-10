@@ -6,9 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Properties for Arc
- */
 @Getter
 @Setter
 @Builder
@@ -22,9 +19,6 @@ public class ArcProperties {
 	private double endAngle;
 	private double thickness;
 
-	/**
-	 * Calculate 1 point in arc base on angle
-	 */
 	public Position calculatePointOnArc(double angle) {
 		double radians = Math.toRadians(angle);
 		double x = centerX + radius * Math.cos(radians);

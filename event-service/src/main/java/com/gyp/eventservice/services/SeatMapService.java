@@ -13,7 +13,7 @@ import com.gyp.eventservice.dtos.seatmap.SeatWithScore;
 import com.gyp.eventservice.dtos.seatmap.VenueMap;
 
 public interface SeatMapService {
-	String convertOrganizerJson(String content);
+	String convertSeatMapJson(String content);
 
 	VenueMap createTheaterSeatMap(String name, int rows, int seatsPerRow);
 
@@ -36,6 +36,8 @@ public interface SeatMapService {
 	SeatAvailability checkSeatAvailability(String seatMapId, List<String> seatIds);
 
 	SeatConfig parseSeatConfig(String seatConfigJson);
+
+	SeatConfig soldSeats(SeatConfig seatConfig, List<String> seatIds);
 
 	List<SeatMapResponseDto> getAllSeatMaps();
 

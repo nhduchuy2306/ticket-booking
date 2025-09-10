@@ -1,7 +1,6 @@
 package com.gyp.orderservice.services.impl;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -13,33 +12,25 @@ import java.util.UUID;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.gyp.orderservice.clients.momoservice.MomoServiceClient;
+import com.gyp.common.enums.order.OrderStatus;
+import com.gyp.orderservice.clients.MomoServiceClient;
+import com.gyp.orderservice.dtos.payment.MomoProperties;
 import com.gyp.orderservice.dtos.payment.PaymentResponseDto;
 import com.gyp.orderservice.services.MoMoPaymentService;
+import com.gyp.orderservice.services.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class MoMoPaymentServiceImpl implements MoMoPaymentService {
-	@Value("${momo.partner.code}")
-	private String partnerCode;
-	@Value("${momo.access.key}")
-	private String accessKey;
-	@Value("${momo.secret.key}")
-	private String secretKey;
-	@Value("${momo.return.url}")
-	private String returnUrl;
-	@Value("${momo.notify.url}")
-	private String notifyUrl;
-
+	private final MomoProperties momoProperties;
 	private final MomoServiceClient momoServiceClient;
+	private final OrderService orderService;
 
 	@Override
-	public Object createMoMoPaymentEndpoint(Long amount)
+	public Object createMoMoPaymentEndpoint(Long amount, String orderId)
 			throws InvalidKeyException, NoSuchAlgorithmException, IOException {
-		String orderId = UUID.randomUUID().toString();
 		String orderInfo = "PAY WITH MOMO";
 		String requestId = UUID.randomUUID().toString();
 		String requestType = "captureWallet";
@@ -48,29 +39,29 @@ public class MoMoPaymentServiceImpl implements MoMoPaymentService {
 		String partnerName = "Shop";
 		String storeId = "MoMoStore";
 
-		String requestRawData = "accessKey" + "=" + accessKey + "&"
-								+ "amount" + "=" + amount + "&"
-								+ "extraData" + "=" + extraData + "&"
-								+ "ipnUrl" + "=" + notifyUrl + "&"
-								+ "orderId" + "=" + orderId + "&"
-								+ "orderInfo" + "=" + orderInfo + "&"
-								+ "partnerCode" + "=" + partnerCode + "&"
-								+ "redirectUrl" + "=" + returnUrl + "&"
-								+ "requestId" + "=" + requestId + "&"
-								+ "requestType" + "=" + requestType;
+		String requestRawData = "accessKey" + "=" + momoProperties.getAccessKey() + "&"
+				+ "amount" + "=" + amount + "&"
+				+ "extraData" + "=" + extraData + "&"
+				+ "ipnUrl" + "=" + momoProperties.getNotifyUrl() + "&"
+				+ "orderId" + "=" + orderId + "&"
+				+ "orderInfo" + "=" + orderInfo + "&"
+				+ "partnerCode" + "=" + momoProperties.getPartnerCode() + "&"
+				+ "redirectUrl" + "=" + momoProperties.getReturnUrl() + "&"
+				+ "requestId" + "=" + requestId + "&"
+				+ "requestType" + "=" + requestType;
 
-		String signature = signHmacSHA256(requestRawData, secretKey);
+		String signature = signHmacSHA256(requestRawData, momoProperties.getSecretKey());
 
 		Map<String, String> paymentBody = new HashMap<>();
-		paymentBody.put("partnerCode", partnerCode);
+		paymentBody.put("partnerCode", momoProperties.getPartnerCode());
 		paymentBody.put("partnerName", partnerName);
 		paymentBody.put("storeId", storeId);
 		paymentBody.put("requestId", requestId);
 		paymentBody.put("amount", String.valueOf(amount));
 		paymentBody.put("orderId", orderId);
 		paymentBody.put("orderInfo", orderInfo);
-		paymentBody.put("redirectUrl", returnUrl);
-		paymentBody.put("ipnUrl", notifyUrl);
+		paymentBody.put("redirectUrl", momoProperties.getReturnUrl());
+		paymentBody.put("ipnUrl", momoProperties.getNotifyUrl());
 		paymentBody.put("lang", lang);
 		paymentBody.put("extraData", extraData);
 		paymentBody.put("requestType", requestType);
@@ -83,22 +74,22 @@ public class MoMoPaymentServiceImpl implements MoMoPaymentService {
 	public PaymentResponseDto compareSignature(String partnerCode, String orderId, String requestId,
 			String amount, String orderInfo, String orderType, String transId, String resultCode, String message,
 			String payType, String responseTime, String extraData, String signature)
-			throws InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException {
-		String requestRawData = "accessKey" + "=" + accessKey + "&"
-								+ "amount" + "=" + amount + "&"
-								+ "extraData" + "=" + extraData + "&"
-								+ "message" + "=" + message + "&"
-								+ "orderId" + "=" + orderId + "&"
-								+ "orderInfo" + "=" + orderInfo + "&"
-								+ "orderType" + "=" + orderType + "&"
-								+ "partnerCode" + "=" + partnerCode + "&"
-								+ "payType" + "=" + payType + "&"
-								+ "requestId" + "=" + requestId + "&"
-								+ "responseTime" + "=" + responseTime + "&"
-								+ "resultCode" + "=" + resultCode + "&"
-								+ "transId" + "=" + transId;
+			throws InvalidKeyException, NoSuchAlgorithmException {
+		String requestRawData = "accessKey" + "=" + momoProperties.getAccessKey() + "&"
+				+ "amount" + "=" + amount + "&"
+				+ "extraData" + "=" + extraData + "&"
+				+ "message" + "=" + message + "&"
+				+ "orderId" + "=" + orderId + "&"
+				+ "orderInfo" + "=" + orderInfo + "&"
+				+ "orderType" + "=" + orderType + "&"
+				+ "partnerCode" + "=" + partnerCode + "&"
+				+ "payType" + "=" + payType + "&"
+				+ "requestId" + "=" + requestId + "&"
+				+ "responseTime" + "=" + responseTime + "&"
+				+ "resultCode" + "=" + resultCode + "&"
+				+ "transId" + "=" + transId;
 
-		String signRequest = signHmacSHA256(requestRawData, secretKey);
+		String signRequest = signHmacSHA256(requestRawData, momoProperties.getSecretKey());
 
 		if(!signRequest.equals(signature)) {
 			return PaymentResponseDto.builder()
@@ -109,11 +100,29 @@ public class MoMoPaymentServiceImpl implements MoMoPaymentService {
 		return PaymentResponseDto.builder()
 				.message(message)
 				.status(resultCode)
+				.orderId(orderId)
 				.build();
 	}
 
-	private String signHmacSHA256(String data, String secretKey)
-			throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException {
+	@Override
+	public String getPaymentResponseInfo(String partnerCode, String orderId, String requestId, String amount,
+			String orderInfo, String orderType, String transId, String resultCode, String message, String payType,
+			String responseTime, String extraData, String signature)
+			throws NoSuchAlgorithmException, InvalidKeyException {
+		String postFixUrl = "?orderId=%s&message=%s";
+		PaymentResponseDto paymentResponse = compareSignature(partnerCode, orderId, requestId, amount,
+				orderInfo, orderType, transId, resultCode, message, payType, responseTime, extraData, signature);
+		if("0".equals(paymentResponse.getStatus())) {
+			orderService.updateOrderStatus(orderId, OrderStatus.DONE);
+			return String.format(momoProperties.getFrontendSuccessUrl() + postFixUrl, orderId,
+					paymentResponse.getMessage());
+		}
+		orderService.updateOrderStatus(orderId, OrderStatus.CANCELLED);
+		return String.format(momoProperties.getFrontendFailureUrl() + postFixUrl, orderId,
+				paymentResponse.getMessage());
+	}
+
+	private String signHmacSHA256(String data, String secretKey) throws NoSuchAlgorithmException, InvalidKeyException {
 		SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(), "HmacSHA256");
 		Mac mac = Mac.getInstance("HmacSHA256");
 		mac.init(secretKeySpec);

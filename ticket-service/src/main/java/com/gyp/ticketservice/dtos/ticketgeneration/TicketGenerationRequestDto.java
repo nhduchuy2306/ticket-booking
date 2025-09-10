@@ -16,6 +16,7 @@ import lombok.Setter;
 public class TicketGenerationRequestDto {
 	private String eventId;
 	private String eventName;
+	private String seatId;
 	private String seatInfo;
 	private String ticketNumber;
 	private String attendeeName;

@@ -14,6 +14,6 @@ export interface OrderDetailModel {
     eventId?: string;
     seatMapId?: string;
     selectedSeats?: SelectedSeatModel[];
-    totalPrice?: number;
+    totalAmount?: number;
     ticketTypeMap?: Map<string, number>;
 }

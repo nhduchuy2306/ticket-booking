@@ -2,9 +2,6 @@ package com.gyp.ticketservice.dtos.seatmap;
 
 import java.util.Objects;
 
-/**
- * Factory để tạo các loại layout khác nhau
- */
 public final class SeatLayoutFactory {
 	private SeatLayoutFactory() {
 	}

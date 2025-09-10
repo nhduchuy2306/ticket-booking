@@ -12,8 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RenderingProperties {
-	private boolean cached; // Konva caching
+	private boolean cached;
 	private double pixelRatio;
-	private String[] filters; // Konva filters
+	private String[] filters;
 	private boolean perfectDrawEnabled;
 }

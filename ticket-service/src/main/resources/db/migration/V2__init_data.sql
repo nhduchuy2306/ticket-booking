@@ -23,18 +23,21 @@ VALUES ('fb81dfc2-1fda-481a-968c-88c589e4c380', 'VIP Pass', 'Premium seating wit
 
 -- Insert sample TICKET data
 INSERT INTO ticket (id, ticket_code, ticket_type_id, event_id, event_name, event_date_time, reserved_date,
-                    seat_info, status, attendee_name, attendee_email, qr_code_url, pdf_url,
+                    seat_info, seat_id, status, attendee_name, attendee_email, qr_code_url, pdf_url,
                     create_user, change_user, create_timestamp, change_timestamp)
-VALUES ('tk1', 'TICKET-0001', '8f58d410-c3a3-49d9-9b4d-2620b593e1e2', 'event-001', 'Spring Concert 2025', '2025-06-10 19:00:00', NULL,
-        'A1', 'AVAILABLE', NULL, NULL, NULL, NULL,
+VALUES ('tk1', 'TICKET-0001', '8f58d410-c3a3-49d9-9b4d-2620b593e1e2', 'event-001', 'Spring Concert 2025',
+        '2025-06-10 19:00:00', NULL,
+        'A1', 'A1', 'AVAILABLE', NULL, NULL, NULL, NULL,
         'system', 'system', NOW(), NOW()),
 
-       ('tk2', 'TICKET-0002', '8f58d410-c3a3-49d9-9b4d-2620b593e1e2', 'event-001', 'Spring Concert 2025', '2025-06-10 19:00:00', NULL,
-        'A2', 'AVAILABLE', NULL, NULL, NULL, NULL,
+       ('tk2', 'TICKET-0002', '8f58d410-c3a3-49d9-9b4d-2620b593e1e2', 'event-001', 'Spring Concert 2025',
+        '2025-06-10 19:00:00', NULL,
+        'A2', 'A2', 'AVAILABLE', NULL, NULL, NULL, NULL,
         'system', 'system', NOW(), NOW()),
 
-       ('tk3', 'TICKET-0003', 'fb81dfc2-1fda-481a-968c-88c589e4c380', 'event-001', 'Spring Concert 2025', '2025-06-10 19:00:00', NULL,
-        'VIP-1', 'AVAILABLE', NULL, NULL, NULL, NULL,
+       ('tk3', 'TICKET-0003', 'fb81dfc2-1fda-481a-968c-88c589e4c380', 'event-001', 'Spring Concert 2025',
+        '2025-06-10 19:00:00', NULL,
+        'VIP-1', 'VIP-1', 'AVAILABLE', NULL, NULL, NULL, NULL,
         'system', 'system', NOW(), NOW());
 -- Insert sample TICKETORDERLINK data
 INSERT INTO ticketorderlink (id, ticket_id, order_id, purchase_time, price_at_purchase,

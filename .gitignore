@@ -47,3 +47,6 @@ build/
 
 /infrastructure/dockers/mysql_data
 /infrastructure/dockers/minio_data
+/infrastructure/dockers/redis_data
+
+/.env

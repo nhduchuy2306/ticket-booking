@@ -32,43 +32,11 @@ public class Seat extends BaseSeatMap implements Positionable, Styleable, Intera
 		useAbsolutePosition = true;
 	}
 
-	/**
-	 * Thêm thuộc tính cho ghế
-	 */
 	public void addAttribute(String key, boolean value) {
 		attributes.put(key, value);
 	}
 
-	/**
-	 * Kiểm tra xem ghế có thuộc tính đã cho không
-	 */
 	public boolean hasAttribute(String key) {
 		return attributes.containsKey(key) && attributes.get(key);
-	}
-
-	public VisualStyle getStatusBasedStyle() {
-		if(visualStyle == null) {
-			visualStyle = new VisualStyle();
-		}
-
-		switch(status) {
-			case AVAILABLE:
-				visualStyle.setFillColor("#00FF00"); // Green color for available seats
-				break;
-			case RESERVED:
-				visualStyle.setFillColor("#FFFF00"); // Yellow color for reserved seats
-				break;
-			case SOLD:
-				visualStyle.setFillColor("#FF0000"); // Red color for sold seats
-				break;
-			case BLOCKED:
-				visualStyle.setFillColor("#0000FF"); // Blue color for blocked seats
-				break;
-			default:
-				visualStyle.setFillColor("#FFFFFF"); // Default to white if status is unknown
-				break;
-		}
-
-		return visualStyle;
 	}
 }

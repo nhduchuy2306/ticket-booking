@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// styling properties
 @Getter
 @Setter
 @Builder
@@ -17,7 +16,7 @@ public class VisualStyle {
 	private String strokeColor;
 	private double strokeWidth;
 	private double opacity;
-	private String[] dashPattern; // for dashed lines
+	private String[] dashPattern;
 	private boolean visible;
-	private int zindex; // layering
+	private int zindex;
 }

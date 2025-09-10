@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS ticket
     event_date_time  DATETIME,
     reserved_date    DATETIME,
 
+    seat_id          VARCHAR(255),
     seat_info        VARCHAR(255),                    -- A1, A2, VIP-1
     status           VARCHAR(50) DEFAULT 'AVAILABLE', -- AVAILABLE, RESERVED, SOLD, CANCELED
     attendee_name    VARCHAR(255),

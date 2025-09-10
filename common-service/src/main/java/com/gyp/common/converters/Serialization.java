@@ -2,6 +2,7 @@ package com.gyp.common.converters;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,7 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public final class Serialization {
 	private static final ObjectMapper objectMapper = new ObjectMapper()
-			.registerModule(new JavaTimeModule());
+			.registerModule(new JavaTimeModule())
+			.setSerializationInclusion(JsonInclude.Include.NON_NULL); // Exclude null fields
 
 	private Serialization() {
 	}

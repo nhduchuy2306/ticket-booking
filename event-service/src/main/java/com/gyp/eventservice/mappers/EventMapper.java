@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.gyp.common.models.EventEventModel;
 import com.gyp.eventservice.dtos.event.EventRequestDto;
 import com.gyp.eventservice.dtos.event.EventResponseDto;
 import com.gyp.eventservice.entities.CategoryEntity;
@@ -77,14 +76,6 @@ public interface EventMapper extends AbstractMapper {
 	@Mapping(target = "eventPromotionEntityList", ignore = true)
 	@Mapping(target = "eventApprovalEntityList", ignore = true)
 	void updateEntityFromDto(EventRequestDto dto, @MappingTarget EventEntity entity);
-
-	@Mapping(target = "endTime", source = "entity.time.endTime")
-	@Mapping(target = "startTime", source = "entity.time.startTime")
-	@Mapping(target = "doorCloseTime", source = "entity.time.doorCloseTime")
-	@Mapping(target = "doorOpenTime", source = "entity.time.doorOpenTime")
-	EventEventModel toEventModel(EventEntity entity);
-
-	List<EventEventModel> toModelList(List<EventEntity> entities);
 
 	// Helper methods for calculated fields
 	default long calculateTicketsSold(EventEntity event) {

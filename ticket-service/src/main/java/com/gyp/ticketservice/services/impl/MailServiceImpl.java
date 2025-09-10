@@ -1,4 +1,4 @@
-package com.gyp.common.services.impl;
+package com.gyp.ticketservice.services.impl;
 
 import java.util.Locale;
 import java.util.Map;
@@ -6,10 +6,10 @@ import java.util.Map;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
-import com.gyp.common.services.MailService;
+import com.gyp.ticketservice.services.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,7 +21,6 @@ import org.thymeleaf.context.Context;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@ConditionalOnBean({ JavaMailSender.class, TemplateEngine.class })
 public class MailServiceImpl implements MailService {
 	private final JavaMailSender mailSender;
 	private final TemplateEngine templateEngine;
@@ -47,6 +46,48 @@ public class MailServiceImpl implements MailService {
 			mailSender.send(message);
 		} catch(MessagingException e) {
 			log.error("Failed to send email with attachment", e);
+		}
+	}
+
+	@Override
+	public void sendEmailWithMultipleAttachments(String to, String subject,
+			Map<String, Object> model, String templateName, Map<String, Pair<byte[], String>> attachments) {
+		try {
+			MimeMessage message = mailSender.createMimeMessage();
+			MimeMessageHelper helper = createMimeMessageHelper(message, to, subject, model, templateName);
+
+			if(attachments != null && !attachments.isEmpty()) {
+				for(Map.Entry<String, Pair<byte[], String>> entry : attachments.entrySet()) {
+					String fileName = entry.getKey();
+					byte[] fileBytes = entry.getValue().getLeft();
+					String contentType = entry.getValue().getRight();
+
+					addAttachment(helper, fileBytes, fileName, contentType);
+				}
+			}
+
+			mailSender.send(message);
+		} catch(MessagingException e) {
+			log.error("Failed to send email with multiple attachments", e);
+		}
+	}
+
+	private void addAttachment(MimeMessageHelper helper, byte[] attachmentBytes,
+			String fileName, String contentType) throws MessagingException {
+		if(attachmentBytes != null && attachmentBytes.length > 0) {
+			try {
+				ByteArrayResource resource = new ByteArrayResource(attachmentBytes) {
+					@Override
+					public String getFilename() {
+						return fileName;
+					}
+				};
+				helper.addAttachment(fileName, resource, contentType);
+				log.debug("Attachment added successfully: {} (type: {})", fileName, contentType);
+			} catch(MessagingException e) {
+				log.error("Error adding attachment: {}", fileName, e);
+				throw e;
+			}
 		}
 	}
 

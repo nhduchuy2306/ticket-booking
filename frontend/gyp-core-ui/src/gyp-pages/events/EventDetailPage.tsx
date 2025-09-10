@@ -32,8 +32,8 @@ const EventDetailPage: React.FC = () => {
     }
 
     return (
-            <div className="w-full">
-                <div className="!p-4 flex items-center justify-around bg-gray-400">
+            <div className="w-full flex flex-col flex-grow">
+                <div className="!p-4 flex items-start justify-center bg-gray-400 flex-grow">
                     <div className="w-6xl flex items-center justify-center">
                         <div className="flex-1/3 flex flex-col justify-center rounded-l-xl bg-[#38383d] h-[400px] text-white !p-4">
                             <div className="flex-1 flex flex-col gap-5">

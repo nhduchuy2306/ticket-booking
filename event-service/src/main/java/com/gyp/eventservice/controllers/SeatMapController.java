@@ -97,7 +97,7 @@ public class SeatMapController extends AbstractController {
 	public ResponseEntity<String> uploadSeatMap(@RequestParam("file") MultipartFile file) {
 		try {
 			String content = new String(file.getBytes(), StandardCharsets.UTF_8);
-			String convertedJson = seatMapService.convertOrganizerJson(content);
+			String convertedJson = seatMapService.convertSeatMapJson(content);
 			return ResponseEntity.ok(convertedJson);
 		} catch(IOException e) {
 			return ResponseEntity.badRequest().body("Error processing file: " + e.getMessage());

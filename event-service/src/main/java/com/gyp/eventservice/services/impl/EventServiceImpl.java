@@ -6,7 +6,6 @@ import java.util.List;
 import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.enums.event.EventStatus;
 import com.gyp.common.exceptions.ResourceNotFoundException;
-import com.gyp.common.models.EventEventModel;
 import com.gyp.common.services.UploadService;
 import com.gyp.common.services.ValidationService;
 import com.gyp.common.utils.SecurityUtils;
@@ -39,12 +38,6 @@ public class EventServiceImpl implements EventService {
 	private final EventMapper eventMapper;
 	private final UploadService uploadService;
 	private final AssignSaleChannelToEventProducer assignSaleChannelToEventProducer;
-
-	@Override
-	public List<EventEventModel> getListEventModel() {
-		List<EventEntity> entities = eventRepository.findAll();
-		return eventMapper.toModelList(entities);
-	}
 
 	@Override
 	public List<EventResponseDto> getAllEvents(EventSearchCriteria criteria, PaginatedDto pagination) {

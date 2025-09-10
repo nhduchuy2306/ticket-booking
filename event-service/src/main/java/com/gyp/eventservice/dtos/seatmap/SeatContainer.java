@@ -2,9 +2,6 @@ package com.gyp.eventservice.dtos.seatmap;
 
 import java.util.List;
 
-/**
- * Interface cho các thành phần có thể chứa chỗ ngồi
- */
 public interface SeatContainer {
 	List<Seat> getSeats();
 

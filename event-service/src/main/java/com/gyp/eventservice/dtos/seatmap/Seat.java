@@ -45,27 +45,4 @@ public class Seat extends BaseSeatMap implements Positionable, Styleable, Intera
 	public boolean hasAttribute(String key) {
 		return attributes.containsKey(key) && attributes.get(key);
 	}
-
-	public VisualStyle getStatusBasedStyle() {
-		if(visualStyle == null) {
-			visualStyle = new VisualStyle();
-		}
-
-		switch(status) {
-			case AVAILABLE:
-				visualStyle.setFillColor("#FFFFFF"); // White color for available seats
-				break;
-			case RESERVED:
-				visualStyle.setFillColor("#00FF00"); // Green color for reserved seats
-				break;
-			case SOLD:
-				visualStyle.setFillColor("#FF0000"); // Red color for sold seats
-				break;
-			default:
-				visualStyle.setFillColor("#CCCCCC"); // Default gray color
-				break;
-		}
-
-		return visualStyle;
-	}
 }

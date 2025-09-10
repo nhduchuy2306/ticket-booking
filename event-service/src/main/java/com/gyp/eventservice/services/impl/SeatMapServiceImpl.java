@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gyp.common.converters.Serialization;
 import com.gyp.common.exceptions.ResourceNotFoundException;
 import com.gyp.common.models.SeatMapEventModel;
 import com.gyp.eventservice.dtos.seatmap.Position;
@@ -31,7 +32,6 @@ import com.gyp.eventservice.dtos.seatmap.VenueMap;
 import com.gyp.eventservice.mappers.SeatMapMapper;
 import com.gyp.eventservice.messages.producers.GenerateSeatMapTicketProducer;
 import com.gyp.eventservice.repositories.SeatMapRepository;
-import com.gyp.eventservice.repositories.VenueRepository;
 import com.gyp.eventservice.services.SeatMapService;
 import com.gyp.eventservice.services.SeatMapTemplateService;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +48,7 @@ public class SeatMapServiceImpl implements SeatMapService {
 	private final GenerateSeatMapTicketProducer generateSeatMapTicketProducer;
 
 	@Override
-	public String convertOrganizerJson(String content) {
+	public String convertSeatMapJson(String content) {
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			JsonNode root = objectMapper.readTree(content);
@@ -176,6 +176,34 @@ public class SeatMapServiceImpl implements SeatMapService {
 
 	@Override
 	public SeatConfig parseSeatConfig(String seatConfigJson) {
+		try {
+			return Serialization.deserializeFromString(seatConfigJson, SeatConfig.class);
+		} catch(JsonProcessingException e) {
+			throw new RuntimeException("Failed to parse seat config JSON", e);
+		}
+	}
+
+	@Override
+	public SeatConfig soldSeats(SeatConfig seatConfig, List<String> seatIds) {
+		for(Section section : seatConfig.getSections()) {
+			if(SectionType.SEATED.equals(section.getType())) {
+				for(Row row : section.getRows()) {
+					for(Seat seat : row.getSeats()) {
+						if(seatIds.contains(seat.getId())) {
+							seat.setStatus(SeatStatus.SOLD);
+						}
+					}
+				}
+			} else if(SectionType.TABLE.equals(section.getType())) {
+				for(Table table : section.getTables()) {
+					for(Seat seat : table.getSeats()) {
+						if(seatIds.contains(seat.getId())) {
+							seat.setStatus(SeatStatus.SOLD);
+						}
+					}
+				}
+			}
+		}
 		return null;
 	}
 

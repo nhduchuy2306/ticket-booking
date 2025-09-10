@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-/**
- * Lớp đại diện cho một bàn
- */
 @Getter
 @Setter
 @SuperBuilder
@@ -34,9 +31,6 @@ public class Table extends BaseSeatMap implements Positionable, Dimensional, Sea
 		seats.remove(seat);
 	}
 
-	/**
-	 * Tạo ghế xung quanh bàn tròn
-	 */
 	public void generateSeatsForRoundTable(int count, double radius) {
 		double angleStep = 360.0 / count;
 
@@ -54,9 +48,6 @@ public class Table extends BaseSeatMap implements Positionable, Dimensional, Sea
 		}
 	}
 
-	/**
-	 * Tạo ghế xung quanh bàn chữ nhật
-	 */
 	public void generateSeatsForRectangleTable(int seatsPerLongSide, int seatsPerShortSide) {
 		int totalSeats = 2 * (seatsPerLongSide + seatsPerShortSide);
 		double width = this.dimensions.getWidth();

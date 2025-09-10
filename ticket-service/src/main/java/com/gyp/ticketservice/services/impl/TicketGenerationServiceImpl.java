@@ -108,7 +108,8 @@ public class TicketGenerationServiceImpl implements TicketGenerationService {
 						"No seats found in row: " + row.getName() + " for section: " + section.getName());
 			}
 			String seatInfo = section.getName() + "-" + row.getName() + "-";
-			generateSeatTickets(eventId, seatMapDto, seats, seatInfo, organizationId);
+			String seatId = section.getId() + "-" + row.getId() + "-";
+			generateSeatTickets(eventId, seatMapDto, seats, seatInfo, seatId, organizationId);
 		}
 	}
 
@@ -121,16 +122,18 @@ public class TicketGenerationServiceImpl implements TicketGenerationService {
 						"No seats found in table: " + table.getName() + " for section: " + section.getName());
 			}
 			String seatInfo = section.getName() + "-" + table.getName() + "-";
-			generateSeatTickets(eventId, seatMapDto, seats, seatInfo, organizationId);
+			String seatId = section.getId() + "-" + table.getId() + "-";
+			generateSeatTickets(eventId, seatMapDto, seats, seatInfo, seatId, organizationId);
 		}
 	}
 
 	private void generateSeatTickets(String eventId, SeatMapDto seatMapDto, List<Seat> seats, String seatInfoPrefix,
-			String organizationId) {
+			String seatIdPrefix, String organizationId) {
 		for(Seat seat : seats) {
 			TicketEntity ticketEntity = TicketEntity.builder()
 					.eventId(eventId)
 					.eventName(seatMapDto.getEventName())
+					.seatId(seatIdPrefix + seat.getId())
 					.seatInfo(seatInfoPrefix + seat.getName())
 					.ticketCode(generateTicketNumber())
 					.organizationId(organizationId)

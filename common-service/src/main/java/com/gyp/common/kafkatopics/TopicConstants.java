@@ -24,4 +24,7 @@ public final class TopicConstants {
 
 	public static final String ASSIGN_SALE_CHANNEL_TO_EVENT = "event.assign-sale-channel-to-event";
 	public static final String EVENT_ON_SALE_EVENT = "event.on.sale.event";
+	public static final String ORDER_CREATED_EVENT = "order.created.event";
+	public static final String GENERATE_TICKET_PDF_EVENT = "generate.ticket.pdf.event";
+	public static final String SEND_EMAIL_EVENT = "send-email.event";
 }

@@ -1,21 +1,21 @@
 package com.gyp.ticketservice.services.impl;
 
 import java.io.IOException;
-import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import com.gyp.common.exceptions.QRLogoImageNotFoundException;
-import com.gyp.common.services.MailService;
 import com.gyp.ticketservice.dtos.mail.TicketMailConfirmRequestDto;
 import com.gyp.ticketservice.dtos.ticketgeneration.TicketGenerationResponseDto;
-import com.gyp.ticketservice.services.PDFService;
+import com.gyp.ticketservice.services.MailService;
 import com.gyp.ticketservice.services.QRCodeService;
 import com.gyp.ticketservice.services.TicketDeliveryService;
 import com.gyp.ticketservice.services.TicketGenerationService;
-import com.nimbusds.jose.util.Pair;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -26,57 +26,37 @@ import org.springframework.util.FileCopyUtils;
 public class TicketDeliveryServiceImpl implements TicketDeliveryService {
 	private final TicketGenerationService ticketGenerationService;
 	private final QRCodeService qrCodeService;
-	private final PDFService pdfService;
 	private final MailService mailService;
 
 	@Override
-	public void sendByEmail(TicketMailConfirmRequestDto ticketMailConfirmRequestDto) throws IOException {
-		if(ticketMailConfirmRequestDto.isHasQrCode()) {
-			var qrCodeRes = createTicketQR(ticketMailConfirmRequestDto.getTicketId(), false);
-			byte[] qrCodeBytes = qrCodeRes.getLeft();
-			TicketGenerationResponseDto generationResponseDto = qrCodeRes.getRight();
-
-			String qrCodeBase64 = Base64.getEncoder().encodeToString(qrCodeBytes);
-			Map<String, Object> model = createBaseSendMail(generationResponseDto);
-			model.put("qrCode", "data:image/png;base64," + qrCodeBase64);
-			mailService.sendEmail(generationResponseDto.getAttendeeEmail(), "Ticket", model,
-					"ticket-email-template-with-image");
-		}
-	}
-
-	@Override
-	public void sendByEmailWithAttachment(TicketMailConfirmRequestDto ticketMailConfirmRequestDto) {
+	public void sendByEmailWithAttachment(TicketMailConfirmRequestDto ticketMailConfirmRequestDto,
+			List<byte[]> ticketPDFBytes, List<TicketGenerationResponseDto> ticketGenerationResponseDtoList) {
 		if(ticketMailConfirmRequestDto.isHasTickPdfAttachment()) {
-			var ticketPDF = createTicketPDF(ticketMailConfirmRequestDto.getTicketId());
-			byte[] ticketPDFBytes = ticketPDF.getLeft();
-			TicketGenerationResponseDto generationResponseDto = ticketPDF.getRight();
+			Map<String, Object> model = new HashMap<>();
+			String content = """
+						<p>Thank you for using our service.</p>
+						<p>This is a email sent you a ticket</p>
+						<p>Please check if you have any questions, feel free to contact with us.</p>
+					""";
+			model.put("name", ticketGenerationResponseDtoList.getFirst().getAttendeeName());
+			model.put("content", content);
+			if(CollectionUtils.isNotEmpty(ticketPDFBytes)) {
+				Map<String, Pair<byte[], String>> attachments = new HashMap<>();
+				for(byte[] ticketPDFByte : ticketPDFBytes) {
+					attachments.put("tickets.pdf", Pair.of(ticketPDFByte, "application/pdf"));
+				}
 
-			Map<String, Object> model = createBaseSendMail(generationResponseDto);
-			if(ticketPDFBytes != null && ticketPDFBytes.length > 0) {
-				mailService.sendEmailWithAttachment(generationResponseDto.getAttendeeEmail(),
-						"Ticket", model, "ticket-email-template", ticketPDFBytes,
-						"ticket-" + generationResponseDto.getTicketNumber() + ".pdf");
+				mailService.sendEmailWithMultipleAttachments(
+						ticketGenerationResponseDtoList.getFirst().getAttendeeEmail(),
+						"Ticket", model, "ticket-email-template", attachments);
 			} else {
-				mailService.sendEmail(generationResponseDto.getAttendeeEmail(), "Ticket", model,
-						"ticket-email-template-with-image");
+				mailService.sendEmail(ticketGenerationResponseDtoList.getFirst().getAttendeeEmail(),
+						"Ticket", model, "ticket-email-template-with-image");
 			}
 		}
 	}
 
-	@Override
-	public Pair<byte[], TicketGenerationResponseDto> createTicketPDF(String id) {
-		TicketGenerationResponseDto ticket = ticketGenerationService.getTicketGenerationById(id);
-		if(Objects.nonNull(ticket)) {
-			byte[] pdfBytes = pdfService.generateTicketPDF(ticket);
-			if(pdfBytes != null && pdfBytes.length > 0) {
-				return Pair.of(pdfBytes, ticket);
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public Pair<byte[], TicketGenerationResponseDto> createTicketQR(String id, boolean hasLogoImage)
+	private Pair<byte[], TicketGenerationResponseDto> createTicketQR(String id, boolean hasLogoImage)
 			throws IOException {
 		String urlPath = "http://192.168.100.146:9002/tickets/validateticket?ticketnumber=";
 		byte[] logoBytes = null;
@@ -103,8 +83,7 @@ public class TicketDeliveryServiceImpl implements TicketDeliveryService {
 		return null;
 	}
 
-	@Override
-	public Pair<byte[], TicketGenerationResponseDto> createTicketQRWithCustomImage(String id, byte[] logoBytes) {
+	private Pair<byte[], TicketGenerationResponseDto> createTicketQRWithCustomImage(String id, byte[] logoBytes) {
 		String urlPath = "http://192.168.100.146:9002/tickets/validateticket?ticketnumber=";
 		TicketGenerationResponseDto ticket = ticketGenerationService.getTicketGenerationById(id);
 		if(Objects.nonNull(ticket)) {
@@ -119,17 +98,5 @@ public class TicketDeliveryServiceImpl implements TicketDeliveryService {
 			}
 		}
 		return null;
-	}
-
-	private Map<String, Object> createBaseSendMail(TicketGenerationResponseDto dto) {
-		Map<String, Object> model = new HashMap<>();
-		String content = """
-					<p>Thank you for using our service.</p>
-					<p>This is a email sent you a ticket</p>
-					<p>Please check if you have any questions, feel free to contact with us.</p>
-				""";
-		model.put("name", dto.getAttendeeName());
-		model.put("content", content);
-		return model;
 	}
 }

@@ -59,6 +59,9 @@ public class TicketEntity extends AbstractEntity {
 	@JoinColumn(name = "ticket_type_id")
 	private TicketTypeEntity ticketTypeEntity;
 
+	@Column(name = "seat_id")
+	private String seatId;
+
 	@Column(name = "seat_info")
 	private String seatInfo;
 

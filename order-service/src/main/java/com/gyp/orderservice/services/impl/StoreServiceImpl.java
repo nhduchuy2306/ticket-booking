@@ -25,6 +25,7 @@ public class StoreServiceImpl implements StoreService {
 	@Override
 	public Integer getCountDownSession(String sessionId) {
 		Long expire = redisTemplate.getExpire(sessionId, TimeUnit.SECONDS);
+		log.info("Checked countdown session: {} with remaining TTL: {} seconds", sessionId, expire);
 		return expire > 0 ? expire.intValue() : null;
 	}
 }
