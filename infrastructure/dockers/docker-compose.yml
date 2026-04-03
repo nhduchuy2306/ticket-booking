@@ -64,7 +64,7 @@ services:
       - gyp-net
 
   redis:
-    image: bitnami/redis:8.0.0
+    image: bitnami/redis:latest
     container_name: redis
     ports:
       - "6379:6379"
@@ -121,6 +121,17 @@ services:
     command: start-dev
     depends_on:
       - mysql
+    networks:
+      - gyp-net
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    ports:
+      - "9090:8080"
+      - "50000:50000"
+    volumes:
+      - ./jenkins_home:/var/jenkins_home
     networks:
       - gyp-net
 
