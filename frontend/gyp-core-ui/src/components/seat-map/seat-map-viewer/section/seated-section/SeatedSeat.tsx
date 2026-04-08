@@ -5,6 +5,7 @@ import { SeatSizes } from "../../../constants/SeatMapContants.ts";
 import { useSeatMapViewerContext } from "../../context/SeatMapViewerContext.tsx";
 import { EventUtils } from "../../utils/EventUtils.ts";
 import { SeatUtils } from "../../utils/SeatUtils.ts";
+import { formatCountdown, getHoldCountdownSeconds } from "../../../../../utils/bookingSession.ts";
 
 export interface SeatMapSeatedSeatProps {
     seat: Seat,
@@ -27,6 +28,8 @@ const SeatedSeat: React.FC<SeatMapSeatedSeatProps> = (props) => {
     }, [props.seat]);
 
     const isSelected = selectedSeats.find((s) => s.seat.id === seat.id) !== undefined;
+    const holdExpiresAt = seat.attributes?.holdExpiresAt as string | undefined;
+    const holdCountdown = getHoldCountdownSeconds(holdExpiresAt);
 
     // Use the seat's predefined position for arc layouts
     const positionX = seat.position?.x || 0;
@@ -65,6 +68,17 @@ const SeatedSeat: React.FC<SeatMapSeatedSeatProps> = (props) => {
                             perfectDrawEnabled={false}
                             fontStyle='bold'
                         />
+                            {seat.status === "RESERVED" && holdCountdown > 0 && (
+                                <Text
+                                    x={0}
+                                    y={SeatSizes.MEDIUM.size / 2}
+                                    text={formatCountdown(holdCountdown)}
+                                    fontSize={10}
+                                    fill="#9A3412"
+                                    align="center"
+                                    width={SeatSizes.MEDIUM.size}
+                                />
+                            )}
                     </Group>}
             </>
     );

@@ -13,7 +13,9 @@ import com.gyp.common.services.UploadService;
 import com.gyp.ticketservice.dtos.mail.TicketMailConfirmRequestDto;
 import com.gyp.ticketservice.dtos.ticketgeneration.TicketGenerationResponseDto;
 import com.gyp.ticketservice.entities.TicketEntity;
+import com.gyp.ticketservice.entities.ProcessedKafkaEventEntity;
 import com.gyp.ticketservice.repositories.TicketRepository;
+import com.gyp.ticketservice.repositories.ProcessedKafkaEventRepository;
 import com.gyp.ticketservice.services.PDFService;
 import com.gyp.ticketservice.services.TicketDeliveryService;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +27,12 @@ import org.springframework.kafka.annotation.KafkaListener;
 @KafkaComponent
 @RequiredArgsConstructor
 public class GenerateTicketPdfAndSendEmailConsumer {
+	private static final String PDF_CONSUMER_NAME = "ticket.pdf.consumer";
+	private static final String EMAIL_CONSUMER_NAME = "ticket.email.consumer";
+
 	private final PDFService pdfService;
 	private final TicketRepository ticketRepository;
+	private final ProcessedKafkaEventRepository processedKafkaEventRepository;
 	private final UploadService uploadService;
 	private final TicketDeliveryService ticketDeliveryService;
 
@@ -38,6 +44,13 @@ public class GenerateTicketPdfAndSendEmailConsumer {
 					EventGenerationPdfEM.class);
 			if(StringUtils.isEmpty(eventGenerationPdfEM.getSeatId())) {
 				log.warn("Seat ID is empty in SendEmail event: {}", message);
+				return;
+			}
+			String dedupKey = resolveDedupKey(eventGenerationPdfEM.getIdempotencyKey(), eventGenerationPdfEM.getOrderId(),
+					eventGenerationPdfEM.getSeatId(), eventGenerationPdfEM.getSeatIds());
+			String eventKey = dedupKey + ":" + eventGenerationPdfEM.getSeatId();
+			if(processedKafkaEventRepository.existsByConsumerNameAndEventKey(PDF_CONSUMER_NAME, eventKey)) {
+				log.info("Skipping duplicate PDF event: {}", eventKey);
 				return;
 			}
 			TicketEntity ticketEntity = ticketRepository.findBySeatId(eventGenerationPdfEM.getSeatId())
@@ -61,6 +74,11 @@ public class GenerateTicketPdfAndSendEmailConsumer {
 			ticketEntity.setAttendeeName(eventGenerationPdfEM.getCustomerEmail());
 			ticketEntity.setReservedDateTime(LocalDateTime.now());
 			ticketRepository.save(ticketEntity);
+			processedKafkaEventRepository.save(ProcessedKafkaEventEntity.builder()
+					.consumerName(PDF_CONSUMER_NAME)
+					.eventKey(eventKey)
+					.processedAt(LocalDateTime.now())
+					.build());
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
@@ -72,6 +90,19 @@ public class GenerateTicketPdfAndSendEmailConsumer {
 			log.info("Received SendEmail event: {}", message);
 			EventGenerationPdfEM eventGenerationPdfEM = Serialization.deserializeFromString(message,
 					EventGenerationPdfEM.class);
+			String seatKey = eventGenerationPdfEM.getSeatIds() == null ? "" : String.join(",",
+					eventGenerationPdfEM.getSeatIds().stream().sorted().toList());
+			String dedupKey = resolveDedupKey(eventGenerationPdfEM.getIdempotencyKey(), eventGenerationPdfEM.getOrderId(),
+					eventGenerationPdfEM.getSeatId(), eventGenerationPdfEM.getSeatIds());
+			String eventKey = dedupKey + ":" + seatKey;
+			if(processedKafkaEventRepository.existsByConsumerNameAndEventKey(EMAIL_CONSUMER_NAME, eventKey)) {
+				log.info("Skipping duplicate email event: {}", eventKey);
+				return;
+			}
+			if(eventGenerationPdfEM.getSeatIds() == null || eventGenerationPdfEM.getSeatIds().isEmpty()) {
+				log.warn("Seat IDs are empty in SendEmail event: {}", message);
+				return;
+			}
 
 			List<byte[]> pdfs = new ArrayList<>();
 			List<String> ticketIds = new ArrayList<>();
@@ -108,8 +139,29 @@ public class GenerateTicketPdfAndSendEmailConsumer {
 
 			ticketDeliveryService.sendByEmailWithAttachment(ticketMailConfirmRequestDto, pdfs,
 					ticketGenerationResponseDtoList);
+			processedKafkaEventRepository.save(ProcessedKafkaEventEntity.builder()
+					.consumerName(EMAIL_CONSUMER_NAME)
+					.eventKey(eventKey)
+					.processedAt(LocalDateTime.now())
+					.build());
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private String resolveDedupKey(String idempotencyKey, String orderId, String seatId, List<String> seatIds) {
+		if(StringUtils.isNotEmpty(idempotencyKey)) {
+			return idempotencyKey;
+		}
+		if(StringUtils.isNotEmpty(orderId)) {
+			return orderId;
+		}
+		if(StringUtils.isNotEmpty(seatId)) {
+			return seatId;
+		}
+		if(seatIds != null && !seatIds.isEmpty()) {
+			return String.join(",", seatIds.stream().sorted().toList());
+		}
+		return "legacy-message";
 	}
 }

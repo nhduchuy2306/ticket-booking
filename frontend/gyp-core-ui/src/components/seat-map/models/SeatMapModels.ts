@@ -8,6 +8,8 @@ export interface SelectedTypeModel {
 export interface SelectedSeatModel {
     seat: Seat;
     section?: Section;
+    holdToken?: string;
+    holdExpiresAt?: string;
 }
 
 export interface OrderDetailModel {
@@ -16,4 +18,6 @@ export interface OrderDetailModel {
     selectedSeats?: SelectedSeatModel[];
     totalAmount?: number;
     ticketTypeMap?: Map<string, number>;
+    holdToken?: string;
+    holdExpiresAt?: string;
 }

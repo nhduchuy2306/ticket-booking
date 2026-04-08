@@ -2,6 +2,7 @@ package com.gyp.ticketservice.services.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import com.gyp.common.enums.event.TicketStatus;
 import com.gyp.common.exceptions.ResourceNotFoundException;
@@ -130,10 +131,14 @@ public class TicketGenerationServiceImpl implements TicketGenerationService {
 	private void generateSeatTickets(String eventId, SeatMapDto seatMapDto, List<Seat> seats, String seatInfoPrefix,
 			String seatIdPrefix, String organizationId) {
 		for(Seat seat : seats) {
+			String seatKey = seatIdPrefix + seat.getId();
+			if(ticketRepository.existsByEventIdAndSeatId(eventId, seatKey)) {
+				continue;
+			}
 			TicketEntity ticketEntity = TicketEntity.builder()
 					.eventId(eventId)
 					.eventName(seatMapDto.getEventName())
-					.seatId(seatIdPrefix + seat.getId())
+					.seatId(seatKey)
 					.seatInfo(seatInfoPrefix + seat.getName())
 					.ticketCode(generateTicketNumber())
 					.organizationId(organizationId)
@@ -147,6 +152,6 @@ public class TicketGenerationServiceImpl implements TicketGenerationService {
 	}
 
 	private String generateTicketNumber() {
-		return "TICKET-" + System.currentTimeMillis();
+		return "TICKET-" + UUID.randomUUID();
 	}
 }

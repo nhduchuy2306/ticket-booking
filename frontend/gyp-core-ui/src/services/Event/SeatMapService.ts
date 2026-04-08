@@ -5,12 +5,25 @@ import {
     SeatMapResponseDto,
     StageConfig
 } from "../../models/generated/event-service-models";
+import {
+    SeatAvailabilityDto,
+    SeatHoldRequestDto,
+    SeatHoldResponseDto,
+} from "../../models/booking/SeatHoldModels.ts";
 import { apiClient, apiWithoutAuth, EVENT_SERVICE_PATH } from "../ApiClient.ts";
 import { BaseService } from "../BaseService.ts";
 
 const SEAT_MAP_PATH = "seat-maps";
 const SEAT_MAPS_UPLOAD_PATH = `/${SEAT_MAP_PATH}/upload`;
 const GENERATE_SEAT_MAP_TICKET_PATH = "/generateseatmapticket";
+const SEAT_API_PATH = "api/seats";
+
+const unwrapResponse = <T>(response: { data: T | { result?: T } }): T => {
+    const payload = response.data as T & { result?: T };
+    return (payload && typeof payload === "object" && "result" in payload && payload.result !== undefined)
+            ? payload.result
+            : response.data as T;
+};
 
 export class SeatMapService {
     static getAllSeatMaps = async (): Promise<SeatMapResponseDto[]> => {
@@ -21,6 +34,40 @@ export class SeatMapService {
     static getSeatMapById = async (id: string): Promise<SeatMapResponseDto> => {
         const response = await apiWithoutAuth.get(`${EVENT_SERVICE_PATH}/${SEAT_MAP_PATH}/${id}`);
         return response.data;
+    }
+
+    static getSeatAvailability = async (eventId: string): Promise<SeatAvailabilityDto[]> => {
+        const response = await apiWithoutAuth.get(`${EVENT_SERVICE_PATH}/${SEAT_API_PATH}/availability`, {
+            params: {eventId},
+        });
+        return unwrapResponse<SeatAvailabilityDto[]>(response);
+    }
+
+    static reserveSeats = async (request: SeatHoldRequestDto): Promise<SeatHoldResponseDto> => {
+        const response = await apiClient.post(`${EVENT_SERVICE_PATH}/${SEAT_API_PATH}/reserve`, {
+            ...request,
+            seatIds: request.seatIds ?? request.seatKeys,
+            seatKeys: request.seatKeys ?? request.seatIds,
+        });
+        return unwrapResponse<SeatHoldResponseDto>(response);
+    }
+
+    static confirmSeats = async (request: SeatHoldRequestDto): Promise<SeatHoldResponseDto> => {
+        const response = await apiClient.post(`${EVENT_SERVICE_PATH}/${SEAT_API_PATH}/confirm`, {
+            ...request,
+            seatIds: request.seatIds ?? request.seatKeys,
+            seatKeys: request.seatKeys ?? request.seatIds,
+        });
+        return unwrapResponse<SeatHoldResponseDto>(response);
+    }
+
+    static releaseSeats = async (request: SeatHoldRequestDto): Promise<SeatHoldResponseDto> => {
+        const response = await apiClient.post(`${EVENT_SERVICE_PATH}/${SEAT_API_PATH}/release`, {
+            ...request,
+            seatIds: request.seatIds ?? request.seatKeys,
+            seatKeys: request.seatKeys ?? request.seatIds,
+        });
+        return unwrapResponse<SeatHoldResponseDto>(response);
     }
 
     static createSeatMap = async (body: SeatMapRequestDto): Promise<SeatMapResponseDto> => {

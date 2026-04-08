@@ -16,6 +16,10 @@ import org.springframework.stereotype.Repository;
 public interface TicketRepository extends JpaRepository<TicketEntity, String>, JpaSpecificationExecutor<TicketEntity> {
 	List<TicketEntity> findAllByEventId(String eventId);
 
+	boolean existsByEventIdAndSeatId(String eventId, String seatId);
+
+	Optional<TicketEntity> findByEventIdAndSeatId(String eventId, String seatId);
+
 	@Modifying
 	@Query("""
 			UPDATE TicketEntity t

@@ -5,8 +5,9 @@ export const TableColors = Object.freeze({
 
 export const SeatColors = Object.freeze({
     AVAILABLE: Object.freeze({key: 'AVAILABLE', color: '#FFFFFF'}),
-    RESERVED: Object.freeze({key: 'RESERVED', color: '#00FF00'}),
-    SOLD: Object.freeze({key: 'SOLD', color: '#FF0000'}),
+    SELECTED: Object.freeze({key: 'SELECTED', color: '#2563EB'}),
+    RESERVED: Object.freeze({key: 'RESERVED', color: '#F59E0B'}),
+    SOLD: Object.freeze({key: 'SOLD', color: '#9CA3AF'}),
 });
 
 export const SeatSizes = Object.freeze({

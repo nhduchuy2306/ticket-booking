@@ -9,7 +9,7 @@ export class EventUtils {
         evt.evt.stopPropagation();
         const container = evt.target.getStage()?.container();
         if (container) {
-            if (seat.status === "AVAILABLE" || seat.status === "RESERVED") {
+            if (seat.status === "AVAILABLE") {
                 container.style.cursor = 'pointer';
             } else {
                 container.style.cursor = 'not-allowed';
@@ -22,7 +22,7 @@ export class EventUtils {
         evt.evt.stopPropagation();
         const container = evt.target.getStage()?.container();
         if (container) {
-            if (seat.status === "AVAILABLE" || seat.status === "RESERVED") {
+            if (seat.status === "AVAILABLE") {
                 container.style.cursor = 'default';
             } else {
                 container.style.cursor = 'not-allowed';
@@ -69,7 +69,7 @@ export class EventUtils {
         e.evt.preventDefault();
         e.evt.stopPropagation();
 
-        if (seat.status === "AVAILABLE" || seat.status === "RESERVED") {
+        if (seat.status === "AVAILABLE") {
             if (isSelected) {
                 setSelectedSeats(selectedSeats.filter((s) => s.seat.id !== seat.id));
             } else {

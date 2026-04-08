@@ -71,7 +71,7 @@ export class SeatUtils {
 
     static getSeatColor = (seat: Seat, isSelected: boolean) => {
         if (isSelected) {
-            return SeatColors.RESERVED.color;
+            return SeatColors.SELECTED.color;
         }
         let seatColor;
         switch (seat.status) {

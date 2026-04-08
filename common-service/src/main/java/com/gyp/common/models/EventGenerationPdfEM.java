@@ -18,6 +18,8 @@ import lombok.Setter;
 public class EventGenerationPdfEM {
 	private String id;
 	private String name;
+	private String orderId;
+	private String idempotencyKey;
 	private String description;
 	private EventStatus status;
 	private String seatId;

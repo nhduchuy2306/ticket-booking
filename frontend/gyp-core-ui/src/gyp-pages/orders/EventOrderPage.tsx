@@ -6,80 +6,85 @@ import { useEventData } from "../../hooks/form/useEventData.tsx";
 import { OrderRequestDto } from "../../models/generated/order-service-models";
 import { OrderService } from "../../services/Order/OrderService.ts";
 import { PaymentService } from "../../services/Order/PaymentService.ts";
-import { StoreService } from "../../services/Order/StoreService.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
+import { clearBookingSession, getHoldCountdownSeconds, isHoldExpired, loadBookingSession, saveBookingSession } from "../../utils/bookingSession.ts";
+import { SeatMapService } from "../../services/Event/SeatMapService.ts";
+import { createErrorNotification } from "../../components/notification/Notification.ts";
 
 const EventOrderPage: React.FC = () => {
     const location = useLocation();
-    const {eventId, selectedSeats, totalAmount, ticketTypeMap}: OrderDetailModel = location.state?.orderDetails;
+    const bookingSession = loadBookingSession();
+    const orderDetailsFromState: OrderDetailModel = location.state?.orderDetails;
+    const {eventId, selectedSeats, totalAmount, ticketTypeMap, holdToken, holdExpiresAt}: OrderDetailModel = orderDetailsFromState || {
+        eventId: bookingSession?.eventId,
+        selectedSeats: bookingSession?.selectedSeats.map((seat) => ({
+            seat: {id: seat.seatId, name: seat.seatName, status: seat.status},
+            section: {name: seat.sectionName, ticketTypeId: seat.ticketTypeId},
+        })),
+        totalAmount: bookingSession?.totalAmount,
+        holdToken: bookingSession?.holdToken,
+        holdExpiresAt: bookingSession?.holdExpiresAt,
+    };
     const {event, venue} = useEventData({id: eventId});
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [form] = Form.useForm();
+    const [timeLeft, setTimeLeft] = useState(() => getHoldCountdownSeconds(holdExpiresAt || bookingSession?.holdExpiresAt));
+    const bookingSeatPriceMap = new Map<string, number>(bookingSession?.selectedSeats?.map((seat) => [seat.seatId, seat.price]) || []);
+    const resolvedTotalAmount = totalAmount || bookingSession?.totalAmount || 0;
 
-    if (!eventId || !selectedSeats) {
-        navigate("/gyp/", {replace: true});
-    }
-
-    // Countdown timer state (15 minutes)
-    const [timeLeft, setTimeLeft] = useState(15 * 60);
-
-    useEffect(() => {
-        const sessionId = sessionStorage.getItem("countdownSessionId");
-        const init = async () => {
-            if (!sessionId) {
-                await createCountdownSession();
-            } else {
-                const response = await StoreService.getCountDownSession(sessionId);
-                if (response.status === "active") {
-                    setTimeLeft(response.duration);
-                } else {
-                    sessionStorage.removeItem("countdownSessionId");
-                    showSessionExpiredModal();
-                }
-            }
-        };
-
-        void init();
-
-        const timer = setInterval(() => {
-            setTimeLeft(prev => (prev > 0 ? prev - 1 : 0));
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, []);
-
-    useEffect(() => {
-        if (timeLeft === 0) {
-            sessionStorage.removeItem("countdownSessionId");
-            showSessionExpiredModal();
-        }
-    }, [timeLeft]);
-
-    const createCountdownSession = async () => {
-        const response = await StoreService.createCountDownSession();
-        if (response?.sessionId) {
-            sessionStorage.setItem("countdownSessionId", response.sessionId);
-            setTimeLeft(response.duration);
-        }
-    };
+    const resolvedSeatRows = (selectedSeats && selectedSeats.length > 0)
+            ? selectedSeats.map((seat) => ({
+                seatId: String(seat.seat.id),
+                seatName: seat.seat.name || String(seat.seat.id),
+                sectionName: seat.section?.name || "Seat",
+                ticketTypeId: seat.section?.ticketTypeId,
+                price: ticketTypeMap?.get(seat.section?.ticketTypeId || "") || bookingSeatPriceMap.get(String(seat.seat.id)) || 0,
+            }))
+            : (bookingSession?.selectedSeats || []);
 
     const showSessionExpiredModal = () => {
         Modal.confirm({
             title: "Session Expired",
-            content: "Your previous session has expired. Please choose an option:",
+            content: "Your seat hold expired. Please reserve the seats again.",
             okText: "Start New Order",
             cancelText: "Go Home",
             onOk: async () => {
+                clearBookingSession();
                 navigate(`/gyp/events/${eventId}/choose-seats`, {replace: true});
             },
             onCancel: () => {
+                clearBookingSession();
                 navigate("/gyp/", {replace: true});
             },
             maskClosable: false,
             closable: false,
         });
     };
+
+    useEffect(() => {
+        if (!eventId || !selectedSeats || selectedSeats.length === 0) {
+            navigate("/gyp/", {replace: true});
+        }
+    }, [eventId, navigate, selectedSeats]);
+
+    useEffect(() => {
+        if (!holdExpiresAt && !bookingSession?.holdExpiresAt) {
+            return;
+        }
+
+        const timer = setInterval(() => {
+            setTimeLeft(getHoldCountdownSeconds(holdExpiresAt || bookingSession?.holdExpiresAt));
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [bookingSession?.holdExpiresAt, holdExpiresAt]);
+
+    useEffect(() => {
+        if (timeLeft === 0 && (holdToken || bookingSession?.holdToken)) {
+            showSessionExpiredModal();
+        }
+    }, [bookingSession?.holdToken, eventId, holdToken, navigate, showSessionExpiredModal, timeLeft]);
 
     // Format time as MM:SS
     const formatTime = (seconds: number) => {
@@ -89,8 +94,8 @@ const EventOrderPage: React.FC = () => {
     };
 
     const handleCompleteOrder = async () => {
-        if (timeLeft <= 0) {
-            alert("Time has expired. Please start over.");
+        if (timeLeft <= 0 || isHoldExpired(holdExpiresAt || bookingSession?.holdExpiresAt)) {
+            showSessionExpiredModal();
         } else {
             showInputEmailAndPhoneModal();
         }
@@ -138,15 +143,15 @@ const EventOrderPage: React.FC = () => {
                     setIsLoading(true);
                     const values = await form.validateFields();
 
-                    if (totalAmount) {
+                    if (resolvedTotalAmount) {
                         const orderRequest: OrderRequestDto = {
                             eventId: eventId,
                             customerEmail: values.email,
-                            totalAmount: totalAmount,
-                            orderDetails: selectedSeats?.map(seat => ({
-                                seatId: seat.seat.id,
+                            totalAmount: resolvedTotalAmount,
+                            orderDetails: resolvedSeatRows.map((seat) => ({
+                                seatId: seat.seatId,
                                 quantity: 1,
-                                price: ticketTypeMap?.get(seat.section?.ticketTypeId) || 0,
+                                price: seat.price,
                             })),
                         }
                         const pendingOrder = await OrderService.createOrder(orderRequest);
@@ -156,24 +161,58 @@ const EventOrderPage: React.FC = () => {
                             return Promise.resolve(); // Close modal
                         }
 
-                        const vndPrice = totalAmount * 23000; // Convert to VND
+                        const vndPrice = resolvedTotalAmount * 23000; // Convert to VND
                         const paymentResponse = await PaymentService.createPaymentEndpoint(vndPrice, pendingOrder.id);
-                        console.log("Redirecting to payment URL:", paymentResponse);
                         if (paymentResponse) {
+                            const sessionSelectedSeats = (resolvedSeatRows.length > 0)
+                                    ? resolvedSeatRows.map((seat) => ({
+                                        seatId: seat.seatId,
+                                        seatName: seat.seatName,
+                                        sectionName: seat.sectionName,
+                                        ticketTypeId: seat.ticketTypeId,
+                                        price: seat.price,
+                                        holdToken: holdToken || bookingSession?.holdToken,
+                                        holdExpiresAt: holdExpiresAt || bookingSession?.holdExpiresAt,
+                                    }))
+                                    : (bookingSession?.selectedSeats || []);
+
+                            saveBookingSession({
+                                ...(bookingSession || {
+                                    eventId: eventId || "",
+                                    holdToken: holdToken || bookingSession?.holdToken || "",
+                                    holdExpiresAt: holdExpiresAt || bookingSession?.holdExpiresAt || new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+                                    seatIds: resolvedSeatRows.map((seat) => seat.seatId),
+                                    selectedSeats: sessionSelectedSeats,
+                                    totalAmount: resolvedTotalAmount,
+                                }),
+                                eventId: eventId || bookingSession?.eventId || "",
+                                orderId: pendingOrder.id,
+                                customerEmail: values.email,
+                            });
                             window.location.href = paymentResponse.payUrl;
                         }
                     }
                 } catch (error) {
-                    console.log('Validation failed:', error);
+                    createErrorNotification(
+                            "Checkout failed",
+                            (error as any)?.response?.data?.message || (error as Error)?.message || "Unable to create the order. Please try again."
+                    );
                     setIsLoading(false);
-                    return Promise.reject(); // Prevent modal from closing
+                    return Promise.reject();
                 } finally {
                     setIsLoading(false);
-                    sessionStorage.removeItem("countdownSessionId");
                 }
             },
             onCancel: () => {
-                console.log("User cancelled input");
+                if (bookingSession?.eventId && (holdToken || bookingSession?.holdToken)) {
+                    void SeatMapService.releaseSeats({
+                        eventId: bookingSession.eventId,
+                        holdToken: holdToken || bookingSession.holdToken,
+                        seatIds: bookingSession.seatIds,
+                        seatKeys: bookingSession.seatIds,
+                        userId: bookingSession.userId,
+                    }).finally(() => clearBookingSession());
+                }
             },
             maskClosable: false,
         });
@@ -225,13 +264,13 @@ const EventOrderPage: React.FC = () => {
                                 <div className="mb-8">
                                     <h2 className="text-xl font-semibold text-gray-700 !mb-4">Selected Seats</h2>
                                     <div className="space-y-3">
-                                        {selectedSeats?.map((selectedSeat, index) => (
+                                            {resolvedSeatRows.map((selectedSeat, index) => (
                                                 <div key={index}
                                                      className="flex justify-between items-center py-3 px-4 bg-gray-50 rounded-lg">
                                                     <span className="font-medium text-gray-800">
-                                                        Seat {selectedSeat.seat.id}
+                                                            Seat {selectedSeat.seatName || selectedSeat.seatId}
                                                     </span>
-                                                    <span className="font-semibold text-gray-800">${ticketTypeMap?.get(selectedSeat.section?.ticketTypeId)}</span>
+                                                        <span className="font-semibold text-gray-800">${selectedSeat.price}</span>
                                                 </div>
                                         ))}
                                     </div>
@@ -258,7 +297,17 @@ const EventOrderPage: React.FC = () => {
                                                     okText: "Yes, Cancel",
                                                     cancelText: "No, Go Back",
                                                     onOk: () => {
-                                                        sessionStorage.removeItem("countdownSessionId");
+                                                        if (bookingSession?.eventId && (holdToken || bookingSession?.holdToken)) {
+                                                            void SeatMapService.releaseSeats({
+                                                                eventId: bookingSession.eventId,
+                                                                holdToken: holdToken || bookingSession.holdToken,
+                                                                seatIds: bookingSession.seatIds,
+                                                                seatKeys: bookingSession.seatIds,
+                                                                userId: bookingSession.userId,
+                                                            }).finally(() => clearBookingSession());
+                                                        } else {
+                                                            clearBookingSession();
+                                                        }
                                                         navigate("/gyp/", {replace: true});
                                                     },
                                                     onCancel: () => {
@@ -310,11 +359,11 @@ const EventOrderPage: React.FC = () => {
                                 <div className="space-y-3 text-sm border-t border-red-400 border-opacity-30 pt-4">
                                     <div className="flex justify-between opacity-75">
                                         <span>Seats Reserved:</span>
-                                        <span>{selectedSeats?.length || 0}</span>
+                                        <span>{selectedSeats?.length || bookingSession?.selectedSeats?.length || 0}</span>
                                     </div>
                                     <div className="flex justify-between opacity-75">
                                         <span>Total Amount:</span>
-                                        <span>${totalAmount}</span>
+                                        <span>${resolvedTotalAmount}</span>
                                     </div>
                                 </div>
                             </div>

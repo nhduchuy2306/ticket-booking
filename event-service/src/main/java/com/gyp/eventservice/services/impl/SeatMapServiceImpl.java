@@ -32,6 +32,7 @@ import com.gyp.eventservice.dtos.seatmap.VenueMap;
 import com.gyp.eventservice.mappers.SeatMapMapper;
 import com.gyp.eventservice.messages.producers.GenerateSeatMapTicketProducer;
 import com.gyp.eventservice.repositories.SeatMapRepository;
+import com.gyp.eventservice.services.SeatInventoryService;
 import com.gyp.eventservice.services.SeatMapService;
 import com.gyp.eventservice.services.SeatMapTemplateService;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,7 @@ public class SeatMapServiceImpl implements SeatMapService {
 	private final SeatMapRepository seatMapRepository;
 	private final SeatMapMapper seatMapMapper;
 	private final GenerateSeatMapTicketProducer generateSeatMapTicketProducer;
+	private final SeatInventoryService seatInventoryService;
 
 	@Override
 	public String convertSeatMapJson(String content) {
@@ -266,6 +268,7 @@ public class SeatMapServiceImpl implements SeatMapService {
 
 	@Override
 	public void generateSeatMapTicket(String eventId) {
+		seatInventoryService.initializeSeatsForEvent(eventId);
 		generateSeatMapTicketProducer.generateSeatMapTicket(eventId);
 	}
 

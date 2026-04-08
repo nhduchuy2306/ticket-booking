@@ -25,7 +25,9 @@ import lombok.Setter;
 @Setter
 @Entity
 @Builder
-@Table(name = "ticket")
+@Table(name = "ticket", uniqueConstraints = {
+		@jakarta.persistence.UniqueConstraint(name = "uk_ticket_event_seat", columnNames = {"event_id", "seat_id"})
+})
 @AllArgsConstructor
 @NoArgsConstructor
 public class TicketEntity extends AbstractEntity {
@@ -59,7 +61,7 @@ public class TicketEntity extends AbstractEntity {
 	@JoinColumn(name = "ticket_type_id")
 	private TicketTypeEntity ticketTypeEntity;
 
-	@Column(name = "seat_id")
+	@Column(name = "seat_id", nullable = false)
 	private String seatId;
 
 	@Column(name = "seat_info")

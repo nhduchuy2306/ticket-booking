@@ -8,10 +8,12 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableKafka
 @EnableDiscoveryClient
 @EnableAspectJAutoProxy
+@EnableScheduling
 @ComponentScan(basePackages = { "com.gyp.common.*", "com.gyp.eventservice.*" })
 @SpringBootApplication
 @EnableConfigurationProperties(CorsConfiguration.class)

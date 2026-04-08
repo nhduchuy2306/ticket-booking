@@ -9,7 +9,6 @@ import com.gyp.orderservice.dtos.order.OrderResponseDto;
 import com.gyp.orderservice.dtos.orderdetail.OrderDetailRequestDto;
 import com.gyp.orderservice.entities.OrderEntity;
 import com.gyp.orderservice.mappers.OrderMapper;
-import com.gyp.orderservice.messages.producers.OrderCreatedProducer;
 import com.gyp.orderservice.repositories.OrderRepository;
 import com.gyp.orderservice.services.OrderDetailService;
 import com.gyp.orderservice.services.OrderService;
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderServiceImpl implements OrderService {
 	private final OrderDetailService orderDetailService;
 	private final OrderRepository orderRepository;
-	private final OrderCreatedProducer orderCreatedProducer;
 	private final OrderMapper orderMapper;
 
 	@Transactional(rollbackFor = Exception.class)
@@ -55,7 +53,5 @@ public class OrderServiceImpl implements OrderService {
 		orderEntity.setStatus(orderStatus);
 		orderRepository.save(orderEntity);
 		log.info("Order status updated successfully for Order ID: {}", orderId);
-		// Send event to kafka
-		orderCreatedProducer.sendOrderCreatedEvent(orderEntity);
 	}
 }

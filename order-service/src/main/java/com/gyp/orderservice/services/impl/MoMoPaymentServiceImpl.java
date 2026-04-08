@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,9 +14,14 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.gyp.common.enums.order.OrderStatus;
+import com.gyp.common.enums.order.PaymentStatus;
+import com.gyp.common.models.PaymentOutcomeEM;
 import com.gyp.orderservice.clients.MomoServiceClient;
 import com.gyp.orderservice.dtos.payment.MomoProperties;
 import com.gyp.orderservice.dtos.payment.PaymentResponseDto;
+import com.gyp.orderservice.entities.OrderEntity;
+import com.gyp.orderservice.messages.producers.OrderPaymentEventProducer;
+import com.gyp.orderservice.repositories.OrderRepository;
 import com.gyp.orderservice.services.MoMoPaymentService;
 import com.gyp.orderservice.services.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +33,8 @@ public class MoMoPaymentServiceImpl implements MoMoPaymentService {
 	private final MomoProperties momoProperties;
 	private final MomoServiceClient momoServiceClient;
 	private final OrderService orderService;
+	private final OrderRepository orderRepository;
+	private final OrderPaymentEventProducer orderPaymentEventProducer;
 
 	@Override
 	public Object createMoMoPaymentEndpoint(Long amount, String orderId)
@@ -112,12 +120,30 @@ public class MoMoPaymentServiceImpl implements MoMoPaymentService {
 		String postFixUrl = "?orderId=%s&message=%s";
 		PaymentResponseDto paymentResponse = compareSignature(partnerCode, orderId, requestId, amount,
 				orderInfo, orderType, transId, resultCode, message, payType, responseTime, extraData, signature);
+		OrderEntity orderEntity = orderRepository.findById(orderId)
+				.orElseThrow(() -> new IllegalArgumentException("Order not found with id: " + orderId));
 		if("0".equals(paymentResponse.getStatus())) {
 			orderService.updateOrderStatus(orderId, OrderStatus.DONE);
+			orderPaymentEventProducer.sendPaymentOutcome(PaymentOutcomeEM.builder()
+					.orderId(orderId)
+					.eventId(orderEntity.getEventId())
+					.customerEmail(orderEntity.getCustomerEmail())
+					.totalAmount(orderEntity.getTotalAmount())
+					.paymentStatus(PaymentStatus.SUCCESS)
+					.idempotencyKey(orderId)
+					.build());
 			return String.format(momoProperties.getFrontendSuccessUrl() + postFixUrl, orderId,
 					paymentResponse.getMessage());
 		}
 		orderService.updateOrderStatus(orderId, OrderStatus.CANCELLED);
+		orderPaymentEventProducer.sendPaymentOutcome(PaymentOutcomeEM.builder()
+				.orderId(orderId)
+				.eventId(orderEntity.getEventId())
+				.customerEmail(orderEntity.getCustomerEmail())
+				.totalAmount(orderEntity.getTotalAmount())
+				.paymentStatus(PaymentStatus.FAILED)
+				.idempotencyKey(orderId)
+				.build());
 		return String.format(momoProperties.getFrontendFailureUrl() + postFixUrl, orderId,
 				paymentResponse.getMessage());
 	}

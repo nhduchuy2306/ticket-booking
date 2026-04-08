@@ -22,9 +22,11 @@ import org.springframework.kafka.support.SendResult;
 public class GenerateTicketPdfAndSendEmailProducer {
 	private final KafkaTemplate<String, String> kafkaTemplate;
 
-	public void sendGenerateTicketPdf(EventEntity eventEntity, String seatId, String customerEmail) {
+	public void sendGenerateTicketPdf(EventEntity eventEntity, String seatId, String customerEmail,
+			String idempotencyKey) {
 		try {
-			EventGenerationPdfEM eventGenerationPdfEM = createEventGenerationPdfEM(eventEntity, seatId, customerEmail);
+			EventGenerationPdfEM eventGenerationPdfEM = createEventGenerationPdfEM(eventEntity, seatId, customerEmail,
+					idempotencyKey);
 			String eventGenerationPdfEMString = Serialization.serializeToString(eventGenerationPdfEM);
 			CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(
 					TopicConstants.GENERATE_TICKET_PDF_EVENT, eventGenerationPdfEMString);
@@ -46,9 +48,10 @@ public class GenerateTicketPdfAndSendEmailProducer {
 		}
 	}
 
-	public void sendEmail(EventEntity eventEntity, List<String> seatIds, String customerEmail) {
+	public void sendEmail(EventEntity eventEntity, List<String> seatIds, String customerEmail, String idempotencyKey) {
 		try {
-			EventGenerationPdfEM eventGenerationPdfEM = createEventGenerationPdfEM(eventEntity, seatIds, customerEmail);
+			EventGenerationPdfEM eventGenerationPdfEM = createEventGenerationPdfEM(eventEntity, seatIds, customerEmail,
+					idempotencyKey);
 			String eventGenerationPdfEMString = Serialization.serializeToString(eventGenerationPdfEM);
 			CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(
 					TopicConstants.SEND_EMAIL_EVENT, eventGenerationPdfEMString);
@@ -70,11 +73,13 @@ public class GenerateTicketPdfAndSendEmailProducer {
 	}
 
 	private EventGenerationPdfEM createEventGenerationPdfEM(EventEntity eventEntity, String seatId,
-			String customerEmail) {
+			String customerEmail, String idempotencyKey) {
 		VenueEntity venueEntity = checkVenueAndSeatMap(eventEntity);
 		return EventGenerationPdfEM.builder()
 				.id(eventEntity.getId())
 				.name(eventEntity.getName())
+				.orderId(idempotencyKey)
+				.idempotencyKey(idempotencyKey)
 				.description(eventEntity.getDescription())
 				.status(eventEntity.getStatus())
 				.seatId(seatId)
@@ -89,11 +94,13 @@ public class GenerateTicketPdfAndSendEmailProducer {
 	}
 
 	private EventGenerationPdfEM createEventGenerationPdfEM(EventEntity eventEntity, List<String> seatIds,
-			String customerEmail) {
+			String customerEmail, String idempotencyKey) {
 		VenueEntity venueEntity = checkVenueAndSeatMap(eventEntity);
 		return EventGenerationPdfEM.builder()
 				.id(eventEntity.getId())
 				.name(eventEntity.getName())
+				.orderId(idempotencyKey)
+				.idempotencyKey(idempotencyKey)
 				.description(eventEntity.getDescription())
 				.status(eventEntity.getStatus())
 				.seatIds(seatIds)

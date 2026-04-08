@@ -1,9 +1,13 @@
 import { Button } from "antd";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { BsTicketDetailed } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { OrderDetailModel } from "../models/SeatMapModels.ts";
 import { useSeatMapViewerContext } from "../seat-map-viewer/context/SeatMapViewerContext.tsx";
+import { createHoldToken, formatCountdown, getHoldCountdownSeconds, saveBookingSession } from "../../../utils/bookingSession.ts";
+import { SeatMapService } from "../../../services/Event/SeatMapService.ts";
+import { IamService } from "../../../services/Iam/IamService.ts";
+import { createErrorNotification } from "../../notification/Notification.ts";
 
 interface ChooseSeatAndOrderComponentProps {
 }
@@ -11,6 +15,7 @@ interface ChooseSeatAndOrderComponentProps {
 const ChooseSeatAndOrderComponent: React.FC<ChooseSeatAndOrderComponentProps> = () => {
     const {selectedSeats, seatTypes, eventId, seatMapId} = useSeatMapViewerContext();
     const navigate = useNavigate();
+    const [isReserving, setIsReserving] = useState(false);
 
     const getSeatTypeMap = useMemo(() => {
         const map = new Map<string, number>();
@@ -41,18 +46,91 @@ const ChooseSeatAndOrderComponent: React.FC<ChooseSeatAndOrderComponentProps> = 
         }, 0);
     }
 
-    const handleOrderTickets = () => {
-        const orderDetails: OrderDetailModel = {
-            eventId,
-            seatMapId,
-            selectedSeats,
-            totalAmount: getTotalAmount(),
-            ticketTypeMap: getSeatTypeMap,
-        };
-        navigate(`/gyp/events/${eventId}/orders`, {
-            state: { orderDetails }
-        });
+    const getCurrentHoldCountdown = () => {
+        const holdSession = sessionStorage.getItem("gyp:booking-hold-session");
+        if (!holdSession) {
+            return null;
+        }
+
+        try {
+            const parsed = JSON.parse(holdSession) as { holdExpiresAt?: string };
+            if (!parsed.holdExpiresAt) {
+                return null;
+            }
+
+            return getHoldCountdownSeconds(parsed.holdExpiresAt);
+        } catch {
+            return null;
+        }
+    }
+
+    const handleOrderTickets = async () => {
+        if (!eventId || !selectedSeats || selectedSeats.length === 0) {
+            return;
+        }
+
+        const seatIds = selectedSeats.map((seat) => String(seat.seat.id));
+        const existingCountdown = getCurrentHoldCountdown();
+        if (existingCountdown && existingCountdown > 0) {
+            navigate(`/gyp/events/${eventId}/orders`);
+            return;
+        }
+
+        try {
+            setIsReserving(true);
+            const userId = IamService.getUserId();
+            const reservationResponse = await SeatMapService.reserveSeats({
+                eventId,
+                seatIds,
+                seatKeys: seatIds,
+                holdToken: createHoldToken(),
+                userId,
+            });
+
+            const holdToken = reservationResponse.holdToken || createHoldToken();
+            const holdExpiresAt = reservationResponse.holdExpiresAt || reservationResponse.expiresAt || new Date(Date.now() + 5 * 60 * 1000).toISOString();
+
+            saveBookingSession({
+                eventId,
+                seatMapId,
+                holdToken,
+                holdExpiresAt,
+                seatIds,
+                selectedSeats: selectedSeats.map((seat) => ({
+                    seatId: String(seat.seat.id),
+                    seatName: seat.seat.name,
+                    sectionName: seat.section?.name,
+                    ticketTypeId: seat.section?.ticketTypeId,
+                    price: getSeatTypeMap.get(seat.section?.ticketTypeId || "") || 0,
+                    status: seat.seat.status,
+                })),
+                totalAmount: getTotalAmount(),
+                userId,
+            });
+
+            const orderDetails: OrderDetailModel = {
+                eventId,
+                seatMapId,
+                selectedSeats,
+                totalAmount: getTotalAmount(),
+                ticketTypeMap: getSeatTypeMap,
+                holdToken,
+                holdExpiresAt,
+            };
+            navigate(`/gyp/events/${eventId}/orders`, {
+                state: { orderDetails }
+            });
+        } catch (error: any) {
+            createErrorNotification(
+                    "Seat reservation failed",
+                    error?.response?.data?.message || error?.message || "The selected seats could not be reserved. Refresh availability and try again."
+            );
+        } finally {
+            setIsReserving(false);
+        }
     };
+
+    const holdCountdown = getCurrentHoldCountdown();
 
     return (
             <div className="flex flex-col items-start justify-center gap-4 h-full !m-4">
@@ -67,13 +145,20 @@ const ChooseSeatAndOrderComponent: React.FC<ChooseSeatAndOrderComponentProps> = 
                             <span>Total: </span>
                             <span>${getTotalAmount()}</span>
                         </div>
+                        {holdCountdown !== null && holdCountdown > 0 && (
+                                <div className="flex items-center justify-start gap-2 text-amber-300 font-bold">
+                                    <span>Hold expires in:</span>
+                                    <span>{formatCountdown(holdCountdown)}</span>
+                                </div>
+                        )}
                     </div>
                 }
                 <Button className="!bg-[#2dc275] !text-white !font-bold !mb-4 w-full !border-none disabled:!bg-gray-400 hover:!bg-[#25a563]"
                         disabled={!selectedSeats || selectedSeats.length === 0}
+                        loading={isReserving}
                         onClick={handleOrderTickets}
                 >
-                    Order Tickets
+                    Reserve Seats & Continue
                 </Button>
             </div>
     );
