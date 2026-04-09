@@ -11,12 +11,16 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SeatHoldRepository extends JpaRepository<SeatHoldEntity, String> {
+	List<SeatHoldEntity> findByEventId(String eventId);
+
 	List<SeatHoldEntity> findByEventIdAndHoldToken(String eventId, String holdToken);
 
 	List<SeatHoldEntity> findByEventIdAndHoldTokenAndStatus(String eventId, String holdToken, SeatHoldStatus status);
 
 	List<SeatHoldEntity> findByEventIdAndHoldTokenAndStatusIn(String eventId, String holdToken,
 			Collection<SeatHoldStatus> statuses);
+
+	List<SeatHoldEntity> findByEventIdAndStatusIn(String eventId, Collection<SeatHoldStatus> statuses);
 
 	List<SeatHoldEntity> findByStatusAndExpiresAtBefore(SeatHoldStatus status, LocalDateTime cutoff);
 }

@@ -6,6 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Input payload for creating or updating a seat map.
+ * The layout stays as DTO data so editor-side changes do not couple to seat
+ * inventory tables.
+ */
 @Getter
 @Setter
 @Builder

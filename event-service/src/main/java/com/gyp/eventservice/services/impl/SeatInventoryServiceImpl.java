@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import jakarta.transaction.Transactional;
+
 import com.gyp.common.converters.Serialization;
 import com.gyp.common.exceptions.ResourceNotFoundException;
 import com.gyp.eventservice.dtos.seatmap.Row;
@@ -29,7 +31,6 @@ import com.gyp.eventservice.repositories.EventRepository;
 import com.gyp.eventservice.repositories.SeatHoldRepository;
 import com.gyp.eventservice.repositories.SeatRepository;
 import com.gyp.eventservice.services.SeatInventoryService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;

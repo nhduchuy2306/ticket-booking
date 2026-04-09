@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
 public interface SeatRepository extends JpaRepository<SeatEntity, String> {
 	boolean existsByEventId(String eventId);
 
+	List<SeatEntity> findByEventId(String eventId);
+
 	Optional<SeatEntity> findByEventIdAndSeatKey(String eventId, String seatKey);
 
 	@Lock(LockModeType.PESSIMISTIC_WRITE)

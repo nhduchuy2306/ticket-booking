@@ -12,6 +12,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.tuple.Pair;
 
+/**
+ * Seat layout for one venue map.
+ * This is the structural blueprint for sections, rows, tables, and seat ids.
+ * The booking flow converts it into SeatEntity rows per event.
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,14 +24,24 @@ public class SeatConfig {
 	private List<String> seatTypes = new ArrayList<>();
 	private List<Section> sections = new ArrayList<>();
 
+	/**
+	 * Adds a new section to the venue layout.
+	 */
 	public void addSection(Section section) {
 		sections.add(section);
 	}
 
+	/**
+	 * Removes a section from the layout editor snapshot.
+	 */
 	public void removeSection(Section section) {
 		sections.remove(section);
 	}
 
+	/**
+	 * Flattens the nested layout into a stream of seats for scoring, export, and
+	 * inventory initialization.
+	 */
 	@JsonIgnore
 	public Stream<Seat> getAllSeatsStream() {
 		return sections.stream()
@@ -43,6 +58,10 @@ public class SeatConfig {
 				});
 	}
 
+	/**
+	 * Applies a status update to a set of seat ids and returns the affected seat
+	 * keys used by downstream ticket generation.
+	 */
 	public Pair<SeatConfig, List<String>> updateSeatStatus(List<String> seatIds, SeatStatus newStatus) {
 		Set<String> seatIdSet = new HashSet<>(seatIds);
 		List<String> ticketSeatIds = new ArrayList<>();
@@ -72,14 +91,23 @@ public class SeatConfig {
 		return Pair.of(this, ticketSeatIds);
 	}
 
+	/**
+	 * Marks seats as sold in the serialized seat-map snapshot.
+	 */
 	public Pair<SeatConfig, List<String>> soldSeats(List<String> seatIds) {
 		return updateSeatStatus(seatIds, SeatStatus.SOLD);
 	}
 
+	/**
+	 * Restores seats back to available in the serialized seat-map snapshot.
+	 */
 	public Pair<SeatConfig, List<String>> availableSeats(List<String> seatIds) {
 		return updateSeatStatus(seatIds, SeatStatus.AVAILABLE);
 	}
 
+	/**
+	 * Marks seats as temporarily reserved in the serialized seat-map snapshot.
+	 */
 	public Pair<SeatConfig, List<String>> reservedSeats(List<String> seatIds) {
 		return updateSeatStatus(seatIds, SeatStatus.RESERVED);
 	}

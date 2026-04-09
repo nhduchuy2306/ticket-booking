@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.Version;
 
 import lombok.AllArgsConstructor;
@@ -24,8 +25,8 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "seat", uniqueConstraints = {
-		@jakarta.persistence.UniqueConstraint(name = "uk_seat_event_key", columnNames = {"event_id", "seat_key"})
+@Table(name = "SEAT", uniqueConstraints = {
+		@UniqueConstraint(name = "uk_seat_event_key", columnNames = {"event_id", "seat_key"})
 })
 public class SeatEntity extends AbstractEntity {
 	@Serial

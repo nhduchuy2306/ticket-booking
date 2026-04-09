@@ -127,7 +127,7 @@ const SectionContainer: React.FC<SectionContainerProps> = (props) => {
 
         if (setSelectedType) {
             setSelectedType({
-                type: SelectedType.SEATED_SEAT.key,
+                type: SelectedType.SECTION_CONTAINER.key,
                 data: section
             });
         }
