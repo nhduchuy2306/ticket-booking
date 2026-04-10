@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.gyp.common.models.SeatMapEventModel;
 import com.gyp.eventservice.dtos.seatmap.Seat;
-import com.gyp.eventservice.dtos.seatmap.SeatAvailability;
 import com.gyp.eventservice.dtos.seatmap.SeatConfig;
 import com.gyp.eventservice.dtos.seatmap.SeatMapRequestDto;
 import com.gyp.eventservice.dtos.seatmap.SeatMapResponseDto;
@@ -29,15 +28,7 @@ public interface SeatMapService {
 
 	List<Seat> findSeatsBySection(String venueMapId, String sectionId, SeatStatus status);
 
-	boolean reserveSeat(String venueMapId, String seatId);
-
-	boolean confirmSeatReservation(String venueMapId, String seatId);
-
-	SeatAvailability checkSeatAvailability(String seatMapId, List<String> seatIds);
-
 	SeatConfig parseSeatConfig(String seatConfigJson);
-
-	SeatConfig soldSeats(SeatConfig seatConfig, List<String> seatIds);
 
 	List<SeatMapResponseDto> getAllSeatMaps();
 

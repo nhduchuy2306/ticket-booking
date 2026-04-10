@@ -1,21 +1,35 @@
 import { Button, Form, Input, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { createErrorNotification } from "../../components/notification/Notification.ts";
 import { OrderDetailModel } from "../../components/seat-map/models/SeatMapModels.ts";
 import { useEventData } from "../../hooks/form/useEventData.tsx";
+import { BookingHoldSession } from "../../models/booking/SeatHoldModels.ts";
 import { OrderRequestDto } from "../../models/generated/order-service-models";
+import { SeatMapService } from "../../services/Event/SeatMapService.ts";
 import { OrderService } from "../../services/Order/OrderService.ts";
 import { PaymentService } from "../../services/Order/PaymentService.ts";
+import {
+    clearBookingSession,
+    getHoldCountdownSeconds,
+    isHoldExpired,
+    loadBookingSession,
+    saveBookingSession
+} from "../../utils/bookingSession.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
-import { clearBookingSession, getHoldCountdownSeconds, isHoldExpired, loadBookingSession, saveBookingSession } from "../../utils/bookingSession.ts";
-import { SeatMapService } from "../../services/Event/SeatMapService.ts";
-import { createErrorNotification } from "../../components/notification/Notification.ts";
 
 const EventOrderPage: React.FC = () => {
     const location = useLocation();
     const bookingSession = loadBookingSession();
     const orderDetailsFromState: OrderDetailModel = location.state?.orderDetails;
-    const {eventId, selectedSeats, totalAmount, ticketTypeMap, holdToken, holdExpiresAt}: OrderDetailModel = orderDetailsFromState || {
+    const {
+        eventId,
+        selectedSeats,
+        totalAmount,
+        ticketTypeMap,
+        holdToken,
+        holdExpiresAt
+    }: OrderDetailModel = orderDetailsFromState || {
         eventId: bookingSession?.eventId,
         selectedSeats: bookingSession?.selectedSeats.map((seat) => ({
             seat: {id: seat.seatId, name: seat.seatName, status: seat.status},
@@ -176,15 +190,18 @@ const EventOrderPage: React.FC = () => {
                                     }))
                                     : (bookingSession?.selectedSeats || []);
 
+                            const baseSession: BookingHoldSession = bookingSession ?? {
+                                eventId: eventId || "",
+                                holdToken: holdToken || "",
+                                holdExpiresAt:
+                                        holdExpiresAt || new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+                                seatIds: resolvedSeatRows.map((seat) => seat.seatId),
+                                selectedSeats: sessionSelectedSeats,
+                                totalAmount: resolvedTotalAmount,
+                            };
+
                             saveBookingSession({
-                                ...(bookingSession || {
-                                    eventId: eventId || "",
-                                    holdToken: holdToken || bookingSession?.holdToken || "",
-                                    holdExpiresAt: holdExpiresAt || bookingSession?.holdExpiresAt || new Date(Date.now() + 5 * 60 * 1000).toISOString(),
-                                    seatIds: resolvedSeatRows.map((seat) => seat.seatId),
-                                    selectedSeats: sessionSelectedSeats,
-                                    totalAmount: resolvedTotalAmount,
-                                }),
+                                ...baseSession,
                                 eventId: eventId || bookingSession?.eventId || "",
                                 orderId: pendingOrder.id,
                                 customerEmail: values.email,
@@ -264,13 +281,13 @@ const EventOrderPage: React.FC = () => {
                                 <div className="mb-8">
                                     <h2 className="text-xl font-semibold text-gray-700 !mb-4">Selected Seats</h2>
                                     <div className="space-y-3">
-                                            {resolvedSeatRows.map((selectedSeat, index) => (
+                                        {resolvedSeatRows.map((selectedSeat, index) => (
                                                 <div key={index}
                                                      className="flex justify-between items-center py-3 px-4 bg-gray-50 rounded-lg">
                                                     <span className="font-medium text-gray-800">
                                                             Seat {selectedSeat.seatName || selectedSeat.seatId}
                                                     </span>
-                                                        <span className="font-semibold text-gray-800">${selectedSeat.price}</span>
+                                                    <span className="font-semibold text-gray-800">${selectedSeat.price}</span>
                                                 </div>
                                         ))}
                                     </div>

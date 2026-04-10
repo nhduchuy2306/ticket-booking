@@ -16,7 +16,7 @@ import { BaseService } from "../BaseService.ts";
 const SEAT_MAP_PATH = "seat-maps";
 const SEAT_MAPS_UPLOAD_PATH = `/${SEAT_MAP_PATH}/upload`;
 const GENERATE_SEAT_MAP_TICKET_PATH = "/generateseatmapticket";
-const SEAT_API_PATH = "api/seats";
+const SEAT_API_PATH = "seat-inventory";
 
 const unwrapResponse = <T>(response: { data: T | { result?: T } }): T => {
     const payload = response.data as T & { result?: T };

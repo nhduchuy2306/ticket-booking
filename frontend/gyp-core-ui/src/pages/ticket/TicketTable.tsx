@@ -19,6 +19,8 @@ const TicketTable: React.FC<TicketTableProps> = ({eventId, refreshTrigger}) => {
         const fetchGeneratedTickets = async () => {
             setIsLoading(true);
             if (!eventId) {
+                setGeneratedTickets([]);
+                setIsLoading(false);
                 return;
             }
             try {

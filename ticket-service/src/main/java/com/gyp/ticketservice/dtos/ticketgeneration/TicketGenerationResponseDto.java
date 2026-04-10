@@ -22,6 +22,10 @@ public class TicketGenerationResponseDto extends AbstractDto {
 	private String eventName;
 	private String seatId;
 	private String seatInfo;
+	private String seatLabel;
+	private String sectionId;
+	private String rowId;
+	private String ticketTypeId;
 	private String ticketNumber;
 	private String attendeeName;
 	private String attendeeEmail;

@@ -17,7 +17,8 @@ import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring", mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG)
 public interface SaleChannelOrderMapper extends AbstractMapper {
-	SaleChannelOrderResponseDto toResponseDto(SaleChannelOrderResponseDto entity);
+	@Mapping(target = "saleChannelId", source = "saleChannel.id")
+	SaleChannelOrderResponseDto toResponseDto(SaleChannelOrderEntity entity);
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "saleChannel", source = "saleChannelId", qualifiedByName = "saleChannelIdToSaleChannel")

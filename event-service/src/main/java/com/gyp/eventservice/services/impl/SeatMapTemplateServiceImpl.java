@@ -27,15 +27,15 @@ public class SeatMapTemplateServiceImpl implements SeatMapTemplateService {
 	public VenueMap createTheaterTemplate(String name, int totalRows, int seatsPerRow) {
 		VenueMap venueMap = VenueMap.builder()
 				.name(name)
-				.dimensions(new Dimension(1000, 800))
+				.dimensions(new Dimension(1080, 860))
 				.seatConfig(new SeatConfig())
 				.build();
 
 		// Create stage configuration
 		StageConfig stage = StageConfig.builder()
 				.name("Main Stage")
-				.position(new Position(300, 50))
-				.dimensions(new Dimension(400, 100))
+				.position(new Position(340, 60))
+				.dimensions(new Dimension(400, 110))
 				.shape(StageShape.RECTANGLE)
 				.orientation(StageOrientation.SOUTH)
 				.build();
@@ -49,38 +49,54 @@ public class SeatMapTemplateServiceImpl implements SeatMapTemplateService {
 	}
 
 	private void createTheaterSections(VenueMap venueMap, int totalRows, int seatsPerRow) {
-		// Orchestra (tầng trệt)
-		Section orchestra = Section.builder()
-				.name("Orchestra")
+		createCurvedTheaterSection(venueMap, "Orchestra", new Position(540, 190),
+				new Dimension(640, 260), totalRows * 2 / 3, seatsPerRow, 20, 160, 150, 34, "orchestra");
+		createCurvedTheaterSection(venueMap, "Mezzanine", new Position(540, 260),
+				new Dimension(780, 320), Math.max(2, totalRows / 3), seatsPerRow + 4, 20, 160, 210, 30, "mezzanine");
+		createCurvedTheaterSection(venueMap, "Balcony", new Position(540, 340),
+				new Dimension(920, 380), Math.max(2, totalRows / 4), seatsPerRow + 8, 20, 160, 280, 28, "balcony");
+	}
+
+	private void createCurvedTheaterSection(VenueMap venueMap, String name, Position center,
+			Dimension dimensions, int rows, int seatsPerRow, double startAngle, double endAngle,
+			double innerRadius, double rowSpacing, String ticketTypeId) {
+		Section section = Section.builder()
+				.name(name)
 				.type(SectionType.SEATED)
-				.position(new Position(200, 200))
-				.ticketTypeId("orchestra")
+				.position(center)
+				.dimensions(dimensions)
+				.isArc(true)
+				.ticketTypeId(ticketTypeId)
 				.build();
 
-		createRowsForSection(orchestra, totalRows * 2 / 3, seatsPerRow, 40, 35);
-		venueMap.getSeatConfig().addSection(orchestra);
+		section.setArcProperties(ArcProperties.builder()
+				.centerX(center.getX())
+				.centerY(center.getY())
+				.radius(innerRadius + rows * rowSpacing)
+				.startAngle(startAngle)
+				.endAngle(endAngle)
+				.build());
 
-		// Mezzanine (tầng 2)
-		Section mezzanine = Section.builder()
-				.name("Mezzanine")
-				.type(SectionType.SEATED)
-				.position(new Position(150, 500))
-				.ticketTypeId("mezzanine")
-				.build();
+		for(int i = 0; i < rows; i++) {
+			Row row = Row.builder()
+					.name("Row " + (char)('A' + i))
+					.position(center)
+					.isArc(true)
+					.build();
 
-		createRowsForSection(mezzanine, totalRows / 3, seatsPerRow + 4, 45, 30);
-		venueMap.getSeatConfig().addSection(mezzanine);
+			ArcProperties rowArcProps = ArcProperties.builder()
+					.centerX(center.getX())
+					.centerY(center.getY())
+					.radius(innerRadius + i * rowSpacing)
+					.startAngle(startAngle)
+					.endAngle(endAngle)
+					.build();
 
-		// Balcony (tầng 3)
-		Section balcony = Section.builder()
-				.name("Balcony")
-				.type(SectionType.SEATED)
-				.position(new Position(100, 650))
-				.ticketTypeId("balcony")
-				.build();
+			row.generateArcSeats(seatsPerRow, rowArcProps);
+			section.addRow(row);
+		}
 
-		createRowsForSection(balcony, totalRows / 4, seatsPerRow + 8, 50, 28);
-		venueMap.getSeatConfig().addSection(balcony);
+		venueMap.getSeatConfig().addSection(section);
 	}
 
 	/**

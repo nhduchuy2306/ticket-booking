@@ -23,7 +23,15 @@ public class EventGenerationPdfEM {
 	private String description;
 	private EventStatus status;
 	private String seatId;
+	private String seatLabel;
+	private String sectionId;
+	private String rowId;
+	private String ticketTypeId;
 	private List<String> seatIds;
+	private List<String> seatLabels;
+	private List<String> sectionIds;
+	private List<String> rowIds;
+	private List<String> ticketTypeIds;
 	private String logoUrl;
 	private String venueAddress;
 	private String customerEmail;

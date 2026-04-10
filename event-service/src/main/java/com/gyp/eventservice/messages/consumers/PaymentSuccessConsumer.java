@@ -1,12 +1,18 @@
 package com.gyp.eventservice.messages.consumers;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.gyp.common.annotations.KafkaComponent;
 import com.gyp.common.converters.Serialization;
 import com.gyp.common.kafkatopics.TopicConstants;
 import com.gyp.common.models.PaymentOutcomeEM;
 import com.gyp.eventservice.entities.EventEntity;
+import com.gyp.eventservice.entities.SeatEntity;
 import com.gyp.eventservice.messages.producers.GenerateTicketPdfAndSendEmailProducer;
 import com.gyp.eventservice.repositories.EventRepository;
+import com.gyp.eventservice.repositories.SeatRepository;
 import com.gyp.eventservice.services.SeatInventoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +25,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 public class PaymentSuccessConsumer {
 	private final SeatInventoryService seatInventoryService;
 	private final EventRepository eventRepository;
+	private final SeatRepository seatRepository;
 	private final GenerateTicketPdfAndSendEmailProducer generateTicketPdfAndSendEmailProducer;
 
 	@KafkaListener(topics = TopicConstants.PAYMENT_SUCCESS_EVENT)
@@ -33,14 +40,31 @@ public class PaymentSuccessConsumer {
 				log.info("No active holds found for payment success order ID: {}", paymentOutcomeEM.getOrderId());
 				return;
 			}
-			confirmedSeatKeys.forEach(seatKey -> generateTicketPdfAndSendEmailProducer.sendGenerateTicketPdf(
-					eventEntity, seatKey, paymentOutcomeEM.getCustomerEmail(), paymentOutcomeEM.getIdempotencyKey()));
-			generateTicketPdfAndSendEmailProducer.sendEmail(eventEntity, confirmedSeatKeys,
+			List<SeatEntity> confirmedSeats = loadConfirmedSeats(paymentOutcomeEM.getEventId(), confirmedSeatKeys);
+			if(confirmedSeats.size() != confirmedSeatKeys.size()) {
+				throw new IllegalStateException("Failed to load full seat metadata for confirmed order: "
+						+ paymentOutcomeEM.getOrderId());
+			}
+			confirmedSeats.forEach(seatEntity -> generateTicketPdfAndSendEmailProducer.sendGenerateTicketPdf(
+					eventEntity, seatEntity, paymentOutcomeEM.getCustomerEmail(), paymentOutcomeEM.getIdempotencyKey()));
+			generateTicketPdfAndSendEmailProducer.sendEmail(eventEntity, confirmedSeats,
 					paymentOutcomeEM.getCustomerEmail(), paymentOutcomeEM.getIdempotencyKey());
 			log.info("Payment success processed for order ID: {}", paymentOutcomeEM.getOrderId());
 		} catch(Exception e) {
 			log.error("Failed to process payment success event", e);
 			throw new RuntimeException("Failed to process payment success event", e);
 		}
+	}
+
+	private List<SeatEntity> loadConfirmedSeats(String eventId, List<String> confirmedSeatKeys) {
+		List<SeatEntity> seatEntities = seatRepository.findByEventIdAndSeatKeyIn(eventId, confirmedSeatKeys);
+		Map<String, SeatEntity> seatByKey = new LinkedHashMap<>();
+		for(SeatEntity seatEntity : seatEntities) {
+			seatByKey.put(seatEntity.getSeatKey(), seatEntity);
+		}
+		return confirmedSeatKeys.stream()
+				.map(seatByKey::get)
+				.filter(java.util.Objects::nonNull)
+				.toList();
 	}
 }

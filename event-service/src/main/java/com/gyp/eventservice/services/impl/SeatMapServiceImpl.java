@@ -17,7 +17,6 @@ import com.gyp.common.models.SeatMapEventModel;
 import com.gyp.eventservice.dtos.seatmap.Position;
 import com.gyp.eventservice.dtos.seatmap.Row;
 import com.gyp.eventservice.dtos.seatmap.Seat;
-import com.gyp.eventservice.dtos.seatmap.SeatAvailability;
 import com.gyp.eventservice.dtos.seatmap.SeatConfig;
 import com.gyp.eventservice.dtos.seatmap.SeatMapRequestDto;
 import com.gyp.eventservice.dtos.seatmap.SeatMapResponseDto;
@@ -30,7 +29,6 @@ import com.gyp.eventservice.dtos.seatmap.StageConfig;
 import com.gyp.eventservice.dtos.seatmap.Table;
 import com.gyp.eventservice.dtos.seatmap.VenueMap;
 import com.gyp.eventservice.mappers.SeatMapMapper;
-import com.gyp.eventservice.messages.producers.GenerateSeatMapTicketProducer;
 import com.gyp.eventservice.repositories.SeatMapRepository;
 import com.gyp.eventservice.services.SeatInventoryService;
 import com.gyp.eventservice.services.SeatMapService;
@@ -46,7 +44,6 @@ public class SeatMapServiceImpl implements SeatMapService {
 	private final SeatMapTemplateService seatMapTemplateService;
 	private final SeatMapRepository seatMapRepository;
 	private final SeatMapMapper seatMapMapper;
-	private final GenerateSeatMapTicketProducer generateSeatMapTicketProducer;
 	private final SeatInventoryService seatInventoryService;
 
 	@Override
@@ -148,65 +145,12 @@ public class SeatMapServiceImpl implements SeatMapService {
 	}
 
 	@Override
-	public boolean reserveSeat(String venueMapId, String seatId) {
-		VenueMap venueMap = findVenueMapById(venueMapId);
-
-		Seat seat = findSeatById(venueMap, seatId);
-		if(seat != null && Objects.equals(seat.getStatus(), SeatStatus.AVAILABLE)) {
-			seat.setStatus(SeatStatus.RESERVED);
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean confirmSeatReservation(String venueMapId, String seatId) {
-		VenueMap venueMap = findVenueMapById(venueMapId);
-
-		Seat seat = findSeatById(venueMap, seatId);
-		if(seat != null && Objects.equals(seat.getStatus(), SeatStatus.RESERVED)) {
-			seat.setStatus(SeatStatus.SOLD);
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public SeatAvailability checkSeatAvailability(String seatMapId, List<String> seatIds) {
-		return null;
-	}
-
-	@Override
 	public SeatConfig parseSeatConfig(String seatConfigJson) {
 		try {
 			return Serialization.deserializeFromString(seatConfigJson, SeatConfig.class);
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException("Failed to parse seat config JSON", e);
 		}
-	}
-
-	@Override
-	public SeatConfig soldSeats(SeatConfig seatConfig, List<String> seatIds) {
-		for(Section section : seatConfig.getSections()) {
-			if(SectionType.SEATED.equals(section.getType())) {
-				for(Row row : section.getRows()) {
-					for(Seat seat : row.getSeats()) {
-						if(seatIds.contains(seat.getId())) {
-							seat.setStatus(SeatStatus.SOLD);
-						}
-					}
-				}
-			} else if(SectionType.TABLE.equals(section.getType())) {
-				for(Table table : section.getTables()) {
-					for(Seat seat : table.getSeats()) {
-						if(seatIds.contains(seat.getId())) {
-							seat.setStatus(SeatStatus.SOLD);
-						}
-					}
-				}
-			}
-		}
-		return null;
 	}
 
 	@Override
@@ -269,7 +213,6 @@ public class SeatMapServiceImpl implements SeatMapService {
 	@Override
 	public void generateSeatMapTicket(String eventId) {
 		seatInventoryService.initializeSeatsForEvent(eventId);
-		generateSeatMapTicketProducer.generateSeatMapTicket(eventId);
 	}
 
 	private Seat findSeatById(VenueMap venueMap, String seatId) {

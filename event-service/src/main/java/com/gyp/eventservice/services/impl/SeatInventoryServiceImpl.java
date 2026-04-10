@@ -14,10 +14,14 @@ import jakarta.transaction.Transactional;
 
 import com.gyp.common.converters.Serialization;
 import com.gyp.common.exceptions.ResourceNotFoundException;
+import com.gyp.eventservice.dtos.seatmap.SeatAvailability;
+import com.gyp.eventservice.dtos.seatmap.SeatHoldRequestDto;
+import com.gyp.eventservice.dtos.seatmap.SeatHoldResponseDto;
 import com.gyp.eventservice.dtos.seatmap.Row;
 import com.gyp.eventservice.dtos.seatmap.Seat;
 import com.gyp.eventservice.dtos.seatmap.SeatConfig;
 import com.gyp.eventservice.dtos.seatmap.Section;
+import com.gyp.eventservice.dtos.seatmap.SeatStatus;
 import com.gyp.eventservice.dtos.seatmap.SectionType;
 import com.gyp.eventservice.dtos.seatmap.Table;
 import com.gyp.eventservice.entities.EventEntity;
@@ -30,6 +34,7 @@ import com.gyp.eventservice.entities.VenueMapEntity;
 import com.gyp.eventservice.repositories.EventRepository;
 import com.gyp.eventservice.repositories.SeatHoldRepository;
 import com.gyp.eventservice.repositories.SeatRepository;
+import com.gyp.eventservice.repositories.TicketTypeRepository;
 import com.gyp.eventservice.services.SeatInventoryService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -43,6 +48,55 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 	private final EventRepository eventRepository;
 	private final SeatRepository seatRepository;
 	private final SeatHoldRepository seatHoldRepository;
+	private final TicketTypeRepository ticketTypeRepository;
+
+	@Transactional
+	@Override
+	public List<SeatAvailability> getSeatAvailability(String eventId) {
+		List<SeatEntity> seats = seatRepository.findByEventId(eventId);
+		if(seats.isEmpty()) {
+			return List.of();
+		}
+
+		Map<String, Double> priceByTicketTypeId = new java.util.HashMap<>();
+		for(var ticketTypeEntity : ticketTypeRepository.findAllByEventEntityId(eventId)) {
+			priceByTicketTypeId.put(ticketTypeEntity.getId(), ticketTypeEntity.getPrice());
+		}
+		List<SeatHoldEntity> activeHolds = seatHoldRepository.findByEventIdAndStatusIn(eventId,
+				List.of(SeatHoldStatus.ACTIVE));
+		Map<Object, SeatHoldEntity> holdBySeatId = activeHolds.stream()
+				.collect(Collectors.toMap(hold -> hold.getSeatEntity().getId(), Function.identity(),
+						(left, right) -> left));
+
+		return seats.stream()
+				.map(seat -> toAvailability(seat, holdBySeatId.get(seat.getId()), priceByTicketTypeId))
+				.toList();
+	}
+
+	@Transactional
+	@Override
+	public SeatHoldResponseDto reserveSeats(SeatHoldRequestDto request) {
+		String holdToken = normalizeHoldToken(request.getHoldToken());
+		List<String> seatKeys = resolveSeatKeys(request);
+		List<String> reserves = reserveSeatsForOrder(request.getEventId(), holdToken, request.getUserId(), seatKeys);
+		return buildHoldResponse(request.getEventId(), holdToken, reserves);
+	}
+
+	@Transactional
+	@Override
+	public SeatHoldResponseDto confirmSeats(SeatHoldRequestDto request) {
+		String holdToken = normalizeHoldToken(request.getHoldToken());
+		List<String> seatKeys = confirmSeatsForOrder(request.getEventId(), holdToken);
+		return buildHoldResponse(request.getEventId(), holdToken, seatKeys);
+	}
+
+	@Transactional
+	@Override
+	public SeatHoldResponseDto releaseSeats(SeatHoldRequestDto request) {
+		String holdToken = normalizeHoldToken(request.getHoldToken());
+		List<String> seatKeys = releaseSeatsForOrder(request.getEventId(), holdToken);
+		return buildHoldResponse(request.getEventId(), holdToken, seatKeys);
+	}
 
 	@Transactional
 	@Override
@@ -199,8 +253,19 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 				.sectionId(section.getId())
 				.rowId(containerId)
 				.ticketTypeId(seat.getTicketTypeId())
-				.status(SeatInventoryStatus.AVAILABLE)
+				.status(toInventoryStatus(seat.getStatus()))
 				.build();
+	}
+
+	private SeatInventoryStatus toInventoryStatus(SeatStatus seatStatus) {
+		if(seatStatus == null) {
+			return SeatInventoryStatus.AVAILABLE;
+		}
+		return switch(seatStatus) {
+			case AVAILABLE -> SeatInventoryStatus.AVAILABLE;
+			case RESERVED -> SeatInventoryStatus.RESERVED;
+			case SOLD -> SeatInventoryStatus.SOLD;
+		};
 	}
 
 	private String buildSeatKey(Section section, String containerId, String seatId) {
@@ -230,5 +295,62 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 		} catch(Exception e) {
 			throw new IllegalStateException("Failed to parse seat map for event: " + eventEntity.getId(), e);
 		}
+	}
+
+	private SeatAvailability toAvailability(SeatEntity seat, SeatHoldEntity hold, Map<String, Double> priceByTicketTypeId) {
+		boolean isAvailable = SeatInventoryStatus.AVAILABLE.equals(seat.getStatus());
+		return SeatAvailability.builder()
+				.seatId(seat.getId())
+				.seatKey(seat.getSeatKey())
+				.seatLabel(seat.getSeatLabel())
+				.sectionId(seat.getSectionId())
+				.rowId(seat.getRowId())
+				.ticketTypeId(seat.getTicketTypeId())
+				.price(seat.getTicketTypeId() != null ? priceByTicketTypeId.get(seat.getTicketTypeId()) : null)
+				.status(seat.getStatus())
+				.available(isAvailable)
+				.holdToken(hold != null ? hold.getHoldToken() : null)
+				.holdExpiresAt(hold != null ? hold.getExpiresAt() : null)
+				.build();
+	}
+
+	private SeatHoldResponseDto buildHoldResponse(String eventId, String holdToken, List<String> seatKeys) {
+		List<SeatHoldEntity> holds = seatHoldRepository.findByEventIdAndHoldToken(eventId, holdToken);
+		List<String> resolvedSeatIds = new ArrayList<>();
+		if(!holds.isEmpty()) {
+			resolvedSeatIds = holds.stream()
+					.map(hold -> hold.getSeatEntity().getSeatKey())
+					.toList();
+		} else if(seatKeys != null) {
+			resolvedSeatIds = new ArrayList<>(seatKeys);
+		}
+
+		LocalDateTime expiresAt = holds.stream()
+				.filter(hold -> SeatHoldStatus.ACTIVE.equals(hold.getStatus()))
+				.map(SeatHoldEntity::getExpiresAt)
+				.findFirst()
+				.orElse(null);
+
+		return SeatHoldResponseDto.builder()
+				.eventId(eventId)
+				.holdToken(holdToken)
+				.holdExpiresAt(expiresAt)
+				.seatIds(resolvedSeatIds)
+				.seats(getSeatAvailability(eventId))
+				.build();
+	}
+
+	private List<String> resolveSeatKeys(SeatHoldRequestDto request) {
+		if(request.getSeatKeys() != null && !request.getSeatKeys().isEmpty()) {
+			return request.getSeatKeys();
+		}
+		if(request.getSeatIds() != null && !request.getSeatIds().isEmpty()) {
+			return request.getSeatIds();
+		}
+		return List.of();
+	}
+
+	private String normalizeHoldToken(String holdToken) {
+		return holdToken != null && !holdToken.isBlank() ? holdToken : java.util.UUID.randomUUID().toString();
 	}
 }

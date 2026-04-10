@@ -1,12 +1,17 @@
-import { SeatStatus } from "../generated/event-service-models";
+import { SeatInventoryStatus, SeatStatus } from "../generated/event-service-models";
 
 export interface SeatAvailabilityDto {
     seatId?: string;
-    status?: SeatStatus;
+    seatKey?: string;
+    seatLabel?: string;
+    sectionId?: string;
+    rowId?: string;
+    ticketTypeId?: string;
+    price?: number;
+    status?: SeatInventoryStatus;
+    available?: boolean;
     holdToken?: string;
-    expiresAt?: string;
     holdExpiresAt?: string;
-    holdOwner?: string;
 }
 
 export interface SeatHoldRequestDto {
@@ -19,10 +24,8 @@ export interface SeatHoldRequestDto {
 
 export interface SeatHoldResponseDto {
     holdToken?: string;
-    expiresAt?: string;
     holdExpiresAt?: string;
     seatIds?: string[];
-    seatKeys?: string[];
     seats?: SeatAvailabilityDto[];
 }
 

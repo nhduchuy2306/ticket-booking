@@ -73,7 +73,25 @@ const TicketForm: React.FC<TicketFormProps> = ({onShowTicket}) => {
     }
 
     const handleSaleTicket = async () => {
-        await TicketService.startSaleTicket(selectedEvent?.id);
+        const eventId = selectedEvent?.id;
+        if (!eventId) {
+            createErrorNotification("No event selected", "Please select an event to start ticket sale.");
+            return;
+        }
+
+        try {
+            await TicketService.startSaleTicket(eventId);
+            setIsOnSale(true);
+            createSuccessNotification(
+                    "Ticket sale started successfully",
+                    `Ticket sale for event ID ${eventId} is now ON_SALE.`
+            );
+        } catch (error) {
+            createErrorNotification(
+                    "Failed to start ticket sale",
+                    error instanceof Error ? error.message : "Unknown error"
+            );
+        }
     }
 
     return (

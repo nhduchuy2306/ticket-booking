@@ -29,8 +29,8 @@ public interface SeatMapMapper extends AbstractMapper {
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "venueMapEntityList", ignore = true)
-	@Mapping(target = "seatConfigRaw", expression = "java(parseSeatConfigRaw(dto.getSeatConfig()))")
-	@Mapping(target = "stageConfigRaw", expression = "java(parseStageConfig(dto.getStageConfig()))")
+	@Mapping(target = "seatConfigRaw", expression = "java(serializeSeatConfig(dto.getSeatConfig()))")
+	@Mapping(target = "stageConfigRaw", expression = "java(serializeStageConfig(dto.getStageConfig()))")
 	SeatMapEntity toEntity(SeatMapRequestDto dto);
 
 	@Mapping(target = "stageConfig", source = "stageConfigRaw")
@@ -46,8 +46,8 @@ public interface SeatMapMapper extends AbstractMapper {
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "venueMapEntityList", ignore = true)
-	@Mapping(target = "seatConfigRaw", expression = "java(parseSeatConfigRaw(dto.getSeatConfig()))")
-	@Mapping(target = "stageConfigRaw", expression = "java(parseStageConfig(dto.getStageConfig()))")
+	@Mapping(target = "seatConfigRaw", expression = "java(serializeSeatConfig(dto.getSeatConfig()))")
+	@Mapping(target = "stageConfigRaw", expression = "java(serializeStageConfig(dto.getStageConfig()))")
 	void updateEntityFromDto(SeatMapRequestDto dto, @MappingTarget SeatMapEntity entity);
 
 	default SeatConfig parseSeatConfig(String seatConfigRaw) {
@@ -66,7 +66,7 @@ public interface SeatMapMapper extends AbstractMapper {
 		}
 	}
 
-	default String parseSeatConfigRaw(SeatConfig seatConfig) {
+	default String serializeSeatConfig(SeatConfig seatConfig) {
 		try {
 			return Serialization.serializeToString(seatConfig);
 		} catch(JsonProcessingException e) {
@@ -74,7 +74,7 @@ public interface SeatMapMapper extends AbstractMapper {
 		}
 	}
 
-	default String parseStageConfig(StageConfig stageConfig) {
+	default String serializeStageConfig(StageConfig stageConfig) {
 		try {
 			return Serialization.serializeToString(stageConfig);
 		} catch(JsonProcessingException e) {
