@@ -1,24 +1,8 @@
 import { createContext, Dispatch, SetStateAction, useContext } from "react";
-import {
-    SeatConfig,
-    StageConfig,
-    TicketTypeResponseDto,
-    VenueMap
-} from "../../../../models/generated/event-service-models";
-import { SelectedTypeModel } from "../../models/SeatMapModels.ts";
 
 interface SeatMapEditorContextProps {
-    venueMapData: VenueMap,
-    stageConfig: StageConfig,
-    seatConfig: SeatConfig,
-    ticketTypes?: TicketTypeResponseDto[],
-    showSeatNumbers: boolean,
-    selectedSeats: string[],
-    setSelectedSeats: Dispatch<SetStateAction<string[]>>,
-    draggable?: boolean,
-    setDraggable?: Dispatch<SetStateAction<boolean>>,
-    selectedType?: SelectedTypeModel,
-    setSelectedType?: Dispatch<SetStateAction<SelectedTypeModel | undefined>>,
+    showSeatNumbers?: boolean,
+    setShowSeatNumbers?: Dispatch<SetStateAction<boolean>>,
 }
 
 export const SeatMapEditorContext = createContext<SeatMapEditorContextProps | undefined>(undefined);

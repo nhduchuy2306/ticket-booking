@@ -1,207 +1,271 @@
-import { Button } from "antd";
-import Konva from "konva";
-import React, { useEffect, useRef, useState } from "react";
-import { BiMinus, BiPlus, BiReset } from "react-icons/bi";
-import { Layer, Stage } from "react-konva";
-import {
-    SeatConfig, Section,
+import { Splitter } from "antd";
+import React, { useEffect, useMemo, useState } from "react";
+import type {
+    SeatConfig,
+    Section,
     StageConfig,
-    TicketTypeResponseDto,
-    VenueMap,
 } from "../../../models/generated/event-service-models";
-import { TicketTypeService } from "../../../services/Event/TicketTypeService.ts";
-import { createErrorNotification } from "../../notification/Notification.ts";
-import VenueSeatContainer from "../common/VenueSeatContainer.tsx";
-import VenueSeatMapHeader from "../common/VenueSeatMapHeader.tsx";
-import VenueStageContainer from "../common/VenueStageContainer.tsx";
-import { SelectedTypeModel } from "../models/SeatMapModels.ts";
+import { DraftErrorMap, SectionDraftState, StageDraftState } from "../models/SeatMapModels.ts";
+import SeatMapConfigEditor from "./editors/SeatMapConfigEditor";
+import SeatMapPreviewCanvas from "./SeatMapPreviewCanvas";
+import {
+    buildSectionFromDraft,
+    buildStageConfigFromDraft,
+    createDefaultSectionDraft,
+    createDefaultStageDraft,
+} from "./utils/SeatMapEditorUtils.ts";
 import { SeatMapEditorContext } from "./context/SeatMapEditorContext.tsx";
-import SeatMapConfigEditor from "./editors/SeatMapConfigEditor.tsx";
-import SectionContainer from "./section/SectionContainer.tsx";
+
+export interface SeatMapEditorData {
+    stageConfig: StageConfig;
+    seatConfig: SeatConfig;
+}
 
 export interface SeatMapEditorProps {
-    venueMap?: VenueMap;
+    initialData?: SeatMapEditorData;
+    onSave?: (data: SeatMapEditorData) => void;
     title?: string;
 }
 
-const SeatMapEditor: React.FC<SeatMapEditorProps> = ({venueMap, title}) => {
-    const [venueMapData, setVenueMapData] = useState<VenueMap>({});
-    const [ticketTypes, setTicketTypes] = useState<TicketTypeResponseDto[]>([]);
-    const [stageConfig, setStageConfig] = useState<StageConfig>({});
-    const [seatConfig, setSeatConfig] = useState<SeatConfig>({});
-    const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
-    const [zoomLevel, setZoomLevel] = useState(0.8);
-    const [showSeatNumbers, setShowSeatNumbers] = useState(false);
-    const [draggable, setDraggable] = useState(true);
-    const [selectedType, setSelectedType] = useState<SelectedTypeModel>();
+const DEFAULT_STAGE_CONFIG: StageConfig = {
+    name: "STAGE",
+    position: {x: 0, y: 24},
+    dimensions: {width: 800, height: 150},
+    borderRadius: 12,
+};
 
-    const stageRef = useRef<Konva.Stage>(null);
-    const layerRef = useRef<Konva.Layer>(null);
-    const stageWidth = 1200;
-    const stageHeight = 800;
-
-    useEffect(() => {
-        if (venueMap) {
-            setVenueMapData(venueMap);
-        }
-    }, [venueMap]);
+const SeatMapEditor: React.FC<SeatMapEditorProps> = ({initialData, onSave, title}) => {
+    const [stageDraft, setStageDraft] = useState<StageDraftState>(createDefaultStageDraft(initialData?.stageConfig));
+    const [stageConfig, setStageConfig] = useState<StageConfig>(initialData?.stageConfig || DEFAULT_STAGE_CONFIG);
+    const [seatConfig, setSeatConfig] = useState<SeatConfig>({sections: initialData?.seatConfig?.sections || []});
+    const [draftSection, setDraftSection] = useState<SectionDraftState | null>(null);
+    const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
+    const [selectedSectionId, setSelectedSectionId] = useState<string | null>(initialData?.seatConfig?.sections?.[0]?.id || null);
+    const [stageErrors, setStageErrors] = useState<DraftErrorMap>({});
+    const [draftErrors, setDraftErrors] = useState<DraftErrorMap>({});
+    const [exportedJson, setExportedJson] = useState<string>("");
+    const [showSeatNumbers, setShowSeatNumbers] = useState<boolean>(false);
 
     useEffect(() => {
-        if (venueMapData && Object.keys(venueMapData).length > 0) {
-            setStageConfig(venueMapData.stageConfig || {});
-            setSeatConfig(venueMapData.seatConfig || {});
-            const ticketTypeIds = venueMapData.seatConfig?.sections?.map(s => s.ticketTypeId);
-            void getTicketTypes(ticketTypeIds || []);
-        }
-    }, [venueMapData]);
+        const nextStageDraft = createDefaultStageDraft(initialData?.stageConfig);
+        const nextStage = buildStageConfigFromDraft(nextStageDraft);
 
-    const getTicketTypes = async (ids: string[]) => {
-        try {
-            if (ids.length === 0) return;
-            const types = await TicketTypeService.getTicketTypesByIds(ids);
-            if (types && types.length > 0) {
-                setTicketTypes(types);
-            } else {
-                setTicketTypes([]);
-            }
-        } catch (error) {
-            createErrorNotification("Failed to fetch ticket types");
+        setStageDraft(nextStageDraft);
+        setStageErrors(nextStage.errors);
+        if (nextStage.stageConfig) {
+            setStageConfig(nextStage.stageConfig);
+        } else {
+            setStageConfig(initialData?.stageConfig || DEFAULT_STAGE_CONFIG);
+        }
+
+        setSeatConfig({sections: initialData?.seatConfig?.sections || []});
+        setDraftSection(null);
+        setEditingSectionId(null);
+        setSelectedSectionId(initialData?.seatConfig?.sections?.[0]?.id || null);
+        setDraftErrors({});
+        setExportedJson("");
+    }, [initialData]);
+
+    const updateStageDraft = (field: keyof StageDraftState, value: string) => {
+        const nextDraft = {...stageDraft, [field]: value};
+        setStageDraft(nextDraft);
+
+        const nextStage = buildStageConfigFromDraft(nextDraft);
+        setStageErrors(nextStage.errors);
+        if (nextStage.stageConfig) {
+            setStageConfig(nextStage.stageConfig);
         }
     };
 
-    const handleResetView = () => {
-        if (!stageRef.current || !layerRef.current) return;
+    const previewSection = useMemo(() => {
+        if (!draftSection) {
+            return null;
+        }
 
-        const stage = stageRef.current;
-        const layer = layerRef.current;
+        const previewId = editingSectionId || "__draft-section__";
+        const parsed = buildSectionFromDraft(draftSection, previewId, false);
+        return parsed.section || null;
+    }, [draftSection, editingSectionId]);
 
-        const resetScale = 0.8;
+    const previewSeatConfig = useMemo<SeatConfig>(() => {
+        if (!previewSection) {
+            return seatConfig;
+        }
 
-        // Set scale first
-        layer.scale({x: resetScale, y: resetScale});
+        const sections = seatConfig.sections || [];
+        const existingIndex = editingSectionId
+                ? sections.findIndex((section) => section.id === editingSectionId)
+                : -1;
 
-        // Calculate centered position
-        const newX = stageWidth / 2 - (stageWidth / 2) * resetScale;
-        const newY = stageHeight / 2 - (stageHeight / 2) * resetScale;
+        if (existingIndex >= 0) {
+            return {
+                sections: sections.map((section) => (section.id === editingSectionId ? previewSection : section)),
+            };
+        }
 
-        layer.position({x: newX, y: newY});
-        layer.batchDraw();
+        return {
+            sections: [...sections, previewSection],
+        };
+    }, [editingSectionId, previewSection, seatConfig]);
 
-        stage.position({x: 0, y: 0});
-        stage.batchDraw();
+    const updateSectionDraft = (field: keyof SectionDraftState, value: string) => {
+        if (!draftSection) {
+            return;
+        }
 
-        setZoomLevel(resetScale);
-        setShowSeatNumbers(false);
+        const nextDraft = {...draftSection, [field]: value};
+        setDraftSection(nextDraft);
+
+        const previewId = editingSectionId || "__draft-section__";
+        const parsed = buildSectionFromDraft(nextDraft, previewId, false);
+        setDraftErrors(parsed.errors);
     };
 
-    const getZoomContext = () => {
-        if (!stageRef.current || !layerRef.current) return null;
+    const openNewSectionDraft = () => {
+        const nextDraft = createDefaultSectionDraft(seatConfig.sections || []);
+        setDraftSection(nextDraft);
+        setEditingSectionId(null);
+        setSelectedSectionId("__draft-section__");
+        const parsed = buildSectionFromDraft(nextDraft, "__draft-section__", false);
+        setDraftErrors(parsed.errors);
+    };
 
-        const stage = stageRef.current;
-        const layer = layerRef.current;
-        const oldScale = layer.scaleX();
-        const pointer = stage.getPointerPosition();
-        if (!pointer) return null;
+    const openSectionForEdit = (sectionId: string) => {
+        const sections = seatConfig.sections || [];
+        const section = sections.find((item) => item.id === sectionId);
+        if (!section) {
+            return;
+        }
 
-        const mousePointTo = {
-            x: (pointer.x - layer.x()) / oldScale,
-            y: (pointer.y - layer.y()) / oldScale,
+        const nextDraft: SectionDraftState = {
+            name: section.name || "",
+            type: section.type || "SEATED",
+            ticketTypeId: section.ticketTypeId || "",
+            positionX: String(section.position?.x || 0),
+            positionY: String(section.position?.y || 0),
+            borderRadius: String(section.borderRadius || 0),
+            labelPosition: section.labelPosition || "LEFT",
+            rowCount: String(section.type === "SEATED" ? section.rows?.length || 1 : 0),
+            seatsPerRow: String(section.type === "SEATED" ? section.rows?.[0]?.seats?.length || 1 : 0),
+            rowSpacing: String(section.type === "SEATED" ? section.rowSpacing || 50 : 0),
+            seatSpacing: String(section.type === "SEATED" ? section.rows?.[0]?.seatSpacing || 50 : 0),
+            startX: String(section.type === "SEATED" ? section.rows?.[0]?.position?.x || 40 : 0),
+            capacity: String(section.capacity || 0),
         };
 
-        return {oldScale, pointer, mousePointTo};
+        setDraftSection(nextDraft);
+        setEditingSectionId(sectionId);
+        setSelectedSectionId(sectionId);
+
+        const parsed = buildSectionFromDraft(nextDraft, sectionId, false);
+        setDraftErrors(parsed.errors);
     };
 
-    const applyZoom = (
-            scale: number,
-            pointer: { x: number; y: number },
-            mousePointTo: { x: number; y: number }
-    ) => {
-        if (!layerRef.current) return;
+    const cancelDraft = () => {
+        setDraftSection(null);
+        setEditingSectionId(null);
+        setDraftErrors({});
+        setSelectedSectionId((seatConfig.sections || [])[0]?.id || null);
+    };
 
-        const clampedScale = Math.max(0.5, Math.min(3, scale));
-        layerRef.current.scale({x: clampedScale, y: clampedScale});
-        setZoomLevel(clampedScale);
-        setShowSeatNumbers(clampedScale > 0.85);
+    const saveDraftSection = () => {
+        if (!draftSection) {
+            return;
+        }
 
-        const newPos = {
-            x: pointer.x - mousePointTo.x * clampedScale,
-            y: pointer.y - mousePointTo.y * clampedScale,
+        const sectionId = editingSectionId || crypto.randomUUID();
+        const parsed = buildSectionFromDraft(draftSection, sectionId, true);
+
+        if (!parsed.section) {
+            setDraftErrors(parsed.errors);
+            return;
+        }
+
+        const sections = seatConfig.sections || [];
+        const nextSections = editingSectionId
+                ? sections.map((section) => (section.id === editingSectionId ? parsed.section as Section : section))
+                : [...sections, parsed.section as Section];
+
+        setSeatConfig({sections: nextSections});
+        setDraftSection(null);
+        setEditingSectionId(null);
+        setDraftErrors({});
+        setSelectedSectionId(parsed.section.id);
+    };
+
+    const deleteSection = (sectionId: string) => {
+        const nextSections = (seatConfig.sections || []).filter((section) => section.id !== sectionId);
+        setSeatConfig({sections: nextSections});
+
+        if (selectedSectionId === sectionId) {
+            setSelectedSectionId(nextSections[0]?.id || null);
+        }
+        if (editingSectionId === sectionId) {
+            cancelDraft();
+        }
+    };
+
+    const handleSelectSection = (sectionId?: string) => {
+        if (!sectionId) {
+            setSelectedSectionId(null);
+            return;
+        }
+
+        setSelectedSectionId(sectionId);
+    };
+
+    const exportJson = () => {
+        const data = {
+            stageConfig,
+            seatConfig: previewSeatConfig,
         };
-
-        layerRef.current.position(newPos);
-        layerRef.current.batchDraw();
-    };
-
-    const handleWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
-        e.evt.preventDefault();
-        e.evt.stopPropagation();
-
-        const ctx = getZoomContext();
-        if (!ctx) return;
-        const {oldScale, pointer, mousePointTo} = ctx;
-
-        const direction = e.evt.deltaY > 0 ? -1 : 1;
-        const factor = 1.1;
-        const newScale = direction > 0 ? oldScale * factor : oldScale / factor;
-
-        applyZoom(newScale, pointer, mousePointTo);
-    };
-
-    const handleZoomInOut = (isZoomIn: boolean) => {
-        const ctx = getZoomContext();
-        if (!ctx) return;
-        const {oldScale, pointer, mousePointTo} = ctx;
-
-        const factor = 1.1;
-        const newScale = isZoomIn ? oldScale * factor : oldScale / factor;
-
-        applyZoom(newScale, pointer, mousePointTo);
+        const json = JSON.stringify(data, null, 2);
+        setExportedJson(json);
+        console.log(json);
+        onSave?.(data);
     };
 
     return (
             <SeatMapEditorContext.Provider value={{
-                venueMapData: venueMapData,
-                stageConfig: stageConfig,
-                seatConfig: seatConfig,
-                ticketTypes: ticketTypes,
                 showSeatNumbers: showSeatNumbers,
-                selectedSeats: selectedSeats,
-                setSelectedSeats: setSelectedSeats,
-                draggable: draggable,
-                setDraggable: setDraggable,
-                selectedType: selectedType,
-                setSelectedType: setSelectedType,
+                setShowSeatNumbers: setShowSeatNumbers,
             }}>
-                <div className="w-full flex items-start gap-3 !m-2 h-full">
-                    <SeatMapConfigEditor title={title}/>
-                    <div className="relative rounded flex flex-col flex-1 items-center justify-center">
-                        <div className="absolute z-10 flex flex-col gap-3 top-8 left-0">
-                            <Button onClick={() => handleZoomInOut(true)} type="default" icon={<BiPlus/>}
-                                    className="!rounded-2xl mb-2"/>
-                            <Button onClick={handleResetView} type="default" icon={<BiReset/>}
-                                    className="!rounded-2xl"/>
-                            <Button onClick={() => handleZoomInOut(false)} type="default" icon={<BiMinus/>}
-                                    className="!rounded-2xl mb-2"/>
+            <div className="h-full w-full min-h-0 flex-1 !overflow-auto">
+                <Splitter layout="horizontal" style={{height: "100%", width: "100%"}}>
+                    <Splitter.Panel size={500} min={340} max={700} style={{height: "100%", minHeight: 0, minWidth: 0}}>
+                        <div className="h-[calc(100%-115px)]">
+                            <SeatMapConfigEditor
+                                    title={title}
+                                    stageDraft={stageDraft}
+                                    stageErrors={stageErrors}
+                                    sections={seatConfig.sections || []}
+                                    selectedSectionId={selectedSectionId}
+                                    draftSection={draftSection}
+                                    draftErrors={draftErrors}
+                                    editingSectionId={editingSectionId}
+                                    onStageDraftChange={updateStageDraft}
+                                    onOpenNewSection={openNewSectionDraft}
+                                    onEditSection={openSectionForEdit}
+                                    onDeleteSection={deleteSection}
+                                    onDraftChange={updateSectionDraft}
+                                    onSaveDraft={saveDraftSection}
+                                    onCancelDraft={cancelDraft}
+                                    onExportJson={exportJson}
+                                    onFocusSection={handleSelectSection}
+                                    exportedJson={exportedJson}
+                            />
                         </div>
-                        <VenueSeatMapHeader/>
-                        <Stage x={0} y={0}
-                               ref={stageRef}
-                               width={stageWidth}
-                               height={stageHeight}
-                               onWheel={handleWheel}
-                               draggable={draggable}>
-                            <Layer ref={layerRef}
-                                   x={stageWidth / 2 - (stageWidth / 2) * zoomLevel}
-                                   y={stageHeight / 2 - (stageHeight / 2) * zoomLevel}
-                                   scale={{x: zoomLevel, y: zoomLevel}}>
-                                <VenueStageContainer stageConfig={stageConfig}/>
-                                <VenueSeatContainer seatConfig={seatConfig}>
-                                    {(section: Section) => <SectionContainer section={section}/> }
-                                </VenueSeatContainer>
-                            </Layer>
-                        </Stage>
-                    </div>
-                </div>
+                    </Splitter.Panel>
+                    <Splitter.Panel style={{height: "100%", minHeight: 0, minWidth: 0}}>
+                        <SeatMapPreviewCanvas
+                                stageConfig={stageConfig}
+                                seatConfig={previewSeatConfig}
+                                selectedSectionId={selectedSectionId}
+                                onSelectSection={handleSelectSection}
+                        />
+                    </Splitter.Panel>
+                </Splitter>
+            </div>
             </SeatMapEditorContext.Provider>
     );
 };

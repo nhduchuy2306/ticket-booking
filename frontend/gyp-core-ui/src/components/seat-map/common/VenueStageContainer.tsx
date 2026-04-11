@@ -39,7 +39,7 @@ const VenueStageContainer: React.FC<VenueStageContainerProps> = ({stageConfig}) 
                             <Rect x={0} y={0}
                                   width={width}
                                   height={height}
-                                  cornerRadius={stage.borderRadius ? parseInt(stage.borderRadius) : 0}
+                                  cornerRadius={Number(stage.borderRadius || 0)}
                                   {...shapeProps}
                             />
                             <Text x={0} y={0}
