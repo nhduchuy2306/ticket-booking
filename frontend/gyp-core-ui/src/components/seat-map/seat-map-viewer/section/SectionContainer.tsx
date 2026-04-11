@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Group, Rect, Text } from "react-konva";
 import { Section } from "../../../../models/generated/event-service-models";
-import SeatedRowWrapper from "../../common/section/SeatedRowWrapper.tsx";
 import { SeatUtils } from "../../utils/SeatUtils.ts";
 import { useSeatMapViewerContext } from "../context/SeatMapViewerContext.tsx";
 import { EventUtils } from "../utils/EventUtils.ts";
-import SeatedSeat from "./seated-section/SeatedSeat.tsx";
+import SeatedRowWrapper from "./seated-section/SeatedRowWrapper.tsx";
 import StandingArea from "./standing-section/StandingArea.tsx";
 
 export interface SectionContainerProps {
@@ -63,14 +62,7 @@ const SectionContainer: React.FC<SectionContainerProps> = ({section}) => {
                                             key={row.id} row={row}
                                             sectionPosition={sectionData.position}
                                             labelPosition={sectionData.labelPosition}
-                                    >
-                                        {(seat, rowName, rowPosition) => <SeatedSeat
-                                                key={seat.id}
-                                                seat={seat}
-                                                rowName={rowName}
-                                                rowPosition={rowPosition}
-                                        />}
-                                    </SeatedRowWrapper>
+                                    />
                             ))}
                         </Group>
                     </Group>
