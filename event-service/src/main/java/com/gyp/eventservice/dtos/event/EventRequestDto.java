@@ -50,4 +50,5 @@ public class EventRequestDto implements Request {
 	private List<String> categoryIds;
 	private String organizationId;
 	private List<String> saleChannelIds;
+	private List<String> ticketTypeIds;
 }

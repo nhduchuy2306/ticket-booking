@@ -14,8 +14,4 @@ import lombok.Setter;
 public class Position {
 	private double x;
 	private double y;
-
-	public Position calculateAbsolutePosition(Position parentPosition) {
-		return new Position(parentPosition.getX() + x, parentPosition.getY() + y);
-	}
 }

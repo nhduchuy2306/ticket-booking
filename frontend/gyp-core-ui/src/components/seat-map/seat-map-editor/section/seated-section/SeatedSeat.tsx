@@ -1,83 +1,58 @@
-import Konva from "konva";
 import React, { useEffect, useState } from "react";
 import { Circle, Group, Text } from "react-konva";
-import { ArcProperties, Position, Seat } from "../../../../../models/generated/event-service-models";
-import { SeatSizes, SelectedType } from "../../../constants/SeatMapContants.ts";
+import { Seat } from "../../../../../models/generated/event-service-models";
+import { SeatColors, SeatSizes } from "../../../constants/SeatMapContants.ts";
 import { useSeatMapEditorContext } from "../../context/SeatMapEditorContext.tsx";
 import { EventUtils } from "../../utils/EventUtils.ts";
-import { SeatUtils } from "../../utils/SeatUtils.ts";
 
 export interface SeatMapSeatedSeatProps {
     seat: Seat,
-    rowName: string,
-    rowPosition?: Position,
-    isArcRow?: boolean,
-    rowArcProperties?: ArcProperties,
 }
 
-const SeatedSeat: React.FC<SeatMapSeatedSeatProps> = (props) => {
-    const [seat, setSeat] = useState<Seat>(props.seat);
-    const {selectedSeats, setSelectedSeats, setDraggable, showSeatNumbers, setSelectedType} = useSeatMapEditorContext();
+const SeatedSeat: React.FC<SeatMapSeatedSeatProps> = ({seat}) => {
+    const [seatData, setSeatData] = useState<Seat>(seat);
+    const {setDraggable, showSeatNumbers} = useSeatMapEditorContext();
 
     useEffect(() => {
-        const data = props.seat;
-        if (data) {
-            setSeat(data);
+        if (seat) {
+            setSeatData(seat);
         }
-    }, [props.seat]);
+    }, [seat]);
 
-    const isSelected = selectedSeats.includes(seat.id);
-
-    // Use the seat's predefined position for arc layouts
-    const positionX = seat.position?.x || 0;
-    const positionY = seat.position?.y || 0;
-
-    const handleClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
-        e.evt.preventDefault();
-        e.evt.stopPropagation();
-
-        if (setSelectedType) {
-            setSelectedType({
-                type: SelectedType.SEATED_SEAT.key,
-                data: seat
-            });
-        }
-        EventUtils.handleClick(e, seat, isSelected, selectedSeats, setSelectedSeats);
-    }
+    const positionX = seatData.position?.x || 0;
+    const positionY = seatData.position?.y || 0;
 
     return (
-            <>
-                {showSeatNumbers &&
-                    <Group x={positionX} y={positionY}
-                           onClick={handleClick}
-                           onMouseDown={() => EventUtils.handleMouseDown(setDraggable)}
-                           onMouseUp={() => EventUtils.handleMouseUp(setDraggable)}
-                           onMouseEnter={EventUtils.handleMouseEnterEvent}
-                           onMouseLeave={EventUtils.handleMouseLeaveEvent}>
-                        <Circle
-                            x={0}
-                            y={0}
-                            offsetX={-20}
-                            offsetY={-20}
-                            radius={SeatSizes.MEDIUM.size / 4}
-                            fill={SeatUtils.getSeatColor(seat, isSelected)}
-                        />
-                        <Text
-                            x={0}
-                            y={0}
-                            text={seat.name || ""}
-                            fontSize={12}
-                            fill='#2C3E50'
-                            align='center'
-                            verticalAlign='middle'
-                            width={SeatSizes.MEDIUM.size}
-                            height={SeatSizes.MEDIUM.size}
-                            listening={false}
-                            perfectDrawEnabled={false}
-                            fontStyle='bold'
-                        />
-                    </Group>}
-            </>
+            <Group x={positionX} y={positionY}
+                   onMouseDown={() => EventUtils.handleMouseDown(setDraggable)}
+                   onMouseUp={() => EventUtils.handleMouseUp(setDraggable)}
+                   onMouseEnter={EventUtils.handleMouseEnterEvent}
+                   onMouseLeave={EventUtils.handleMouseLeaveEvent}>
+                <Circle
+                        x={0}
+                        y={0}
+                        offsetX={-20}
+                        offsetY={-20}
+                        radius={SeatSizes.MEDIUM.size / 4}
+                        fill={SeatColors.AVAILABLE.color}
+                        stroke="#676767"
+                        strokeWidth={1}
+                />
+                {showSeatNumbers && <Text
+                    x={0}
+                    y={0}
+                    text={seat.name || ""}
+                    fontSize={12}
+                    fill='#2C3E50'
+                    align='center'
+                    verticalAlign='middle'
+                    width={SeatSizes.MEDIUM.size}
+                    height={SeatSizes.MEDIUM.size}
+                    listening={false}
+                    perfectDrawEnabled={false}
+                    fontStyle='bold'
+                />}
+            </Group>
     );
 }
 

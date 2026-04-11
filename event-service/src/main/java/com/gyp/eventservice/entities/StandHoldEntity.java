@@ -29,12 +29,13 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "SEATHOLD", uniqueConstraints = {
-		@UniqueConstraint(name = "uk_seat_hold_event_token_seat", columnNames = { "event_id", "hold_token", "seat_id" })
+@Table(name = "STANDHOLD", uniqueConstraints = {
+		@UniqueConstraint(name = "uk_stand_hold_event_token_inventory",
+				columnNames = { "event_id", "hold_token", "stand_inventory_id" })
 })
-public class SeatHoldEntity extends AbstractEntity {
+public class StandHoldEntity extends AbstractEntity {
 	@Serial
-	private static final long serialVersionUID = 8106708175560502142L;
+	private static final long serialVersionUID = -2496102801410282261L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
@@ -50,6 +51,10 @@ public class SeatHoldEntity extends AbstractEntity {
 	@Column(name = "user_id")
 	private String userId;
 
+	@Builder.Default
+	@Column(name = "quantity", nullable = false)
+	private int quantity = 1;
+
 	@Column(name = "expires_at", nullable = false)
 	private LocalDateTime expiresAt;
 
@@ -58,8 +63,8 @@ public class SeatHoldEntity extends AbstractEntity {
 	private SeatHoldStatus status;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "seat_id", nullable = false)
-	private SeatInventoryEntity seatInventoryEntity;
+	@JoinColumn(name = "stand_inventory_id", nullable = false)
+	private StandInventoryEntity standInventoryEntity;
 
 	@Version
 	@Column(name = "version")

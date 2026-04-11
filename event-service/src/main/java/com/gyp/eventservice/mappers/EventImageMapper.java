@@ -19,6 +19,7 @@ public interface EventImageMapper {
 	@Mapping(target = "eventEntity", source = "eventId", qualifiedByName = "eventIdToEntity")
 	EventImageEntity toEntity(EventImageRequestDto dto);
 
+	@Mapping(target = "imageBufferArray", ignore = true)
 	@Mapping(target = "eventName", source = "eventEntity.name")
 	@Mapping(target = "eventId", source = "eventEntity.id")
 	EventImageResponseDto toResponseDto(EventImageEntity entity);

@@ -11,7 +11,7 @@ import com.gyp.eventservice.services.criteria.TicketTypeSearchCriteria;
 
 public interface TicketTypeService {
 
-	double getEffectivePrice(Seat seat);
+	double getEffectivePrice(String ticketTypeId);
 
 	List<TicketTypeResponseDto> getTicketTypes(TicketTypeSearchCriteria criteria, PaginatedDto pagination);
 

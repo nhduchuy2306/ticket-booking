@@ -20,7 +20,7 @@ public class TicketTypeDto extends AbstractDto {
 	private String name;
 	private String description;
 	private double price;
-	private Integer quantityAvailable;
+	private Integer totalCapacity;
 	private TicketStatus status;
 	private LocalDateTime saleStartDate;
 	private LocalDateTime saleEndDate;

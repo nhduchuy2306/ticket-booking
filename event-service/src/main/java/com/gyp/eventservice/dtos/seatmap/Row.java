@@ -10,16 +10,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * Presented as a horizontal grouping of seats within a section, with shared styling and spacing.
+ */
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Row extends BaseSeatMap implements Positionable, SeatContainer, ArcLayout {
+public class Row extends BaseSeatMap implements Positionable, SeatContainer {
 	private Position position;
+	private String borderRadius;
+	private Double seatSpacing;
 	private List<Seat> seats = new ArrayList<>();
-	private Boolean isArc;
-	private ArcProperties arcProperties;
 
 	@Override
 	public void addSeat(Seat seat) {
@@ -35,49 +37,5 @@ public class Row extends BaseSeatMap implements Positionable, SeatContainer, Arc
 	@Override
 	public int getCapacity() {
 		return seats.size();
-	}
-
-	@Override
-	public void setArcProperties(ArcProperties arcProperties) {
-		this.arcProperties = arcProperties;
-		setIsArc(arcProperties != null);
-	}
-
-	@Override
-	public Boolean getIsArc() {
-		return isArc != null ? isArc : false;
-	}
-
-	@Override
-	public void setIsArc(Boolean isArc) {
-		this.isArc = isArc;
-	}
-
-	public void generateLinearSeats(int seatPerRow, double startX, double spacing) {
-		for(int i = 0; i < seatPerRow; i++) {
-			Seat seat = new Seat();
-			seat.setName(String.valueOf(i + 1));
-			seat.setPosition(new Position(startX + i * spacing, 0));
-			addSeat(seat);
-		}
-	}
-
-	public void generateArcSeats(int count, ArcProperties arcProps) {
-		if(arcProps == null) {
-			throw new IllegalArgumentException("Arc properties cannot be null");
-		}
-
-		double angleRange = arcProps.getEndAngle() - arcProps.getStartAngle();
-		double angleStep = angleRange / (count - 1);
-
-		for(int i = 0; i < count; i++) {
-			double angle = arcProps.getStartAngle() + i * angleStep;
-			Position seatPosition = arcProps.calculatePointOnArc(angle);
-
-			Seat seat = new Seat();
-			seat.setName(String.valueOf(i + 1));
-			seat.setPosition(seatPosition);
-			addSeat(seat);
-		}
 	}
 }

@@ -10,6 +10,7 @@ import com.gyp.eventservice.dtos.event.EventResponseDto;
 import com.gyp.eventservice.entities.CategoryEntity;
 import com.gyp.eventservice.entities.EventEntity;
 import com.gyp.eventservice.entities.SeasonEntity;
+import com.gyp.eventservice.entities.TicketTypeEntity;
 import com.gyp.eventservice.entities.VenueMapEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
@@ -55,7 +56,7 @@ public interface EventMapper extends AbstractMapper {
 	@Mapping(target = "seasonEntity", source = "seasonId", qualifiedByName = "seasonIdToEntity")
 	@Mapping(target = "venueMapEntity", source = "venueMapId", qualifiedByName = "venueMapIdToEntity")
 	@Mapping(target = "categoryEntityList", source = "categoryIds", qualifiedByName = "categoryIdsToEntities")
-	@Mapping(target = "ticketTypeEntityList", ignore = true)
+	@Mapping(target = "ticketTypeEntityList", source = "ticketTypeIds", qualifiedByName = "ticketTypeIdsToEntities")
 	@Mapping(target = "eventPromotionEntityList", ignore = true)
 	@Mapping(target = "eventApprovalEntityList", ignore = true)
 	EventEntity toEntity(EventRequestDto dto);
@@ -72,7 +73,8 @@ public interface EventMapper extends AbstractMapper {
 	@Mapping(target = "seasonEntity", source = "seasonId", qualifiedByName = "seasonIdToEntity")
 	@Mapping(target = "venueMapEntity", source = "venueMapId", qualifiedByName = "venueMapIdToEntity")
 	@Mapping(target = "categoryEntityList", source = "categoryIds", qualifiedByName = "categoryIdsToEntities")
-	@Mapping(target = "ticketTypeEntityList", ignore = true)
+	@Mapping(target = "ticketTypeEntityList", source = "ticketTypeIds", qualifiedByName = "ticketTypeIdsToEntities")
+	@Mapping(target = "")
 	@Mapping(target = "eventPromotionEntityList", ignore = true)
 	@Mapping(target = "eventApprovalEntityList", ignore = true)
 	void updateEntityFromDto(EventRequestDto dto, @MappingTarget EventEntity entity);
@@ -84,8 +86,8 @@ public interface EventMapper extends AbstractMapper {
 		}
 		return event.getTicketTypeEntityList().stream()
 				.mapToLong(ticketType ->
-						ticketType.getQuantityAvailable() != null ?
-								ticketType.getQuantityAvailable() : 0)
+						ticketType.getTotalCapacity() != null ?
+								ticketType.getTotalCapacity() : 0)
 				.sum();
 	}
 
@@ -111,9 +113,7 @@ public interface EventMapper extends AbstractMapper {
 		if(seasonId == null) {
 			return null;
 		}
-		SeasonEntity season = new SeasonEntity();
-		season.setId(seasonId);
-		return season;
+		return SeasonEntity.builder().id(seasonId).build();
 	}
 
 	@Named("venueMapIdToEntity")
@@ -121,9 +121,7 @@ public interface EventMapper extends AbstractMapper {
 		if(StringUtils.isEmpty(venueMapId)) {
 			return null;
 		}
-		VenueMapEntity venueMap = new VenueMapEntity();
-		venueMap.setId(venueMapId);
-		return venueMap;
+		return VenueMapEntity.builder().id(venueMapId).build();
 	}
 
 	@Named("eventIdToEntity")
@@ -131,9 +129,7 @@ public interface EventMapper extends AbstractMapper {
 		if(id == null) {
 			return null;
 		}
-		EventEntity entity = new EventEntity();
-		entity.setId(id);
-		return entity;
+		return EventEntity.builder().id(id).build();
 	}
 
 	@Named("categoryIdsToEntities")
@@ -142,11 +138,17 @@ public interface EventMapper extends AbstractMapper {
 			return new ArrayList<>();
 		}
 		return categoryIds.stream()
-				.map(id -> {
-					CategoryEntity category = new CategoryEntity();
-					category.setId(id);
-					return category;
-				})
+				.map(id -> CategoryEntity.builder().id(id).build())
+				.collect(Collectors.toList());
+	}
+
+	@Named("ticketTypeIdsToEntities")
+	default List<TicketTypeEntity> ticketTypeIdsToEntities(List<String> ticketTypeIds) {
+		if(ticketTypeIds == null) {
+			return new ArrayList<>();
+		}
+		return ticketTypeIds.stream()
+				.map(id -> TicketTypeEntity.builder().id(id).build())
 				.collect(Collectors.toList());
 	}
 

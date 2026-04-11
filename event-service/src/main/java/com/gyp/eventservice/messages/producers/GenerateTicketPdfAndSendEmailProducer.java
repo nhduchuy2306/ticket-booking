@@ -1,8 +1,8 @@
 package com.gyp.eventservice.messages.producers;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.Collections;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gyp.common.annotations.KafkaComponent;
@@ -10,7 +10,7 @@ import com.gyp.common.converters.Serialization;
 import com.gyp.common.kafkatopics.TopicConstants;
 import com.gyp.common.models.EventGenerationPdfEM;
 import com.gyp.eventservice.entities.EventEntity;
-import com.gyp.eventservice.entities.SeatEntity;
+import com.gyp.eventservice.entities.SeatInventoryEntity;
 import com.gyp.eventservice.entities.VenueEntity;
 import com.gyp.eventservice.entities.VenueMapEntity;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +24,11 @@ import org.springframework.kafka.support.SendResult;
 public class GenerateTicketPdfAndSendEmailProducer {
 	private final KafkaTemplate<String, String> kafkaTemplate;
 
-	public void sendGenerateTicketPdf(EventEntity eventEntity, SeatEntity seatEntity, String customerEmail,
-			String idempotencyKey) {
+	public void sendGenerateTicketPdf(EventEntity eventEntity, SeatInventoryEntity seatInventoryEntity,
+			String customerEmail, String idempotencyKey) {
 		try {
-			EventGenerationPdfEM eventGenerationPdfEM = createEventGenerationPdfEM(eventEntity, seatEntity, customerEmail,
+			EventGenerationPdfEM eventGenerationPdfEM = createEventGenerationPdfEM(eventEntity, seatInventoryEntity,
+					customerEmail,
 					idempotencyKey);
 			String eventGenerationPdfEMString = Serialization.serializeToString(eventGenerationPdfEM);
 			CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(
@@ -50,10 +51,11 @@ public class GenerateTicketPdfAndSendEmailProducer {
 		}
 	}
 
-	public void sendEmail(EventEntity eventEntity, List<SeatEntity> seatEntities, String customerEmail,
+	public void sendEmail(EventEntity eventEntity, List<SeatInventoryEntity> seatEntities, String customerEmail,
 			String idempotencyKey) {
 		try {
-			EventGenerationPdfEM eventGenerationPdfEM = createEventGenerationPdfEM(eventEntity, seatEntities, customerEmail,
+			EventGenerationPdfEM eventGenerationPdfEM = createEventGenerationPdfEM(eventEntity, seatEntities,
+					customerEmail,
 					idempotencyKey);
 			String eventGenerationPdfEMString = Serialization.serializeToString(eventGenerationPdfEM);
 			CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(
@@ -75,8 +77,8 @@ public class GenerateTicketPdfAndSendEmailProducer {
 		}
 	}
 
-	private EventGenerationPdfEM createEventGenerationPdfEM(EventEntity eventEntity, SeatEntity seatEntity,
-			String customerEmail, String idempotencyKey) {
+	private EventGenerationPdfEM createEventGenerationPdfEM(EventEntity eventEntity,
+			SeatInventoryEntity seatInventoryEntity, String customerEmail, String idempotencyKey) {
 		VenueEntity venueEntity = checkVenueAndSeatMap(eventEntity);
 		return EventGenerationPdfEM.builder()
 				.id(eventEntity.getId())
@@ -85,16 +87,16 @@ public class GenerateTicketPdfAndSendEmailProducer {
 				.idempotencyKey(idempotencyKey)
 				.description(eventEntity.getDescription())
 				.status(eventEntity.getStatus())
-				.seatId(seatEntity.getSeatKey())
-				.seatLabel(seatEntity.getSeatLabel())
-				.sectionId(seatEntity.getSectionId())
-				.rowId(seatEntity.getRowId())
-				.ticketTypeId(seatEntity.getTicketTypeId())
-				.seatIds(Collections.singletonList(seatEntity.getSeatKey()))
-				.seatLabels(Collections.singletonList(seatEntity.getSeatLabel()))
-				.sectionIds(Collections.singletonList(seatEntity.getSectionId()))
-				.rowIds(Collections.singletonList(seatEntity.getRowId()))
-				.ticketTypeIds(Collections.singletonList(seatEntity.getTicketTypeId()))
+				.seatId(seatInventoryEntity.getSeatKey())
+				.seatLabel(seatInventoryEntity.getSeatLabel())
+				.sectionId(seatInventoryEntity.getSectionId())
+				.rowId(seatInventoryEntity.getRowId())
+				.ticketTypeId(seatInventoryEntity.getTicketTypeId())
+				.seatIds(Collections.singletonList(seatInventoryEntity.getSeatKey()))
+				.seatLabels(Collections.singletonList(seatInventoryEntity.getSeatLabel()))
+				.sectionIds(Collections.singletonList(seatInventoryEntity.getSectionId()))
+				.rowIds(Collections.singletonList(seatInventoryEntity.getRowId()))
+				.ticketTypeIds(Collections.singletonList(seatInventoryEntity.getTicketTypeId()))
 				.logoUrl(eventEntity.getLogoUrl())
 				.venueAddress(venueEntity != null ? venueEntity.getAddress() : null)
 				.customerEmail(customerEmail)
@@ -105,14 +107,14 @@ public class GenerateTicketPdfAndSendEmailProducer {
 				.build();
 	}
 
-	private EventGenerationPdfEM createEventGenerationPdfEM(EventEntity eventEntity, List<SeatEntity> seatEntities,
-			String customerEmail, String idempotencyKey) {
+	private EventGenerationPdfEM createEventGenerationPdfEM(EventEntity eventEntity,
+			List<SeatInventoryEntity> seatEntities, String customerEmail, String idempotencyKey) {
 		VenueEntity venueEntity = checkVenueAndSeatMap(eventEntity);
-		List<String> seatIds = seatEntities.stream().map(SeatEntity::getSeatKey).toList();
-		List<String> seatLabels = seatEntities.stream().map(SeatEntity::getSeatLabel).toList();
-		List<String> sectionIds = seatEntities.stream().map(SeatEntity::getSectionId).toList();
-		List<String> rowIds = seatEntities.stream().map(SeatEntity::getRowId).toList();
-		List<String> ticketTypeIds = seatEntities.stream().map(SeatEntity::getTicketTypeId).toList();
+		List<String> seatIds = seatEntities.stream().map(SeatInventoryEntity::getSeatKey).toList();
+		List<String> seatLabels = seatEntities.stream().map(SeatInventoryEntity::getSeatLabel).toList();
+		List<String> sectionIds = seatEntities.stream().map(SeatInventoryEntity::getSectionId).toList();
+		List<String> rowIds = seatEntities.stream().map(SeatInventoryEntity::getRowId).toList();
+		List<String> ticketTypeIds = seatEntities.stream().map(SeatInventoryEntity::getTicketTypeId).toList();
 		return EventGenerationPdfEM.builder()
 				.id(eventEntity.getId())
 				.name(eventEntity.getName())

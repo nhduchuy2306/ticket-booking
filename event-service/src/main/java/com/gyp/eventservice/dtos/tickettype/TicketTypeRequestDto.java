@@ -19,7 +19,8 @@ public class TicketTypeRequestDto {
 	private String description;
 	private double price;
 	private String color;
-	private Integer quantityAvailable;
+	private String currency;
+	private Integer totalCapacity;
 	private TicketStatus status;
 	private LocalDateTime saleStartDate;
 	private LocalDateTime saleEndDate;

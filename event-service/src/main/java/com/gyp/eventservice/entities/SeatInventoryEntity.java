@@ -1,7 +1,6 @@
 package com.gyp.eventservice.entities;
 
 import java.io.Serial;
-import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,13 +9,11 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.Version;
 
-import com.gyp.common.enums.event.SeatHoldStatus;
+import com.gyp.common.enums.event.SeatInventoryStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,12 +26,12 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "SEATHOLD", uniqueConstraints = {
-		@UniqueConstraint(name = "uk_seat_hold_event_token_seat", columnNames = { "event_id", "hold_token", "seat_id" })
+@Table(name = "SEATINVENTORY", uniqueConstraints = {
+		@UniqueConstraint(name = "uk_seat_event_key", columnNames = { "event_id", "seat_key" })
 })
-public class SeatHoldEntity extends AbstractEntity {
+public class SeatInventoryEntity extends AbstractEntity {
 	@Serial
-	private static final long serialVersionUID = 8106708175560502142L;
+	private static final long serialVersionUID = -8110091261913840521L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
@@ -44,22 +41,24 @@ public class SeatHoldEntity extends AbstractEntity {
 	@Column(name = "event_id", nullable = false)
 	private String eventId;
 
-	@Column(name = "hold_token", nullable = false)
-	private String holdToken;
+	@Column(name = "seat_key", nullable = false)
+	private String seatKey;
 
-	@Column(name = "user_id")
-	private String userId;
+	@Column(name = "seat_label")
+	private String seatLabel;
 
-	@Column(name = "expires_at", nullable = false)
-	private LocalDateTime expiresAt;
+	@Column(name = "section_id")
+	private String sectionId;
+
+	@Column(name = "row_id")
+	private String rowId;
+
+	@Column(name = "ticket_type_id")
+	private String ticketTypeId;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)
-	private SeatHoldStatus status;
-
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "seat_id", nullable = false)
-	private SeatInventoryEntity seatInventoryEntity;
+	private SeatInventoryStatus status;
 
 	@Version
 	@Column(name = "version")

@@ -5,13 +5,13 @@ import {
     TicketTypeResponseDto,
     VenueMap
 } from "../../../../models/generated/event-service-models";
-import { SelectedTypeModel } from "../models/SeatMapModels.ts";
+import { SelectedTypeModel } from "../../models/SeatMapModels.ts";
 
 interface SeatMapEditorContextProps {
-    venueData: VenueMap,
+    venueMapData: VenueMap,
     stageConfig: StageConfig,
     seatConfig: SeatConfig,
-    seatTypes?: TicketTypeResponseDto[],
+    ticketTypes?: TicketTypeResponseDto[],
     showSeatNumbers: boolean,
     selectedSeats: string[],
     setSelectedSeats: Dispatch<SetStateAction<string[]>>,

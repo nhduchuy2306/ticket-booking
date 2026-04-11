@@ -8,12 +8,12 @@ interface VenueSeatDetailProps {
 }
 
 const VenueSeatDetail: React.FC<VenueSeatDetailProps> = ({title}) => {
-    const {seatTypes} = useSeatMapViewerContext();
+    const {ticketTypes} = useSeatMapViewerContext();
 
     return (
             <div className="flex-1/3 flex flex-col items-start justify-between bg-[#38383d] h-full">
                 <div className="flex-1 w-full">
-                    <SectionPriceComponent title={title} seatTypes={seatTypes}/>
+                    <SectionPriceComponent title={title} ticketTypes={ticketTypes}/>
                 </div>
                 <div className="w-full">
                     <ChooseSeatAndOrderComponent/>

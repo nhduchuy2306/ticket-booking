@@ -71,8 +71,12 @@ public class EventEntity extends AbstractEntity {
 	@JoinColumn(name = "venue_map_id")
 	private VenueMapEntity venueMapEntity;
 
-	@JsonIgnore
-	@OneToMany(mappedBy = "eventEntity", cascade = CascadeType.ALL)
+	@ManyToMany
+	@JoinTable(
+			name = "eventtickettypes",
+			joinColumns = @JoinColumn(name = "event_id"),
+			inverseJoinColumns = @JoinColumn(name = "ticket_type_id")
+	)
 	private List<TicketTypeEntity> ticketTypeEntityList = new ArrayList<>();
 
 	@JsonIgnore

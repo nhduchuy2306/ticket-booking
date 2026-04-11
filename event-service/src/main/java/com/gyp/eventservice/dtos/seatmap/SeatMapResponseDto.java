@@ -10,7 +10,7 @@ import lombok.Setter;
 /**
  * Persisted seat map layout returned to the editor and viewer.
  * It contains the serialized seat/stage layout, but not per-event runtime seat
- * inventory, which is handled by SeatEntity and SeatHoldEntity.
+ * inventory, which is handled by SeatInventoryEntity and SeatHoldEntity.
  */
 @Getter
 @Setter

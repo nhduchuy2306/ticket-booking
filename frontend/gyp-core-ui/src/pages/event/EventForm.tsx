@@ -15,12 +15,14 @@ import {
     EventRequestDto,
     EventResponseDto,
     SeasonResponseDto,
+    TicketTypeResponseDto,
     VenueMapResponseDto
 } from "../../models/generated/event-service-models";
 import { SaleChannelResponseDto } from "../../models/generated/sale-channel-service-models";
 import { CategoryService } from "../../services/Event/CategoryService.ts";
 import { EventService, EventServiceAdapter } from "../../services/Event/EventService.ts";
 import { SeasonService } from "../../services/Event/SeasonService.ts";
+import { TicketTypeService } from "../../services/Event/TicketTypeService.ts";
 import { VenueMapService } from "../../services/Event/VenueMapService.ts";
 import { SaleChannelService } from "../../services/SaleChannel/SaleChannelService.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
@@ -39,6 +41,7 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
     const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
     const [saleChannelsByEvent, setSaleChannelsByEvent] = useState<SaleChannelResponseDto[]>([]);
     const [saleChannels, setSaleChannels] = useState<SaleChannelResponseDto[]>([]);
+    const [ticketTypes, setTicketTypes] = useState<TicketTypeResponseDto[]>([]);
     const {id} = useParams();
     const [form] = Form.useForm();
     const navigate = useNavigate();
@@ -76,6 +79,13 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                     setSaleChannels(saleChannelResponse);
                 } else {
                     setSaleChannels([]);
+                }
+
+                const ticketTypeResponse = await TicketTypeService.getAllTicketTypes();
+                if (ticketTypeResponse) {
+                    setTicketTypes(ticketTypeResponse);
+                } else {
+                    setTicketTypes([]);
                 }
 
                 const saleChannelsByEventResponse = id ? await SaleChannelService.getSaleChannelsByEventId(id) : [];
@@ -125,6 +135,7 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                 eventCompleted: data.eventCompleted,
                 eventInProgress: data.eventInProgress,
                 categories: data.categories ? data.categories.map(category => category.id) : [],
+                ticketTypes: data.ticketTypes ? data.ticketTypes.map(ticketType => ticketType.id) : [],
                 venueMapId: data.venueMap?.id,
                 seasonId: data.season?.id,
                 status: data.status,
@@ -162,6 +173,7 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                 doorOpenTime: values.doorOpenTime ? DateUtils.toIsoDateTime(values.doorOpenTime) : null,
                 doorCloseTime: values.doorCloseTime ? DateUtils.toIsoDateTime(values.doorCloseTime) : null,
                 categoryIds: validatedValues.categories || [],
+                ticketTypeIds: validatedValues.ticketTypes || [],
                 saleChannelIds: validatedValues.saleChannelIds.map((saleChannel: {
                     key: string
                 }) => saleChannel.key) || [],
@@ -257,6 +269,22 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                     </Form.Item>
 
                     <Form.Item
+                            name="ticketTypes"
+                            label="Ticket Types"
+                            rules={[{required: true, message: 'Please select at least one ticket type!'}]}
+                    >
+                        <Select
+                                mode="multiple"
+                                placeholder="Select ticket types"
+                                options={ticketTypes.map(ticketType => ({
+                                    label: ticketType.name,
+                                    value: ticketType.id
+                                }))}
+                                disabled={isReadOnly}
+                        />
+                    </Form.Item>
+
+                    <Form.Item
                             name="venueMapId"
                             label="Venue Map"
                             rules={[{required: true, message: 'Please select Venue Map!'}]}
@@ -346,6 +374,7 @@ const EventForm: React.FC<EventFormProps> = ({mode}) => {
                     <Form.Item
                             label="Logo"
                             name="logoUrl"
+                            className="pb-5!"
                     >
                         <ImageUpload
                                 fileList={logoFileList}

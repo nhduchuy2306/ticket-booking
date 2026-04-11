@@ -6,18 +6,20 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import { Layer, Stage } from "react-konva";
 import {
     SeatConfig,
+    Section,
     StageConfig,
     TicketTypeResponseDto,
     VenueMap,
 } from "../../../models/generated/event-service-models";
 import { TicketTypeService } from "../../../services/Event/TicketTypeService.ts";
 import { createErrorNotification } from "../../notification/Notification.ts";
+import VenueSeatContainer from "../common/VenueSeatContainer.tsx";
+import VenueSeatMapHeader from "../common/VenueSeatMapHeader.tsx";
+import VenueStageContainer from "../common/VenueStageContainer.tsx";
 import { SelectedSeatModel } from "../models/SeatMapModels.ts";
 import { SeatMapViewerContext } from "./context/SeatMapViewerContext.tsx";
-import VenueSeatContainer from "./layout/VenueSeatContainer.tsx";
 import VenueSeatDetail from "./layout/VenueSeatDetail.tsx";
-import VenueSeatMapHeader from "./layout/VenueSeatMapHeader.tsx";
-import VenueStageContainer from "./layout/VenueStageContainer.tsx";
+import SectionContainer from "./section/SectionContainer.tsx";
 
 export interface SeatMapViewerProps {
     venueMap?: VenueMap;
@@ -28,8 +30,8 @@ export interface SeatMapViewerProps {
 }
 
 const SeatMapViewer: React.FC<SeatMapViewerProps> = ({venueMap, title, onBack, eventId, seatMapId}) => {
-    const [venueData, setVenueData] = useState<VenueMap>({});
-    const [seatTypes, setSeatTypes] = useState<TicketTypeResponseDto[]>([]);
+    const [venueMapData, setVenueMapData] = useState<VenueMap>({});
+    const [ticketTypes, setTicketTypes] = useState<TicketTypeResponseDto[]>([]);
     const [stageConfig, setStageConfig] = useState<StageConfig>({});
     const [seatConfig, setSeatConfig] = useState<SeatConfig>({});
     const [selectedSeats, setSelectedSeats] = useState<SelectedSeatModel[]>([]);
@@ -39,31 +41,32 @@ const SeatMapViewer: React.FC<SeatMapViewerProps> = ({venueMap, title, onBack, e
 
     const stageRef = useRef<Konva.Stage>(null);
     const layerRef = useRef<Konva.Layer>(null);
-    const stageWidth = 800;
-    const stageHeight = 650;
+    const stageWidth = 1200;
+    const stageHeight = 800;
 
     useEffect(() => {
         if (venueMap) {
-            setVenueData(venueMap);
+            setVenueMapData(venueMap);
         }
     }, [venueMap]);
 
     useEffect(() => {
-        if (venueData && Object.keys(venueData).length > 0) {
-            setStageConfig(venueData.stageConfig || {});
-            setSeatConfig(venueData.seatConfig || {});
-            void getTicketTypes(venueData.seatConfig?.seatTypes || []);
+        if (venueMapData && Object.keys(venueMapData).length > 0) {
+            setStageConfig(venueMapData.stageConfig || {});
+            setSeatConfig(venueMapData.seatConfig || {});
+            const ticketTypeIds = venueMapData.seatConfig?.sections?.map(s => s.ticketTypeId);
+            void getTicketTypes(ticketTypeIds || []);
         }
-    }, [venueData]);
+    }, [venueMapData]);
 
     const getTicketTypes = async (ids: string[]) => {
         try {
             if (ids.length === 0) return;
             const types = await TicketTypeService.getTicketTypesByIds(ids);
             if (types && types.length > 0) {
-                setSeatTypes(types);
+                setTicketTypes(types);
             } else {
-                setSeatTypes([]);
+                setTicketTypes([]);
             }
         } catch (error) {
             createErrorNotification("Failed to fetch ticket types");
@@ -161,10 +164,10 @@ const SeatMapViewer: React.FC<SeatMapViewerProps> = ({venueMap, title, onBack, e
 
     return (
             <SeatMapViewerContext.Provider value={{
-                venueData: venueData,
+                venueMapData: venueMapData,
                 stageConfig: stageConfig,
                 seatConfig: seatConfig,
-                seatTypes: seatTypes,
+                ticketTypes: ticketTypes,
                 showSeatNumbers: showSeatNumbers,
                 selectedSeats: selectedSeats,
                 setSelectedSeats: setSelectedSeats,
@@ -183,8 +186,8 @@ const SeatMapViewer: React.FC<SeatMapViewerProps> = ({venueMap, title, onBack, e
                         <Button onClick={() => handleZoomInOut(false)} type="default" icon={<BiMinus/>}
                                 className="!rounded-2xl mb-2"/>
                     </div>
-                    <div className="rounded flex flex-col flex-2/3 items-center justify-center">
-                        <VenueSeatMapHeader/>
+                    <div className="rounded flex flex-col flex-5/6 items-center justify-center">
+                        <VenueSeatMapHeader isSeatMapViewer={true}/>
                         <Stage x={0} y={0}
                                ref={stageRef}
                                width={stageWidth}
@@ -196,7 +199,9 @@ const SeatMapViewer: React.FC<SeatMapViewerProps> = ({venueMap, title, onBack, e
                                    y={stageHeight / 2 - (stageHeight / 2) * zoomLevel}
                                    scale={{x: zoomLevel, y: zoomLevel}}>
                                 <VenueStageContainer stageConfig={stageConfig}/>
-                                <VenueSeatContainer seatConfig={seatConfig}/>
+                                <VenueSeatContainer seatConfig={seatConfig}>
+                                    {(section: Section) => <SectionContainer section={section}/>}
+                                </VenueSeatContainer>
                             </Layer>
                         </Stage>
                     </div>

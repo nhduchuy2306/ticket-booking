@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.gyp.common.enums.event.SeatHoldStatus;
 import com.gyp.eventservice.entities.SeatHoldEntity;
-import com.gyp.eventservice.entities.SeatHoldStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

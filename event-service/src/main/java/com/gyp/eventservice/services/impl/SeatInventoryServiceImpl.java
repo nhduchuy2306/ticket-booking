@@ -13,27 +13,25 @@ import java.util.stream.Collectors;
 import jakarta.transaction.Transactional;
 
 import com.gyp.common.converters.Serialization;
+import com.gyp.common.enums.event.SeatHoldStatus;
+import com.gyp.common.enums.event.SeatInventoryStatus;
 import com.gyp.common.exceptions.ResourceNotFoundException;
-import com.gyp.eventservice.dtos.seatmap.SeatAvailability;
-import com.gyp.eventservice.dtos.seatmap.SeatHoldRequestDto;
-import com.gyp.eventservice.dtos.seatmap.SeatHoldResponseDto;
 import com.gyp.eventservice.dtos.seatmap.Row;
 import com.gyp.eventservice.dtos.seatmap.Seat;
+import com.gyp.eventservice.dtos.seatmap.SeatAvailability;
 import com.gyp.eventservice.dtos.seatmap.SeatConfig;
+import com.gyp.eventservice.dtos.seatmap.SeatHoldRequestDto;
+import com.gyp.eventservice.dtos.seatmap.SeatHoldResponseDto;
 import com.gyp.eventservice.dtos.seatmap.Section;
-import com.gyp.eventservice.dtos.seatmap.SeatStatus;
 import com.gyp.eventservice.dtos.seatmap.SectionType;
-import com.gyp.eventservice.dtos.seatmap.Table;
 import com.gyp.eventservice.entities.EventEntity;
-import com.gyp.eventservice.entities.SeatEntity;
 import com.gyp.eventservice.entities.SeatHoldEntity;
-import com.gyp.eventservice.entities.SeatHoldStatus;
-import com.gyp.eventservice.entities.SeatInventoryStatus;
+import com.gyp.eventservice.entities.SeatInventoryEntity;
 import com.gyp.eventservice.entities.SeatMapEntity;
 import com.gyp.eventservice.entities.VenueMapEntity;
 import com.gyp.eventservice.repositories.EventRepository;
 import com.gyp.eventservice.repositories.SeatHoldRepository;
-import com.gyp.eventservice.repositories.SeatRepository;
+import com.gyp.eventservice.repositories.SeatInventoryRepository;
 import com.gyp.eventservice.repositories.TicketTypeRepository;
 import com.gyp.eventservice.services.SeatInventoryService;
 import lombok.RequiredArgsConstructor;
@@ -46,14 +44,14 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 	private static final int DEFAULT_HOLD_MINUTES = 15;
 
 	private final EventRepository eventRepository;
-	private final SeatRepository seatRepository;
+	private final SeatInventoryRepository seatInventoryRepository;
 	private final SeatHoldRepository seatHoldRepository;
 	private final TicketTypeRepository ticketTypeRepository;
 
 	@Transactional
 	@Override
 	public List<SeatAvailability> getSeatAvailability(String eventId) {
-		List<SeatEntity> seats = seatRepository.findByEventId(eventId);
+		List<SeatInventoryEntity> seats = seatInventoryRepository.findByEventId(eventId);
 		if(seats.isEmpty()) {
 			return List.of();
 		}
@@ -65,7 +63,7 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 		List<SeatHoldEntity> activeHolds = seatHoldRepository.findByEventIdAndStatusIn(eventId,
 				List.of(SeatHoldStatus.ACTIVE));
 		Map<Object, SeatHoldEntity> holdBySeatId = activeHolds.stream()
-				.collect(Collectors.toMap(hold -> hold.getSeatEntity().getId(), Function.identity(),
+				.collect(Collectors.toMap(hold -> hold.getSeatInventoryEntity().getId(), Function.identity(),
 						(left, right) -> left));
 
 		return seats.stream()
@@ -101,31 +99,26 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 	@Transactional
 	@Override
 	public void initializeSeatsForEvent(String eventId) {
-		if(seatRepository.existsByEventId(eventId)) {
+		if(seatInventoryRepository.existsByEventId(eventId)) {
 			return;
 		}
 
 		EventEntity eventEntity = loadEvent(eventId);
 		SeatConfig seatConfig = loadSeatConfig(eventEntity);
-		List<SeatEntity> seats = new ArrayList<>();
+		List<SeatInventoryEntity> seats = new ArrayList<>();
 
 		for(Section section : seatConfig.getSections()) {
+			String ticketTypeId = section.getTicketTypeId();
 			if(Objects.equals(section.getType(), SectionType.SEATED)) {
 				for(Row row : section.getRows()) {
 					for(Seat seat : row.getSeats()) {
-						seats.add(buildSeat(eventId, section, row.getId(), row.getName(), seat));
-					}
-				}
-			} else if(Objects.equals(section.getType(), SectionType.TABLE)) {
-				for(Table table : section.getTables()) {
-					for(Seat seat : table.getSeats()) {
-						seats.add(buildSeat(eventId, section, table.getId(), table.getName(), seat));
+						seats.add(buildSeat(eventId, section, row.getId(), row.getName(), seat, ticketTypeId));
 					}
 				}
 			}
 		}
 
-		seatRepository.saveAll(seats);
+		seatInventoryRepository.saveAll(seats);
 	}
 
 	@Transactional
@@ -140,33 +133,33 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 		List<SeatHoldEntity> existingHolds = seatHoldRepository.findByEventIdAndHoldToken(eventId, holdToken);
 		if(CollectionUtils.isNotEmpty(existingHolds)) {
 			return existingHolds.stream()
-					.map(hold -> hold.getSeatEntity().getSeatKey())
+					.map(hold -> hold.getSeatInventoryEntity().getSeatKey())
 					.toList();
 		}
 
-		List<SeatEntity> seats = seatRepository.findByEventIdAndSeatKeyIn(eventId, requestedSeatKeys);
+		List<SeatInventoryEntity> seats = seatInventoryRepository.findByEventIdAndSeatKeyIn(eventId, requestedSeatKeys);
 		validateSeatSet(eventId, requestedSeatKeys, seats);
 
-		Map<String, SeatEntity> seatByKey = seats.stream()
-				.collect(Collectors.toMap(SeatEntity::getSeatKey, Function.identity()));
+		Map<String, SeatInventoryEntity> seatByKey = seats.stream()
+				.collect(Collectors.toMap(SeatInventoryEntity::getSeatKey, Function.identity()));
 		List<SeatHoldEntity> holds = new ArrayList<>();
 		for(String seatKey : requestedSeatKeys) {
-			SeatEntity seatEntity = seatByKey.get(seatKey);
-			if(!SeatInventoryStatus.AVAILABLE.equals(seatEntity.getStatus())) {
+			SeatInventoryEntity seatInventoryEntity = seatByKey.get(seatKey);
+			if(!SeatInventoryStatus.AVAILABLE.equals(seatInventoryEntity.getStatus())) {
 				throw new IllegalStateException("Seat is not available: " + seatKey);
 			}
-			seatEntity.setStatus(SeatInventoryStatus.RESERVED);
+			seatInventoryEntity.setStatus(SeatInventoryStatus.RESERVED);
 			holds.add(SeatHoldEntity.builder()
 					.eventId(eventId)
 					.holdToken(holdToken)
 					.userId(userId)
 					.expiresAt(LocalDateTime.now().plusMinutes(DEFAULT_HOLD_MINUTES))
 					.status(SeatHoldStatus.ACTIVE)
-					.seatEntity(seatEntity)
+					.seatInventoryEntity(seatInventoryEntity)
 					.build());
 		}
 
-		seatRepository.saveAll(seats);
+		seatInventoryRepository.saveAll(seats);
 		seatHoldRepository.saveAll(holds);
 		return seatKeys;
 	}
@@ -182,13 +175,13 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 
 		List<String> confirmedSeatKeys = new ArrayList<>();
 		for(SeatHoldEntity seatHoldEntity : activeHolds) {
-			SeatEntity seatEntity = seatHoldEntity.getSeatEntity();
-			seatEntity.setStatus(SeatInventoryStatus.SOLD);
+			SeatInventoryEntity seatInventoryEntity = seatHoldEntity.getSeatInventoryEntity();
+			seatInventoryEntity.setStatus(SeatInventoryStatus.SOLD);
 			seatHoldEntity.setStatus(SeatHoldStatus.CONFIRMED);
-			confirmedSeatKeys.add(seatEntity.getSeatKey());
+			confirmedSeatKeys.add(seatInventoryEntity.getSeatKey());
 		}
 
-		seatRepository.saveAll(activeHolds.stream().map(SeatHoldEntity::getSeatEntity).toList());
+		seatInventoryRepository.saveAll(activeHolds.stream().map(SeatHoldEntity::getSeatInventoryEntity).toList());
 		seatHoldRepository.saveAll(activeHolds);
 		return confirmedSeatKeys;
 	}
@@ -204,13 +197,13 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 
 		List<String> releasedSeatKeys = new ArrayList<>();
 		for(SeatHoldEntity seatHoldEntity : activeHolds) {
-			SeatEntity seatEntity = seatHoldEntity.getSeatEntity();
-			seatEntity.setStatus(SeatInventoryStatus.AVAILABLE);
+			SeatInventoryEntity seatInventoryEntity = seatHoldEntity.getSeatInventoryEntity();
+			seatInventoryEntity.setStatus(SeatInventoryStatus.AVAILABLE);
 			seatHoldEntity.setStatus(SeatHoldStatus.RELEASED);
-			releasedSeatKeys.add(seatEntity.getSeatKey());
+			releasedSeatKeys.add(seatInventoryEntity.getSeatKey());
 		}
 
-		seatRepository.saveAll(activeHolds.stream().map(SeatHoldEntity::getSeatEntity).toList());
+		seatInventoryRepository.saveAll(activeHolds.stream().map(SeatHoldEntity::getSeatInventoryEntity).toList());
 		seatHoldRepository.saveAll(activeHolds);
 		return releasedSeatKeys;
 	}
@@ -224,48 +217,39 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 			return;
 		}
 
-		List<SeatEntity> seatsToRelease = new ArrayList<>();
+		List<SeatInventoryEntity> seatsToRelease = new ArrayList<>();
 		for(SeatHoldEntity seatHoldEntity : expiredHolds) {
-			SeatEntity seatEntity = seatHoldEntity.getSeatEntity();
-			seatEntity.setStatus(SeatInventoryStatus.AVAILABLE);
+			SeatInventoryEntity seatInventoryEntity = seatHoldEntity.getSeatInventoryEntity();
+			seatInventoryEntity.setStatus(SeatInventoryStatus.AVAILABLE);
 			seatHoldEntity.setStatus(SeatHoldStatus.EXPIRED);
-			seatsToRelease.add(seatEntity);
+			seatsToRelease.add(seatInventoryEntity);
 		}
-		seatRepository.saveAll(seatsToRelease);
+		seatInventoryRepository.saveAll(seatsToRelease);
 		seatHoldRepository.saveAll(expiredHolds);
 	}
 
-	private void validateSeatSet(String eventId, List<String> seatKeys, List<SeatEntity> seats) {
+	private void validateSeatSet(String eventId, List<String> seatKeys, List<SeatInventoryEntity> seats) {
 		Set<String> requested = new LinkedHashSet<>(seatKeys);
-		Set<String> found = seats.stream().map(SeatEntity::getSeatKey).collect(Collectors.toSet());
+		Set<String> found = seats.stream().map(SeatInventoryEntity::getSeatKey).collect(Collectors.toSet());
 		if(found.size() != requested.size()) {
 			requested.removeAll(found);
 			throw new ResourceNotFoundException("Seat not found for event " + eventId + ": " + requested);
 		}
 	}
 
-	private SeatEntity buildSeat(String eventId, Section section, String containerId, String containerName, Seat seat) {
+	private SeatInventoryEntity buildSeat(String eventId, Section section, String containerId, String containerName,
+			Seat seat,
+			String ticketTypeId) {
 		String seatKey = buildSeatKey(section, containerId, seat.getId());
-		return SeatEntity.builder()
+		return SeatInventoryEntity.builder()
 				.eventId(eventId)
 				.seatKey(seatKey)
 				.seatLabel(buildSeatLabel(section, containerName, seat))
 				.sectionId(section.getId())
 				.rowId(containerId)
-				.ticketTypeId(seat.getTicketTypeId())
-				.status(toInventoryStatus(seat.getStatus()))
+				.ticketTypeId(ticketTypeId)
+				.status(SeatInventoryStatus.AVAILABLE)
 				.build();
-	}
-
-	private SeatInventoryStatus toInventoryStatus(SeatStatus seatStatus) {
-		if(seatStatus == null) {
-			return SeatInventoryStatus.AVAILABLE;
-		}
-		return switch(seatStatus) {
-			case AVAILABLE -> SeatInventoryStatus.AVAILABLE;
-			case RESERVED -> SeatInventoryStatus.RESERVED;
-			case SOLD -> SeatInventoryStatus.SOLD;
-		};
 	}
 
 	private String buildSeatKey(Section section, String containerId, String seatId) {
@@ -297,7 +281,8 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 		}
 	}
 
-	private SeatAvailability toAvailability(SeatEntity seat, SeatHoldEntity hold, Map<String, Double> priceByTicketTypeId) {
+	private SeatAvailability toAvailability(SeatInventoryEntity seat, SeatHoldEntity hold,
+			Map<String, Double> priceByTicketTypeId) {
 		boolean isAvailable = SeatInventoryStatus.AVAILABLE.equals(seat.getStatus());
 		return SeatAvailability.builder()
 				.seatId(seat.getId())
@@ -319,7 +304,7 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 		List<String> resolvedSeatIds = new ArrayList<>();
 		if(!holds.isEmpty()) {
 			resolvedSeatIds = holds.stream()
-					.map(hold -> hold.getSeatEntity().getSeatKey())
+					.map(hold -> hold.getSeatInventoryEntity().getSeatKey())
 					.toList();
 		} else if(seatKeys != null) {
 			resolvedSeatIds = new ArrayList<>(seatKeys);

@@ -20,8 +20,6 @@ import org.mapstruct.Named;
 		uses = { EventMapper.class })
 public interface TicketTypeMapper extends AbstractMapper {
 	// To response DTO
-	@Mapping(target = "eventId", source = "entity.eventEntity.id")
-	@Mapping(target = "soldTickets", expression = "java(calculateSoldTickets(entity))")
 	@Mapping(target = "isSaleActive", expression = "java(isSaleActive(entity))")
 	@Mapping(target = "isSoldOut", expression = "java(isSoldOut(entity))")
 	TicketTypeResponseDto toResponseDto(TicketTypeEntity entity);
@@ -30,25 +28,18 @@ public interface TicketTypeMapper extends AbstractMapper {
 	List<TicketTypeResponseDto> toResponseDtoList(List<TicketTypeEntity> entities);
 
 	// Create new entity from request
+	@Mapping(target = "eventEntityList", ignore = true)
 	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "eventEntity", source = "eventId", qualifiedByName = "eventIdToEntity")
 	@Named("toEntity")
 	TicketTypeEntity toEntity(TicketTypeRequestDto dto);
 
 	List<TicketTypeEventModel> toEventModelList(List<TicketTypeEntity> ticketTypeEntities);
 
 	// Update existing entity from request
+	@Mapping(target = "eventEntityList", ignore = true)
 	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "eventEntity", source = "eventId", qualifiedByName = "eventIdToEntity")
 	@Named("updateEntityFromDto")
 	void updateEntityFromDto(TicketTypeRequestDto dto, @MappingTarget TicketTypeEntity entity);
-
-	// Helper methods for calculated fields
-	default Integer calculateSoldTickets(TicketTypeEntity ticketType) {
-		// Logic for calculating sold tickets should be replaced with your actual implementation
-		// This is just a placeholder
-		return 0;
-	}
 
 	default boolean isSaleActive(TicketTypeEntity ticketType) {
 		if(ticketType.getSaleStartDate() == null || ticketType.getSaleEndDate() == null) {
@@ -61,7 +52,7 @@ public interface TicketTypeMapper extends AbstractMapper {
 	}
 
 	default boolean isSoldOut(TicketTypeEntity ticketType) {
-		return ticketType.getQuantityAvailable() != null && ticketType.getQuantityAvailable() <= 0;
+		return ticketType.getTotalCapacity() != null && ticketType.getTotalCapacity() <= 0;
 	}
 
 	@AfterMapping

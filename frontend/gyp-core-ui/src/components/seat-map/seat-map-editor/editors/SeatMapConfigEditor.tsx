@@ -8,7 +8,7 @@ interface SeatMapConfigEditorProps {
 }
 
 const SeatMapConfigEditor: React.FC<SeatMapConfigEditorProps> = ({title}) => {
-    const {seatTypes, selectedType} = useSeatMapEditorContext();
+    const {ticketTypes, selectedType} = useSeatMapEditorContext();
 
     const getEditor = () => {
         switch (selectedType?.type) {
@@ -31,7 +31,7 @@ const SeatMapConfigEditor: React.FC<SeatMapConfigEditorProps> = ({title}) => {
 
     return (
             <div className="flex-1 flex-col items-center justify-center bg-[#38383d] h-full">
-                <SectionPriceComponent title={title} seatTypes={seatTypes}/>
+                <SectionPriceComponent title={title} ticketTypes={ticketTypes}/>
                 <div>{getEditor()}</div>
             </div>
     );

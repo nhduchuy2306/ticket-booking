@@ -2,6 +2,7 @@ package com.gyp.eventservice.entities;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,10 +11,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gyp.common.enums.event.TicketStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,8 +50,11 @@ public class TicketTypeEntity extends AbstractEntity {
 	@Column(name = "price")
 	private Double price;
 
-	@Column(name = "quantity_available")
-	private Integer quantityAvailable;
+	@Column(name = "currency")
+	private String currency;
+
+	@Column(name = "total_capacity")
+	private Integer totalCapacity;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
@@ -65,7 +69,7 @@ public class TicketTypeEntity extends AbstractEntity {
 	@Column(name = "organization_id")
 	private String organizationId;
 
-	@ManyToOne
-	@JoinColumn(name = "event_id")
-	private EventEntity eventEntity;
+	@JsonIgnore
+	@ManyToMany(mappedBy = "ticketTypeEntityList")
+	private List<EventEntity> eventEntityList;
 }

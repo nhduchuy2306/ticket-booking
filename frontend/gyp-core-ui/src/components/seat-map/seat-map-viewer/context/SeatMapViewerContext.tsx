@@ -10,10 +10,10 @@ import { SelectedSeatModel } from "../../models/SeatMapModels.ts";
 interface SeatMapViewerContextProps {
     eventId?: string,
     seatMapId?: string,
-    venueData: VenueMap,
+    venueMapData: VenueMap,
     stageConfig: StageConfig,
     seatConfig: SeatConfig,
-    seatTypes?: TicketTypeResponseDto[],
+    ticketTypes?: TicketTypeResponseDto[],
     showSeatNumbers: boolean,
     selectedSeats: SelectedSeatModel[],
     setSelectedSeats: Dispatch<SetStateAction<SelectedSeatModel[]>>,

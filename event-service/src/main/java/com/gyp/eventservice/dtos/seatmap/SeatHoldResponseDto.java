@@ -19,7 +19,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SeatHoldResponseDto {
-
 	private String eventId;
 	private String holdToken;
 	private LocalDateTime holdExpiresAt;

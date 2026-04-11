@@ -2,7 +2,7 @@ package com.gyp.eventservice.dtos.seatmap;
 
 import java.time.LocalDateTime;
 
-import com.gyp.eventservice.entities.SeatInventoryStatus;
+import com.gyp.common.enums.event.SeatInventoryStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

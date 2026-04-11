@@ -1,16 +1,10 @@
 import { Button, ColorPicker, DatePicker, Form, Input, InputNumber, Select, Space, Switch } from "antd";
 import { AggregationColor } from "antd/es/color-picker/color";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import MetaData from "../../components/metadata/MetaData.tsx";
-import { createErrorNotification } from "../../components/notification/Notification.ts";
 import { FormState } from "../../models/enums/FormState.ts";
-import {
-    EventResponseDto,
-    TicketTypeRequestDto,
-    TicketTypeResponseDto
-} from "../../models/generated/event-service-models";
-import { EventService } from "../../services/Event/EventService.ts";
+import { TicketTypeRequestDto, TicketTypeResponseDto } from "../../models/generated/event-service-models";
 
 export interface TicketTypeFormProps {
     entity: TicketTypeResponseDto;
@@ -21,7 +15,6 @@ export interface TicketTypeFormProps {
 
 const TicketTypeForm: React.FC<TicketTypeFormProps> = ({entity, mode, onSave, onCancel}) => {
     const [form] = Form.useForm();
-    const [events, setEvents] = useState<EventResponseDto[]>([]);
 
     useEffect(() => {
         if (entity) {
@@ -33,21 +26,7 @@ const TicketTypeForm: React.FC<TicketTypeFormProps> = ({entity, mode, onSave, on
         } else {
             form.resetFields();
         }
-        void fetchEvents();
     }, [entity, form]);
-
-    const fetchEvents = async () => {
-        try {
-            const events = await EventService.getActiveEvents();
-            if (events) {
-                setEvents(events);
-            } else {
-                setEvents([]);
-            }
-        } catch (error) {
-            createErrorNotification("Error", "Failed to fetch events. Please try again later.");
-        }
-    }
 
     const isReadOnly = mode === FormState.READ_ONLY.key;
     const isCreateMode = mode === FormState.CREATE.key;
@@ -94,19 +73,6 @@ const TicketTypeForm: React.FC<TicketTypeFormProps> = ({entity, mode, onSave, on
                     </Form.Item>
 
                     <Form.Item
-                            name="eventId"
-                            label="Event"
-                            rules={[{required: true, message: 'Please choose an event'}]}
-                    >
-                        <Select
-                                options={events.map(event => ({
-                                    label: event.name,
-                                    value: event.id
-                                }))}
-                        />
-                    </Form.Item>
-
-                    <Form.Item
                             name="price"
                             label="Price"
                             rules={[{required: true, message: 'Please enter price'}]}
@@ -125,15 +91,15 @@ const TicketTypeForm: React.FC<TicketTypeFormProps> = ({entity, mode, onSave, on
                             rules={[{required: true, message: 'Please select a color'}]}
                             getValueFromEvent={(color: AggregationColor) => color.toHexString()}
                     >
-                        <ColorPicker defaultValue="#1677ff" showText />
+                        <ColorPicker defaultValue="#1677ff" showText/>
                     </Form.Item>
 
                     <Form.Item
-                            name="quantityAvailable"
-                            label="Quantity Available"
-                            rules={[{required: true, message: 'Please enter quantity available'}]}
+                            name="totalCapacity"
+                            label="Total Capacity"
+                            rules={[{required: true, message: 'Please enter total capacity'}]}
                     >
-                        <InputNumber min={0} placeholder="Enter quantity available" style={{width: '100%'}}/>
+                        <InputNumber min={0} placeholder="Enter total capacity" style={{width: '100%'}}/>
                     </Form.Item>
 
                     <Form.Item

@@ -5,7 +5,6 @@ import java.util.List;
 import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.models.TicketTypeEventModel;
 import com.gyp.common.utils.SecurityUtils;
-import com.gyp.eventservice.dtos.seatmap.Seat;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeRequestDto;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeResponseDto;
 import com.gyp.eventservice.entities.TicketTypeEntity;
@@ -26,8 +25,8 @@ public class TicketTypeServiceImpl implements TicketTypeService {
 	private final TicketTypeMapper ticketTypeMapper;
 
 	@Override
-	public double getEffectivePrice(Seat seat) {
-		TicketTypeEntity ticketType = ticketTypeRepository.findById(seat.getTicketTypeId())
+	public double getEffectivePrice(String ticketTypeId) {
+		TicketTypeEntity ticketType = ticketTypeRepository.findById(ticketTypeId)
 				.orElseThrow(() -> new RuntimeException("TicketType not found"));
 		return ticketType.getPrice();
 	}

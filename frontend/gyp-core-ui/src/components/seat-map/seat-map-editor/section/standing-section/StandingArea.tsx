@@ -1,9 +1,6 @@
-import Konva from "konva";
 import React, { useEffect, useState } from "react";
 import { Group, Rect, Text } from "react-konva";
 import { Section } from "../../../../../models/generated/event-service-models";
-import { SelectedType } from "../../../constants/SeatMapContants.ts";
-import { useSeatMapEditorContext } from "../../context/SeatMapEditorContext.tsx";
 
 interface StandingAreaProps {
     standingSection: Section
@@ -11,7 +8,6 @@ interface StandingAreaProps {
 
 const StandingArea: React.FC<StandingAreaProps> = (props) => {
     const [standingSection, setStandingSection] = useState<Section>(props.standingSection);
-    const {setSelectedType} = useSeatMapEditorContext();
 
     useEffect(() => {
         const data = props.standingSection;
@@ -22,7 +18,6 @@ const StandingArea: React.FC<StandingAreaProps> = (props) => {
 
     const positionX = standingSection?.position?.x || 0;
     const positionY = standingSection?.position?.y || 0;
-    const rotation = standingSection?.rotation || 0;
     const dimensionsWidth = standingSection?.dimensions?.width || 0;
     const dimensionsHeight = standingSection?.dimensions?.height || 0;
     const capacity = standingSection?.capacity || 0;
@@ -32,27 +27,14 @@ const StandingArea: React.FC<StandingAreaProps> = (props) => {
     const borderColor = "#2E7D32";
     const textColor = "#2C3E50";
 
-    const handleStandingAreaClick = (evt: Konva.KonvaEventObject<MouseEvent>) => {
-        evt.evt.preventDefault();
-        evt.evt.stopPropagation();
-
-        if (setSelectedType) {
-            setSelectedType({
-                type: SelectedType.SEATED_SEAT.key,
-                data: standingSection
-            });
-        }
-    }
-
     return (
-            <Group x={positionX} y={positionY} onClick={handleStandingAreaClick}>
+            <Group x={positionX} y={positionY}>
                 <Rect
                         width={dimensionsWidth}
                         height={dimensionsHeight}
                         fillLinearGradientStartPoint={{x: 0, y: 0}}
                         fillLinearGradientEndPoint={{x: dimensionsWidth, y: dimensionsHeight}}
                         fillLinearGradientColorStops={[0, fillColor, 1, "#66BB6A"]}
-                        rotation={rotation}
                         stroke={borderColor}
                         strokeWidth={1}
                         cornerRadius={3}
