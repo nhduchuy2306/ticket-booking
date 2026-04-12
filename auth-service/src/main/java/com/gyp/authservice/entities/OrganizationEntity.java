@@ -42,6 +42,9 @@ public class OrganizationEntity extends AbstractEntity {
 	@Column(name = "description")
 	private String description;
 
+	@Column(name = "code")
+	private String code;
+
 	@JsonIgnore
 	@OneToMany(mappedBy = "organizationEntity", fetch = FetchType.LAZY)
 	private List<UserAccountEntity> userAccountEntityList = new ArrayList<>();

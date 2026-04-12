@@ -10,8 +10,8 @@ export interface SeatMapSectionDraftFormProps {
     onCancelDraft: () => void;
 }
 
-const baseButton = "border border-slate-300 bg-white px-3! py-2! text-sm text-slate-900 transition hover:border-slate-400 rounded-xl";
-const activeButton = "border border-slate-900 bg-slate-900 px-3! py-2! text-sm text-white! transition rounded-xl";
+const baseButton = "border border-slate-300 bg-white px-3! py-2! text-sm text-slate-900 transition hover:border-slate-400 rounded-xl cursor-pointer";
+const activeButton = "border border-slate-900 bg-slate-900 px-3! py-2! text-sm text-white! transition rounded-xl cursor-pointer";
 
 const SeatMapSectionDraftForm: React.FC<SeatMapSectionDraftFormProps> = ({
                                                                              draftSection,
@@ -26,7 +26,7 @@ const SeatMapSectionDraftForm: React.FC<SeatMapSectionDraftFormProps> = ({
                 <div className="mb-5! flex items-center justify-between gap-3">
                     <strong className="text-sm text-slate-900">Section editor</strong>
                     <button type="button"
-                            className="border border-slate-300 bg-white px-3! py-2! text-sm text-slate-900 transition hover:border-slate-400 rounded-xl"
+                            className="border border-slate-300 bg-white px-3! py-2! text-sm text-slate-900 transition hover:border-slate-400 rounded-xl cursor-pointer"
                             onClick={onCancelDraft}>
                         Cancel
                     </button>

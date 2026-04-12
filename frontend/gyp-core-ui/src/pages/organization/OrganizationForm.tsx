@@ -50,13 +50,24 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({entity, mode, onSave
 
                     <Form.Item
                             name="name"
-                            label="Venue Name"
+                            label="Name"
                             rules={[
-                                {required: true, message: 'Please enter venue name'},
-                                {min: 2, message: 'Venue name must be at least 2 characters'}
+                                {required: true, message: 'Please enter name'},
+                                {min: 2, message: 'Name must be at least 2 characters'}
                             ]}
                     >
-                        <Input placeholder="Enter venue name"/>
+                        <Input placeholder="Enter name"/>
+                    </Form.Item>
+
+                    <Form.Item
+                            name="code"
+                            label="Code"
+                            rules={[
+                                {required: true, message: 'Please enter code'},
+                                {min: 2, message: 'Code must be at least 2 characters'}
+                            ]}
+                    >
+                        <Input placeholder="Enter code"/>
                     </Form.Item>
 
                     <Form.Item

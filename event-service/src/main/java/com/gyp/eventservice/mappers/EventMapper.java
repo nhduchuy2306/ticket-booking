@@ -74,7 +74,6 @@ public interface EventMapper extends AbstractMapper {
 	@Mapping(target = "venueMapEntity", source = "venueMapId", qualifiedByName = "venueMapIdToEntity")
 	@Mapping(target = "categoryEntityList", source = "categoryIds", qualifiedByName = "categoryIdsToEntities")
 	@Mapping(target = "ticketTypeEntityList", source = "ticketTypeIds", qualifiedByName = "ticketTypeIdsToEntities")
-	@Mapping(target = "")
 	@Mapping(target = "eventPromotionEntityList", ignore = true)
 	@Mapping(target = "eventApprovalEntityList", ignore = true)
 	void updateEntityFromDto(EventRequestDto dto, @MappingTarget EventEntity entity);

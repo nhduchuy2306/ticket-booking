@@ -19,4 +19,5 @@ public class OrganizationResponseDto extends AbstractDto {
 	private String id;
 	private String name;
 	private String description;
+	private String code;
 }
