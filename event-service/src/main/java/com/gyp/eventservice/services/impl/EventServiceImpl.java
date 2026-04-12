@@ -1,7 +1,8 @@
 package com.gyp.eventservice.services.impl;
 
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,23 +17,25 @@ import com.gyp.common.utils.SecurityUtils;
 import com.gyp.common.validators.criteria.ValidationInfo;
 import com.gyp.eventservice.dtos.event.EventRequestDto;
 import com.gyp.eventservice.dtos.event.EventResponseDto;
+import com.gyp.eventservice.dtos.seatmap.SeatConfig;
+import com.gyp.eventservice.dtos.seatmap.Section;
 import com.gyp.eventservice.entities.EventEntity;
-import com.gyp.eventservice.mappers.EventMapper;
 import com.gyp.eventservice.entities.EventSectionMappingEntity;
 import com.gyp.eventservice.entities.SeatMapEntity;
+import com.gyp.eventservice.entities.TicketTypeEntity;
 import com.gyp.eventservice.entities.VenueMapEntity;
+import com.gyp.eventservice.mappers.EventMapper;
 import com.gyp.eventservice.messages.producers.AssignSaleChannelToEventProducer;
 import com.gyp.eventservice.repositories.EventRepository;
+import com.gyp.eventservice.repositories.EventSectionMappingRepository;
+import com.gyp.eventservice.repositories.VenueMapRepository;
 import com.gyp.eventservice.services.EventService;
 import com.gyp.eventservice.services.criteria.EventSearchCriteria;
 import com.gyp.eventservice.services.specifications.EventSpecification;
-import com.gyp.eventservice.repositories.VenueMapRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import com.gyp.eventservice.dtos.seatmap.SeatConfig;
-import com.gyp.eventservice.dtos.seatmap.Section;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -49,6 +52,7 @@ public class EventServiceImpl implements EventService {
 	private final UploadService uploadService;
 	private final AssignSaleChannelToEventProducer assignSaleChannelToEventProducer;
 	private final VenueMapRepository venueMapRepository;
+	private final EventSectionMappingRepository eventSectionMappingRepository;
 
 	@Override
 	public List<EventResponseDto> getAllEvents(EventSearchCriteria criteria, PaginatedDto pagination) {
@@ -88,6 +92,7 @@ public class EventServiceImpl implements EventService {
 	public EventResponseDto createEvent(EventRequestDto request, MultipartFile file) {
 		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		EventEntity eventEntity = eventMapper.toEntity(request);
+		eventEntity.setIsGenerated(false);
 		enrichEventMappings(eventEntity);
 		if(file != null) {
 			String fileName = uploadService.upload(file).getLeft();
@@ -239,14 +244,60 @@ public class EventServiceImpl implements EventService {
 		eventEntity.setVenueMapEntity(venueMapEntity);
 		SeatMapEntity seatMapEntity = venueMapEntity.getSeatMapEntity();
 		Map<String, String> sectionIdByTicketTypeId = resolveSectionIds(seatMapEntity);
+		Map<String, EventSectionMappingEntity> existingMappingByKey = loadExistingMappingsByKey(eventEntity.getId());
+		Map<String, EventSectionMappingEntity> reconciledMappings = new LinkedHashMap<>();
 
 		for(EventSectionMappingEntity mapping : eventEntity.getEventSectionMappingEntityList()) {
-			mapping.setEventEntity(eventEntity);
-			mapping.setSeatMapEntity(seatMapEntity);
-			if(mapping.getTicketTypeEntity() != null) {
-				mapping.setSectionId(sectionIdByTicketTypeId.get(mapping.getTicketTypeEntity().getId()));
+			String ticketTypeId = mapping.getTicketTypeEntity() != null ? mapping.getTicketTypeEntity().getId() : null;
+			String sectionId = ticketTypeId != null ? sectionIdByTicketTypeId.get(ticketTypeId) : null;
+			String key = buildMappingKey(eventEntity.getId(), ticketTypeId,
+					seatMapEntity != null ? seatMapEntity.getId() : null,
+					sectionId);
+			if(StringUtils.isBlank(ticketTypeId) || StringUtils.isBlank(sectionId) || StringUtils.isBlank(key)) {
+				continue;
+			}
+
+			EventSectionMappingEntity target = existingMappingByKey.getOrDefault(key, mapping);
+			target.setEventEntity(eventEntity);
+			target.setSeatMapEntity(seatMapEntity);
+			target.setSectionId(sectionId);
+			if(target.getTicketTypeEntity() == null || !ticketTypeId.equals(target.getTicketTypeEntity().getId())) {
+				target.setTicketTypeEntity(TicketTypeEntity.builder().id(ticketTypeId).build());
+			}
+			reconciledMappings.put(key, target);
+		}
+
+		eventEntity.setEventSectionMappingEntityList(new ArrayList<>(reconciledMappings.values()));
+	}
+
+	private Map<String, EventSectionMappingEntity> loadExistingMappingsByKey(String eventId) {
+		if(StringUtils.isBlank(eventId)) {
+			return new HashMap<>();
+		}
+
+		List<EventSectionMappingEntity> existingMappings = eventSectionMappingRepository.findAllByEventEntityId(
+				eventId);
+		if(CollectionUtils.isEmpty(existingMappings)) {
+			return new HashMap<>();
+		}
+
+		Map<String, EventSectionMappingEntity> mappingsByKey = new HashMap<>();
+		for(EventSectionMappingEntity mapping : existingMappings) {
+			String ticketTypeId = mapping.getTicketTypeEntity() != null ? mapping.getTicketTypeEntity().getId() : null;
+			String seatMapId = mapping.getSeatMapEntity() != null ? mapping.getSeatMapEntity().getId() : null;
+			String key = buildMappingKey(eventId, ticketTypeId, seatMapId, mapping.getSectionId());
+			if(StringUtils.isNotBlank(key)) {
+				mappingsByKey.put(key, mapping);
 			}
 		}
+		return mappingsByKey;
+	}
+
+	private String buildMappingKey(String eventId, String ticketTypeId, String seatMapId, String sectionId) {
+		if(StringUtils.isAnyBlank(eventId, ticketTypeId, seatMapId, sectionId)) {
+			return null;
+		}
+		return eventId + "|" + ticketTypeId + "|" + seatMapId + "|" + sectionId;
 	}
 
 	private Map<String, String> resolveSectionIds(SeatMapEntity seatMapEntity) {
@@ -255,14 +306,17 @@ public class EventServiceImpl implements EventService {
 		}
 
 		try {
-			SeatConfig seatConfig = Serialization.deserializeFromString(seatMapEntity.getSeatConfigRaw(), SeatConfig.class);
+			SeatConfig seatConfig = Serialization.deserializeFromString(seatMapEntity.getSeatConfigRaw(),
+					SeatConfig.class);
 			if(seatConfig == null || CollectionUtils.isEmpty(seatConfig.getSections())) {
 				return new HashMap<>();
 			}
 
 			return seatConfig.getSections().stream()
-					.filter(section -> StringUtils.isNotBlank(section.getTicketTypeId()) && StringUtils.isNotBlank(section.getId()))
-					.collect(Collectors.toMap(Section::getTicketTypeId, Section::getId, (left, right) -> left, HashMap::new));
+					.filter(section -> StringUtils.isNotBlank(section.getTicketTypeId())
+							&& StringUtils.isNotBlank(section.getId()))
+					.collect(Collectors.toMap(Section::getTicketTypeId, Section::getId, (left, right) -> left,
+							HashMap::new));
 		} catch(Exception ex) {
 			log.warn("Failed to resolve section ids from seat map {}", seatMapEntity.getId(), ex);
 			return new HashMap<>();

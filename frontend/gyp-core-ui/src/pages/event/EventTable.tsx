@@ -2,6 +2,7 @@ import { Button, Tag, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
 import React from "react";
 import { RiLoopLeftFill } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
 import SinglePageTable from "../../components/layout/singlepage/SinglePageTable.tsx";
 import { EventResponseDto } from "../../models/generated/event-service-models";
 import { EventService, EventServiceAdapter } from "../../services/Event/EventService.ts";
@@ -11,6 +12,7 @@ export interface EventTableProps {
 }
 
 const EventTable: React.FC<EventTableProps> = () => {
+    const navigate = useNavigate();
     const columns: ColumnsType<EventResponseDto> = [
         {
             title: 'Name',
@@ -86,12 +88,25 @@ const EventTable: React.FC<EventTableProps> = () => {
         );
     };
 
+    const handleAssignTicketType = (entity: EventResponseDto) => {
+        EventService.navigate(navigate, '/assign', entity);
+    }
+
+    const additionalActions = (entity: EventResponseDto): React.ReactNode => {
+        return (
+                <Tooltip title="Assign Ticket Types">
+                    <Button type="default" onClick={() => handleAssignTicketType(entity)}>Assign</Button>
+                </Tooltip>
+        );
+    }
+
     return (
             <SinglePageTable
                     columns={columns}
                     createButtonTooltip="Create New Event"
                     service={EventServiceAdapter}
                     customActions={customActions}
+                    additionalActions={additionalActions}
             />
     );
 };

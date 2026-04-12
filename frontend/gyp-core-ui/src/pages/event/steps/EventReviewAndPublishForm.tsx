@@ -2,13 +2,13 @@ import { Card, Descriptions, List } from "antd";
 import React, { useMemo } from "react";
 import SeatMapViewer from "../../../components/seat-map/seat-map-viewer/SeatMapViewer";
 import {
-    EventRequestDto,
+    EventResponseDto,
     SeatMapResponseDto,
     TicketTypeResponseDto,
 } from "../../../models/generated/event-service-models";
 
 interface EventReviewAndPublishFormProps {
-    eventDraft?: EventRequestDto | null;
+    eventDraft?: EventResponseDto | null;
     seatMap?: SeatMapResponseDto | null;
     ticketTypes: TicketTypeResponseDto[];
     assignments: Record<string, string>;
@@ -50,7 +50,7 @@ const EventReviewAndPublishForm: React.FC<EventReviewAndPublishFormProps> = ({
     return (
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
                 <div className="space-y-4!">
-                    <Card className="!border-[#3a3a3a] !bg-[#252525] text-white p-5!">
+                    <Card className="!border-[#3a3a3a] !bg-[#252525] text-white p-5!" styles={{body: {padding: 20}}}>
                         <h2 className="text-[18px] font-semibold text-white">Event Information</h2>
                         <Descriptions column={1} size="small" className="mt-4!"
                                       contentStyle={{color: "#d4d4d4"}}
@@ -59,16 +59,20 @@ const EventReviewAndPublishForm: React.FC<EventReviewAndPublishFormProps> = ({
                                           {key: "name", label: "Name of event", children: eventDraft?.name || "-"},
                                           {key: "status", label: "Status", children: eventDraft?.status || "-"},
                                           {
-                                              key: "venueMapName",
-                                              label: "Venue map",
-                                              children: eventDraft?.venueMapId,
+                                              key: "venueName",
+                                              label: "Venue name",
+                                              children: eventDraft?.venueMap?.name || "-",
                                           },
-                                          {key: "seasonId", label: "Season", children: eventDraft?.seasonId || "-"},
+                                          {
+                                              key: "seasonName",
+                                              label: "Season name",
+                                              children: eventDraft?.season?.name || "-"
+                                          },
                                       ]}
                         />
                     </Card>
 
-                    <Card className="!border-[#3a3a3a] !bg-[#252525] !text-white !p-5">
+                    <Card className="!border-[#3a3a3a] !bg-[#252525] !text-white !p-5" styles={{body: {padding: 20}}}>
                         <h2 className="text-[18px] font-semibold text-white">Assign ticket type</h2>
                         <List
                                 className="mt-4!"
@@ -90,20 +94,21 @@ const EventReviewAndPublishForm: React.FC<EventReviewAndPublishFormProps> = ({
                     </Card>
                 </div>
 
-                <Card className="!border-[#3a3a3a] !bg-[#252525] text-white" bodyStyle={{padding: 20}}>
-                    <h2 className="text-[18px] font-semibold text-white">SeatMapViewer</h2>
+                <Card className="!border-[#3a3a3a] !bg-[#252525] text-white" styles={{body: {padding: 20}}}>
+                    <h2 className="text-[18px] font-semibold text-white">Seat Map Viewer</h2>
                     <div className="mt-4 h-[760px] overflow-hidden rounded-2xl bg-[#1f1f1f]">
                         {previewVenueMap ? (
                                 <SeatMapViewer
                                         venueMap={previewVenueMap}
                                         title={eventDraft?.name}
                                         onBack={onBack}
-                                        eventId={eventDraft?.venueMapId}
+                                        eventId={eventDraft?.id}
                                         showUiFunctionality={false}
                                 />
                         ) : (
                                 <div className="flex h-full items-center justify-center text-sm text-slate-400">
-                                    Chưa có dữ liệu để preview.
+                                    Not able to load seat map preview. Please go back and make sure you have selected a
+                                    seat map.
                                 </div>
                         )}
                     </div>

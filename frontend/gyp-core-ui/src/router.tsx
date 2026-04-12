@@ -7,6 +7,7 @@ import RegisterPage from "./pages/auth/RegisterPage.tsx";
 import CategoryPage from "./pages/category/CategoryPage.tsx";
 import ConfigurationPage from "./pages/configuration/ConfigurationPage.tsx";
 import ErrorPage from "./pages/error/ErrorPage.tsx";
+import EventAssignForm from "./pages/event/EventAssignForm.tsx";
 import EventForm from "./pages/event/EventForm.tsx";
 import EventPage from "./pages/event/EventPage.tsx";
 import EventImagePage from "./pages/eventimage/EventImagePage.tsx";
@@ -93,6 +94,10 @@ const EventServiceRouter = [
             {
                 path: 'edit/:id',
                 element: <EventForm mode={Mode.EDIT.key}/>
+            },
+            {
+                path: 'assign/:id',
+                element: <EventAssignForm/>
             }
         ],
     },

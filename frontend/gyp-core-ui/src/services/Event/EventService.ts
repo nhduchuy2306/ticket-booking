@@ -73,6 +73,8 @@ export class EventService {
             navigator(`/event/edit/${entity?.id}`);
         } else if (path === '/view') {
             navigator(`/event/view/${entity?.id}`);
+        } else if (path === '/assign') {
+            navigator(`/event/assign/${entity?.id}`);
         } else {
             navigator('/event');
         }

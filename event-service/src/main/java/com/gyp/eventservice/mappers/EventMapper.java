@@ -157,6 +157,8 @@ public interface EventMapper extends AbstractMapper {
 			return new ArrayList<>();
 		}
 		return ticketTypeIds.stream()
+				.filter(StringUtils::isNotBlank)
+				.distinct()
 				.map(id -> EventSectionMappingEntity.builder()
 						.ticketTypeEntity(TicketTypeEntity.builder().id(id).build())
 						.build())

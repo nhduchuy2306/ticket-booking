@@ -7,6 +7,7 @@ interface EventTicketTypeFormProps {
     seatMap?: SeatMapResponseDto | null;
     ticketTypes: TicketTypeResponseDto[];
     assignments: Record<string, string>;
+    eventSectionMappings: Record<string, string>;
     onAssignmentsChange: (assignments: Record<string, string>) => void;
 }
 
@@ -14,6 +15,7 @@ const EventTicketTypeForm: React.FC<EventTicketTypeFormProps> = ({
                                                                      seatMap,
                                                                      ticketTypes,
                                                                      assignments,
+                                                                     eventSectionMappings,
                                                                      onAssignmentsChange,
                                                                  }) => {
     const [ticketTypeColors, setTicketTypeColors] = useState<Record<string, string>>({});
@@ -44,19 +46,17 @@ const EventTicketTypeForm: React.FC<EventTicketTypeFormProps> = ({
     const totalCapacity = totalSeated + totalStanding;
 
     useEffect(() => {
-        const sections = seatMap?.seatConfig?.sections || [];
-        const nextColors = sections.reduce((acc, section) => {
-            const ticketTypeId = section?.ticketTypeId;
-            const sectionId = section?.id;
-
-            if (!sectionId) return acc;
-
-            const ticketType = ticketTypesMap[ticketTypeId || ""];
-            acc[sectionId] = ticketType?.color || "";
-            return acc;
-        }, {} as Record<string, string>);
-        setTicketTypeColors(nextColors);
-    }, [seatMap, ticketTypesMap]);
+        Object.keys(eventSectionMappings).forEach((sectionId) => {
+            const ticketTypeId = eventSectionMappings[sectionId];
+            const ticketType = ticketTypesMap[ticketTypeId];
+            if (ticketType) {
+                setTicketTypeColors((prevColors) => ({
+                    ...prevColors,
+                    [sectionId]: ticketType.color,
+                }));
+            }
+        });
+    }, [ticketTypesMap]);
 
     const updateSectionTicketType = (sectionId: string, ticketTypeId?: string) => {
         onAssignmentsChange({
@@ -84,7 +84,7 @@ const EventTicketTypeForm: React.FC<EventTicketTypeFormProps> = ({
 
                     <div className="space-y-3!">
                         {sections.map((section) => {
-                            const currentTicketTypeId = assignments[section.id] || section.ticketTypeId || "";
+                            const currentTicketTypeId = eventSectionMappings[section.id] || "";
                             return (
                                     <div key={section.id}
                                          className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-3! md:flex-row md:items-center md:justify-between">
