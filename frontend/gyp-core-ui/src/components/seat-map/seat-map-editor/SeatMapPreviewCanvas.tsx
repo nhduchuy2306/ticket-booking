@@ -29,6 +29,7 @@ const SeatMapPreviewCanvas: React.FC<SeatMapPreviewCanvasProps> = ({
     const [pan, setPan] = useState({x: 0, y: 0});
     const [isPanning, setIsPanning] = useState(false);
     const [panOrigin, setPanOrigin] = useState<{ x: number; y: number } | null>(null);
+    const isViewportReady = viewportSize.width > 0 && viewportSize.height > 0;
 
     useEffect(() => {
         const element = containerRef.current;
@@ -139,6 +140,17 @@ const SeatMapPreviewCanvas: React.FC<SeatMapPreviewCanvasProps> = ({
 
     const sectionElements = useMemo(() => seatConfig.sections || [], [seatConfig.sections]);
 
+    if (!isViewportReady) {
+        return (
+                <div ref={containerRef}
+                     className="relative h-full w-full min-w-0 overflow-hidden border border-slate-200 bg-gradient-to-b from-slate-50 to-indigo-50 min-h-0 flex-1">
+                    <div className="flex h-full w-full items-center justify-center text-sm text-slate-500">
+                        Seat map is loading...
+                    </div>
+                </div>
+        );
+    }
+
     return (
             <div ref={containerRef}
                  className="relative h-full w-full min-w-0 overflow-hidden border border-slate-200 bg-gradient-to-b from-slate-50 to-indigo-50 min-h-0 flex-1">
@@ -147,8 +159,8 @@ const SeatMapPreviewCanvas: React.FC<SeatMapPreviewCanvasProps> = ({
                 </div>
                 <Stage
                         ref={stageRef}
-                        width={Math.max(viewportSize.width, 1)}
-                        height={Math.max(viewportSize.height, 1)}
+                        width={viewportSize.width}
+                        height={viewportSize.height}
                         onWheel={handleWheel}
                         onMouseDown={handleMouseDown}
                         onMouseMove={handleMouseMove}

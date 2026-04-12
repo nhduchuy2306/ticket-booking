@@ -16,9 +16,9 @@ public interface TicketTypeRepository
 	Optional<TicketTypeEntity> findByName(String ticketTypeName);
 
 	@Query("""
-			SELECT t FROM TicketTypeEntity t
-			JOIN t.eventEntityList e
-			WHERE e.id = :eventId
+			SELECT DISTINCT t FROM TicketTypeEntity t
+			JOIN t.eventSectionMappingEntityList esm
+			WHERE esm.eventEntity.id = :eventId
 			""")
 	List<TicketTypeEntity> findAllByEventEntityId(@Param("eventId") String eventId);
 

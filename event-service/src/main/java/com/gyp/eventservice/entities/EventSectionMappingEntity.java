@@ -19,27 +19,33 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Table(name = "EVENTIMAGE")
+@Table(name = "EVENTSECTIONMAPPING")
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventImageEntity extends AbstractEntity {
+public class EventSectionMappingEntity extends AbstractEntity {
 	@Serial
-	private static final long serialVersionUID = 862554781830627178L;
+	private static final long serialVersionUID = -7061751047213833585L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "id", length = 36)
 	private String id;
 
-	@Column(name = "name")
-	private String name;
-
-	@Column(name = "image_url")
-	private String imageUrl;
+	@ManyToOne
+	@JoinColumn(name = "event_id", nullable = false)
+	private EventEntity eventEntity;
 
 	@ManyToOne
-	@JoinColumn(name = "event_id")
-	private EventEntity eventEntity;
+	@JoinColumn(name = "ticket_type_id", nullable = false)
+	private TicketTypeEntity ticketTypeEntity;
+
+	@ManyToOne
+	@JoinColumn(name = "seat_map_id")
+	private SeatMapEntity seatMapEntity;
+
+	@Column(name = "section_id")
+	private String sectionId;
 }
+

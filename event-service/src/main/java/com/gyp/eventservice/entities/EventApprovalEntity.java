@@ -34,7 +34,7 @@ public class EventApprovalEntity extends AbstractEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	@Column(name = "id")
+	@Column(name = "id", length = 36)
 	private String id;
 
 	@Enumerated(EnumType.STRING)

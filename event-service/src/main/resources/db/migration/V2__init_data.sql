@@ -100,12 +100,16 @@ VALUES ('fb81dfc2-1fda-481a-968c-88c589e4c380', 'VIP', '#FFD700', 'Premium seati
         NOW(6))
 ON DUPLICATE KEY UPDATE id = id;
 
-INSERT INTO eventtickettypes (event_id, ticket_type_id)
-VALUES ('33fe6f8c-7c73-4248-99b6-5a7934af2905', 'fb81dfc2-1fda-481a-968c-88c589e4c380'),
-       ('33fe6f8c-7c73-4248-99b6-5a7934af2905', '8f58d410-c3a3-49d9-9b4d-2620b593e1e2'),
-       ('63fcf9a1-3b6a-40be-a277-f7c91092ee52', 'f4ae1ab5-90ad-4505-858c-cc0502a8b819'),
-       ('98ff9939-f15f-490a-89cb-a276c7537b91', 'e6fff39d-d99d-43b0-8faf-f568078d4120')
-ON DUPLICATE KEY UPDATE event_id = event_id;
+INSERT INTO eventsectionmapping (id, event_id, ticket_type_id, seat_map_id, section_id, create_user, create_timestamp)
+VALUES ('a9c5b9f0-1f8a-4f3d-9cc0-5d8f2b3f0e11', '33fe6f8c-7c73-4248-99b6-5a7934af2905',
+        'fb81dfc2-1fda-481a-968c-88c589e4c380', 'c143797f-4b03-4d21-aa4a-02a21f195b55', 'section-a', 'admin', NOW(6)),
+       ('6c3b2b0f-2e91-44a4-9e6e-9d4d37d2f5b2', '33fe6f8c-7c73-4248-99b6-5a7934af2905',
+        '8f58d410-c3a3-49d9-9b4d-2620b593e1e2', 'c143797f-4b03-4d21-aa4a-02a21f195b55', 'section-b', 'admin', NOW(6)),
+       ('f6d4c7a2-9b59-4a6d-8d54-1f72d4ef6f01', '63fcf9a1-3b6a-40be-a277-f7c91092ee52',
+        'f4ae1ab5-90ad-4505-858c-cc0502a8b819', 'c143797f-4b03-4d21-aa4a-02a21f195b55', 'section-c', 'admin', NOW(6)),
+       ('d7e6a3c4-2a1b-4ef8-8f6b-0d8ce3d8a902', '98ff9939-f15f-490a-89cb-a276c7537b91',
+        'e6fff39d-d99d-43b0-8faf-f568078d4120', 'c143797f-4b03-4d21-aa4a-02a21f195b55', 'section-c', 'admin', NOW(6))
+ON DUPLICATE KEY UPDATE id = id;
 
 INSERT INTO eventpromotion (id, code, discount_amount, valid_from, valid_to, organization_id, event_id, create_user,
                             create_timestamp)

@@ -11,7 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -35,7 +35,7 @@ public class TicketTypeEntity extends AbstractEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	@Column(name = "id")
+	@Column(name = "id", length = 36)
 	private String id;
 
 	@Column(name = "name")
@@ -66,10 +66,10 @@ public class TicketTypeEntity extends AbstractEntity {
 	@Column(name = "sale_end_date")
 	private LocalDateTime saleEndDate;
 
-	@Column(name = "organization_id")
+	@Column(name = "organization_id", length = 36)
 	private String organizationId;
 
 	@JsonIgnore
-	@ManyToMany(mappedBy = "ticketTypeEntityList")
-	private List<EventEntity> eventEntityList;
+	@OneToMany(mappedBy = "ticketTypeEntity")
+	private List<EventSectionMappingEntity> eventSectionMappingEntityList;
 }

@@ -35,7 +35,7 @@ public class VenueMapEntity extends AbstractEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	@Column(name = "id")
+	@Column(name = "id", length = 36)
 	private String id;
 
 	@Column(name = "name")
@@ -47,7 +47,7 @@ public class VenueMapEntity extends AbstractEntity {
 	@Column(name = "height")
 	private Double height;
 
-	@Column(name = "organization_id")
+	@Column(name = "organization_id", length = 36)
 	private String organizationId;
 
 	@ManyToOne

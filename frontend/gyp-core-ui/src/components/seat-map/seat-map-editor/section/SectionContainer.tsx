@@ -1,8 +1,6 @@
 import React from "react";
 import { Group, Rect, Text } from "react-konva";
-import {
-    Section,
-} from "../../../../models/generated/event-service-models";
+import { Section, } from "../../../../models/generated/event-service-models";
 import SeatedRowWrapper from "./seated-section/SeatedRowWrapper.tsx";
 import StandingArea from "./standing-section/StandingArea.tsx";
 
@@ -17,11 +15,12 @@ const SectionContainer: React.FC<SectionContainerProps> = ({section, isSelected,
     const positionY = section?.position?.y || 0;
     const width = section?.dimensions?.width || 0;
     const height = section?.dimensions?.height || 0;
-        const fillColor = section.type === "SEATED" ? "rgba(37, 99, 235, 0.18)" : "rgba(16, 185, 129, 0.18)";
+    const fillColor = section.type === "SEATED" ? "rgba(37, 99, 235, 0.18)" : "rgba(16, 185, 129, 0.18)";
 
     if (section.type === "SEATED") {
         return (
-                <Group x={positionX} y={positionY} onClick={() => onSelect?.(section)} onTap={() => onSelect?.(section)}>
+                <Group x={positionX} y={positionY} onClick={() => onSelect?.(section)}
+                       onTap={() => onSelect?.(section)}>
                     <Rect
                             x={0}
                             y={0}

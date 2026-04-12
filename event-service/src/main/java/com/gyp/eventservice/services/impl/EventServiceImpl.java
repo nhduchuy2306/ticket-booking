@@ -1,8 +1,12 @@
 package com.gyp.eventservice.services.impl;
 
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.gyp.common.converters.Serialization;
 import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.enums.event.EventStatus;
 import com.gyp.common.exceptions.ResourceNotFoundException;
@@ -14,15 +18,21 @@ import com.gyp.eventservice.dtos.event.EventRequestDto;
 import com.gyp.eventservice.dtos.event.EventResponseDto;
 import com.gyp.eventservice.entities.EventEntity;
 import com.gyp.eventservice.mappers.EventMapper;
+import com.gyp.eventservice.entities.EventSectionMappingEntity;
+import com.gyp.eventservice.entities.SeatMapEntity;
+import com.gyp.eventservice.entities.VenueMapEntity;
 import com.gyp.eventservice.messages.producers.AssignSaleChannelToEventProducer;
 import com.gyp.eventservice.repositories.EventRepository;
 import com.gyp.eventservice.services.EventService;
 import com.gyp.eventservice.services.criteria.EventSearchCriteria;
 import com.gyp.eventservice.services.specifications.EventSpecification;
+import com.gyp.eventservice.repositories.VenueMapRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import com.gyp.eventservice.dtos.seatmap.SeatConfig;
+import com.gyp.eventservice.dtos.seatmap.Section;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -38,6 +48,7 @@ public class EventServiceImpl implements EventService {
 	private final EventMapper eventMapper;
 	private final UploadService uploadService;
 	private final AssignSaleChannelToEventProducer assignSaleChannelToEventProducer;
+	private final VenueMapRepository venueMapRepository;
 
 	@Override
 	public List<EventResponseDto> getAllEvents(EventSearchCriteria criteria, PaginatedDto pagination) {
@@ -65,6 +76,7 @@ public class EventServiceImpl implements EventService {
 	public EventResponseDto createEvent(EventRequestDto request) {
 		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		EventEntity eventEntity = eventMapper.toEntity(request);
+		enrichEventMappings(eventEntity);
 		eventEntity.setOrganizationId(organizationId);
 		var savedEvent = eventRepository.save(eventEntity);
 		updateSaleChannels(savedEvent.getId(), request.getSaleChannelIds());
@@ -76,6 +88,7 @@ public class EventServiceImpl implements EventService {
 	public EventResponseDto createEvent(EventRequestDto request, MultipartFile file) {
 		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		EventEntity eventEntity = eventMapper.toEntity(request);
+		enrichEventMappings(eventEntity);
 		if(file != null) {
 			String fileName = uploadService.upload(file).getLeft();
 			eventEntity.setLogoUrl(fileName);
@@ -92,6 +105,7 @@ public class EventServiceImpl implements EventService {
 		EventEntity existingEvent = eventRepository.findById(eventId)
 				.orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + eventId));
 		eventMapper.updateEntityFromDto(request, existingEvent);
+		enrichEventMappings(existingEvent);
 		existingEvent.setOrganizationId(organizationId);
 		EventEntity updatedEvent = eventRepository.save(existingEvent);
 		updateSaleChannels(eventId, request.getSaleChannelIds());
@@ -107,6 +121,7 @@ public class EventServiceImpl implements EventService {
 			EventEntity existingEvent = eventRepository.findById(eventId)
 					.orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + eventId));
 			eventMapper.updateEntityFromDto(request, existingEvent);
+			enrichEventMappings(existingEvent);
 			if(file != null) {
 				// Delete old logo if it exists
 				if(existingEvent.getLogoUrl() != null) {
@@ -207,5 +222,50 @@ public class EventServiceImpl implements EventService {
 				? uploadService.getFileData(entity.getLogoUrl())
 				: null;
 		event.setLogoBufferArray(logoBufferArray);
+	}
+
+	private void enrichEventMappings(EventEntity eventEntity) {
+		if(eventEntity == null || eventEntity.getVenueMapEntity() == null ||
+				CollectionUtils.isEmpty(eventEntity.getEventSectionMappingEntityList())) {
+			return;
+		}
+
+		VenueMapEntity venueMapEntity = venueMapRepository.findById(eventEntity.getVenueMapEntity().getId())
+				.orElse(null);
+		if(venueMapEntity == null) {
+			return;
+		}
+
+		eventEntity.setVenueMapEntity(venueMapEntity);
+		SeatMapEntity seatMapEntity = venueMapEntity.getSeatMapEntity();
+		Map<String, String> sectionIdByTicketTypeId = resolveSectionIds(seatMapEntity);
+
+		for(EventSectionMappingEntity mapping : eventEntity.getEventSectionMappingEntityList()) {
+			mapping.setEventEntity(eventEntity);
+			mapping.setSeatMapEntity(seatMapEntity);
+			if(mapping.getTicketTypeEntity() != null) {
+				mapping.setSectionId(sectionIdByTicketTypeId.get(mapping.getTicketTypeEntity().getId()));
+			}
+		}
+	}
+
+	private Map<String, String> resolveSectionIds(SeatMapEntity seatMapEntity) {
+		if(seatMapEntity == null || StringUtils.isBlank(seatMapEntity.getSeatConfigRaw())) {
+			return new HashMap<>();
+		}
+
+		try {
+			SeatConfig seatConfig = Serialization.deserializeFromString(seatMapEntity.getSeatConfigRaw(), SeatConfig.class);
+			if(seatConfig == null || CollectionUtils.isEmpty(seatConfig.getSections())) {
+				return new HashMap<>();
+			}
+
+			return seatConfig.getSections().stream()
+					.filter(section -> StringUtils.isNotBlank(section.getTicketTypeId()) && StringUtils.isNotBlank(section.getId()))
+					.collect(Collectors.toMap(Section::getTicketTypeId, Section::getId, (left, right) -> left, HashMap::new));
+		} catch(Exception ex) {
+			log.warn("Failed to resolve section ids from seat map {}", seatMapEntity.getId(), ex);
+			return new HashMap<>();
+		}
 	}
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Group, Path, Rect, Text } from "react-konva";
 import { StageConfig } from "../../../models/generated/event-service-models";
 
@@ -7,45 +7,36 @@ interface VenueStageContainerProps {
 }
 
 const VenueStageContainer: React.FC<VenueStageContainerProps> = ({stageConfig}) => {
-    const [stage, setStage] = useState<StageConfig>({});
-
-    useEffect(() => {
-        if (stageConfig) {
-            setStage(stageConfig);
-            console.log("Stage config updated:", stageConfig);
-        }
-    }, [stageConfig]);
-
     const shapeProps = {
         fill: "#2C3E50",
         stroke: "#34495E",
         strokeWidth: 2,
     };
 
-    let positionX = stage.position?.x || 0;
-    let positionY = stage.position?.y || 0;
-    const width = stage.dimensions?.width || 0;
-    const height = stage.dimensions?.height || 0;
+    let positionX = stageConfig?.position?.x || 0;
+    let positionY = stageConfig?.position?.y || 0;
+    const width = stageConfig?.dimensions?.width || 0;
+    const height = stageConfig?.dimensions?.height || 0;
 
     return (
             <>
-                {stage.svgPath
+                {stageConfig?.svgPath
                         ? <Path x={positionX}
                                 y={positionY}
-                                data={stage.svgPath}
+                                data={stageConfig.svgPath}
                                 {...shapeProps}
                         />
                         : <Group x={positionX} y={positionY}>
                             <Rect x={0} y={0}
                                   width={width}
                                   height={height}
-                                  cornerRadius={Number(stage.borderRadius || 0)}
+                                  cornerRadius={Number(stageConfig?.borderRadius || 0)}
                                   {...shapeProps}
                             />
                             <Text x={0} y={0}
                                   width={width}
                                   height={height}
-                                  text={stage.name || "Stage"}
+                                  text={stageConfig?.name || "Stage"}
                                   fontSize={40}
                                   fontFamily="Arial"
                                   fill="white"

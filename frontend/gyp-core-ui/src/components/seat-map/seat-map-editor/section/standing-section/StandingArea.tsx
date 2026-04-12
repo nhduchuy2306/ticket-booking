@@ -6,7 +6,7 @@ interface StandingAreaProps {
     standingSection: Section;
     isSelected?: boolean;
     fillColor?: string;
-        onSelect?: (section: Section) => void;
+    onSelect?: (section: Section) => void;
 }
 
 const StandingArea: React.FC<StandingAreaProps> = ({standingSection, isSelected, fillColor, onSelect}) => {
@@ -22,7 +22,8 @@ const StandingArea: React.FC<StandingAreaProps> = ({standingSection, isSelected,
     const textColor = "#2C3E50";
 
     return (
-            <Group x={positionX} y={positionY} onClick={() => onSelect?.(standingSection)} onTap={() => onSelect?.(standingSection)}>
+            <Group x={positionX} y={positionY} onClick={() => onSelect?.(standingSection)}
+                   onTap={() => onSelect?.(standingSection)}>
                 <Rect
                         width={dimensionsWidth}
                         height={dimensionsHeight}

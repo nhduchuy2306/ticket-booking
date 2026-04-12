@@ -22,6 +22,9 @@ public final class EventSpecification {
 	public static Specification<EventEntity> createSearchEventSpecification(EventSearchCriteria criteria) {
 		return (root, query, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<>();
+			if(query != null) {
+				query.distinct(true);
+			}
 
 			// Organization ID filter
 			if(criteria.getOrganizationId() != null && !criteria.getOrganizationId().trim().isEmpty()) {
@@ -109,7 +112,7 @@ public final class EventSpecification {
 
 			// Price range filters (requires join with ticket types)
 			if(criteria.getMinPrice() != null || criteria.getMaxPrice() != null) {
-				var ticketJoin = root.join("ticketTypeEntityList");
+				var ticketJoin = root.join("eventSectionMappingEntityList").join("ticketTypeEntity");
 
 				if(criteria.getMinPrice() != null) {
 					predicates.add(criteriaBuilder.greaterThanOrEqualTo(

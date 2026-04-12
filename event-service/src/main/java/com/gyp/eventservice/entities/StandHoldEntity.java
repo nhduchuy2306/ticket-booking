@@ -39,7 +39,7 @@ public class StandHoldEntity extends AbstractEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	@Column(name = "id")
+	@Column(name = "id", length = 36)
 	private String id;
 
 	@Column(name = "event_id", nullable = false)

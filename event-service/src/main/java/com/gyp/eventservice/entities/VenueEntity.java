@@ -32,7 +32,7 @@ public class VenueEntity extends AbstractEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	@Column(name = "id")
+	@Column(name = "id", length = 36)
 	private String id;
 
 	@Column(name = "name")
@@ -56,7 +56,7 @@ public class VenueEntity extends AbstractEntity {
 	@Column(name = "longitude")
 	private Double longitude;
 
-	@Column(name = "organization_id")
+	@Column(name = "organization_id", length = 36)
 	private String organizationId;
 
 	@JsonIgnore

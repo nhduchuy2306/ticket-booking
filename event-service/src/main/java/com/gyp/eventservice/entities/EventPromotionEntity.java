@@ -31,7 +31,7 @@ public class EventPromotionEntity extends AbstractEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	@Column(name = "id")
+	@Column(name = "id", length = 36)
 	private String id;
 
 	@Column(name = "code")
@@ -46,7 +46,7 @@ public class EventPromotionEntity extends AbstractEntity {
 	@Column(name = "valid_to")
 	private LocalDateTime validTo;
 
-	@Column(name = "organization_id")
+	@Column(name = "organization_id", length = 36)
 	private String organizationId;
 
 	@ManyToOne

@@ -28,7 +28,7 @@ public interface TicketTypeMapper extends AbstractMapper {
 	List<TicketTypeResponseDto> toResponseDtoList(List<TicketTypeEntity> entities);
 
 	// Create new entity from request
-	@Mapping(target = "eventEntityList", ignore = true)
+	@Mapping(target = "eventSectionMappingEntityList", ignore = true)
 	@Mapping(target = "id", ignore = true)
 	@Named("toEntity")
 	TicketTypeEntity toEntity(TicketTypeRequestDto dto);
@@ -36,7 +36,7 @@ public interface TicketTypeMapper extends AbstractMapper {
 	List<TicketTypeEventModel> toEventModelList(List<TicketTypeEntity> ticketTypeEntities);
 
 	// Update existing entity from request
-	@Mapping(target = "eventEntityList", ignore = true)
+	@Mapping(target = "eventSectionMappingEntityList", ignore = true)
 	@Mapping(target = "id", ignore = true)
 	@Named("updateEntityFromDto")
 	void updateEntityFromDto(TicketTypeRequestDto dto, @MappingTarget TicketTypeEntity entity);

@@ -16,8 +16,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -42,7 +42,7 @@ public class EventEntity extends AbstractEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	@Column(name = "id")
+	@Column(name = "id", length = 36)
 	private String id;
 
 	@Column(name = "name")
@@ -58,7 +58,7 @@ public class EventEntity extends AbstractEntity {
 	@Embedded
 	private EventTimeEmbeddable time;
 
-	@Column(name = "organization_id")
+	@Column(name = "organization_id", length = 36)
 	private String organizationId;
 
 	@Column(name = "is_generated")
@@ -71,13 +71,9 @@ public class EventEntity extends AbstractEntity {
 	@JoinColumn(name = "venue_map_id")
 	private VenueMapEntity venueMapEntity;
 
-	@ManyToMany
-	@JoinTable(
-			name = "eventtickettypes",
-			joinColumns = @JoinColumn(name = "event_id"),
-			inverseJoinColumns = @JoinColumn(name = "ticket_type_id")
-	)
-	private List<TicketTypeEntity> ticketTypeEntityList = new ArrayList<>();
+	@JsonIgnore
+	@OneToMany(mappedBy = "eventEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<EventSectionMappingEntity> eventSectionMappingEntityList = new ArrayList<>();
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "eventEntity", cascade = CascadeType.ALL)
