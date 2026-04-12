@@ -21,6 +21,7 @@ public class TicketTypeResponseDto extends AbstractDto {
 	private String description;
 	private double price;
 	private String color;
+	private String currency;
 	private Integer totalCapacity;
 	private TicketStatus status;
 	private LocalDateTime saleStartDate;

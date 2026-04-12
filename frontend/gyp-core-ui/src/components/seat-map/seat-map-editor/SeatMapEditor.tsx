@@ -1,10 +1,6 @@
 import { Splitter } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
-import type {
-    SeatConfig,
-    Section,
-    StageConfig,
-} from "../../../models/generated/event-service-models";
+import type { SeatConfig, Section, StageConfig, } from "../../../models/generated/event-service-models";
 import { DraftErrorMap, SectionDraftState, StageDraftState } from "../models/SeatMapModels.ts";
 import SeatMapConfigEditor from "./editors/SeatMapConfigEditor";
 import SeatMapPreviewCanvas from "./SeatMapPreviewCanvas";
@@ -14,7 +10,6 @@ import {
     createDefaultSectionDraft,
     createDefaultStageDraft,
 } from "./utils/SeatMapEditorUtils.ts";
-import { SeatMapEditorContext } from "./context/SeatMapEditorContext.tsx";
 
 export interface SeatMapEditorData {
     stageConfig: StageConfig;
@@ -226,10 +221,6 @@ const SeatMapEditor: React.FC<SeatMapEditorProps> = ({initialData, onSave, title
     };
 
     return (
-            <SeatMapEditorContext.Provider value={{
-                showSeatNumbers: showSeatNumbers,
-                setShowSeatNumbers: setShowSeatNumbers,
-            }}>
             <div className="h-full w-full min-h-0 flex-1 !overflow-auto">
                 <Splitter layout="horizontal" style={{height: "100%", width: "100%"}}>
                     <Splitter.Panel size={500} min={340} max={700} style={{height: "100%", minHeight: 0, minWidth: 0}}>
@@ -253,6 +244,7 @@ const SeatMapEditor: React.FC<SeatMapEditorProps> = ({initialData, onSave, title
                                     onExportJson={exportJson}
                                     onFocusSection={handleSelectSection}
                                     exportedJson={exportedJson}
+                                    setShowSeatNumbersCb={(value) => setShowSeatNumbers(value)}
                             />
                         </div>
                     </Splitter.Panel>
@@ -262,11 +254,11 @@ const SeatMapEditor: React.FC<SeatMapEditorProps> = ({initialData, onSave, title
                                 seatConfig={previewSeatConfig}
                                 selectedSectionId={selectedSectionId}
                                 onSelectSection={handleSelectSection}
+                                showSeatNumbers={showSeatNumbers}
                         />
                     </Splitter.Panel>
                 </Splitter>
             </div>
-            </SeatMapEditorContext.Provider>
     );
 };
 

@@ -2,18 +2,16 @@ import React from "react";
 import { Circle, Group, Text } from "react-konva";
 import { Seat } from "../../../../../models/generated/event-service-models";
 import { SeatColors, SeatSizes } from "../../../constants/SeatMapContants.ts";
-import { useSeatMapEditorContext } from "../../context/SeatMapEditorContext.tsx";
 
 export interface SeatMapSeatedSeatProps {
     seat: Seat;
     seatIndex: number;
     seatSpacing: number;
     isSelected?: boolean;
+    showSeatNumbers?: boolean;
 }
 
-const SeatedSeat: React.FC<SeatMapSeatedSeatProps> = ({seat, seatIndex, seatSpacing, isSelected}) => {
-    const {showSeatNumbers} = useSeatMapEditorContext();
-
+const SeatedSeat: React.FC<SeatMapSeatedSeatProps> = ({seat, seatIndex, seatSpacing, isSelected, showSeatNumbers}) => {
     return (
             <Group x={seatIndex * seatSpacing} y={0}>
                 <Circle

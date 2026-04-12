@@ -7,9 +7,10 @@ export interface SeatMapSeatedSectionProps {
     row: Row;
     labelPosition?: RowLabelPosition;
     section?: Section;
+    showSeatNumbers?: boolean;
 }
 
-const SeatedRowWrapper: React.FC<SeatMapSeatedSectionProps> = ({row, labelPosition, section}) => {
+const SeatedRowWrapper: React.FC<SeatMapSeatedSectionProps> = ({row, labelPosition, section, showSeatNumbers}) => {
     const positionX = row?.position?.x || 0;
     const positionY = row?.position?.y || 0;
     const sectionPositionX = section?.position?.x || 0;
@@ -38,6 +39,7 @@ const SeatedRowWrapper: React.FC<SeatMapSeatedSectionProps> = ({row, labelPositi
                                 seatIndex={seatIndex}
                                 seatSpacing={row.seatSpacing || 0}
                                 isSelected={false}
+                                showSeatNumbers={showSeatNumbers}
                         />
                 ))}
             </Group>

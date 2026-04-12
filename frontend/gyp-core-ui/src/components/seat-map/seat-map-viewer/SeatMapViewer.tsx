@@ -27,9 +27,10 @@ export interface SeatMapViewerProps {
     onBack?: () => void;
     eventId?: string;
     seatMapId?: string;
+    showUiFunctionality?: boolean;
 }
 
-const SeatMapViewer: React.FC<SeatMapViewerProps> = ({venueMap, title, onBack, eventId, seatMapId}) => {
+const SeatMapViewer: React.FC<SeatMapViewerProps> = ({venueMap, title, onBack, eventId, seatMapId, showUiFunctionality = true}) => {
     const [venueMapData, setVenueMapData] = useState<VenueMap>({});
     const [ticketTypes, setTicketTypes] = useState<TicketTypeResponseDto[]>([]);
     const [stageConfig, setStageConfig] = useState<StageConfig>({});
@@ -177,7 +178,7 @@ const SeatMapViewer: React.FC<SeatMapViewerProps> = ({venueMap, title, onBack, e
                 seatMapId: seatMapId,
             }}>
                 <div className="w-full flex items-start gap-3 h-full bg-black">
-                    <div className="absolute z-10 flex flex-col items-center justify-center gap-3 top-8">
+                    {showUiFunctionality && <div className="absolute z-10 flex flex-col items-center justify-center gap-3 top-8">
                         <Button onClick={onBack} type="link" className="!text-white mb-2"
                                 icon={<FaArrowLeftLong/>}>Back</Button>
                         <Button onClick={() => handleZoomInOut(true)} type="default" icon={<BiPlus/>}
@@ -185,7 +186,7 @@ const SeatMapViewer: React.FC<SeatMapViewerProps> = ({venueMap, title, onBack, e
                         <Button onClick={handleResetView} type="default" icon={<BiReset/>} className="!rounded-2xl"/>
                         <Button onClick={() => handleZoomInOut(false)} type="default" icon={<BiMinus/>}
                                 className="!rounded-2xl mb-2"/>
-                    </div>
+                    </div>}
                     <div className="rounded flex flex-col flex-5/6 items-center justify-center">
                         <VenueSeatMapHeader isSeatMapViewer={true}/>
                         <Stage x={0} y={0}

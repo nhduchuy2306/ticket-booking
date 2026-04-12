@@ -8,9 +8,10 @@ export interface SectionContainerProps {
     section: Section;
     isSelected?: boolean;
     onSelect?: (section: Section) => void;
+    showSeatNumbers?: boolean;
 }
 
-const SectionContainer: React.FC<SectionContainerProps> = ({section, isSelected, onSelect}) => {
+const SectionContainer: React.FC<SectionContainerProps> = ({section, isSelected, onSelect, showSeatNumbers}) => {
     const positionX = section?.position?.x || 0;
     const positionY = section?.position?.y || 0;
     const width = section?.dimensions?.width || 0;
@@ -54,6 +55,7 @@ const SectionContainer: React.FC<SectionContainerProps> = ({section, isSelected,
                                     row={row}
                                     labelPosition={section.labelPosition}
                                     section={section}
+                                    showSeatNumbers={showSeatNumbers}
                             />
                     ))}
                 </Group>

@@ -10,6 +10,7 @@ export interface SeatMapPreviewCanvasProps {
     seatConfig: SeatConfig;
     selectedSectionId?: string | null;
     onSelectSection?: (sectionId?: string) => void;
+    showSeatNumbers?: boolean;
 }
 
 const MIN_ZOOM = 0.55;
@@ -20,6 +21,7 @@ const SeatMapPreviewCanvas: React.FC<SeatMapPreviewCanvasProps> = ({
                                                                        seatConfig,
                                                                        selectedSectionId,
                                                                        onSelectSection,
+                                                                       showSeatNumbers,
                                                                    }) => {
     const stageRef = useRef<Konva.Stage>(null);
     const layerRef = useRef<Konva.Layer>(null);
@@ -183,6 +185,7 @@ const SeatMapPreviewCanvas: React.FC<SeatMapPreviewCanvasProps> = ({
                                         section={section}
                                         isSelected={selectedSectionId === section.id}
                                         onSelect={(selectedSection) => onSelectSection?.(selectedSection.id)}
+                                        showSeatNumbers={showSeatNumbers}
                                 />
                         ))}
                     </Layer>

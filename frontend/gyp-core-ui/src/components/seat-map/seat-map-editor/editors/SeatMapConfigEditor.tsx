@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { BiCopy } from "react-icons/bi";
 import { Section } from "../../../../models/generated/event-service-models";
 import type { DraftErrorMap } from "../../models/SeatMapModels.ts";
 import { SectionDraftState, StageDraftState } from "../../models/SeatMapModels.ts";
-import { useSeatMapEditorContext } from "../context/SeatMapEditorContext.tsx";
 import SeatMapEditorField from "./SeatMapEditorField.tsx";
 import SeatMapSectionCard from "./SeatMapSectionCard.tsx";
 import SeatMapSectionDraftForm from "./SeatMapSectionDraftForm.tsx";
@@ -27,6 +26,7 @@ export interface SeatMapConfigEditorProps {
     onExportJson: () => void;
     onFocusSection?: (sectionId: string) => void;
     exportedJson: string;
+    setShowSeatNumbersCb: ((show: boolean) => void) | null;
 }
 
 const SeatMapConfigEditor: React.FC<SeatMapConfigEditorProps> = ({
@@ -48,9 +48,10 @@ const SeatMapConfigEditor: React.FC<SeatMapConfigEditorProps> = ({
                                                                      onExportJson,
                                                                      onFocusSection,
                                                                      exportedJson,
+                                                                     setShowSeatNumbersCb
                                                                  }) => {
     const isDraftNewSection = draftSection && !editingSectionId;
-    const {showSeatNumbers, setShowSeatNumbers} = useSeatMapEditorContext();
+    const [showSeatNumbers, setShowSeatNumbers] = useState<boolean>();
 
     return (
             <div className="flex flex-col !h-full !min-h-0 w-full min-w-0 border border-slate-200 bg-white">
@@ -132,8 +133,9 @@ const SeatMapConfigEditor: React.FC<SeatMapConfigEditorProps> = ({
                                         value={showSeatNumbers ? "true" : "false"}
                                         type="switch"
                                         onChange={(value) => {
-                                            if (setShowSeatNumbers) {
+                                            if (setShowSeatNumbersCb) {
                                                 setShowSeatNumbers(value === "true");
+                                                setShowSeatNumbersCb(value === "true");
                                             }
                                         }}
                                         error={draftErrors.name}
