@@ -1,6 +1,8 @@
 spring:
   application:
     name: bff-service
+  config:
+    import: optional:classpath:observability/common-actuator.properties
 
 server:
   port: 9010
