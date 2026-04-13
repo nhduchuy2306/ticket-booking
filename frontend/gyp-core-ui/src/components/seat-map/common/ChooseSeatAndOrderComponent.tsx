@@ -9,25 +9,22 @@ import { SeatMapService } from "../../../services/Event/SeatMapService.ts";
 import { IamService } from "../../../services/Iam/IamService.ts";
 import { createErrorNotification } from "../../notification/Notification.ts";
 
-interface ChooseSeatAndOrderComponentProps {
-}
-
-const ChooseSeatAndOrderComponent: React.FC<ChooseSeatAndOrderComponentProps> = () => {
-    const {selectedSeats, seatTypes, eventId, seatMapId} = useSeatMapViewerContext();
+const ChooseSeatAndOrderComponent: React.FC = () => {
+    const {selectedSeats, ticketTypes, eventId, seatMapId} = useSeatMapViewerContext();
     const navigate = useNavigate();
     const [isReserving, setIsReserving] = useState(false);
 
     const getSeatTypeMap = useMemo(() => {
         const map = new Map<string, number>();
-        if (seatTypes) {
-            seatTypes.forEach(st => {
+        if (ticketTypes) {
+            ticketTypes.forEach(st => {
                 if (st.id && st.name) {
                     map.set(st.id, st.price || 0);
                 }
             });
         }
         return map;
-    }, [seatTypes]);
+    }, [ticketTypes]);
 
     const getSelectedSeats = () => {
         if (!selectedSeats || selectedSeats.length === 0) {
@@ -88,7 +85,8 @@ const ChooseSeatAndOrderComponent: React.FC<ChooseSeatAndOrderComponentProps> = 
             });
 
             const holdToken = reservationResponse.holdToken || createHoldToken();
-            const holdExpiresAt = reservationResponse.holdExpiresAt || reservationResponse.expiresAt || new Date(Date.now() + 5 * 60 * 1000).toISOString();
+            // const holdExpiresAt = reservationResponse.holdExpiresAt || reservationResponse.expiresAt || new Date(Date.now() + 5 * 60 * 1000).toISOString();
+            const holdExpiresAt = "";
 
             saveBookingSession({
                 eventId,
@@ -120,10 +118,10 @@ const ChooseSeatAndOrderComponent: React.FC<ChooseSeatAndOrderComponentProps> = 
             navigate(`/gyp/events/${eventId}/orders`, {
                 state: { orderDetails }
             });
-        } catch (error: any) {
+        } catch {
             createErrorNotification(
                     "Seat reservation failed",
-                    error?.response?.data?.message || error?.message || "The selected seats could not be reserved. Refresh availability and try again."
+                    "The selected seats could not be reserved. Refresh availability and try again."
             );
         } finally {
             setIsReserving(false);

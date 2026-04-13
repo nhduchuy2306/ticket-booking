@@ -35,7 +35,7 @@ export const useEventData = ({id}: useEventDataProps) => {
                         setSeatMap(seatMapResponse);
                     }
                 }
-            } catch (error) {
+            } catch {
                 createErrorNotification("Failed to fetch data");
             } finally {
                 setIsLoading(false);
@@ -45,7 +45,7 @@ export const useEventData = ({id}: useEventDataProps) => {
         if (id) {
             void fetchData();
         }
-    }, []);
+    }, [id]);
 
     return {event, venue, seatMap, isLoading};
 }

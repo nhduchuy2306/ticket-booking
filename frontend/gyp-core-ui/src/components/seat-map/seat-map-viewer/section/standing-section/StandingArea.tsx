@@ -18,7 +18,6 @@ const StandingArea: React.FC<StandingAreaProps> = (props) => {
 
     const positionX = standingSection?.position?.x || 0;
     const positionY = standingSection?.position?.y || 0;
-    const rotation = standingSection?.rotation || 0;
     const dimensionsWidth = standingSection?.dimensions?.width || 0;
     const dimensionsHeight = standingSection?.dimensions?.height || 0;
     const capacity = standingSection?.capacity || 0;
@@ -36,7 +35,6 @@ const StandingArea: React.FC<StandingAreaProps> = (props) => {
                         fillLinearGradientStartPoint={{x: 0, y: 0}}
                         fillLinearGradientEndPoint={{x: dimensionsWidth, y: dimensionsHeight}}
                         fillLinearGradientColorStops={[0, fillColor, 1, "#66BB6A"]}
-                        rotation={rotation}
                         stroke={borderColor}
                         strokeWidth={1}
                         cornerRadius={3}

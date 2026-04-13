@@ -4,14 +4,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import SeatMapViewer from "../../components/seat-map/seat-map-viewer/SeatMapViewer.tsx";
 import { useEventData } from "../../hooks/form/useEventData.tsx";
 import { SeatAvailabilityDto } from "../../models/booking/SeatHoldModels.ts";
+import { Row, Seat, SeatConfig, Section } from "../../models/generated/event-service-models";
 import { SeatMapService } from "../../services/Event/SeatMapService.ts";
 
-const cloneSeatConfigWithAvailability = (seatConfig: any, availabilityMap: Map<string, SeatAvailabilityDto>): any => {
+const cloneSeatConfigWithAvailability = (seatConfig: SeatConfig, availabilityMap: Map<string, SeatAvailabilityDto>) => {
     if (!seatConfig?.sections) {
         return seatConfig;
     }
 
-    const patchSeat = (seat: any) => {
+    const patchSeat = (seat: Seat) => {
         if (!seat?.id) {
             return seat;
         }
@@ -24,30 +25,19 @@ const cloneSeatConfigWithAvailability = (seatConfig: any, availabilityMap: Map<s
         return {
             ...seat,
             status: availability.status || seat.status,
-            attributes: {
-                ...(seat.attributes || {}),
-                holdToken: availability.holdToken,
-                holdExpiresAt: availability.holdExpiresAt || availability.expiresAt,
-            },
         };
     };
 
-    const patchRow = (row: any) => ({
+    const patchRow = (row: Row) => ({
         ...row,
-        seats: row?.seats?.map((seat: any) => patchSeat(seat)) || [],
-    });
-
-    const patchTable = (table: any) => ({
-        ...table,
-        seats: table?.seats?.map((seat: any) => patchSeat(seat)) || [],
+        seats: row?.seats?.map((seat: Seat) => patchSeat(seat)) || [],
     });
 
     return {
         ...seatConfig,
-        sections: seatConfig.sections.map((section: any) => ({
+        sections: seatConfig.sections.map((section: Section) => ({
             ...section,
-            rows: section?.rows?.map((row: any) => patchRow(row)) || [],
-            tables: section?.tables?.map((table: any) => patchTable(table)) || [],
+            rows: section?.rows?.map((row: Row) => patchRow(row)) || [],
         })),
     };
 };
@@ -89,7 +79,7 @@ const EventSeatMap: React.FC = () => {
 
         return {
             ...seatMap,
-            seatConfig: cloneSeatConfigWithAvailability(seatMap.seatConfig, availabilityMap),
+            seatConfig: cloneSeatConfigWithAvailability(seatMap?.seatConfig || {}, availabilityMap),
         };
     }, [seatAvailability, seatMap]);
 

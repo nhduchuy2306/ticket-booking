@@ -1,4 +1,4 @@
-import { SeatInventoryStatus, SeatStatus } from "../generated/event-service-models";
+import { SeatInventoryStatus } from "../generated/event-service-models";
 
 export interface SeatAvailabilityDto {
     seatId?: string;
@@ -35,7 +35,7 @@ export interface BookingSeatSummary {
     sectionName?: string;
     ticketTypeId?: string;
     price: number;
-    status?: SeatStatus;
+    status?: SeatInventoryStatus;
     holdToken?: string;
     holdExpiresAt?: string;
 }

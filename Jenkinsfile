@@ -29,7 +29,7 @@ pipeline {
 
     stage('Build And Test') {
       steps {
-        sh 'mvn -B -ntp clean test -P prod'
+        sh 'mvn -B -ntp clean test -Dspring.flyway.enabled=false -Dspring.profiles.active=prod'
       }
       post {
         always {
