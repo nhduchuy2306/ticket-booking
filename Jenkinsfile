@@ -29,7 +29,7 @@ pipeline {
 
     stage('Build And Test') {
       steps {
-        sh 'mvn -B -ntp clean test -P dev'
+        sh 'mvn -B -ntp clean test -P prod'
       }
       post {
         always {
@@ -40,7 +40,7 @@ pipeline {
 
     stage('Package') {
       steps {
-        sh 'mvn -B -ntp package -DskipTests -P dev'
+        sh 'mvn -B -ntp package -DskipTests -P prod'
       }
       post {
         success {

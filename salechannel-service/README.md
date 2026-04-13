@@ -1,13 +1,13 @@
 Sale Channel
 
-*a. Internal Channel (trong ứng dụng)*
-- Website chính thức của bạn 
-- Mobile App (Android/iOS)
-- Widget Embedded (nhúng vào website của Organizer)
+*a. Internal Channel (in-app)*
+- Your official website
+- Mobile app (Android/iOS)
+- Embedded widget (embedded in the organizer's website)
 
-*b. External Channel (ngoài ứng dụng)*
-- Đối tác phân phối (affiliate)
-- Cộng tác viên bán vé (agents)
-- Mạng xã hội (Facebook, Zalo, Instagram)
-- QR Code tại sự kiện 
-- POS (Point of Sale): quầy vé vật lý tại địa điểm
+*b. External Channel (out-of-app)*
+- Distribution partners (affiliate)
+- Ticket sales agents
+- Social media (Facebook, Zalo, Instagram)
+- QR code at the event
+- POS (Point of Sale): physical ticket counter at the venue

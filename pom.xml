@@ -20,15 +20,12 @@
         <module>common-service</module>
         <module>api-gateway</module>
         <module>auth-service</module>
-        <module>bff-service</module>
         <module>discovery-service</module>
         <module>notification-service</module>
         <module>event-service</module>
         <module>ticket-service</module>
         <module>order-service</module>
         <module>salechannel-service</module>
-        <module>configuration-service</module>
-        <module>observability-service</module>
     </modules>
 
     <properties>
