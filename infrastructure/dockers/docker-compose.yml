@@ -193,6 +193,7 @@ services:
     ports:
       - "9999:9999"
     environment:
+      - SPRING_PROFILES_ACTIVE=prod
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://discovery-service:9761/eureka/
       - EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
       - EUREKA_INSTANCE_HOSTNAME=api-gateway
