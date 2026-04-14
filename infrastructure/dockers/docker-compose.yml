@@ -82,6 +82,7 @@ services:
     container_name: mysql
     volumes:
       - ./mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d:ro
     environment:
       MYSQL_USER: root
       MYSQL_ROOT_PASSWORD: 12345
@@ -207,6 +208,9 @@ services:
       - "9000:9000"
     environment:
       SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/auth_service?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 12345
     env_file:
       - ../../.env
     depends_on:

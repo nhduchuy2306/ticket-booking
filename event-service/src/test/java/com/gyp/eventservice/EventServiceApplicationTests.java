@@ -1,4 +1,4 @@
-package com.gyp.salechannelservice;
+package com.gyp.eventservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -6,10 +6,9 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class SalechannelServiceApplicationTests {
+class EventServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
 	}
-
 }
