@@ -184,6 +184,8 @@ services:
     container_name: discovery-service
     ports:
       - "9761:9761"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
     networks:
       - gyp-net
 

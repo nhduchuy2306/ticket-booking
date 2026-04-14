@@ -30,5 +30,6 @@
 #ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", "/app.jar"]
 
 FROM eclipse-temurin:21-jre-alpine
+ENV SPRING_PROFILES_ACTIVE=prod
 COPY target/discovery-service*.jar app.jar
-ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app.jar"]
