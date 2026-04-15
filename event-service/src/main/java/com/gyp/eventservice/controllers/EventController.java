@@ -33,6 +33,7 @@ public class EventController extends AbstractController {
 	private static final String ACTIVE_PATH = "/active";
 	private static final String WITH_UPLOAD_PATH = "/with-upload";
 	private static final String ON_SALE_PATH = "/on-sale";
+	private static final String COMING_EVENTS_PATH = "/coming-events";
 
 	private final EventService eventService;
 
@@ -111,5 +112,10 @@ public class EventController extends AbstractController {
 	@GetMapping(ON_SALE_PATH)
 	public ResponseEntity<?> getAllEventsOnSale() {
 		return ResponseEntity.ok(eventService.getAllEventsOnSale());
+	}
+
+	@GetMapping(COMING_EVENTS_PATH)
+	public ResponseEntity<?> getAllComingEvents() {
+		return ResponseEntity.ok(eventService.getAllComingEvents());
 	}
 }

@@ -9,15 +9,16 @@ import { UploadUtils } from "../../utils/UploadUtils.ts";
 
 const Main: React.FC = () => {
     const navigate = useNavigate();
-    const [events, setEvents] = React.useState<EventResponseDto[]>([]);
+    const [onSaleEvents, setOnSaleEvents] = React.useState<EventResponseDto[]>([]);
+    const [onComingEvents, setOnComingEvents] = React.useState<EventResponseDto[]>([]);
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
     useEffect(() => {
-        const fetchData = async () => {
+        (async () => {
             try {
-                const eventResponse = await EventService.getOnSaleEvents();
-                if (eventResponse) {
-                    setEvents(eventResponse);
+                const onSaleEventResponse = await EventService.getOnSaleEvents();
+                if (onSaleEventResponse) {
+                    setOnSaleEvents(onSaleEventResponse);
                 }
             } catch (Error) {
                 console.error("Error fetching events:", Error);
@@ -25,8 +26,21 @@ const Main: React.FC = () => {
             } finally {
                 setIsLoading(false);
             }
-        }
-        void fetchData();
+        })();
+
+        (async () => {
+            try {
+                const comingEventResponse = await EventService.getComingEvents();
+                if (comingEventResponse) {
+                    setOnComingEvents(comingEventResponse);
+                }
+            } catch (Error) {
+                console.error("Error fetching events:", Error);
+                createErrorNotification("Error", "Failed to fetch data.");
+            } finally {
+                setIsLoading(false);
+            }
+        })();
     }, []);
 
     return (
@@ -40,7 +54,7 @@ const Main: React.FC = () => {
                             ? <Spin size="large" className="!mt-20"/>
                             : <MultiItemSlider
                                     itemsPerView={3}
-                                    items={events.map((event) => (
+                                    items={onSaleEvents.map((event) => (
                                             <>
                                                 <div className="h-48 bg-gradient-to-br flex items-center justify-center">
                                                     <img
@@ -57,7 +71,42 @@ const Main: React.FC = () => {
                                             </>
                                     ))}
                                     onItemClick={(index: number) => {
-                                        const event = events[index];
+                                        const event = onSaleEvents[index];
+                                        if (event && event.id) {
+                                            navigate(`/gyp/events/${event.id}`);
+                                        }
+                                    }}
+                            />
+                    }
+                </div>
+
+                {/* Coming Event */}
+                <div className="flex flex-col items-center justify-center !mb-16 !mt-8 w-full h-full">
+                    <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">
+                        Coming Events
+                    </h2>
+                    {isLoading
+                            ? <Spin size="large" className="!mt-20"/>
+                            : <MultiItemSlider
+                                    itemsPerView={3}
+                                    items={onComingEvents.map((event) => (
+                                            <>
+                                                <div className="h-48 bg-gradient-to-br flex items-center justify-center">
+                                                    <img
+                                                            src={UploadUtils.arrayBufferToBase64(event.logoBufferArray)}
+                                                            alt={event.name}
+                                                            className="w-full h-[210px] object-cover"
+                                                    />
+                                                </div>
+                                                <div className="text-center !mt-5">
+                                                    <h4 className="font-semibold text-gray-800">
+                                                        {event.name}
+                                                    </h4>
+                                                </div>
+                                            </>
+                                    ))}
+                                    onItemClick={(index: number) => {
+                                        const event = onComingEvents[index];
                                         if (event && event.id) {
                                             navigate(`/gyp/events/${event.id}`);
                                         }

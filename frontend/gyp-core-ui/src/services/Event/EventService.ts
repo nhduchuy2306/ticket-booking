@@ -8,6 +8,7 @@ const SYNC_EVENT_PATH = "syncevent";
 const ACTIVE_PATH = "active";
 const WITH_UPLOAD_PATH = "with-upload";
 const ON_SALE_PATH = "on-sale";
+const COMING_EVENTS_PATH = "/coming-events";
 
 export class EventService {
     static getAllEvents = async (): Promise<EventResponseDto[]> => {
@@ -82,6 +83,11 @@ export class EventService {
 
     static getOnSaleEvents = async (): Promise<EventResponseDto[]> => {
         const response = await apiWithoutAuth.get(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${ON_SALE_PATH}`);
+        return response.data;
+    }
+
+    static getComingEvents = async (): Promise<EventResponseDto[]> => {
+        const response = await apiWithoutAuth.get(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}${COMING_EVENTS_PATH}`);
         return response.data;
     }
 

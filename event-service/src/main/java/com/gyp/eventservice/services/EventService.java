@@ -37,4 +37,6 @@ public interface EventService extends Validatable {
 	List<EventResponseDto> getAllActiveEvents();
 
 	List<EventResponseDto> getAllEventsOnSale();
+
+	List<EventResponseDto> getAllComingEvents();
 }

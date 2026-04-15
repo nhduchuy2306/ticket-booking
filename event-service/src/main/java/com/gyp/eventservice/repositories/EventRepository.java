@@ -26,4 +26,12 @@ public interface EventRepository extends JpaRepository<EventEntity, String>, Jpa
 			ORDER BY e.time.startTime ASC
 			""")
 	List<EventEntity> findAllEventsOnSale();
+
+	@Query("""
+			SELECT e FROM EventEntity e
+			WHERE e.time.startTime > CURRENT_TIMESTAMP
+			AND e.status = 'PUBLISHED'
+			ORDER BY e.time.startTime ASC
+			""")
+	List<EventEntity> findAllEventsComing();
 }

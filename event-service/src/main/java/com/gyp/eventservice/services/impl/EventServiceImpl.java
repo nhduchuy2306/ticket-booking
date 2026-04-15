@@ -205,6 +205,18 @@ public class EventServiceImpl implements EventService {
 	}
 
 	@Override
+	public List<EventResponseDto> getAllComingEvents() {
+		return eventRepository.findAllEventsComing()
+				.stream()
+				.map(item -> {
+					var event = eventMapper.toResponseDto(item);
+					setImageUrl(item, event);
+					return event;
+				})
+				.toList();
+	}
+
+	@Override
 	public ValidationInfo validate(Class<?> clazz) {
 		var validationInfo = validationService.extractValidationInfo(clazz);
 		if(validationInfo == null) {
