@@ -3,10 +3,13 @@ import React from "react";
 import { BiSearch } from "react-icons/bi";
 import { IoTicketOutline } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
+import { CustomerAuthStorage } from "../../services/CustomerAuth/CustomerAuthStorage.ts";
+import { useGypPageContext } from "../GypPageContext.tsx";
 import Logo from "./Logo.tsx";
 
 const Header: React.FC = () => {
     const navigate = useNavigate();
+    const {customerResponseDto} = useGypPageContext();
 
     const handleMyTicketClick = () => {
         console.log("My Ticket clicked");
@@ -14,6 +17,11 @@ const Header: React.FC = () => {
 
     const handleCreateEventClick = () => {
         navigate("/");
+    }
+
+    const handleLogout = () => {
+        CustomerAuthStorage.clearAll();
+        navigate("/gyp");
     }
 
     return (
@@ -48,14 +56,21 @@ const Header: React.FC = () => {
                             Create Event
                         </Button>
 
-                        <div className="flex items-center gap-2">
-                            <Button type="primary">
-                                <Link to="/login">Login</Link>
-                            </Button>
-                            <Button>
-                                <Link to="/sign-up">Register</Link>
-                            </Button>
-                        </div>
+                        {
+                            customerResponseDto || CustomerAuthStorage.getCustomerName()
+                                    ? <div className="flex items-center gap-2">
+                                        <span className="text-white">{customerResponseDto?.name || CustomerAuthStorage.getCustomerName()}</span>
+                                        <Button onClick={handleLogout}>Logout</Button>
+                                    </div>
+                                    : <div className="flex items-center gap-2">
+                                        <Button type="primary">
+                                            <Link to="/gyp/login">Login</Link>
+                                        </Button>
+                                        <Button>
+                                            <Link to="/gyp/sign-up">Register</Link>
+                                        </Button>
+                                    </div>
+                        }
                     </div>
                 </div>
             </header>

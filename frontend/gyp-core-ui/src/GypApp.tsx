@@ -1,5 +1,8 @@
 import React, { useEffect } from "react";
 import { useRoutes } from "react-router-dom";
+import LoginPage from "./gyp-pages/auths/LoginPage.tsx";
+import OAuth2CallbackPage from "./gyp-pages/auths/OAuth2CallbackPage.tsx";
+import RegisterPage from "./gyp-pages/auths/RegisterPage.tsx";
 import EventDetailPage from "./gyp-pages/events/EventDetailPage.tsx";
 import GypRootLayout from "./gyp-pages/GypRootLayout.tsx";
 import LandingPage from "./gyp-pages/landing/LandingPage.tsx";
@@ -45,6 +48,18 @@ const GypApp: React.FC = () => {
                 {
                     index: true,
                     element: <LandingPage/>,
+                },
+                {
+                    path: "login",
+                    element: <LoginPage/>,
+                },
+                {
+                    path: "register",
+                    element: <RegisterPage/>,
+                },
+                {
+                    path: "oauth2/callback",
+                    element: <OAuth2CallbackPage/>,
                 },
                 {
                     path: "events/:id",

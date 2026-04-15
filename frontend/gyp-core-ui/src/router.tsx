@@ -3,7 +3,6 @@ import App from "./App.tsx";
 import GypProtectRoute from "./gyp-pages/GypProtectRoute.tsx";
 import GypApp from "./GypApp.tsx";
 import { Mode } from "./models/enums/Mode.ts";
-import RegisterPage from "./pages/auth/RegisterPage.tsx";
 import CategoryPage from "./pages/category/CategoryPage.tsx";
 import ConfigurationPage from "./pages/configuration/ConfigurationPage.tsx";
 import ErrorPage from "./pages/error/ErrorPage.tsx";
@@ -31,11 +30,6 @@ const AuthServiceRouter = [
         path: 'callback',
         element: <ProtectRoute/>,
         errorElement: <ErrorPage/>,
-    },
-    {
-        path: 'register',
-        element: <RegisterPage/>,
-        errorElement: <ErrorPage/>
     },
 ];
 
