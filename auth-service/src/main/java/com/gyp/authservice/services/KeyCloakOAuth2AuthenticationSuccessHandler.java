@@ -1,8 +1,17 @@
 package com.gyp.authservice.services;
 
+import java.util.List;
+import java.util.Optional;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import com.gyp.authservice.entities.UserAccountEntity;
+import com.gyp.authservice.entities.UserGroupEntity;
+import com.gyp.authservice.mappers.UserGroupMapper;
+import com.gyp.authservice.repositories.UserAccountRepository;
+import com.gyp.authservice.repositories.UserGroupRepository;
+import com.gyp.common.enums.auth.RealmTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -18,6 +27,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class KeyCloakOAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 	private final OAuth2AuthorizedClientService authorizedClientService;
+	private final JwtTokenProvider jwtTokenProvider;
+	private final UserAccountRepository userAccountRepository;
+	private final UserGroupRepository userGroupRepository;
+	private final UserGroupMapper userGroupMapper;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -29,12 +42,19 @@ public class KeyCloakOAuth2AuthenticationSuccessHandler implements Authenticatio
 				oauthToken.getName()
 		);
 
-		String accessToken = client.getAccessToken().getTokenValue();
-		String idToken = ((OidcUser)authentication.getPrincipal())
-				.getIdToken()
-				.getTokenValue();
+		var principal = authentication.getPrincipal();
+		if(principal instanceof OidcUser oidcUser) {
+			Optional<UserAccountEntity> userAccount = userAccountRepository.findByEmailAndRealmType(
+					oidcUser.getEmail(), RealmTypeEnum.GYP_KEYCLOAK_REALM);
+			List<UserGroupEntity> userGroupEntityList = userGroupRepository.findByUserAccountEntityList(
+					userAccount.map(List::of).orElse(List.of()));
+			log.info("UserGroupEntityList: {}", userGroupEntityList);
 
-		log.info("ACCESS TOKEN: {}", accessToken);
-		log.info("ID TOKEN: {}", idToken);
+			String accessToken = client.getAccessToken().getTokenValue();
+			String idToken = oidcUser.getIdToken().getTokenValue();
+
+			log.info("ACCESS TOKEN: {}", accessToken);
+			log.info("ID TOKEN: {}", idToken);
+		}
 	}
 }

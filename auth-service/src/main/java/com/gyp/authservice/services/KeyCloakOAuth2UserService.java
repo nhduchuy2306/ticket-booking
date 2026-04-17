@@ -7,6 +7,7 @@ import com.gyp.authservice.entities.UserAccountEntity;
 import com.gyp.authservice.entities.UserGroupEntity;
 import com.gyp.authservice.repositories.UserAccountRepository;
 import com.gyp.authservice.repositories.UserGroupRepository;
+import com.gyp.common.enums.auth.RealmTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -64,6 +65,7 @@ public class KeyCloakOAuth2UserService implements OAuth2UserService<OidcUserRequ
 		UserAccountEntity customerEntity = UserAccountEntity.builder()
 				.name(name)
 				.email(email)
+				.realmType(RealmTypeEnum.GYP_KEYCLOAK_REALM)
 				.createTimestamp(LocalDateTime.now())
 				.changeTimestamp(LocalDateTime.now())
 				.build();

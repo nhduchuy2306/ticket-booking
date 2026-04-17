@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.gyp.authservice.dtos.AbstractDto;
 import com.gyp.authservice.dtos.usergroup.UserGroupResponseDto;
+import com.gyp.common.enums.auth.RealmTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,5 +26,6 @@ public class UserAccountResponseDto extends AbstractDto {
 	private String phoneNumber;
 	private String email;
 	private String organizationId;
+	private RealmTypeEnum realmType;
 	private List<UserGroupResponseDto> userGroupList;
 }

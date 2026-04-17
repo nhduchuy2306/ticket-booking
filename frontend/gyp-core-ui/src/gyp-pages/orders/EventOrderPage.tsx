@@ -1,4 +1,5 @@
 import { Button, Form, Input, Modal } from "antd";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { createErrorNotification } from "../../components/notification/Notification.ts";
@@ -210,10 +211,12 @@ const EventOrderPage: React.FC = () => {
                         }
                     }
                 } catch (error) {
-                    createErrorNotification(
-                            "Checkout failed",
-                            (error as any)?.response?.data?.message || (error as Error)?.message || "Unable to create the order. Please try again."
-                    );
+                    if(axios.isAxiosError(error)) {
+                        createErrorNotification(
+                                "Checkout failed",
+                                error?.response?.data?.message || (error as Error)?.message || "Unable to create the order. Please try again."
+                        );
+                    }
                     setIsLoading(false);
                     return Promise.reject();
                 } finally {

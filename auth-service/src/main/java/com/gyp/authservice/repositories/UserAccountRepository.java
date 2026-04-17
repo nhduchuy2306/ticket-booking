@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.gyp.authservice.entities.UserAccountEntity;
+import com.gyp.common.enums.auth.RealmTypeEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +16,8 @@ public interface UserAccountRepository extends JpaRepository<UserAccountEntity, 
 	Optional<UserAccountEntity> findByName(String name);
 
 	Optional<UserAccountEntity> findByEmailAndName(String email, String name);
+
+	Optional<UserAccountEntity> findByEmailAndRealmType(String email, RealmTypeEnum realmType);
 
 	Boolean existsByEmail(String email);
 

@@ -16,6 +16,7 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring", uses = { UserGroupMapper.class })
 public interface UserAccountMapper extends AbstractMapper {
 	@Mapping(target = "organizationEntity", source = "organizationId", qualifiedByName = "toOrganizationEntity")
+	@Mapping(target = "realmType", ignore = true)
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "userGroupEntityList", ignore = true)
 	UserAccountEntity toEntity(UserAccountRequestDto dto);
