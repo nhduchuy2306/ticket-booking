@@ -3,6 +3,9 @@ package com.gyp.authservice.configurations;
 import com.gyp.authservice.services.CustomerOAuth2AuthenticationFailureHandler;
 import com.gyp.authservice.services.CustomerOAuth2AuthenticationSuccessHandler;
 import com.gyp.authservice.services.CustomerOAuth2UserService;
+import com.gyp.authservice.services.KeyCloakOAuth2AuthenticationFailureHandler;
+import com.gyp.authservice.services.KeyCloakOAuth2AuthenticationSuccessHandler;
+import com.gyp.authservice.services.KeyCloakOAuth2UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,6 +55,28 @@ public class SecurityConfiguration {
 
 	@Bean
 	@Order(2)
+	public SecurityFilterChain keyCloarkSecurityFilterChain(HttpSecurity http, JwtDecoder jwtDecoder,
+			KeyCloakOAuth2UserService keyCloakOAuth2UserService,
+			KeyCloakOAuth2AuthenticationSuccessHandler successHandler,
+			KeyCloakOAuth2AuthenticationFailureHandler failureHandler) throws Exception {
+		http.securityMatcher("/oidc/oauth2/authorize/**", "/oidc/oauth2/callback/**");
+		http.csrf(AbstractHttpConfigurer::disable).cors(AbstractHttpConfigurer::disable);
+		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+		http.authorizeHttpRequests(request -> request.anyRequest().permitAll());
+		http.oauth2Login(oauth2 -> oauth2
+				.authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint
+						.baseUri("/oidc/oauth2/authorize/**"))
+				.redirectionEndpoint(redirectionEndpoint -> redirectionEndpoint
+						.baseUri("/oidc/oauth2/callback/**"))
+				.userInfoEndpoint(userInfo -> userInfo.oidcUserService(keyCloakOAuth2UserService))
+				.successHandler(successHandler)
+				.failureHandler(failureHandler));
+		http.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder)));
+		return http.build();
+	}
+
+	@Bean
+	@Order(3)
 	public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtDecoder jwtDecoder) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable).cors(AbstractHttpConfigurer::disable);
 		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

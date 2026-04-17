@@ -3,9 +3,11 @@ package com.gyp.authservice.controllers;
 import com.gyp.authservice.dtos.useraccount.UserAccountResponseDto;
 import com.gyp.authservice.services.IamService;
 import com.gyp.common.constants.AppConstants;
+import com.gyp.common.enums.auth.RealmTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,12 +28,20 @@ public class IamController {
 
 	@GetMapping(LOGIN_PATH)
 	public String oauthLogin(
+			@Value("${keycloak.login.form.url}") String loginFormUrl,
 			@RequestParam(name = "redirect_uri", required = false) String redirectUri,
-			@RequestParam(name = "client_id", required = false) String clientId, Model model) {
+			@RequestParam(name = "client_id", required = false) String clientId,
+			@RequestParam(name = "realm_type", required = false) String realmType, Model model) {
+		if(RealmTypeEnum.GYP_KEYCLOAK_REALM.getName().equals(realmType)) {
+			return "redirect:" + loginFormUrl;
+		}
+		realmType = RealmTypeEnum.GYP_DEFAULT_REALM.name();
+		log.info("Realm type not provided, defaulting to: {}", realmType);
 		String actionUrl = "/auths/iam/oauth/login";
 		model.addAttribute("redirect_uri", redirectUri);
 		model.addAttribute("client_id", clientId);
 		model.addAttribute("action_url", actionUrl);
+		model.addAttribute("realm_type", realmType);
 		return "login";
 	}
 

@@ -14,6 +14,10 @@ public interface UserAccountRepository extends JpaRepository<UserAccountEntity, 
 		JpaSpecificationExecutor<UserAccountEntity> {
 	Optional<UserAccountEntity> findByName(String name);
 
+	Optional<UserAccountEntity> findByEmailAndName(String email, String name);
+
+	Boolean existsByEmail(String email);
+
 	@Query("SELECT u FROM UserAccountEntity u JOIN FETCH u.userGroupEntityList WHERE u.username = :username")
 	Optional<UserAccountEntity> findByUsername(String username);
 
