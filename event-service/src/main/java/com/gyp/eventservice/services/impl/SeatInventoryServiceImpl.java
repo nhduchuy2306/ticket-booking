@@ -33,6 +33,7 @@ import com.gyp.eventservice.repositories.EventRepository;
 import com.gyp.eventservice.repositories.SeatHoldRepository;
 import com.gyp.eventservice.repositories.SeatInventoryRepository;
 import com.gyp.eventservice.repositories.TicketTypeRepository;
+import com.gyp.eventservice.services.EventCacheService;
 import com.gyp.eventservice.services.SeatInventoryService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -47,10 +48,16 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 	private final SeatInventoryRepository seatInventoryRepository;
 	private final SeatHoldRepository seatHoldRepository;
 	private final TicketTypeRepository ticketTypeRepository;
+	private final EventCacheService eventCacheService;
 
 	@Transactional
 	@Override
 	public List<SeatAvailability> getSeatAvailability(String eventId) {
+		List<SeatAvailability> cachedSeatAvailability = eventCacheService.getSeatAvailability(eventId);
+		if(cachedSeatAvailability != null) {
+			return cachedSeatAvailability;
+		}
+
 		List<SeatInventoryEntity> seats = seatInventoryRepository.findByEventId(eventId);
 		if(seats.isEmpty()) {
 			return List.of();
@@ -66,9 +73,11 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 				.collect(Collectors.toMap(hold -> hold.getSeatInventoryEntity().getId(), Function.identity(),
 						(left, right) -> left));
 
-		return seats.stream()
+		List<SeatAvailability> seatAvailabilityList = seats.stream()
 				.map(seat -> toAvailability(seat, holdBySeatId.get(seat.getId()), priceByTicketTypeId))
 				.toList();
+		eventCacheService.cacheSeatAvailability(eventId, seatAvailabilityList);
+		return seatAvailabilityList;
 	}
 
 	@Transactional
@@ -161,6 +170,7 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 
 		seatInventoryRepository.saveAll(seats);
 		seatHoldRepository.saveAll(holds);
+		eventCacheService.evictSeatAvailability(eventId);
 		return seatKeys;
 	}
 
@@ -183,6 +193,7 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 
 		seatInventoryRepository.saveAll(activeHolds.stream().map(SeatHoldEntity::getSeatInventoryEntity).toList());
 		seatHoldRepository.saveAll(activeHolds);
+		eventCacheService.evictSeatAvailability(eventId);
 		return confirmedSeatKeys;
 	}
 
@@ -205,6 +216,7 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 
 		seatInventoryRepository.saveAll(activeHolds.stream().map(SeatHoldEntity::getSeatInventoryEntity).toList());
 		seatHoldRepository.saveAll(activeHolds);
+		eventCacheService.evictSeatAvailability(eventId);
 		return releasedSeatKeys;
 	}
 
@@ -226,6 +238,11 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 		}
 		seatInventoryRepository.saveAll(seatsToRelease);
 		seatHoldRepository.saveAll(expiredHolds);
+		expiredHolds.stream()
+				.map(SeatHoldEntity::getEventId)
+				.filter(org.apache.commons.lang3.StringUtils::isNotBlank)
+				.distinct()
+				.forEach(eventCacheService::evictSeatAvailability);
 	}
 
 	private void validateSeatSet(String eventId, List<String> seatKeys, List<SeatInventoryEntity> seats) {

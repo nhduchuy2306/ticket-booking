@@ -5,6 +5,7 @@ import com.gyp.salechannelservice.entities.SaleChannelEventEntity;
 import com.gyp.salechannelservice.mappers.SaleChannelEventMapper;
 import com.gyp.salechannelservice.repositories.SaleChannelEventRepository;
 import com.gyp.salechannelservice.repositories.SaleChannelRepository;
+import com.gyp.salechannelservice.services.SaleChannelRedisCacheService;
 import com.gyp.salechannelservice.services.SaleChannelEventService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ public class SaleChannelEventServiceImpl implements SaleChannelEventService {
 	private final SaleChannelEventRepository saleChannelEventRepository;
 	private final SaleChannelRepository saleChannelRepository;
 	private final SaleChannelEventMapper saleChannelEventMapper;
+	private final SaleChannelRedisCacheService saleChannelRedisCacheService;
 
 	@Override
 	public void assignEventToChannel(String channelId, String eventId) {
@@ -48,6 +50,7 @@ public class SaleChannelEventServiceImpl implements SaleChannelEventService {
 
 		SaleChannelEventEntity entity = saleChannelEventMapper.toEntity(dto);
 		saleChannelEventRepository.save(entity);
+		saleChannelRedisCacheService.evictByPrefix("salechannel:event:" + eventId);
 		log.info("Assigned event {} to channel {}", eventId, channelId);
 	}
 
@@ -74,6 +77,7 @@ public class SaleChannelEventServiceImpl implements SaleChannelEventService {
 		}
 
 		saleChannelEventRepository.delete(existingEvent.get());
+		saleChannelRedisCacheService.evictByPrefix("salechannel:event:" + eventId);
 		log.info("Removed event {} from channel {}", eventId, channelId);
 	}
 }

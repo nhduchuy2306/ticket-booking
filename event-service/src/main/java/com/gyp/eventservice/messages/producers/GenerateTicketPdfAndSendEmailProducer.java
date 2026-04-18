@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gyp.common.annotations.KafkaComponent;
 import com.gyp.common.converters.Serialization;
 import com.gyp.common.kafkatopics.TopicConstants;
@@ -26,55 +25,47 @@ public class GenerateTicketPdfAndSendEmailProducer {
 
 	public void sendGenerateTicketPdf(EventEntity eventEntity, SeatInventoryEntity seatInventoryEntity,
 			String customerEmail, String idempotencyKey) {
-		try {
-			EventGenerationPdfEM eventGenerationPdfEM = createEventGenerationPdfEM(eventEntity, seatInventoryEntity,
-					customerEmail,
-					idempotencyKey);
-			String eventGenerationPdfEMString = Serialization.serializeToString(eventGenerationPdfEM);
-			CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(
-					TopicConstants.GENERATE_TICKET_PDF_EVENT, eventGenerationPdfEMString);
-			future.whenComplete((result, throwable) -> {
-				if(throwable != null) {
-					log.error("Failed to send GenerateTicketPdfAndSendEmail event for event ID {}: {}",
-							eventEntity.getId(), throwable.getMessage());
-				} else {
-					log.info(
-							"GenerateTicketPdfAndSendEmail event for event ID {} sent successfully to topic {} at offset {} in partition {}",
-							eventEntity.getId(),
-							result.getRecordMetadata().topic(),
-							result.getRecordMetadata().offset(),
-							result.getRecordMetadata().partition());
-				}
-			});
-		} catch(JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		EventGenerationPdfEM eventGenerationPdfEM = createEventGenerationPdfEM(eventEntity, seatInventoryEntity,
+				customerEmail,
+				idempotencyKey);
+		String eventGenerationPdfEMString = Serialization.serializeToString(eventGenerationPdfEM);
+		CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(
+				TopicConstants.GENERATE_TICKET_PDF_EVENT, eventGenerationPdfEMString);
+		future.whenComplete((result, throwable) -> {
+			if(throwable != null) {
+				log.error("Failed to send GenerateTicketPdfAndSendEmail event for event ID {}: {}",
+						eventEntity.getId(), throwable.getMessage());
+			} else {
+				log.info(
+						"GenerateTicketPdfAndSendEmail event for event ID {} sent successfully to topic {} at offset {} in partition {}",
+						eventEntity.getId(),
+						result.getRecordMetadata().topic(),
+						result.getRecordMetadata().offset(),
+						result.getRecordMetadata().partition());
+			}
+		});
 	}
 
 	public void sendEmail(EventEntity eventEntity, List<SeatInventoryEntity> seatEntities, String customerEmail,
 			String idempotencyKey) {
-		try {
-			EventGenerationPdfEM eventGenerationPdfEM = createEventGenerationPdfEM(eventEntity, seatEntities,
-					customerEmail,
-					idempotencyKey);
-			String eventGenerationPdfEMString = Serialization.serializeToString(eventGenerationPdfEM);
-			CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(
-					TopicConstants.SEND_EMAIL_EVENT, eventGenerationPdfEMString);
-			future.whenComplete((result, throwable) -> {
-				if(throwable != null) {
-					log.error("Failed to send email event for event ID {}: {}",
-							eventEntity.getId(), throwable.getMessage());
-				} else {
-					log.info("Email event for event ID {} sent successfully to topic {} at offset {} in partition {}",
-							eventEntity.getId(),
-							result.getRecordMetadata().topic(),
-							result.getRecordMetadata().offset(),
-							result.getRecordMetadata().partition());
-				}
-			});
-		} catch(JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		EventGenerationPdfEM eventGenerationPdfEM = createEventGenerationPdfEM(eventEntity, seatEntities,
+				customerEmail,
+				idempotencyKey);
+		String eventGenerationPdfEMString = Serialization.serializeToString(eventGenerationPdfEM);
+		CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(
+				TopicConstants.SEND_EMAIL_EVENT, eventGenerationPdfEMString);
+		future.whenComplete((result, throwable) -> {
+			if(throwable != null) {
+				log.error("Failed to send email event for event ID {}: {}",
+						eventEntity.getId(), throwable.getMessage());
+			} else {
+				log.info("Email event for event ID {} sent successfully to topic {} at offset {} in partition {}",
+						eventEntity.getId(),
+						result.getRecordMetadata().topic(),
+						result.getRecordMetadata().offset(),
+						result.getRecordMetadata().partition());
+			}
+		});
 	}
 
 	private EventGenerationPdfEM createEventGenerationPdfEM(EventEntity eventEntity,

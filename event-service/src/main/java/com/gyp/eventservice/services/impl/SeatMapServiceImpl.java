@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gyp.common.converters.Serialization;
 import com.gyp.common.exceptions.ResourceNotFoundException;
 import com.gyp.common.models.SeatMapEventModel;
 import com.gyp.eventservice.dtos.seatmap.SeatConfig;
@@ -53,15 +52,6 @@ public class SeatMapServiceImpl implements SeatMapService {
 			return objectMapper.writeValueAsString(result);
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException("Failed to parse seat map JSON", e);
-		}
-	}
-
-	@Override
-	public SeatConfig parseSeatConfig(String seatConfigJson) {
-		try {
-			return Serialization.deserializeFromString(seatConfigJson, SeatConfig.class);
-		} catch(JsonProcessingException e) {
-			throw new RuntimeException("Failed to parse seat config JSON", e);
 		}
 	}
 

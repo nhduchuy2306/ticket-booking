@@ -39,7 +39,12 @@ public class CategoryController extends AbstractController {
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
 			@RequestParam(value = "size", required = false) Optional<Integer> size) {
 		String organizationId = getCurrentOrganizationId();
-		CategorySearchCriteria criteria = new CategorySearchCriteria(id, name, description, sortBy, organizationId);
+		CategorySearchCriteria criteria = CategorySearchCriteria.builder()
+				.id(id)
+				.name(name)
+				.description(description)
+				.sortBy(sortBy)
+				.build();
 		PaginatedDto pagination = PaginatedDto.builder()
 				.page(page.orElse(0))
 				.size(size.orElse(10))

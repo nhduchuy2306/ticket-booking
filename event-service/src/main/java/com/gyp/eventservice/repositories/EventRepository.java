@@ -1,6 +1,7 @@
 package com.gyp.eventservice.repositories;
 
 import java.util.List;
+import java.time.LocalDateTime;
 
 import com.gyp.eventservice.entities.EventEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,4 +35,12 @@ public interface EventRepository extends JpaRepository<EventEntity, String>, Jpa
 			ORDER BY e.time.startTime ASC
 			""")
 	List<EventEntity> findAllEventsComing();
+
+	@Query("""
+			SELECT e FROM EventEntity e
+			WHERE e.status = 'PUBLISHED'
+			AND e.time.startTime <= :now
+			ORDER BY e.time.startTime ASC
+			""")
+	List<EventEntity> findAllPublishedEventsReadyToSell(@Param("now") LocalDateTime now);
 }

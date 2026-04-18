@@ -1,9 +1,11 @@
 package com.gyp.salechannelservice.services.impl;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.gyp.common.enums.salechannel.SaleChannelStatus;
 import com.gyp.common.enums.salechannel.SaleChannelType;
 import com.gyp.common.exceptions.ResourceNotFoundException;
@@ -11,6 +13,7 @@ import com.gyp.salechannelservice.dtos.salechannel.SaleChannelRequestDto;
 import com.gyp.salechannelservice.dtos.salechannel.SaleChannelResponseDto;
 import com.gyp.salechannelservice.mappers.SaleChannelMapper;
 import com.gyp.salechannelservice.repositories.SaleChannelRepository;
+import com.gyp.salechannelservice.services.SaleChannelRedisCacheService;
 import com.gyp.salechannelservice.services.SaleChannelService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,15 +24,26 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class SaleChannelServiceImpl implements SaleChannelService {
+	private static final Duration SALE_CHANNEL_TTL = Duration.ofMinutes(10);
+	private static final Duration SALE_CHANNEL_LIST_TTL = Duration.ofMinutes(5);
+	private static final String SALE_CHANNEL_LIST_KEY = "salechannel:list:all";
+	private static final String SALE_CHANNEL_ACTIVE_KEY = "salechannel:list:active";
+	private static final String SALE_CHANNEL_KEY_PREFIX = "salechannel:id:";
+	private static final String SALE_CHANNEL_EVENT_KEY_PREFIX = "salechannel:event:";
+	private static final String SALE_CHANNEL_TYPE_KEY_PREFIX = "salechannel:type:";
+
 	private final SaleChannelRepository saleChannelRepository;
 	private final SaleChannelMapper saleChannelMapper;
+	private final SaleChannelRedisCacheService saleChannelRedisCacheService;
 
 	@Override
 	public SaleChannelResponseDto createSaleChannel(SaleChannelRequestDto saleChannel) {
 		var entity = saleChannelMapper.toEntity(saleChannel);
 		entity.setStatus(SaleChannelStatus.ACTIVE);
 		var savedEntity = saleChannelRepository.save(entity);
-		return saleChannelMapper.toResponseDto(savedEntity);
+		SaleChannelResponseDto responseDto = saleChannelMapper.toResponseDto(savedEntity);
+		evictSaleChannelCaches(savedEntity.getId(), savedEntity.getType());
+		return responseDto;
 	}
 
 	@Override
@@ -37,9 +51,13 @@ public class SaleChannelServiceImpl implements SaleChannelService {
 		var existingEntity = saleChannelRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Sale channel not found with id: " + id));
 		if(Objects.nonNull(existingEntity)) {
+			SaleChannelType previousType = existingEntity.getType();
 			saleChannelMapper.updateEntityFromDto(saleChannel, existingEntity);
 			var updatedEntity = saleChannelRepository.save(existingEntity);
-			return saleChannelMapper.toResponseDto(updatedEntity);
+			SaleChannelResponseDto responseDto = saleChannelMapper.toResponseDto(updatedEntity);
+			evictSaleChannelCaches(updatedEntity.getId(), previousType);
+			evictSaleChannelTypeCaches(updatedEntity.getType());
+			return responseDto;
 		} else {
 			throw new ResourceNotFoundException("Sale channel not found with id: " + id);
 		}
@@ -47,8 +65,17 @@ public class SaleChannelServiceImpl implements SaleChannelService {
 
 	@Override
 	public Optional<SaleChannelResponseDto> getSaleChannelById(String id) {
+		SaleChannelResponseDto cachedSaleChannel = saleChannelRedisCacheService.get(saleChannelKey(id),
+				SaleChannelResponseDto.class);
+		if(cachedSaleChannel != null) {
+			return Optional.of(cachedSaleChannel);
+		}
 		return saleChannelRepository.findById(id)
-				.map(saleChannelMapper::toResponseDto)
+				.map(entity -> {
+					SaleChannelResponseDto responseDto = saleChannelMapper.toResponseDto(entity);
+					saleChannelRedisCacheService.put(saleChannelKey(id), responseDto, SALE_CHANNEL_TTL);
+					return responseDto;
+				})
 				.or(() -> {
 					log.warn("Sale channel not found with id: {}", id);
 					return Optional.empty();
@@ -57,6 +84,11 @@ public class SaleChannelServiceImpl implements SaleChannelService {
 
 	@Override
 	public List<SaleChannelResponseDto> getAllSaleChannels() {
+		List<SaleChannelResponseDto> cachedSaleChannels = saleChannelRedisCacheService.get(SALE_CHANNEL_LIST_KEY,
+				new TypeReference<>() {});
+		if(cachedSaleChannels != null) {
+			return cachedSaleChannels;
+		}
 		List<SaleChannelResponseDto> responseList = saleChannelRepository.findAll()
 				.stream()
 				.map(saleChannelMapper::toResponseDto)
@@ -64,19 +96,32 @@ public class SaleChannelServiceImpl implements SaleChannelService {
 		if(responseList.isEmpty()) {
 			log.warn("No sale channels found.");
 		}
+		saleChannelRedisCacheService.put(SALE_CHANNEL_LIST_KEY, responseList, SALE_CHANNEL_LIST_TTL);
 		return responseList;
 	}
 
 	@Override
 	public List<SaleChannelResponseDto> getAllSaleChannelsByEventId(String eventId) {
-		return saleChannelRepository.findAllByEventId(eventId)
+		List<SaleChannelResponseDto> cachedSaleChannels = saleChannelRedisCacheService.get(
+				saleChannelEventKey(eventId), new TypeReference<>() {});
+		if(cachedSaleChannels != null) {
+			return cachedSaleChannels;
+		}
+		List<SaleChannelResponseDto> responseList = saleChannelRepository.findAllByEventId(eventId)
 				.stream()
 				.map(saleChannelMapper::toResponseDto)
 				.toList();
+		saleChannelRedisCacheService.put(saleChannelEventKey(eventId), responseList, SALE_CHANNEL_LIST_TTL);
+		return responseList;
 	}
 
 	@Override
 	public List<SaleChannelResponseDto> getActiveSaleChannels() {
+		List<SaleChannelResponseDto> cachedSaleChannels = saleChannelRedisCacheService.get(SALE_CHANNEL_ACTIVE_KEY,
+				new TypeReference<>() {});
+		if(cachedSaleChannels != null) {
+			return cachedSaleChannels;
+		}
 		List<SaleChannelResponseDto> responseList = saleChannelRepository.findByStatus(SaleChannelStatus.ACTIVE)
 				.stream()
 				.map(saleChannelMapper::toResponseDto)
@@ -84,6 +129,7 @@ public class SaleChannelServiceImpl implements SaleChannelService {
 		if(responseList.isEmpty()) {
 			log.warn("No active sale channels found.");
 		}
+		saleChannelRedisCacheService.put(SALE_CHANNEL_ACTIVE_KEY, responseList, SALE_CHANNEL_LIST_TTL);
 		return responseList;
 	}
 
@@ -93,6 +139,11 @@ public class SaleChannelServiceImpl implements SaleChannelService {
 			log.warn("Sale channel type is null.");
 			return List.of();
 		}
+		List<SaleChannelResponseDto> cachedSaleChannels = saleChannelRedisCacheService.get(saleChannelTypeKey(type),
+				new TypeReference<>() {});
+		if(cachedSaleChannels != null) {
+			return cachedSaleChannels;
+		}
 		List<SaleChannelResponseDto> responseList = saleChannelRepository.findByType(type)
 				.stream()
 				.map(saleChannelMapper::toResponseDto)
@@ -100,6 +151,7 @@ public class SaleChannelServiceImpl implements SaleChannelService {
 		if(responseList.isEmpty()) {
 			log.warn("No sale channels found for type: {}", type);
 		}
+		saleChannelRedisCacheService.put(saleChannelTypeKey(type), responseList, SALE_CHANNEL_LIST_TTL);
 		return responseList;
 	}
 
@@ -109,6 +161,7 @@ public class SaleChannelServiceImpl implements SaleChannelService {
 				.orElseThrow(() -> new ResourceNotFoundException("Sale channel not found with id: " + id));
 		saleChannel.setStatus(SaleChannelStatus.ACTIVE);
 		saleChannelRepository.save(saleChannel);
+		evictSaleChannelCaches(id, saleChannel.getType());
 	}
 
 	@Override
@@ -117,6 +170,7 @@ public class SaleChannelServiceImpl implements SaleChannelService {
 				.orElseThrow(() -> new ResourceNotFoundException("Sale channel not found with id: " + id));
 		saleChannel.setStatus(SaleChannelStatus.INACTIVE);
 		saleChannelRepository.save(saleChannel);
+		evictSaleChannelCaches(id, saleChannel.getType());
 	}
 
 	@Override
@@ -128,5 +182,32 @@ public class SaleChannelServiceImpl implements SaleChannelService {
 		var saleChannel = saleChannelRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Sale channel not found with id: " + id));
 		saleChannelRepository.delete(saleChannel);
+		evictSaleChannelCaches(id, saleChannel.getType());
+	}
+
+	private String saleChannelKey(String id) {
+		return SALE_CHANNEL_KEY_PREFIX + id;
+	}
+
+	private String saleChannelEventKey(String eventId) {
+		return SALE_CHANNEL_EVENT_KEY_PREFIX + eventId;
+	}
+
+	private String saleChannelTypeKey(SaleChannelType type) {
+		return SALE_CHANNEL_TYPE_KEY_PREFIX + type.name();
+	}
+
+	private void evictSaleChannelTypeCaches(SaleChannelType type) {
+		if(type != null) {
+			saleChannelRedisCacheService.evict(saleChannelTypeKey(type));
+		}
+	}
+
+	private void evictSaleChannelCaches(String saleChannelId, SaleChannelType type) {
+		saleChannelRedisCacheService.evict(saleChannelKey(saleChannelId));
+		saleChannelRedisCacheService.evict(SALE_CHANNEL_LIST_KEY);
+		saleChannelRedisCacheService.evict(SALE_CHANNEL_ACTIVE_KEY);
+		saleChannelRedisCacheService.evictByPrefix(SALE_CHANNEL_EVENT_KEY_PREFIX);
+		evictSaleChannelTypeCaches(type);
 	}
 }

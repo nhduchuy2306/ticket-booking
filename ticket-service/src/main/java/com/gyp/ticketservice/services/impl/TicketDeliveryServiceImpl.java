@@ -42,8 +42,10 @@ public class TicketDeliveryServiceImpl implements TicketDeliveryService {
 			model.put("content", content);
 			if(CollectionUtils.isNotEmpty(ticketPDFBytes)) {
 				Map<String, Pair<byte[], String>> attachments = new HashMap<>();
-				for(byte[] ticketPDFByte : ticketPDFBytes) {
-					attachments.put("tickets.pdf", Pair.of(ticketPDFByte, "application/pdf"));
+				for(int index = 0; index < ticketPDFBytes.size(); index++) {
+					byte[] ticketPDFByte = ticketPDFBytes.get(index);
+					String fileName = "ticket-" + (index + 1) + ".pdf";
+					attachments.put(fileName, Pair.of(ticketPDFByte, "application/pdf"));
 				}
 
 				mailService.sendEmailWithMultipleAttachments(

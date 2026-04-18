@@ -2,7 +2,6 @@ package com.gyp.orderservice.messages.producers;
 
 import java.util.concurrent.CompletableFuture;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gyp.common.annotations.KafkaComponent;
 import com.gyp.common.converters.Serialization;
 import com.gyp.common.enums.order.PaymentStatus;
@@ -20,24 +19,20 @@ public class OrderPaymentEventProducer {
 	private final KafkaTemplate<String, String> kafkaTemplate;
 
 	public void sendPaymentOutcome(PaymentOutcomeEM paymentOutcomeEM) {
-		try {
-			String topic = PaymentStatus.SUCCESS.equals(paymentOutcomeEM.getPaymentStatus())
-					? TopicConstants.PAYMENT_SUCCESS_EVENT
-					: TopicConstants.PAYMENT_FAILED_EVENT;
-			String payload = Serialization.serializeToString(paymentOutcomeEM);
-			CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(topic, payload);
-			future.whenComplete((result, throwable) -> {
-				if(throwable != null) {
-					log.error("Failed to send payment outcome event for order ID {}: {}",
-							paymentOutcomeEM.getOrderId(), throwable.getMessage());
-				} else {
-					log.info("Payment outcome event sent successfully to topic {} at offset {} in partition {}",
-							result.getRecordMetadata().topic(), result.getRecordMetadata().offset(),
-							result.getRecordMetadata().partition());
-				}
-			});
-		} catch(JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		String topic = PaymentStatus.SUCCESS.equals(paymentOutcomeEM.getPaymentStatus())
+				? TopicConstants.PAYMENT_SUCCESS_EVENT
+				: TopicConstants.PAYMENT_FAILED_EVENT;
+		String payload = Serialization.serializeToString(paymentOutcomeEM);
+		CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(topic, payload);
+		future.whenComplete((result, throwable) -> {
+			if(throwable != null) {
+				log.error("Failed to send payment outcome event for order ID {}: {}",
+						paymentOutcomeEM.getOrderId(), throwable.getMessage());
+			} else {
+				log.info("Payment outcome event sent successfully to topic {} at offset {} in partition {}",
+						result.getRecordMetadata().topic(), result.getRecordMetadata().offset(),
+						result.getRecordMetadata().partition());
+			}
+		});
 	}
 }

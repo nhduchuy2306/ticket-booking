@@ -1,4 +1,4 @@
-package com.gyp.ticketservice.configurations;
+package com.gyp.salechannelservice.configurations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +10,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class RedisConfiguration {
+
 	@Bean
 	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory,
 			ObjectMapper objectMapper) {

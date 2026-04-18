@@ -9,9 +9,6 @@ import com.gyp.eventservice.dtos.seatmap.SeatMapResponseDto;
 
 public interface SeatMapService {
 	String convertSeatMapJson(String content);
-
-	SeatConfig parseSeatConfig(String seatConfigJson);
-
 	List<SeatMapResponseDto> getAllSeatMaps();
 
 	SeatMapResponseDto getSeatMapById(String seatMapId);

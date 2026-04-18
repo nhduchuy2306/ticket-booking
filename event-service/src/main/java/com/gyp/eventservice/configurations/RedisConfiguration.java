@@ -1,4 +1,4 @@
-package com.gyp.ticketservice.configurations;
+package com.gyp.eventservice.configurations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;

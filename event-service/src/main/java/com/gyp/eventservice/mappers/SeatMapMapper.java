@@ -2,7 +2,6 @@ package com.gyp.eventservice.mappers;
 
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gyp.common.converters.Serialization;
 import com.gyp.common.models.SeatMapEventModel;
 import com.gyp.common.models.SeatMapTicketEM;
@@ -48,38 +47,23 @@ public interface SeatMapMapper extends AbstractMapper {
 	@Mapping(target = "venueMapEntityList", ignore = true)
 	@Mapping(target = "seatConfigRaw", expression = "java(serializeSeatConfig(dto.getSeatConfig()))")
 	@Mapping(target = "stageConfigRaw", expression = "java(serializeStageConfig(dto.getStageConfig()))")
+	@Mapping(target = "eventSectionMappingEntityList", ignore = true)
 	void updateEntityFromDto(SeatMapRequestDto dto, @MappingTarget SeatMapEntity entity);
 
 	default SeatConfig parseSeatConfig(String seatConfigRaw) {
-		try {
-			return Serialization.deserializeFromString(seatConfigRaw, SeatConfig.class);
-		} catch(JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		return Serialization.deserializeFromString(seatConfigRaw, SeatConfig.class);
 	}
 
 	default StageConfig parseStageConfig(String stageConfigRaw) {
-		try {
-			return Serialization.deserializeFromString(stageConfigRaw, StageConfig.class);
-		} catch(JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		return Serialization.deserializeFromString(stageConfigRaw, StageConfig.class);
 	}
 
 	default String serializeSeatConfig(SeatConfig seatConfig) {
-		try {
-			return Serialization.serializeToString(seatConfig);
-		} catch(JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		return Serialization.serializeToString(seatConfig);
 	}
 
 	default String serializeStageConfig(StageConfig stageConfig) {
-		try {
-			return Serialization.serializeToString(stageConfig);
-		} catch(JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		return Serialization.serializeToString(stageConfig);
 	}
 
 	@AfterMapping

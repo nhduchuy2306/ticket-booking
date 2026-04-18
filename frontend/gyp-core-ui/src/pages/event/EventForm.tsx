@@ -145,7 +145,7 @@ const EventForm: React.FC<EventFormProps> = ({mode, showBackButton = true}) => {
         } else {
             form.resetFields();
         }
-    }, [data, form, mode]);
+    }, [data, form, mode, saleChannelsByEvent]);
 
     const buildSaleChannelItem = (saleChannelList: SaleChannelResponseDto[]): DataItemModel[] => {
         return saleChannelList.map((saleChannelItem) => ({
@@ -162,12 +162,12 @@ const EventForm: React.FC<EventFormProps> = ({mode, showBackButton = true}) => {
     };
 
     // Custom submit handler that integrates with your API
-    const handleFormSubmit = async (values: any) => {
+    const handleFormSubmit = async (values: EventRequestDto) => {
         setIsLoading(true);
         try {
             const validatedValues = await form.validateFields();
 
-            const adaptedValues: EventRequestDto = {
+            const adaptedValues = {
                 ...validatedValues,
                 startTime: values.startTime ? DateUtils.toIsoDateTime(values.startTime) : null,
                 endTime: values.endTime ? DateUtils.toIsoDateTime(values.endTime) : null,
@@ -175,10 +175,12 @@ const EventForm: React.FC<EventFormProps> = ({mode, showBackButton = true}) => {
                 doorCloseTime: values.doorCloseTime ? DateUtils.toIsoDateTime(values.doorCloseTime) : null,
                 categoryIds: validatedValues.categories || [],
                 ticketTypeIds: validatedValues.ticketTypes || [],
-                saleChannelIds: validatedValues.saleChannelIds.map((saleChannel: {
-                    key: string
-                }) => saleChannel.key) || [],
+                saleChannelIds: validatedValues.saleChannelIds.map((saleChannel: { key: string }) => saleChannel.key) || [],
             };
+            delete adaptedValues.categories;
+            delete adaptedValues.ticketTypes;
+            delete adaptedValues.eventCompleted;
+            delete adaptedValues.eventInProgress;
 
             if (mode === Mode.CREATE.key) {
                 if (selectedLogoFile) {
@@ -214,8 +216,6 @@ const EventForm: React.FC<EventFormProps> = ({mode, showBackButton = true}) => {
     const renderForm = (
             entity: EventResponseDto,
             currentMode: string,
-            _onSave: (values: EventRequestDto) => Promise<void>,
-            _handleBack?: () => void
     ) => {
         const isReadOnly = currentMode === Mode.READ_ONLY.key;
 

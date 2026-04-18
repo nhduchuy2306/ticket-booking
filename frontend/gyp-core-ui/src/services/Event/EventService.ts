@@ -17,7 +17,7 @@ export class EventService {
     }
 
     static getEventById = async (id: string): Promise<EventResponseDto> => {
-        const response = await apiWithoutAuth.get(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${id}`);
+        const response = await apiClient.get(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${id}`);
         return response.data;
     }
 

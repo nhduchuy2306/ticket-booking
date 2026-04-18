@@ -29,7 +29,9 @@ import com.gyp.eventservice.messages.producers.AssignSaleChannelToEventProducer;
 import com.gyp.eventservice.repositories.EventRepository;
 import com.gyp.eventservice.repositories.EventSectionMappingRepository;
 import com.gyp.eventservice.repositories.VenueMapRepository;
+import com.gyp.eventservice.services.EventCacheService;
 import com.gyp.eventservice.services.EventService;
+import com.gyp.eventservice.services.SeatInventoryService;
 import com.gyp.eventservice.services.criteria.EventSearchCriteria;
 import com.gyp.eventservice.services.specifications.EventSpecification;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +55,8 @@ public class EventServiceImpl implements EventService {
 	private final AssignSaleChannelToEventProducer assignSaleChannelToEventProducer;
 	private final VenueMapRepository venueMapRepository;
 	private final EventSectionMappingRepository eventSectionMappingRepository;
+	private final SeatInventoryService seatInventoryService;
+	private final EventCacheService eventCacheService;
 
 	@Override
 	public List<EventResponseDto> getAllEvents(EventSearchCriteria criteria, PaginatedDto pagination) {
@@ -66,11 +70,16 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public EventResponseDto getEventById(String id) throws ResourceNotFoundException {
+		EventResponseDto cachedEvent = eventCacheService.getEvent(id);
+		if(cachedEvent != null) {
+			return cachedEvent;
+		}
 		EventEntity entity = eventRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + id));
 		if(entity != null) {
 			var event = eventMapper.toResponseDto(entity);
 			setImageUrl(entity, event);
+			eventCacheService.cacheEvent(event);
 			return event;
 		}
 		return null;
@@ -101,6 +110,8 @@ public class EventServiceImpl implements EventService {
 		eventEntity.setOrganizationId(organizationId);
 		EventEntity savedEvent = eventRepository.save(eventEntity);
 		updateSaleChannels(savedEvent.getId(), request.getSaleChannelIds());
+		eventCacheService.evictBookingLists(organizationId);
+		eventCacheService.evictEvent(savedEvent.getId());
 		return eventMapper.toResponseDto(savedEvent);
 	}
 
@@ -114,6 +125,9 @@ public class EventServiceImpl implements EventService {
 		existingEvent.setOrganizationId(organizationId);
 		EventEntity updatedEvent = eventRepository.save(existingEvent);
 		updateSaleChannels(eventId, request.getSaleChannelIds());
+		eventCacheService.evictBookingLists(organizationId);
+		eventCacheService.evictEvent(eventId);
+		eventCacheService.evictSeatAvailability(eventId);
 		return eventMapper.toResponseDto(updatedEvent);
 	}
 
@@ -138,6 +152,9 @@ public class EventServiceImpl implements EventService {
 			existingEvent.setOrganizationId(organizationId);
 			EventEntity updatedEvent = eventRepository.save(existingEvent);
 			updateSaleChannels(eventId, request.getSaleChannelIds());
+			eventCacheService.evictBookingLists(organizationId);
+			eventCacheService.evictEvent(eventId);
+			eventCacheService.evictSeatAvailability(eventId);
 			return eventMapper.toResponseDto(updatedEvent);
 		} catch(Exception e) {
 			log.error("Error updating event with id: {}", eventId, e);
@@ -151,6 +168,10 @@ public class EventServiceImpl implements EventService {
 				.orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + eventId));
 		eventEntity.setStatus(EventStatus.PUBLISHED);
 		EventEntity updatedEvent = eventRepository.save(eventEntity);
+		seatInventoryService.initializeSeatsForEvent(eventId);
+		eventCacheService.evictSeatAvailability(eventId);
+		eventCacheService.evictBookingLists(updatedEvent.getOrganizationId());
+		eventCacheService.evictEvent(eventId);
 		return eventMapper.toResponseDto(updatedEvent);
 	}
 
@@ -160,6 +181,8 @@ public class EventServiceImpl implements EventService {
 				.orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + eventId));
 		eventEntity.setStatus(EventStatus.CANCELLED);
 		EventEntity updatedEvent = eventRepository.save(eventEntity);
+		eventCacheService.evictBookingLists(updatedEvent.getOrganizationId());
+		eventCacheService.evictEvent(eventId);
 		return eventMapper.toResponseDto(updatedEvent);
 	}
 
@@ -179,22 +202,37 @@ public class EventServiceImpl implements EventService {
 	public void deleteEvent(String id) throws ResourceNotFoundException {
 		EventEntity eventEntity = eventRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + id));
+		eventCacheService.evictBookingLists(eventEntity.getOrganizationId());
+		eventCacheService.evictEvent(id);
 		eventRepository.delete(eventEntity);
 	}
 
 	@Override
 	public List<EventResponseDto> getAllActiveEvents() {
 		String organizationId = SecurityUtils.getCurrentOrganizationId();
+		List<EventResponseDto> cachedEvents = eventCacheService.getActiveEvents(organizationId);
+		if(cachedEvents != null) {
+			return cachedEvents;
+		}
 		var events = eventRepository.findAllActiveEvents(organizationId);
 		if(events != null && !events.isEmpty()) {
-			return eventMapper.toResponseDtoList(events);
+			var response = eventMapper.toResponseDtoList(events);
+			for(int index = 0; index < events.size(); index++) {
+				setImageUrl(events.get(index), response.get(index));
+			}
+			eventCacheService.cacheActiveEvents(organizationId, response);
+			return response;
 		}
 		return null;
 	}
 
 	@Override
 	public List<EventResponseDto> getAllEventsOnSale() {
-		return eventRepository.findAllEventsOnSale()
+		List<EventResponseDto> cachedEvents = eventCacheService.getEventsOnSale();
+		if(cachedEvents != null) {
+			return cachedEvents;
+		}
+		var events = eventRepository.findAllEventsOnSale()
 				.stream()
 				.map(item -> {
 					var event = eventMapper.toResponseDto(item);
@@ -202,11 +240,17 @@ public class EventServiceImpl implements EventService {
 					return event;
 				})
 				.toList();
+		eventCacheService.cacheEventsOnSale(events);
+		return events;
 	}
 
 	@Override
 	public List<EventResponseDto> getAllComingEvents() {
-		return eventRepository.findAllEventsComing()
+		List<EventResponseDto> cachedEvents = eventCacheService.getComingEvents();
+		if(cachedEvents != null) {
+			return cachedEvents;
+		}
+		var events = eventRepository.findAllEventsComing()
 				.stream()
 				.map(item -> {
 					var event = eventMapper.toResponseDto(item);
@@ -214,6 +258,8 @@ public class EventServiceImpl implements EventService {
 					return event;
 				})
 				.toList();
+		eventCacheService.cacheComingEvents(events);
+		return events;
 	}
 
 	@Override

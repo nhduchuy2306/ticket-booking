@@ -3,7 +3,6 @@ package com.gyp.salechannelservice.mappers;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gyp.common.converters.Serialization;
 import com.gyp.common.enums.salechannel.SaleChannelType;
 import com.gyp.common.mappers.AbstractMapper;
@@ -53,37 +52,29 @@ public interface SaleChannelMapper extends AbstractMapper {
 
 	@Named("mapSaleChannelConfigToDto")
 	default SaleChannelConfig mapSaleChannelConfigToDto(String configJson) {
-		try {
-			if(StringUtils.isEmpty(configJson)) {
-				return null;
-			}
-			LinkedHashMap object = Serialization.deserializeFromString(configJson);
-			String type = (String) object.get("type");
-			if(SaleChannelType.TICKET_SHOP.name().equals(type)) {
-				return Serialization.deserializeFromString(configJson, TicketShopSaleChannelConfigDto.class);
-			} else if(SaleChannelType.BOX_OFFICE.name().equals(type)) {
-				return Serialization.deserializeFromString(configJson, BoxOfficeSaleChannelConfigDto.class);
-			} else if(SaleChannelType.API_PARTNER.name().equals(type)) {
-				return Serialization.deserializeFromString(configJson, ApiPartnerSaleChannelConfigDto.class);
-			} else if(SaleChannelType.MOBILE_APP.name().equals(type)) {
-				return Serialization.deserializeFromString(configJson, MobileAppSaleChannelConfigDto.class);
-			}
+		if(StringUtils.isEmpty(configJson)) {
 			return null;
-		} catch(JsonProcessingException e) {
-			throw new RuntimeException(e);
 		}
+		LinkedHashMap object = Serialization.deserializeFromString(configJson);
+		String type = (String)object.get("type");
+		if(SaleChannelType.TICKET_SHOP.name().equals(type)) {
+			return Serialization.deserializeFromString(configJson, TicketShopSaleChannelConfigDto.class);
+		} else if(SaleChannelType.BOX_OFFICE.name().equals(type)) {
+			return Serialization.deserializeFromString(configJson, BoxOfficeSaleChannelConfigDto.class);
+		} else if(SaleChannelType.API_PARTNER.name().equals(type)) {
+			return Serialization.deserializeFromString(configJson, ApiPartnerSaleChannelConfigDto.class);
+		} else if(SaleChannelType.MOBILE_APP.name().equals(type)) {
+			return Serialization.deserializeFromString(configJson, MobileAppSaleChannelConfigDto.class);
+		}
+		return null;
 	}
 
 	@Named("mapSaleChannelConfigToJson")
 	default String mapSaleChannelConfigToJson(SaleChannelConfig config) {
-		try {
-			if(ObjectUtils.isEmpty(config)) {
-				return null;
-			}
-			return Serialization.serializeToString(config);
-		} catch(JsonProcessingException e) {
-			throw new RuntimeException(e);
+		if(ObjectUtils.isEmpty(config)) {
+			return null;
 		}
+		return Serialization.serializeToString(config);
 	}
 
 	@AfterMapping
