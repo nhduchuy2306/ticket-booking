@@ -25,6 +25,9 @@ const cloneSeatConfigWithAvailability = (seatConfig: SeatConfig, availabilityMap
         return {
             ...seat,
             status: availability.status || seat.status,
+            holdToken: availability.holdToken,
+            holdExpiresAt: availability.holdExpiresAt,
+            available: availability.available,
         };
     };
 

@@ -1,5 +1,7 @@
 package com.gyp.authservice.services.impl;
 
+import java.time.Duration;
+
 import com.gyp.authservice.dtos.auth.LoginRequestDto;
 import com.gyp.authservice.dtos.auth.LoginResponseDto;
 import com.gyp.authservice.dtos.auth.RegisterRequestDto;
@@ -9,6 +11,7 @@ import com.gyp.authservice.dtos.useraccount.UserAccountResponseDto;
 import com.gyp.authservice.entities.UserAccountEntity;
 import com.gyp.authservice.mappers.UserAccountMapper;
 import com.gyp.authservice.repositories.UserAccountRepository;
+import com.gyp.authservice.services.AuthRedisCacheService;
 import com.gyp.authservice.services.AuthService;
 import com.gyp.authservice.services.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +23,14 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+	private static final Duration USER_ACCOUNT_TTL = Duration.ofMinutes(5);
+	private static final String USER_ACCOUNT_KEY_PREFIX = "auth:useraccount:";
+
 	private final UserAccountRepository userAccountRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final UserAccountMapper userAccountMapper;
+	private final AuthRedisCacheService authRedisCacheService;
 
 	@Override
 	public LoginResponseDto login(LoginRequestDto loginRequestDto) {
@@ -51,6 +58,8 @@ public class AuthServiceImpl implements AuthService {
 			UserAccountEntity userAccountEntity = userAccountMapper.toEntity(registerRequestDto);
 			userAccountEntity.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
 			userAccountEntity = userAccountRepository.save(userAccountEntity);
+			authRedisCacheService.evict(userAccountKey(userAccountEntity.getId()));
+			authRedisCacheService.evict(userAccountUsernameKey(userAccountEntity.getUsername()));
 			return userAccountMapper.toResponseDto(userAccountEntity);
 		}
 		return null;
@@ -64,24 +73,24 @@ public class AuthServiceImpl implements AuthService {
 
 			if(!JwtTokenProvider.AUTH_CODE.equals(authCode)) {
 				log.error("Invalid auth code type: {}", authCode);
-				return null;
+				throw new RuntimeException("Invalid auth code type");
 			}
 
 			if(!request.getClientId().equals(clientId)) {
 				log.error("Client ID mismatch: expected {}, got {}", request.getClientId(), clientId);
-				return null;
+				throw new RuntimeException("Client ID mismatch");
 			}
 
 			String userAccountId = (String)jwtTokenProvider.getClaim(request.getCode(), "sub");
-			UserAccountEntity userAccountEntity = userAccountRepository.findById(userAccountId)
-					.orElse(null);
-
-			if(userAccountEntity == null) {
-				log.error("User account not found for ID: {}", userAccountId);
-				return null;
+			UserAccountResponseDto userAccountResponseDto = authRedisCacheService.get(userAccountKey(userAccountId),
+					UserAccountResponseDto.class);
+			if(userAccountResponseDto == null) {
+				UserAccountEntity userAccountEntity = userAccountRepository.findById(userAccountId).orElseThrow(
+						() -> new RuntimeException("User account not found for ID: " + userAccountId));
+				userAccountResponseDto = userAccountMapper.toResponseDto(userAccountEntity);
+				authRedisCacheService.put(userAccountKey(userAccountId), userAccountResponseDto,
+						USER_ACCOUNT_TTL);
 			}
-
-			UserAccountResponseDto userAccountResponseDto = userAccountMapper.toResponseDto(userAccountEntity);
 			String token = jwtTokenProvider.generateTokenWithPermissions(userAccountResponseDto);
 			return TokenResponse.builder()
 					.token(token)
@@ -97,9 +106,17 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public TokenResponse refreshToken(String userId) {
-		UserAccountEntity userAccountEntity = userAccountRepository.findById(userId)
-				.orElse(null);
-		UserAccountResponseDto userAccountResponseDto = userAccountMapper.toResponseDto(userAccountEntity);
+		UserAccountResponseDto userAccountResponseDto = authRedisCacheService.get(userAccountKey(userId),
+				UserAccountResponseDto.class);
+		if(userAccountResponseDto == null) {
+			UserAccountEntity userAccountEntity = userAccountRepository.findById(userId)
+					.orElse(null);
+			if(userAccountEntity == null) {
+				return null;
+			}
+			userAccountResponseDto = userAccountMapper.toResponseDto(userAccountEntity);
+			authRedisCacheService.put(userAccountKey(userId), userAccountResponseDto, USER_ACCOUNT_TTL);
+		}
 		String token = jwtTokenProvider.generateTokenWithPermissions(userAccountResponseDto);
 		return TokenResponse.builder()
 				.token(token)
@@ -107,5 +124,13 @@ public class AuthServiceImpl implements AuthService {
 				.name(userAccountResponseDto.getName())
 				.organizationId(userAccountResponseDto.getOrganizationId())
 				.build();
+	}
+
+	private String userAccountKey(String id) {
+		return USER_ACCOUNT_KEY_PREFIX + id;
+	}
+
+	private String userAccountUsernameKey(String username) {
+		return "auth:useraccount:username:" + username;
 	}
 }

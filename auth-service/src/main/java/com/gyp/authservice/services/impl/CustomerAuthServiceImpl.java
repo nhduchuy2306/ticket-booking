@@ -1,5 +1,6 @@
 package com.gyp.authservice.services.impl;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -13,6 +14,7 @@ import com.gyp.authservice.entities.CustomerEntity;
 import com.gyp.authservice.entities.CustomerRefreshTokenEntity;
 import com.gyp.authservice.repositories.CustomerRefreshTokenRepository;
 import com.gyp.authservice.repositories.CustomerRepository;
+import com.gyp.authservice.services.AuthRedisCacheService;
 import com.gyp.authservice.services.CustomerAuthService;
 import com.gyp.authservice.services.CustomerJwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +35,15 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 public class CustomerAuthServiceImpl implements CustomerAuthService {
 	private static final String LOCAL_PROVIDER = "local";
 	private static final long REFRESH_TOKEN_EXPIRATION_DAYS = 7L;
+	private static final Duration CUSTOMER_TTL = Duration.ofMinutes(5);
+	private static final String CUSTOMER_CURRENT_KEY_PREFIX = "auth:customer:current:";
+	private static final String CUSTOMER_EMAIL_KEY_PREFIX = "auth:customer:email:";
 
 	private final CustomerRepository customerRepository;
 	private final CustomerRefreshTokenRepository customerRefreshTokenRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final CustomerJwtTokenProvider customerJwtTokenProvider;
+	private final AuthRedisCacheService authRedisCacheService;
 
 	@Override
 	public CustomerRegisterResponseDto register(CustomerRegisterRequestDto registerRequestDto) {
@@ -57,6 +63,8 @@ public class CustomerAuthServiceImpl implements CustomerAuthService {
 				.build();
 
 		customerRepository.save(customerEntity);
+		authRedisCacheService.evict(customerEmailKey(customerEntity.getEmail()));
+		authRedisCacheService.evict(customerCurrentKey(customerEntity.getEmail()));
 
 		return CustomerRegisterResponseDto.builder()
 				.id(customerEntity.getId())
@@ -67,8 +75,19 @@ public class CustomerAuthServiceImpl implements CustomerAuthService {
 
 	@Override
 	public CustomerAuthResponseDto login(CustomerLoginRequestDto loginRequestDto) {
-		CustomerEntity customerEntity = customerRepository.findByEmailAndProvider(loginRequestDto.getEmail(),
-						LOCAL_PROVIDER)
+		CustomerResponseDto cachedCustomer = authRedisCacheService.get(customerEmailKey(loginRequestDto.getEmail()),
+				CustomerResponseDto.class);
+		if(cachedCustomer != null) {
+			CustomerEntity customerEntity = customerRepository.findByEmailAndProvider(loginRequestDto.getEmail(),
+					LOCAL_PROVIDER).orElse(null);
+			if(customerEntity != null && customerEntity.getPassword() != null && passwordEncoder.matches(
+					loginRequestDto.getPassword(), customerEntity.getPassword())) {
+				return issueTokens(customerEntity);
+			}
+		}
+
+		CustomerEntity customerEntity = customerRepository.findByEmailAndProvider(
+						loginRequestDto.getEmail(), LOCAL_PROVIDER)
 				.orElseThrow(() -> new ResponseStatusException(UNAUTHORIZED, "Invalid email or password"));
 
 		if(customerEntity.getPassword() == null || !passwordEncoder.matches(loginRequestDto.getPassword(),
@@ -120,11 +139,17 @@ public class CustomerAuthServiceImpl implements CustomerAuthService {
 			var claims = jwt.getClaims();
 			String email = claims.get("email").toString();
 			if(StringUtils.isNotEmpty(email)) {
+				CustomerResponseDto cachedCustomer = authRedisCacheService.get(customerCurrentKey(email),
+						CustomerResponseDto.class);
+				if(cachedCustomer != null) {
+					return cachedCustomer;
+				}
+
 				var customer = customerRepository.findByEmail(email)
 						.orElseThrow(() -> new ResponseStatusException(UNAUTHORIZED, "Invalid email"));
 
 				if(customer != null) {
-					return CustomerResponseDto.builder()
+					CustomerResponseDto responseDto = CustomerResponseDto.builder()
 							.id(customer.getId())
 							.name(customer.getName())
 							.email(customer.getEmail())
@@ -133,9 +158,20 @@ public class CustomerAuthServiceImpl implements CustomerAuthService {
 							.provider(customer.getProvider())
 							.providerId(customer.getProviderId())
 							.build();
+					authRedisCacheService.put(customerCurrentKey(email), responseDto, CUSTOMER_TTL);
+					authRedisCacheService.put(customerEmailKey(email), responseDto, CUSTOMER_TTL);
+					return responseDto;
 				}
 			}
 		}
 		return null;
+	}
+
+	private String customerCurrentKey(String email) {
+		return CUSTOMER_CURRENT_KEY_PREFIX + email;
+	}
+
+	private String customerEmailKey(String email) {
+		return CUSTOMER_EMAIL_KEY_PREFIX + email;
 	}
 }

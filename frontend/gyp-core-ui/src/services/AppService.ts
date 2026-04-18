@@ -1,17 +1,24 @@
 import type { MenuProps } from "antd";
-import { SubMenuType } from "antd/es/menu/interface";
+import { ItemType, SubMenuType } from "antd/es/menu/interface";
 import React from "react";
 
-export type MenuItem = Required<MenuProps>['items'][number] & { label: string }
-
-export function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
-    return {key, icon, children, label} as MenuItem;
+export type MenuItem = Required<MenuProps>['items'][number] & {
+    label: string;
+    key: React.Key;
+    appId?: string;
+    children?: MenuItem[]
 }
 
-export const hasChildren = (item: any): item is { children: MenuItem[] } =>
-        item && Array.isArray(item.children);
+export function getItem(label: React.ReactNode, key: React.Key, appId: string, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
+    return {key, icon, children, label, appId} as MenuItem;
+}
 
-export const findMenuPath = (items: MenuItem[], key: string, path: string[] = []): string[] | null => {
+export const hasChildren = (item: MenuItem) => item && Array.isArray(item.children);
+
+export const findMenuPath = (items: MenuItem[] | (ItemType[] & MenuItem[]) | undefined, key: string, path: string[] = []): string[] | null => {
+    if (!items) {
+        return null;
+    }
     for (const item of items) {
         if (!item || typeof item !== 'object') {
             continue;
@@ -41,3 +48,42 @@ export const getLabelByKey = (key: string, items: MenuItem[]): string | null => 
     return null;
 };
 
+export const hasPermission = (
+        key: React.Key,
+        permissions: Map<string, string[]>
+) => {
+    const actions = permissions.get(key as string);
+    return actions && actions.includes?.('READ');
+};
+
+export const filterMenu = (
+        isAdministrator: boolean,
+        items: MenuItem[],
+        permissions: Map<string, string[]>
+): MenuItem[] => {
+    if (isAdministrator) {
+        return items;
+    }
+    return items
+            .map(item => {
+                if (item.children) {
+                    const filteredChildren = filterMenu(isAdministrator, item.children, permissions);
+
+                    if (filteredChildren.length > 0) {
+                        return {
+                            ...item,
+                            children: filteredChildren,
+                        };
+                    }
+
+                    return null;
+                }
+
+                if (hasPermission(item.key, permissions)) {
+                    return item;
+                }
+
+                return null;
+            })
+            .filter(Boolean) as MenuItem[];
+};

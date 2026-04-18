@@ -49,5 +49,6 @@ build/
 /infrastructure/dockers/minio_data
 /infrastructure/dockers/redis_data
 /infrastructure/dockers/jenkins_home
+/infrastructure/dockers/redisinsight
 
 /.env

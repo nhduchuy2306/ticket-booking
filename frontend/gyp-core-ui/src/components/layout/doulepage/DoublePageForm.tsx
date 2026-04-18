@@ -68,6 +68,7 @@ export const DoublePageForm: React.FC<DoublePageFormProps> = ({
             const isCreateMode = mode === FormState.CREATE.key;
             const isEditMode = mode === FormState.EDIT.key;
 
+            delete values.id;
             if (isCreateMode) {
                 await service.create(values);
                 createSuccessNotification("Success", successMessages.create || "Item created successfully");

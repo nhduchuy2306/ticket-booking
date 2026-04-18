@@ -77,6 +77,16 @@ services:
     networks:
       - gyp-net
 
+  redis-insight:
+    image: redis/redisinsight:latest
+    container_name: redis-insight
+    ports:
+      - "5540:5540"
+    volumes:
+      - ./redisinsight:/data
+    networks:
+      - gyp-net
+
   mysql:
     image: mysql:8.0.21
     container_name: mysql

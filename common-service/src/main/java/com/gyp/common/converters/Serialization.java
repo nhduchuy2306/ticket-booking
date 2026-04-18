@@ -17,15 +17,23 @@ public final class Serialization {
 	private Serialization() {
 	}
 
-	public static <T> String serializeToString(T object) throws JsonProcessingException {
-		Objects.requireNonNull(object, "Object to serialize cannot be null");
-		return objectMapper.writeValueAsString(object);
+	public static <T> String serializeToString(T object) {
+		try {
+			Objects.requireNonNull(object, "Object to serialize cannot be null");
+			return objectMapper.writeValueAsString(object);
+		} catch(JsonProcessingException e) {
+			throw new RuntimeException("Failed to serialize object of type " + object.getClass().getName(), e);
+		}
 	}
 
-	public static <T> T deserializeFromString(String jsonString, Class<T> clazz) throws JsonProcessingException {
-		validateJsonString(jsonString);
-		Objects.requireNonNull(clazz, "Class type cannot be null");
-		return objectMapper.readerFor(clazz).readValue(jsonString);
+	public static <T> T deserializeFromString(String jsonString, Class<T> clazz) {
+		try {
+			validateJsonString(jsonString);
+			Objects.requireNonNull(clazz, "Class type cannot be null");
+			return objectMapper.readerFor(clazz).readValue(jsonString);
+		} catch(JsonProcessingException e) {
+			throw new RuntimeException("Failed to deserialize JSON string to " + clazz.getName(), e);
+		}
 	}
 
 	public static <T> T deserializeFromString(String jsonString, TypeReference<T> typeRef)
@@ -35,9 +43,13 @@ public final class Serialization {
 		return objectMapper.readValue(jsonString, typeRef);
 	}
 
-	public static <T> T deserializeFromString(String jsonString) throws JsonProcessingException {
-		validateJsonString(jsonString);
-		return objectMapper.readValue(jsonString, new TypeReference<>() {});
+	public static <T> T deserializeFromString(String jsonString) {
+		try {
+			validateJsonString(jsonString);
+			return objectMapper.readValue(jsonString, new TypeReference<>() {});
+		} catch(JsonProcessingException e) {
+			throw new RuntimeException("Failed to deserialize JSON string", e);
+		}
 	}
 
 	private static void validateJsonString(String json) {

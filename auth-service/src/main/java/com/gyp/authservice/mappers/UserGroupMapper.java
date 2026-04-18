@@ -1,6 +1,5 @@
 package com.gyp.authservice.mappers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gyp.authservice.dtos.usergroup.UserGroupPermissions;
 import com.gyp.authservice.dtos.usergroup.UserGroupRequestDto;
 import com.gyp.authservice.dtos.usergroup.UserGroupResponseDto;
@@ -36,20 +35,12 @@ public interface UserGroupMapper extends AbstractMapper {
 
 	@Named("mapUserGroupPermissions")
 	default UserGroupPermissions mapUserGroupPermissions(String userGroupPermissionsRaw) {
-		try {
-			return Serialization.deserializeFromString(userGroupPermissionsRaw, UserGroupPermissions.class);
-		} catch(JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		return Serialization.deserializeFromString(userGroupPermissionsRaw, UserGroupPermissions.class);
 	}
 
 	@Named("mapUserGroupPermissionsRaw")
 	default String mapUserGroupPermissionsRaw(UserGroupPermissions userGroupPermissions) {
-		try {
-			return Serialization.serializeToString(userGroupPermissions);
-		} catch(JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		return Serialization.serializeToString(userGroupPermissions);
 	}
 
 	@AfterMapping

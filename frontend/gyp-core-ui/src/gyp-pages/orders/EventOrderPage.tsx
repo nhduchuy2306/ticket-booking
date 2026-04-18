@@ -1,6 +1,6 @@
 import { Button, Form, Input, Modal } from "antd";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { createErrorNotification } from "../../components/notification/Notification.ts";
 import { OrderDetailModel } from "../../components/seat-map/models/SeatMapModels.ts";
@@ -23,13 +23,13 @@ const EventOrderPage: React.FC = () => {
     const location = useLocation();
     const bookingSession = loadBookingSession();
     const orderDetailsFromState: OrderDetailModel = location.state?.orderDetails;
+    const resolvedHoldExpiresAt = orderDetailsFromState?.holdExpiresAt || bookingSession?.holdExpiresAt;
+    const resolvedHoldToken = orderDetailsFromState?.holdToken || bookingSession?.holdToken;
     const {
         eventId,
         selectedSeats,
         totalAmount,
         ticketTypeMap,
-        holdToken,
-        holdExpiresAt
     }: OrderDetailModel = orderDetailsFromState || {
         eventId: bookingSession?.eventId,
         selectedSeats: bookingSession?.selectedSeats.map((seat) => ({
@@ -44,7 +44,8 @@ const EventOrderPage: React.FC = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [form] = Form.useForm();
-    const [timeLeft, setTimeLeft] = useState(() => getHoldCountdownSeconds(holdExpiresAt || bookingSession?.holdExpiresAt));
+    const [timeLeft, setTimeLeft] = useState(() => getHoldCountdownSeconds(resolvedHoldExpiresAt));
+    const hasShownExpiredModalRef = useRef(false);
     const bookingSeatPriceMap = new Map<string, number>(bookingSession?.selectedSeats?.map((seat) => [seat.seatId, seat.price]) || []);
     const resolvedTotalAmount = totalAmount || bookingSession?.totalAmount || 0;
 
@@ -84,22 +85,32 @@ const EventOrderPage: React.FC = () => {
     }, [eventId, navigate, selectedSeats]);
 
     useEffect(() => {
-        if (!holdExpiresAt && !bookingSession?.holdExpiresAt) {
+        if (!resolvedHoldExpiresAt) {
             return;
         }
 
         const timer = setInterval(() => {
-            setTimeLeft(getHoldCountdownSeconds(holdExpiresAt || bookingSession?.holdExpiresAt));
+            setTimeLeft(getHoldCountdownSeconds(resolvedHoldExpiresAt));
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [bookingSession?.holdExpiresAt, holdExpiresAt]);
+    }, [resolvedHoldExpiresAt]);
 
     useEffect(() => {
-        if (timeLeft === 0 && (holdToken || bookingSession?.holdToken)) {
+        if (timeLeft > 0) {
+            hasShownExpiredModalRef.current = false;
+            return;
+        }
+
+        if (!resolvedHoldToken || hasShownExpiredModalRef.current) {
+            return;
+        }
+
+        hasShownExpiredModalRef.current = true;
+        if (timeLeft === 0) {
             showSessionExpiredModal();
         }
-    }, [bookingSession?.holdToken, eventId, holdToken, navigate, showSessionExpiredModal, timeLeft]);
+    }, [resolvedHoldToken, timeLeft]);
 
     // Format time as MM:SS
     const formatTime = (seconds: number) => {
@@ -109,7 +120,7 @@ const EventOrderPage: React.FC = () => {
     };
 
     const handleCompleteOrder = async () => {
-        if (timeLeft <= 0 || isHoldExpired(holdExpiresAt || bookingSession?.holdExpiresAt)) {
+        if (timeLeft <= 0 || isHoldExpired(resolvedHoldExpiresAt)) {
             showSessionExpiredModal();
         } else {
             showInputEmailAndPhoneModal();
@@ -186,16 +197,15 @@ const EventOrderPage: React.FC = () => {
                                         sectionName: seat.sectionName,
                                         ticketTypeId: seat.ticketTypeId,
                                         price: seat.price,
-                                        holdToken: holdToken || bookingSession?.holdToken,
-                                        holdExpiresAt: holdExpiresAt || bookingSession?.holdExpiresAt,
+                                        holdToken: resolvedHoldToken || bookingSession?.holdToken,
+                                        holdExpiresAt: resolvedHoldExpiresAt || bookingSession?.holdExpiresAt,
                                     }))
                                     : (bookingSession?.selectedSeats || []);
 
                             const baseSession: BookingHoldSession = bookingSession ?? {
                                 eventId: eventId || "",
-                                holdToken: holdToken || "",
-                                holdExpiresAt:
-                                        holdExpiresAt || new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+                                holdToken: resolvedHoldToken || "",
+                                holdExpiresAt: resolvedHoldExpiresAt || new Date(Date.now() + 15 * 60 * 1000).toISOString(),
                                 seatIds: resolvedSeatRows.map((seat) => seat.seatId),
                                 selectedSeats: sessionSelectedSeats,
                                 totalAmount: resolvedTotalAmount,
@@ -206,6 +216,8 @@ const EventOrderPage: React.FC = () => {
                                 eventId: eventId || bookingSession?.eventId || "",
                                 orderId: pendingOrder.id,
                                 customerEmail: values.email,
+                                holdToken: resolvedHoldToken || bookingSession?.holdToken || baseSession.holdToken,
+                                holdExpiresAt: resolvedHoldExpiresAt || bookingSession?.holdExpiresAt || baseSession.holdExpiresAt,
                             });
                             window.location.href = paymentResponse.payUrl;
                         }
@@ -224,10 +236,10 @@ const EventOrderPage: React.FC = () => {
                 }
             },
             onCancel: () => {
-                if (bookingSession?.eventId && (holdToken || bookingSession?.holdToken)) {
+                if (bookingSession?.eventId && (resolvedHoldToken || bookingSession?.holdToken)) {
                     void SeatMapService.releaseSeats({
                         eventId: bookingSession.eventId,
-                        holdToken: holdToken || bookingSession.holdToken,
+                        holdToken: resolvedHoldToken || bookingSession.holdToken,
                         seatIds: bookingSession.seatIds,
                         seatKeys: bookingSession.seatIds,
                         userId: bookingSession.userId,
@@ -317,10 +329,10 @@ const EventOrderPage: React.FC = () => {
                                                     okText: "Yes, Cancel",
                                                     cancelText: "No, Go Back",
                                                     onOk: () => {
-                                                        if (bookingSession?.eventId && (holdToken || bookingSession?.holdToken)) {
+                                                        if (bookingSession?.eventId && (resolvedHoldToken || bookingSession?.holdToken)) {
                                                             void SeatMapService.releaseSeats({
                                                                 eventId: bookingSession.eventId,
-                                                                holdToken: holdToken || bookingSession.holdToken,
+                                                                holdToken: resolvedHoldToken || bookingSession.holdToken,
                                                                 seatIds: bookingSession.seatIds,
                                                                 seatKeys: bookingSession.seatIds,
                                                                 userId: bookingSession.userId,

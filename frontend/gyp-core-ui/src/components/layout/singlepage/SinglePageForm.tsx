@@ -45,6 +45,7 @@ const SinglePageForm: React.FC<SinglePageFormProps> = ({
             const isCreateMode = mode === FormState.CREATE.key;
             const isEditMode = mode === FormState.EDIT.key;
 
+            delete values.id;
             if (isCreateMode) {
                 await service.create(values);
                 createSuccessNotification(

@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gyp.authservice.dtos.useraccount.UserAccountResponseDto;
 import com.gyp.common.converters.Serialization;
 import com.gyp.common.enums.permission.ApplicationPermission;
@@ -127,13 +126,8 @@ public class JwtTokenProvider {
 				return ApplicationPermission.ADMIN.getApplicationId();
 			}
 		}
-
 		Map<String, List<String>> appIdAndActions = getAppIdAndActions(dto);
-		try {
-			return Serialization.serializeToString(appIdAndActions);
-		} catch(JsonProcessingException e) {
-			throw new IllegalArgumentException(e);
-		}
+		return Serialization.serializeToString(appIdAndActions);
 	}
 
 	private Map<String, List<String>> getAppIdAndActions(UserAccountResponseDto dto) {

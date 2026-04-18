@@ -85,8 +85,7 @@ const ChooseSeatAndOrderComponent: React.FC = () => {
             });
 
             const holdToken = reservationResponse.holdToken || createHoldToken();
-            // const holdExpiresAt = reservationResponse.holdExpiresAt || reservationResponse.expiresAt || new Date(Date.now() + 5 * 60 * 1000).toISOString();
-            const holdExpiresAt = "";
+            const holdExpiresAt = reservationResponse.holdExpiresAt || new Date(Date.now() + 15 * 60 * 1000).toISOString();
 
             saveBookingSession({
                 eventId,

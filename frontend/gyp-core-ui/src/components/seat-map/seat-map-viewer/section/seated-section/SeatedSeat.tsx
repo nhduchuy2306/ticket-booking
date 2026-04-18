@@ -27,8 +27,8 @@ const SeatedSeat: React.FC<SeatMapSeatedSeatProps> = (props) => {
     }, [props.seat]);
 
     const isSelected = selectedSeats.find((s) => s.seat.id === seat.id) !== undefined;
-    // const holdExpiresAt = seat.attributes?.holdExpiresAt as string | undefined;
-    const holdCountdown = getHoldCountdownSeconds("10:00:00");
+    const holdExpiresAt = (seat as Seat & { holdExpiresAt?: string }).holdExpiresAt;
+    const holdCountdown = getHoldCountdownSeconds(holdExpiresAt);
 
     // Use the seat's predefined position for arc layouts
     const positionX = seat.position?.x || 0;

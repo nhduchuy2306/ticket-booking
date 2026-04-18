@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 @ConditionalOnClass(MinioClient.class)
-@ConditionalOnProperty(name = "minio.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "minio.enabled", havingValue = "true")
 public class UploadServiceImpl implements UploadService {
 	@Value("${minio.bucket}")
 	private String bucket;

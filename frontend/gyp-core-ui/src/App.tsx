@@ -12,48 +12,49 @@ import { PiSeat } from "react-icons/pi";
 import { useSelector } from "react-redux";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import ProfilePage from "./pages/profile/ProfilePage.tsx";
-import { findMenuPath, getItem, getLabelByKey, MenuItem } from "./services/AppService.ts";
+import { filterMenu, findMenuPath, getItem, getLabelByKey, MenuItem } from "./services/AppService.ts";
+import { UserAccountService } from "./services/Auth/UserAccountService.ts";
 import { IamService } from "./services/Iam/IamService.ts";
 import { RootState } from "./states/store.ts";
 
 const {Content, Sider} = Layout;
 
 const menuItems: MenuItem[] = [
-    getItem('User Service', 'user-service', <AiOutlineUser/>, [
-        getItem('User Account', 'user-account', <AiOutlineUser/>),
-        getItem('User Group', 'user-group', <AiOutlineUsergroupAdd/>),
-        getItem('Organization', 'organization', <BiBuilding/>),
+    getItem('User Service', 'user-service', 'user-service', <AiOutlineUser/>, [
+        getItem('User Account', 'user-account', 'app.user.account', <AiOutlineUser/>),
+        getItem('User Group', 'user-group', 'app.user.group', <AiOutlineUsergroupAdd/>),
+        getItem('Organization', 'organization', 'app.organization', <BiBuilding/>),
     ]),
-    getItem('Event Service', 'event-service', <BsCalendar3/>, [
-        getItem('Event', 'event', <BsCalendar3/>),
-        getItem('Event Image', 'event-image', <BiImage/>),
-        getItem('Category', 'category', <BiCategory/>),
-        getItem('Venue', 'venue', <CiLocationOn/>),
-        getItem('Venue Map', 'venue-map', <CiLocationOn/>),
-        getItem('Season', 'season', <GrShareOption/>),
-        getItem('Seat Map', 'seat-map', <PiSeat/>),
-        getItem('Ticket Type', 'ticket-type', <BiCategory/>),
+    getItem('Event Service', 'event-service', 'event-service', <BsCalendar3/>, [
+        getItem('Event', 'event', 'app.event', <BsCalendar3/>),
+        getItem('Event Image', 'event-image', 'app.event.image', <BiImage/>),
+        getItem('Category', 'category', 'app.category', <BiCategory/>),
+        getItem('Venue', 'venue', 'app.venue', <CiLocationOn/>),
+        getItem('Venue Map', 'venue-map', 'app.venue.map', <CiLocationOn/>),
+        getItem('Season', 'season', 'app.season', <GrShareOption/>),
+        getItem('Seat Map', 'seat-map', 'app.seat.map', <PiSeat/>),
+        getItem('Ticket Type', 'ticket-type', 'app.ticket.type', <BiCategory/>),
     ]),
-    getItem('Ticket Service', 'ticket-service', <BsTicket/>, [
-        getItem('Ticket', 'ticket', <BsTicket/>),
-        getItem('Order', 'order', <BiMoney/>),
+    getItem('Ticket Service', 'ticket-service', 'ticket-service', <BsTicket/>, [
+        getItem('Ticket', 'ticket', 'app.ticket', <BsTicket/>),
+        getItem('Order', 'order', 'app.order', <BiMoney/>),
     ]),
-    getItem('Sale Channel Service', 'sale-channel-service', <LiaFirstOrder/>, [
-        getItem('Sale Channel', 'sale-channel', <CiShop/>),
-        getItem('Sale Channel Type', 'sale-channel-type', <CiShop/>),
+    getItem('Sale Channel Service', 'sale-channel-service', 'sale-channel-service', <LiaFirstOrder/>, [
+        getItem('Sale Channel', 'sale-channel', 'app.sale.channel', <CiShop/>),
+        getItem('Sale Channel Type', 'sale-channel-type', 'app.sale.channel.type', <CiShop/>),
     ]),
-    getItem('Configuration Service', 'configuration-service', <CiSettings/>, [
-        getItem('Configuration', 'configuration', <CiSettings/>),
+    getItem('Configuration Service', 'configuration-service', 'configuration-service', <CiSettings/>, [
+        getItem('Configuration', 'configuration', 'app.configuration', <CiSettings/>),
     ]),
-    getItem('Logout', 'logout', <IoIosLogOut/>)
+    getItem('Logout', 'logout', 'logout', <IoIosLogOut/>)
 ];
 
 const boxOfficeMenuItems: MenuItem[] = [
-    getItem('Box Office', 'box-office', <BiMoney/>, [
-        getItem('Box Office Dashboard', 'box-office-dashboard', <BiMoney/>),
-        getItem('Box Office Report', 'box-office-report', <BiMoney/>),
-        getItem('Box Office Settings', 'box-office-settings', <CiSettings/>),
-        getItem('Box Office Sale Ticket', 'box-office-sale-ticket', <BsTicket/>),
+    getItem('Box Office', 'box-office', 'box-office', <BiMoney/>, [
+        getItem('Box Office Dashboard', 'box-office-dashboard', 'box-office-dashboard', <BiMoney/>),
+        getItem('Box Office Report', 'box-office-report', 'box-office-report', <BiMoney/>),
+        getItem('Box Office Settings', 'box-office-settings', 'box-office-settings', <CiSettings/>),
+        getItem('Box Office Sale Ticket', 'box-office-sale-ticket', 'box-office-sale-ticket', <BsTicket/>),
     ]),
 ];
 
@@ -85,6 +86,8 @@ const App: React.FC = () => {
     const [openKeys, setOpenKeys] = useState<string[]>([]);
     const [collapsed, setCollapsed] = useState(false);
     const boxOfficeMode = useSelector((state: RootState) => state.boxOffice.value);
+    const userId = IamService.getUserId();
+    const [filteredMenu, setFilteredMenu] = useState<MenuItem[]>([]);
 
     useEffect(() => {
         const pathParts = location.pathname.split('/');
@@ -101,7 +104,33 @@ const App: React.FC = () => {
         if (menuPath && menuPath.length > 1) {
             setOpenKeys(menuPath.slice(0, -1));
         }
-    }, [location.pathname]);
+    }, [boxOfficeMode, location.pathname, navigate]);
+
+    useEffect(() => {
+        (async () => {
+            const currentUserAccount = await UserAccountService.getUserAccountById(userId || '');
+            const userGroupList = currentUserAccount.userGroupList;
+            const permissions = new Map<string, string[]>();
+            let isAdministrator = false;
+            userGroupList.forEach(group => {
+                isAdministrator = group.administrator;
+                if (isAdministrator) {
+                    return;
+                }
+                group.userGroupPermissions?.permissionItems.map(item => {
+                    if (permissions.get(item.applicationId)) {
+                        const existingActions = permissions.get(item.applicationId);
+                        permissions.set(item.applicationId, {...existingActions, ...item.actions});
+                    } else {
+                        permissions.set(item.applicationId, item.actions);
+                    }
+                });
+            });
+
+            const filtered = filterMenu(isAdministrator, menuItems, permissions);
+            setFilteredMenu(filtered);
+        })();
+    }, [userId]);
 
     const menuPath = findMenuPath(allItems, selectedKey);
     const breadcrumbItems = menuPath
@@ -144,7 +173,7 @@ const App: React.FC = () => {
                             selectedKeys={[selectedKey]}
                             openKeys={openKeys}
                             onOpenChange={(keys) => setOpenKeys(keys)}
-                            items={boxOfficeMode ? boxOfficeMenuItems : menuItems}
+                            items={boxOfficeMode ? boxOfficeMenuItems : filteredMenu}
                             onSelect={handleMenuItemSelect}
                     />
                 </Sider>

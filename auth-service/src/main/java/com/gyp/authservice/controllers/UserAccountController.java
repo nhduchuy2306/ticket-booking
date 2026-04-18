@@ -46,7 +46,6 @@ public class UserAccountController extends AbstractController {
 			@RequestParam(value = "size", required = false) Optional<Integer> size) {
 		String organizationId = getCurrentOrganizationId();
 		UserAccountSearchCriteria userGroupSearchCriteria = UserAccountSearchCriteria.builder()
-				.organizationId(organizationId)
 				.sortBy(sortBy)
 				.build();
 		PaginatedDto pagination = PaginatedDto.builder()
