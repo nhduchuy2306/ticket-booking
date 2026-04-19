@@ -6,8 +6,13 @@ import java.util.Optional;
 import com.gyp.common.enums.salechannel.SaleChannelType;
 import com.gyp.salechannelservice.dtos.salechannel.SaleChannelRequestDto;
 import com.gyp.salechannelservice.dtos.salechannel.SaleChannelResponseDto;
+import com.gyp.salechannelservice.dtos.salechannelconfig.SaleChannelConfig;
 
 public interface SaleChannelService {
+	SaleChannelResponseDto getSaleChannelBySlug(String orgSlug);
+
+	SaleChannelResponseDto updateCurrentOrganizationConfig(SaleChannelConfig saleChannelConfig, String orgSlug);
+
 	SaleChannelResponseDto createSaleChannel(SaleChannelRequestDto saleChannel);
 
 	SaleChannelResponseDto updateSaleChannel(String id, SaleChannelRequestDto saleChannel);

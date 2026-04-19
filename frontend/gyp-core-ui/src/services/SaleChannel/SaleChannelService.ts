@@ -5,6 +5,7 @@ import { BaseService } from "../BaseService.ts";
 const SALE_CHANNEL_PATH = "sale-channels";
 const EVENT_PATH = "events";
 const ACTIVE_PATH = "active";
+const BY_SLUG_PATH = "by-slug";
 
 export class SaleChannelService {
     static getAllSaleChannels = async (): Promise<SaleChannelResponseDto[]> => {
@@ -38,6 +39,11 @@ export class SaleChannelService {
 
     static getActiveSaleChannels = async (): Promise<SaleChannelResponseDto[]> => {
         const res = await apiWithoutAuth.get(`/${SALE_CHANNEL_SERVICE_PATH}/${SALE_CHANNEL_PATH}/${ACTIVE_PATH}`);
+        return res.data;
+    }
+
+    static getSaleChannelBySlug = async (orgSlug: string): Promise<SaleChannelResponseDto> => {
+        const res = await apiWithoutAuth.get(`/${SALE_CHANNEL_SERVICE_PATH}/${SALE_CHANNEL_PATH}/${BY_SLUG_PATH}/${orgSlug}`);
         return res.data;
     }
 }

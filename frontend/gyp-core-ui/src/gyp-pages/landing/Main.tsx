@@ -6,9 +6,11 @@ import MultiItemSlider from "../../components/slider/MultiItemSlider.tsx";
 import { EventResponseDto } from "../../models/generated/event-service-models";
 import { EventService } from "../../services/Event/EventService.ts";
 import { UploadUtils } from "../../utils/UploadUtils.ts";
+import { useGypPageContext } from "../GypPageContext.tsx";
 
 const Main: React.FC = () => {
     const navigate = useNavigate();
+    const { tenantOrganizationId } = useGypPageContext();
     const [onSaleEvents, setOnSaleEvents] = React.useState<EventResponseDto[]>([]);
     const [onComingEvents, setOnComingEvents] = React.useState<EventResponseDto[]>([]);
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
@@ -18,7 +20,11 @@ const Main: React.FC = () => {
             try {
                 const onSaleEventResponse = await EventService.getOnSaleEvents();
                 if (onSaleEventResponse) {
-                    setOnSaleEvents(onSaleEventResponse);
+                    setOnSaleEvents(
+                            tenantOrganizationId
+                                    ? onSaleEventResponse.filter(event => event.organizationId === tenantOrganizationId)
+                                    : onSaleEventResponse
+                    );
                 }
             } catch (Error) {
                 console.error("Error fetching events:", Error);
@@ -32,7 +38,11 @@ const Main: React.FC = () => {
             try {
                 const comingEventResponse = await EventService.getComingEvents();
                 if (comingEventResponse) {
-                    setOnComingEvents(comingEventResponse);
+                    setOnComingEvents(
+                            tenantOrganizationId
+                                    ? comingEventResponse.filter(event => event.organizationId === tenantOrganizationId)
+                                    : comingEventResponse
+                    );
                 }
             } catch (Error) {
                 console.error("Error fetching events:", Error);
@@ -41,7 +51,7 @@ const Main: React.FC = () => {
                 setIsLoading(false);
             }
         })();
-    }, []);
+    }, [tenantOrganizationId]);
 
     return (
             <main className="flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-4 py-16">

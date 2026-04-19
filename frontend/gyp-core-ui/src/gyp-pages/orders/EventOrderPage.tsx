@@ -1,5 +1,5 @@
 import { Button, Form, Input, Modal } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { createErrorNotification } from "../../components/notification/Notification.ts";
@@ -18,6 +18,7 @@ import {
     saveBookingSession
 } from "../../utils/bookingSession.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
+import { useGypPageContext } from "../GypPageContext.tsx";
 
 const EventOrderPage: React.FC = () => {
     const location = useLocation();
@@ -40,7 +41,8 @@ const EventOrderPage: React.FC = () => {
         holdToken: bookingSession?.holdToken,
         holdExpiresAt: bookingSession?.holdExpiresAt,
     };
-    const {event, venue} = useEventData({id: eventId});
+    const {tenantOrganizationId} = useGypPageContext();
+    const {event, venue} = useEventData({id: eventId, tenantOrganizationId});
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [form] = Form.useForm();
@@ -59,7 +61,7 @@ const EventOrderPage: React.FC = () => {
             }))
             : (bookingSession?.selectedSeats || []);
 
-    const showSessionExpiredModal = () => {
+    const showSessionExpiredModal = useCallback(() => {
         Modal.confirm({
             title: "Session Expired",
             content: "Your seat hold expired. Please reserve the seats again.",
@@ -76,7 +78,7 @@ const EventOrderPage: React.FC = () => {
             maskClosable: false,
             closable: false,
         });
-    };
+    }, [eventId, navigate]);
 
     useEffect(() => {
         if (!eventId || !selectedSeats || selectedSeats.length === 0) {
@@ -110,7 +112,7 @@ const EventOrderPage: React.FC = () => {
         if (timeLeft === 0) {
             showSessionExpiredModal();
         }
-    }, [resolvedHoldToken, timeLeft]);
+    }, [resolvedHoldToken, timeLeft, showSessionExpiredModal]);
 
     // Format time as MM:SS
     const formatTime = (seconds: number) => {

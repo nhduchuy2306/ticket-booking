@@ -29,6 +29,7 @@ public interface SaleChannelMapper extends AbstractMapper {
 	SaleChannelResponseDto toResponseDto(SaleChannelEntity entity);
 
 	@Mapping(target = "organizationId", ignore = true)
+	@Mapping(target = "organizationSlug", ignore = true)
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "createUser", ignore = true)
 	@Mapping(target = "createTimestamp", ignore = true)
@@ -41,6 +42,7 @@ public interface SaleChannelMapper extends AbstractMapper {
 	List<SaleChannelResponseDto> toResponseDtoList(List<SaleChannelEntity> entities);
 
 	@Mapping(target = "organizationId", ignore = true)
+	@Mapping(target = "organizationSlug", ignore = true)
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "createUser", ignore = true)
 	@Mapping(target = "createTimestamp", ignore = true)

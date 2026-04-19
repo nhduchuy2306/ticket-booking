@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Welcome to GYP TicketBox</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #222;">
+<h2>Welcome to GYP TicketBox</h2>
+<p>Your organization <strong th:text="${orgName}">Organization Name</strong> has been created successfully.</p>
+<p>Login email: <strong th:text="${ownerEmail}">owner@example.com</strong></p>
+<p>Temporary password: <strong th:text="${temporaryPassword}">TempPassword123</strong></p>
+<p>Login here: <a th:href="${loginUrl}" th:text="${loginUrl}">http://lvh.me:3000/login</a></p>
+<p>Please change your password after the first login.</p>
+</body>
+</html>
+

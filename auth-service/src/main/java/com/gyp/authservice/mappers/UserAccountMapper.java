@@ -3,53 +3,62 @@ package com.gyp.authservice.mappers;
 import com.gyp.authservice.dtos.auth.RegisterRequestDto;
 import com.gyp.authservice.dtos.useraccount.UserAccountRequestDto;
 import com.gyp.authservice.dtos.useraccount.UserAccountResponseDto;
-import com.gyp.authservice.entities.OrganizationEntity;
 import com.gyp.authservice.entities.UserAccountEntity;
 import com.gyp.common.models.UserAccountEventModel;
-import org.apache.commons.lang3.StringUtils;
-import org.mapstruct.AfterMapping;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", uses = { UserGroupMapper.class })
+@Mapper(componentModel = "spring", uses = { UserGroupMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserAccountMapper extends AbstractMapper {
-	@Mapping(target = "organizationEntity", source = "organizationId", qualifiedByName = "toOrganizationEntity")
+	@BeanMapping(ignoreByDefault = true)
+	@Mapping(target = "name", source = "name")
+	@Mapping(target = "username", source = "username")
+	@Mapping(target = "password", source = "password")
+	@Mapping(target = "dob", source = "dob")
+	@Mapping(target = "phoneNumber", source = "phoneNumber")
+	@Mapping(target = "email", source = "email")
+	@Mapping(target = "userGroupEntityList", ignore = true)
 	@Mapping(target = "realmType", ignore = true)
 	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "userGroupEntityList", ignore = true)
 	UserAccountEntity toEntity(UserAccountRequestDto dto);
 
-	@Mapping(target = "organizationId", source = "entity.organizationEntity.id")
+	@BeanMapping(ignoreByDefault = true)
+	@Mapping(target = "name", source = "name")
+	@Mapping(target = "username", source = "username")
+	@Mapping(target = "dob", source = "dob")
+	@Mapping(target = "phoneNumber", source = "phoneNumber")
+	@Mapping(target = "email", source = "email")
+	@Mapping(target = "organizationId", source = "organizationId")
+	@Mapping(target = "realmType", source = "realmType")
 	@Mapping(target = "userGroupList", source = "userGroupEntityList")
 	UserAccountResponseDto toResponseDto(UserAccountEntity entity);
 
 	@Mapping(target = "actions", ignore = true)
 	UserAccountEventModel toModel(UserAccountEntity entity);
 
-	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "organizationEntity", ignore = true)
+	@BeanMapping(ignoreByDefault = true)
+	@Mapping(target = "name", source = "name")
+	@Mapping(target = "username", source = "username")
+	@Mapping(target = "password", source = "password")
+	@Mapping(target = "dob", source = "dob")
+	@Mapping(target = "phoneNumber", source = "phoneNumber")
+	@Mapping(target = "email", source = "email")
 	@Mapping(target = "userGroupEntityList", ignore = true)
+	@Mapping(target = "realmType", ignore = true)
+	@Mapping(target = "id", ignore = true)
 	UserAccountEntity toEntity(RegisterRequestDto dto);
 
-	@Mapping(target = "id", ignore = true)
+	@BeanMapping(ignoreByDefault = true)
+	@Mapping(target = "name", source = "name")
+	@Mapping(target = "username", source = "username")
+	@Mapping(target = "dob", source = "dob")
+	@Mapping(target = "phoneNumber", source = "phoneNumber")
+	@Mapping(target = "email", source = "email")
 	@Mapping(target = "userGroupEntityList", ignore = true)
-	@Mapping(target = "organizationEntity", ignore = true)
+	@Mapping(target = "realmType", ignore = true)
+	@Mapping(target = "id", ignore = true)
 	void updateEntityFromDto(UserAccountRequestDto dto, @MappingTarget UserAccountEntity entity);
-
-	@AfterMapping
-	default void afterMapping(@MappingTarget UserAccountEntity entity) {
-		mapAbstractFieldsToEntity(entity);
-	}
-
-	@Named("toOrganizationEntity")
-	default OrganizationEntity toOrganizationEntity(String organizationId) {
-		if(StringUtils.isEmpty(organizationId)) {
-			return null;
-		}
-		OrganizationEntity organizationEntity = new OrganizationEntity();
-		organizationEntity.setId(organizationId);
-		return organizationEntity;
-	}
 }

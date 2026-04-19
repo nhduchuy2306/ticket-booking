@@ -14,6 +14,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gyp.common.entities.AbstractEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,8 +43,29 @@ public class OrganizationEntity extends AbstractEntity {
 	@Column(name = "description")
 	private String description;
 
-	@Column(name = "code")
-	private String code;
+	@Column(name = "org_slug", unique = true)
+	private String orgSlug;
+
+	@Column(name = "business_email", unique = true)
+	private String businessEmail;
+
+	@Column(name = "phone")
+	private String phone;
+
+	@Column(name = "address")
+	private String address;
+
+	@Column(name = "tax_code", unique = true)
+	private String taxCode;
+
+	@Column(name = "representative_name")
+	private String representativeName;
+
+	@Column(name = "representative_phone")
+	private String representativePhone;
+
+	@Column(name = "status")
+	private String status;
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "organizationEntity", fetch = FetchType.LAZY)

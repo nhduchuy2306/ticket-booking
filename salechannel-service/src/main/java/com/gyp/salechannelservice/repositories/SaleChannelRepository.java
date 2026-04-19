@@ -1,6 +1,7 @@
 package com.gyp.salechannelservice.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.gyp.common.enums.salechannel.SaleChannelStatus;
 import com.gyp.common.enums.salechannel.SaleChannelType;
@@ -14,6 +15,10 @@ public interface SaleChannelRepository extends JpaRepository<SaleChannelEntity, 
 	List<SaleChannelEntity> findByStatus(SaleChannelStatus status);
 
 	List<SaleChannelEntity> findByType(SaleChannelType type);
+
+	Optional<SaleChannelEntity> findFirstByTypeAndOrganizationId(SaleChannelType type, String organizationId);
+
+	Optional<SaleChannelEntity> findFirstByOrganizationSlugAndType(String organizationSlug, SaleChannelType type);
 
 	@Query("""
 			SELECT sc FROM SaleChannelEntity sc

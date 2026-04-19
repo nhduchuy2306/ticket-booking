@@ -58,9 +58,9 @@ public class CustomerAuthServiceImpl implements CustomerAuthService {
 				.email(registerRequestDto.getEmail())
 				.password(passwordEncoder.encode(registerRequestDto.getPassword()))
 				.provider(LOCAL_PROVIDER)
-				.createTimestamp(now)
-				.changeTimestamp(now)
 				.build();
+		customerEntity.setCreateTimestamp(now);
+		customerEntity.setChangeTimestamp(now);
 
 		customerRepository.save(customerEntity);
 		authRedisCacheService.evict(customerEmailKey(customerEntity.getEmail()));

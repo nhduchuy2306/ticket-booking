@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserGroupRepository extends JpaRepository<UserGroupEntity, String>,
 		JpaSpecificationExecutor<UserGroupEntity> {
-	Optional<UserGroupEntity> findByIdAndOrganizationEntityId(String id, String organizationEntity);
+	Optional<UserGroupEntity> findByIdAndOrganizationId(String id, String organizationId);
 
 	List<UserGroupEntity> findByUserAccountEntityList(List<UserAccountEntity> userAccountEntityList);
 }

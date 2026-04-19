@@ -10,9 +10,27 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class BaseSaleChannelConfigDto implements SaleChannelConfig {
-	private String theme;
+	// Branding
+	private String logoUrl;
+	private String faviconUrl;
 	private String primaryColor;
 	private String secondaryColor;
+	private String bannerUrl;
+
+	// Identity
+	private String displayName;
+	private String tagline;
+	private String supportEmail;
+
+	// Social links
+	private String facebookUrl;
+	private String instagramUrl;
+	private String websiteUrl;
+
+	// Behavior
+	private Boolean showPoweredByGYP;
+
+	private String theme;
 	private String fontFamily;
 
 	private String siteLogoUrl;

@@ -5,10 +5,12 @@ import { FaLocationDot } from "react-icons/fa6";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEventData } from "../../hooks/form/useEventData.tsx";
 import { UploadUtils } from "../../utils/UploadUtils.ts";
+import { useGypPageContext } from "../GypPageContext.tsx";
 
 const EventDetailPage: React.FC = () => {
     const {id} = useParams();
-    const {event, isLoading, venue} = useEventData({id});
+    const {tenantOrganizationId} = useGypPageContext();
+    const {event, isLoading, venue} = useEventData({id, tenantOrganizationId});
     const navigate = useNavigate();
 
     const getMinTicketPrice = () => {
@@ -29,6 +31,10 @@ const EventDetailPage: React.FC = () => {
                     <Spin size="large" className="!mt-20"/>
                 </div>
         );
+    }
+
+    if (!event) {
+        return <div className="w-full flex items-center justify-center py-20">Event not found.</div>;
     }
 
     return (

@@ -1,6 +1,7 @@
 package com.gyp.authservice.controllers;
 
 import com.gyp.authservice.dtos.organization.OrganizationRequestDto;
+import jakarta.validation.Valid;
 import com.gyp.authservice.services.OrganizationService;
 import com.gyp.common.controllers.AbstractController;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,11 @@ public class OrganizationController extends AbstractController {
 	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.ORGANIZATION, #ActionPerm.READ)")
 	public ResponseEntity<?> getAllOrganizations() {
 		return ResponseEntity.ok(organizationService.getAllOrganizations());
+	}
+
+	@PostMapping("/register")
+	public ResponseEntity<?> registerOrganization(@Valid @RequestBody OrganizationRequestDto organizationRequestDto) {
+		return ResponseEntity.status(201).body(organizationService.registerOrganization(organizationRequestDto));
 	}
 
 	@GetMapping("/{" + ID_PARAM + "}")

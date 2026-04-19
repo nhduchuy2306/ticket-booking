@@ -6,9 +6,7 @@ public final class TopicConstants {
 
 	// Auth Service Topics
 	public static final String USER_ACCOUNT_SYNC = "auth.user.account.sync";
-	public static final String ORGANIZER_CREATE_COMMAND = "auth.organizer.command.create";
-	public static final String ORGANIZER_UPDATE_COMMAND = "auth.organizer.command.create";
-	public static final String ORGANIZER_DELETE_COMMAND = "auth.organizer.command.create";
+	public static final String ORGANIZATION_CREATED_EVENT = "auth.organization.created.event";
 
 	// Event topics
 	public static final String EVENT_CREATE_COMMAND = "event.command.create";

@@ -65,9 +65,9 @@ public class CustomerOAuth2UserService implements OAuth2UserService<OidcUserRequ
 				.email(email)
 				.provider(GOOGLE_PROVIDER)
 				.providerId(providerId)
-				.createTimestamp(LocalDateTime.now())
-				.changeTimestamp(LocalDateTime.now())
 				.build();
+		customerEntity.setCreateTimestamp(LocalDateTime.now());
+		customerEntity.setChangeTimestamp(LocalDateTime.now());
 		return customerRepository.save(customerEntity);
 	}
 

@@ -1,0 +1,15 @@
+ALTER TABLE organization
+    ADD COLUMN IF NOT EXISTS org_slug VARCHAR(255) UNIQUE,
+    ADD COLUMN IF NOT EXISTS business_email VARCHAR(255) UNIQUE,
+    ADD COLUMN IF NOT EXISTS phone VARCHAR(255),
+    ADD COLUMN IF NOT EXISTS address TEXT,
+    ADD COLUMN IF NOT EXISTS tax_code VARCHAR(255) UNIQUE,
+    ADD COLUMN IF NOT EXISTS representative_name VARCHAR(255),
+    ADD COLUMN IF NOT EXISTS representative_phone VARCHAR(255),
+    ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'ACTIVE';
+
+UPDATE organization
+SET org_slug = COALESCE(org_slug, code),
+    status = COALESCE(status, 'ACTIVE')
+WHERE org_slug IS NULL OR status IS NULL;
+

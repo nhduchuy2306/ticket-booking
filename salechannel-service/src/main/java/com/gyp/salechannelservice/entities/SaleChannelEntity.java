@@ -18,7 +18,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.gyp.common.entities.AbstractEntity;
 import com.gyp.common.enums.salechannel.SaleChannelStatus;
 import com.gyp.common.enums.salechannel.SaleChannelType;
 import lombok.AllArgsConstructor;
@@ -32,7 +31,7 @@ import lombok.Setter;
 @Table(name = "SALECHANNEL")
 @AllArgsConstructor
 @NoArgsConstructor
-public class SaleChannelEntity extends AbstractEntity {
+public class SaleChannelEntity extends OrganizationScopedEntity {
 	@Serial
 	private static final long serialVersionUID = 3004379468671448341L;
 
@@ -62,8 +61,9 @@ public class SaleChannelEntity extends AbstractEntity {
 	@Enumerated(EnumType.STRING)
 	private SaleChannelStatus status;
 
-	@Column(name = "organization_id", nullable = false)
-	private String organizationId;
+
+	@Column(name = "organization_slug")
+	private String organizationSlug;
 
 	@Column(name = "start_sale_at", nullable = false)
 	private LocalDateTime startSaleAt;

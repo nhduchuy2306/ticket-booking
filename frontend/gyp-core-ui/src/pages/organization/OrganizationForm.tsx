@@ -6,7 +6,7 @@ import { FormState } from "../../models/enums/FormState.ts";
 import { OrganizationRequestDto, OrganizationResponseDto } from "../../models/generated/auth-service-models";
 
 export interface OrganizationFormProps {
-    entity: OrganizationResponseDto;
+    entity?: OrganizationResponseDto | null;
     mode: string;
     onSave: (values: OrganizationRequestDto) => Promise<void>;
     onCancel: () => void;
@@ -39,43 +39,124 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({entity, mode, onSave
                         <Form.Item
                             name="id"
                             label="Id"
-                            rules={[
-                                {required: true, message: 'Please enter venue name'},
-                                {min: 2, message: 'Venue name must be at least 2 characters'}
-                            ]}
                         >
                             <Input disabled={true}/>
                         </Form.Item>
                     }
 
                     <Form.Item
-                            name="name"
-                            label="Name"
+                            name="orgName"
+                            label="Organization Name"
                             rules={[
-                                {required: true, message: 'Please enter name'},
-                                {min: 2, message: 'Name must be at least 2 characters'}
+                                {required: true, message: 'Please enter organization name'},
+                                {min: 2, message: 'Organization name must be at least 2 characters'}
                             ]}
                     >
-                        <Input placeholder="Enter name"/>
+                        <Input placeholder="Enter organization name"/>
                     </Form.Item>
 
                     <Form.Item
-                            name="code"
-                            label="Code"
+                            name="orgSlug"
+                            label="Organization Slug"
                             rules={[
-                                {required: true, message: 'Please enter code'},
-                                {min: 2, message: 'Code must be at least 2 characters'}
+                                {required: true, message: 'Please enter organization slug'},
+                                {pattern: /^[a-z0-9-]+$/, message: 'Slug must contain only lowercase letters, numbers, and hyphens'}
                             ]}
                     >
-                        <Input placeholder="Enter code"/>
+                        <Input placeholder="org-slug"/>
                     </Form.Item>
 
                     <Form.Item
-                            name="description"
-                            label="Description"
+                            name="businessEmail"
+                            label="Business Email"
+                            rules={[{required: true, type: 'email', message: 'Please enter a valid business email'}]}
                     >
-                        <Input placeholder="Enter description"/>
+                        <Input placeholder="business@example.com"/>
                     </Form.Item>
+
+                    <Form.Item
+                            name="phone"
+                            label="Phone"
+                            rules={[{required: true, message: 'Please enter a phone number'}]}
+                    >
+                        <Input placeholder="Phone number"/>
+                    </Form.Item>
+
+                    <Form.Item
+                            name="address"
+                            label="Address"
+                            rules={[{required: true, message: 'Please enter an address'}]}
+                    >
+                        <Input placeholder="Address"/>
+                    </Form.Item>
+
+                    <Form.Item
+                            name="taxCode"
+                            label="Tax Code"
+                            rules={[{required: true, message: 'Please enter tax code'}]}
+                    >
+                        <Input placeholder="Tax code"/>
+                    </Form.Item>
+
+                    <Form.Item
+                            name="representativeName"
+                            label="Representative Name"
+                            rules={[{required: true, message: 'Please enter representative name'}]}
+                    >
+                        <Input placeholder="Representative name"/>
+                    </Form.Item>
+
+                    <Form.Item
+                            name="representativePhone"
+                            label="Representative Phone"
+                    >
+                        <Input placeholder="Representative phone"/>
+                    </Form.Item>
+
+                    {isCreateMode && <>
+                        <Form.Item
+                                name="ownerFullName"
+                                label="Owner Full Name"
+                                rules={[{required: true, message: 'Please enter owner full name'}]}
+                        >
+                            <Input placeholder="Owner full name"/>
+                        </Form.Item>
+
+                        <Form.Item
+                                name="ownerEmail"
+                                label="Owner Email"
+                                rules={[{required: true, type: 'email', message: 'Please enter a valid owner email'}]}
+                        >
+                            <Input placeholder="owner@example.com"/>
+                        </Form.Item>
+
+                        <Form.Item
+                                name="ownerPassword"
+                                label="Owner Password"
+                                rules={[{required: true, message: 'Please enter owner password'}]}
+                        >
+                            <Input.Password placeholder="Owner password"/>
+                        </Form.Item>
+
+                        <Form.Item
+                                name="confirmPassword"
+                                label="Confirm Password"
+                                dependencies={["ownerPassword"]}
+                                rules={[
+                                    {required: true, message: 'Please confirm password'},
+                                    ({getFieldValue}) => ({
+                                        validator(_, value) {
+                                            if(!value || getFieldValue('ownerPassword') === value) {
+                                                return Promise.resolve();
+                                            }
+                                            return Promise.reject(new Error('Passwords do not match'));
+                                        },
+                                    }),
+                                ]}
+                        >
+                            <Input.Password placeholder="Confirm password"/>
+                        </Form.Item>
+                    </>}
 
                     {isReadOnly &&
                         <MetaData

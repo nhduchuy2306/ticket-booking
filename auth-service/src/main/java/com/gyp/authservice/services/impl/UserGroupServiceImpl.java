@@ -69,7 +69,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 		if(cachedUserGroup != null) {
 			return cachedUserGroup;
 		}
-		UserGroupEntity userGroupEntity = userGroupRepository.findByIdAndOrganizationEntityId(id, organizationId)
+		UserGroupEntity userGroupEntity = userGroupRepository.findByIdAndOrganizationId(id, organizationId)
 				.orElse(null);
 		if(userGroupEntity != null) {
 			UserGroupResponseDto responseDto = userGroupMapper.toDto(userGroupEntity);
@@ -84,6 +84,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		userGroupRequestDto.setOrganizationId(organizationId);
 		UserGroupEntity userGroupEntity = userGroupMapper.toEntity(userGroupRequestDto);
+		userGroupEntity.setOrganizationId(organizationId);
 		UserGroupPermissions userGroupPermissions = userGroupRequestDto.getUserGroupPermissions();
 		String userPermissionString = Serialization.serializeToString(userGroupPermissions);
 		userGroupEntity.setUserGroupPermissionsRaw(userPermissionString);
@@ -96,8 +97,8 @@ public class UserGroupServiceImpl implements UserGroupService {
 	public UserGroupResponseDto updateUserGroup(UserGroupRequestDto userGroupRequestDto, String id) {
 		UserGroupEntity userGroupEntity = userGroupRepository.findById(id).orElse(null);
 		if(userGroupEntity != null) {
-			String organizationId = userGroupEntity.getOrganizationEntity() != null
-					? userGroupEntity.getOrganizationEntity().getId()
+			String organizationId = userGroupEntity.getOrganizationId() != null
+					? userGroupEntity.getOrganizationId()
 					: SecurityUtils.getCurrentOrganizationId();
 			UserGroupPermissions userGroupPermissions = userGroupRequestDto.getUserGroupPermissions();
 			String userPermissionString = Serialization.serializeToString(userGroupPermissions);
@@ -105,6 +106,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 			userGroupEntity.setName(userGroupRequestDto.getName());
 			userGroupEntity.setDescription(userGroupRequestDto.getDescription());
 			userGroupEntity.setAdministrator(userGroupRequestDto.getAdministrator());
+			userGroupEntity.setOrganizationId(organizationId);
 			userGroupRepository.save(userGroupEntity);
 			evictUserGroupCaches(organizationId, id);
 		}
@@ -115,8 +117,8 @@ public class UserGroupServiceImpl implements UserGroupService {
 	public UserGroupResponseDto deleteUserGroup(String id) {
 		UserGroupEntity userGroupEntity = userGroupRepository.findById(id).orElse(null);
 		if(userGroupEntity != null) {
-			String organizationId = userGroupEntity.getOrganizationEntity() != null
-					? userGroupEntity.getOrganizationEntity().getId()
+			String organizationId = userGroupEntity.getOrganizationId() != null
+					? userGroupEntity.getOrganizationId()
 					: SecurityUtils.getCurrentOrganizationId();
 			var userAccountList = userGroupEntity.getUserAccountEntityList();
 			if(!userAccountList.isEmpty()) {

@@ -5,8 +5,10 @@ import { EventResponseDto } from "../../models/generated/event-service-models";
 import { EventService } from "../../services/Event/EventService.ts";
 import "antd/dist/reset.css";
 import { UploadUtils } from "../../utils/UploadUtils.ts";
+import { useGypPageContext } from "../GypPageContext.tsx";
 
 const PageIllustration: React.FC = () => {
+    const { tenantOrganizationId } = useGypPageContext();
     const [events, setEvents] = React.useState<EventResponseDto[]>([]);
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
@@ -15,7 +17,11 @@ const PageIllustration: React.FC = () => {
             try {
                 const eventResponse = await EventService.getOnSaleEvents();
                 if (eventResponse) {
-                    setEvents(eventResponse);
+                    setEvents(
+                            tenantOrganizationId
+                                    ? eventResponse.filter(event => event.organizationId === tenantOrganizationId)
+                                    : eventResponse
+                    );
                 }
             } catch (Error) {
                 console.error("Error fetching events:", Error);
@@ -25,7 +31,7 @@ const PageIllustration: React.FC = () => {
             }
         }
         void fetchData();
-    }, []);
+    }, [tenantOrganizationId]);
 
     const handleEventClick = (eventId: string) => () => {
         console.log(`Event with ID ${eventId} clicked`);

@@ -6,6 +6,7 @@ import { useEventData } from "../../hooks/form/useEventData.tsx";
 import { SeatAvailabilityDto } from "../../models/booking/SeatHoldModels.ts";
 import { Row, Seat, SeatConfig, Section } from "../../models/generated/event-service-models";
 import { SeatMapService } from "../../services/Event/SeatMapService.ts";
+import { useGypPageContext } from "../GypPageContext.tsx";
 
 const cloneSeatConfigWithAvailability = (seatConfig: SeatConfig, availabilityMap: Map<string, SeatAvailabilityDto>) => {
     if (!seatConfig?.sections) {
@@ -47,7 +48,8 @@ const cloneSeatConfigWithAvailability = (seatConfig: SeatConfig, availabilityMap
 
 const EventSeatMap: React.FC = () => {
     const {id} = useParams();
-    const {event, seatMap, isLoading} = useEventData({id});
+    const {tenantOrganizationId} = useGypPageContext();
+    const {event, seatMap, isLoading} = useEventData({id, tenantOrganizationId});
     const navigate = useNavigate();
     const [seatAvailability, setSeatAvailability] = useState<SeatAvailabilityDto[]>([]);
 
@@ -92,6 +94,10 @@ const EventSeatMap: React.FC = () => {
                     <Spin size="large" className="!mt-20"/>
                 </div>
         );
+    }
+
+    if (!event || !seatMap) {
+        return <div className="w-full flex items-center justify-center py-20">Seat map not available.</div>;
     }
 
     return (

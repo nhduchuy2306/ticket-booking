@@ -1,16 +1,19 @@
 package com.gyp.salechannelservice.services.impl;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.gyp.common.utils.SecurityUtils;
 import com.gyp.common.enums.salechannel.SaleChannelStatus;
 import com.gyp.common.enums.salechannel.SaleChannelType;
 import com.gyp.common.exceptions.ResourceNotFoundException;
 import com.gyp.salechannelservice.dtos.salechannel.SaleChannelRequestDto;
 import com.gyp.salechannelservice.dtos.salechannel.SaleChannelResponseDto;
+import com.gyp.salechannelservice.entities.SaleChannelEntity;
 import com.gyp.salechannelservice.mappers.SaleChannelMapper;
 import com.gyp.salechannelservice.repositories.SaleChannelRepository;
 import com.gyp.salechannelservice.services.SaleChannelRedisCacheService;
@@ -37,9 +40,55 @@ public class SaleChannelServiceImpl implements SaleChannelService {
 	private final SaleChannelRedisCacheService saleChannelRedisCacheService;
 
 	@Override
+	public SaleChannelResponseDto getSaleChannelBySlug(String orgSlug) {
+		if(StringUtils.isEmpty(orgSlug)) {
+			return null;
+		}
+		return saleChannelRepository.findFirstByOrganizationSlugAndType(orgSlug, SaleChannelType.TICKET_SHOP)
+				.map(saleChannelMapper::toResponseDto)
+				.orElse(null);
+	}
+
+	@Override
+	public SaleChannelResponseDto updateCurrentOrganizationConfig(com.gyp.salechannelservice.dtos.salechannelconfig.SaleChannelConfig saleChannelConfig,
+			String orgSlug) {
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
+		SaleChannelEntity saleChannelEntity = saleChannelRepository
+				.findFirstByTypeAndOrganizationId(SaleChannelType.TICKET_SHOP, organizationId)
+				.orElseGet(() -> {
+					SaleChannelEntity entity = new SaleChannelEntity();
+					entity.setOrganizationId(organizationId);
+					entity.setOrganizationSlug(orgSlug);
+					entity.setType(SaleChannelType.TICKET_SHOP);
+					entity.setStatus(SaleChannelStatus.ACTIVE);
+					entity.setName("Ticket Shop");
+					return entity;
+				});
+		if(orgSlug != null && !orgSlug.isBlank()) {
+			saleChannelEntity.setOrganizationSlug(orgSlug);
+		}
+		if(saleChannelEntity.getStartSaleAt() == null) {
+			saleChannelEntity.setStartSaleAt(LocalDateTime.now());
+		}
+		if(saleChannelEntity.getEndSaleAt() == null) {
+			saleChannelEntity.setEndSaleAt(LocalDateTime.now().plusYears(1));
+		}
+		saleChannelEntity.setSaleChannelConfig(saleChannelMapper.mapSaleChannelConfigToJson(saleChannelConfig));
+		saleChannelEntity = saleChannelRepository.save(saleChannelEntity);
+		evictSaleChannelCaches(saleChannelEntity.getId(), saleChannelEntity.getType());
+		return saleChannelMapper.toResponseDto(saleChannelEntity);
+	}
+
+	@Override
 	public SaleChannelResponseDto createSaleChannel(SaleChannelRequestDto saleChannel) {
 		var entity = saleChannelMapper.toEntity(saleChannel);
 		entity.setStatus(SaleChannelStatus.ACTIVE);
+		if(entity.getStartSaleAt() == null) {
+			entity.setStartSaleAt(LocalDateTime.now());
+		}
+		if(entity.getEndSaleAt() == null) {
+			entity.setEndSaleAt(LocalDateTime.now().plusYears(1));
+		}
 		var savedEntity = saleChannelRepository.save(entity);
 		SaleChannelResponseDto responseDto = saleChannelMapper.toResponseDto(savedEntity);
 		evictSaleChannelCaches(savedEntity.getId(), savedEntity.getType());

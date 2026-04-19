@@ -66,9 +66,9 @@ public class KeyCloakOAuth2UserService implements OAuth2UserService<OidcUserRequ
 				.name(name)
 				.email(email)
 				.realmType(RealmTypeEnum.GYP_KEYCLOAK_REALM)
-				.createTimestamp(LocalDateTime.now())
-				.changeTimestamp(LocalDateTime.now())
 				.build();
+		customerEntity.setCreateTimestamp(LocalDateTime.now());
+		customerEntity.setChangeTimestamp(LocalDateTime.now());
 		return userAccountRepository.save(customerEntity);
 	}
 

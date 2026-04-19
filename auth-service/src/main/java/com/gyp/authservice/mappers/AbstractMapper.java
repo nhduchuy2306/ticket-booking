@@ -3,7 +3,7 @@ package com.gyp.authservice.mappers;
 import java.time.LocalDateTime;
 
 import com.gyp.authservice.dtos.AbstractDto;
-import com.gyp.authservice.entities.AbstractEntity;
+import com.gyp.common.entities.AbstractEntity;
 import org.apache.commons.lang3.ObjectUtils;
 import org.mapstruct.Mapper;
 import org.springframework.security.core.Authentication;

@@ -2,6 +2,7 @@ package com.gyp.salechannelservice.controllers;
 
 import com.gyp.common.controllers.AbstractController;
 import com.gyp.salechannelservice.dtos.salechannel.SaleChannelRequestDto;
+import com.gyp.salechannelservice.dtos.salechannelconfig.SaleChannelConfig;
 import com.gyp.salechannelservice.services.SaleChannelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping(SaleChannelController.SALE_CHANNEL_CONTROLLER_PATH)
@@ -23,6 +25,8 @@ public class SaleChannelController extends AbstractController {
 
 	private static final String EVENTS_PATH = "/events";
 	private static final String ACTIVE_PATH = "/active";
+	private static final String BY_SLUG_PATH = "/by-slug";
+	private static final String CONFIG_PATH = "/config";
 
 	private final SaleChannelService saleChannelService;
 
@@ -30,6 +34,11 @@ public class SaleChannelController extends AbstractController {
 	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.SALE_CHANNEL, #ActionPerm.READ)")
 	public ResponseEntity<?> getAll() {
 		return ResponseEntity.ok(saleChannelService.getAllSaleChannels());
+	}
+
+	@GetMapping(BY_SLUG_PATH + "/{" + ID_PARAM + "}")
+	public ResponseEntity<?> getBySlug(@PathVariable(ID_PARAM) String orgSlug) {
+		return ResponseEntity.ok(saleChannelService.getSaleChannelBySlug(orgSlug));
 	}
 
 	@GetMapping("/{" + ID_PARAM + "}")
@@ -57,6 +66,14 @@ public class SaleChannelController extends AbstractController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PutMapping(CONFIG_PATH)
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.SALE_CHANNEL, #ActionPerm.UPDATE)")
+	public ResponseEntity<?> updateCurrentOrganizationConfig(@RequestBody SaleChannelConfig saleChannelConfig,
+			HttpServletRequest request) {
+		return ResponseEntity.ok(saleChannelService.updateCurrentOrganizationConfig(saleChannelConfig,
+				extractOrgSlugFromHost(request.getServerName())));
+	}
+
 	@GetMapping(EVENTS_PATH + "/{" + ID_PARAM + "}")
 	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT, #ActionPerm.READ)")
 	public ResponseEntity<?> getSaleChannelsByEventId(@PathVariable(ID_PARAM) String eventId) {
@@ -66,5 +83,15 @@ public class SaleChannelController extends AbstractController {
 	@GetMapping(ACTIVE_PATH)
 	public ResponseEntity<?> getActiveSaleChannels() {
 		return ResponseEntity.ok(saleChannelService.getActiveSaleChannels());
+	}
+
+	private String extractOrgSlugFromHost(String host) {
+		if(host == null || host.isBlank() || "lvh.me".equalsIgnoreCase(host)) {
+			return null;
+		}
+		if(host.endsWith(".lvh.me")) {
+			return host.replace(".lvh.me", "");
+		}
+		return null;
 	}
 }

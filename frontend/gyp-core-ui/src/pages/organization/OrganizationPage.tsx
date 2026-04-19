@@ -5,18 +5,15 @@ import { OrganizationServiceAdapter } from "../../services/Auth/OrganizationServ
 import OrganizationForm from "./OrganizationForm.tsx";
 import OrganizationTable from "./OrganizationTable.tsx";
 
-export interface OrganizationPageProps {
-}
-
-const OrganizationPage: React.FC<OrganizationPageProps> = () => {
+const OrganizationPage: React.FC = () => {
     return (
             <DoublePageLayout>
                 <OrganizationTable/>
                 <DoublePageForm
                         service={OrganizationServiceAdapter}
                         successMessages={{
-                            create: "Category created successfully",
-                            update: "Category updated successfully"
+                            create: "Organization created successfully",
+                            update: "Organization updated successfully"
                         }}
                 >
                     {({entity, mode, onSave, onCancel}) => (

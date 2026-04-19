@@ -8,6 +8,8 @@ import com.gyp.authservice.dtos.organization.OrganizationResponseDto;
 public interface OrganizationService {
 	List<OrganizationResponseDto> getAllOrganizations();
 
+	OrganizationResponseDto registerOrganization(OrganizationRequestDto organizationRequestDto);
+
 	OrganizationResponseDto getOrganizationById(String id);
 
 	OrganizationResponseDto createOrganization(OrganizationRequestDto organizationRequestDto);

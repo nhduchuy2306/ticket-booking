@@ -7,9 +7,10 @@ import { VenueService } from "../../services/Event/VenueService.ts";
 
 interface useEventDataProps {
     id?: string;
+    tenantOrganizationId?: string | null;
 }
 
-export const useEventData = ({id}: useEventDataProps) => {
+export const useEventData = ({id, tenantOrganizationId}: useEventDataProps) => {
     const [event, setEvent] = useState<EventResponseDto>();
     const [isLoading, setIsLoading] = useState(false);
     const [venue, setVenue] = useState<VenueResponseDto>();
@@ -20,7 +21,7 @@ export const useEventData = ({id}: useEventDataProps) => {
             try {
                 setIsLoading(true);
                 const eventResponse = await EventService.getEventById(id || "");
-                if (eventResponse) {
+                if (eventResponse && (!tenantOrganizationId || eventResponse.organizationId === tenantOrganizationId)) {
                     setEvent(eventResponse);
 
                     const venueId = eventResponse.venueMap?.venueId;
@@ -34,6 +35,8 @@ export const useEventData = ({id}: useEventDataProps) => {
                     if (seatMapResponse) {
                         setSeatMap(seatMapResponse);
                     }
+                } else if (eventResponse && tenantOrganizationId && eventResponse.organizationId !== tenantOrganizationId) {
+                    createErrorNotification("Access denied", "The requested event does not belong to this ticket shop.");
                 }
             } catch {
                 createErrorNotification("Failed to fetch data");
@@ -45,7 +48,7 @@ export const useEventData = ({id}: useEventDataProps) => {
         if (id) {
             void fetchData();
         }
-    }, [id]);
+    }, [id, tenantOrganizationId]);
 
     return {event, venue, seatMap, isLoading};
 }

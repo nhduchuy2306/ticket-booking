@@ -127,6 +127,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 		request.setOrganizationId(organizationId);
 		List<UserGroupEntity> userGroupIds = userGroupRepository.findAllById(request.getUserGroupList());
 		UserAccountEntity userAccountEntity = userAccountMapper.toEntity(request);
+		userAccountEntity.setOrganizationId(organizationId);
 		userAccountEntity.setPassword(passwordEncoder.encode(userAccountEntity.getPassword()));
 		userAccountEntity.setUserGroupEntityList(userGroupIds);
 		userAccountEntity = userAccountRepository.save(userAccountEntity);
@@ -156,14 +157,15 @@ public class UserAccountServiceImpl implements UserAccountService {
 		UserAccountEntity userAccountEntity = userAccountRepository.findById(id).orElse(null);
 		if(userAccountEntity != null) {
 			String previousUsername = userAccountEntity.getUsername();
-			String organizationId = userAccountEntity.getOrganizationEntity() != null
-					? userAccountEntity.getOrganizationEntity().getId()
+			String organizationId = userAccountEntity.getOrganizationId() != null
+					? userAccountEntity.getOrganizationId()
 					: request.getOrganizationId();
 			if(request.getUserGroupList() != null && !request.getUserGroupList().isEmpty()) {
 				List<UserGroupEntity> userGroupIds = userGroupRepository.findAllById(request.getUserGroupList());
 				userAccountEntity.setUserGroupEntityList(userGroupIds);
 			}
 			userAccountMapper.updateEntityFromDto(request, userAccountEntity);
+			userAccountEntity.setOrganizationId(organizationId);
 			userAccountEntity = userAccountRepository.save(userAccountEntity);
 			UserAccountResponseDto responseDto = userAccountMapper.toResponseDto(userAccountEntity);
 			evictUserAccountCaches(organizationId, userAccountEntity.getId(), previousUsername,
@@ -177,9 +179,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	public UserAccountResponseDto deleteUserAccount(String id) {
 		UserAccountEntity userAccountEntity = userAccountRepository.findById(id).orElse(null);
 		if(userAccountEntity != null) {
-			String organizationId = userAccountEntity.getOrganizationEntity() != null
-					? userAccountEntity.getOrganizationEntity().getId()
-					: null;
+			String organizationId = userAccountEntity.getOrganizationId();
 			userAccountRepository.delete(userAccountEntity);
 			UserAccountResponseDto responseDto = userAccountMapper.toResponseDto(userAccountEntity);
 			evictUserAccountCaches(organizationId, id, userAccountEntity.getUsername(),

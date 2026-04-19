@@ -1,9 +1,13 @@
 import { createContext, Dispatch, SetStateAction, useContext } from "react";
 import { CustomerResponseDto } from "../models/generated/auth-service-models";
+import { SaleChannelResponseDto } from "../models/generated/sale-channel-service-models";
 
 interface GypPageContextProps {
     customerResponseDto?: CustomerResponseDto | null;
     setCustomerResponseDto?: Dispatch<SetStateAction<CustomerResponseDto | null>>
+    tenantOrgSlug?: string | null;
+    tenantOrganizationId?: string | null;
+    tenantSaleChannel?: SaleChannelResponseDto | null;
 }
 
 export const GypPageContext = createContext<GypPageContextProps | undefined>(undefined);

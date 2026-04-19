@@ -1,5 +1,5 @@
 import { OrganizationRequestDto, OrganizationResponseDto } from "../../models/generated/auth-service-models";
-import { apiClient, AUTH_SERVICE_PATH } from "../ApiClient.ts";
+import { apiClient, apiWithoutAuth, AUTH_SERVICE_PATH } from "../ApiClient.ts";
 import { BaseService } from "../BaseService.ts";
 
 const ORGANIZATION_PATH = "organizations";
@@ -17,6 +17,11 @@ export class OrganizationService {
 
     static createOrganization = async (body: OrganizationRequestDto): Promise<OrganizationResponseDto> => {
         const res = await apiClient.post(`/${AUTH_SERVICE_PATH}/${ORGANIZATION_PATH}`, body);
+        return res.data;
+    }
+
+    static registerOrganization = async (body: OrganizationRequestDto): Promise<OrganizationResponseDto> => {
+        const res = await apiWithoutAuth.post(`/${AUTH_SERVICE_PATH}/${ORGANIZATION_PATH}/register`, body);
         return res.data;
     }
 

@@ -9,10 +9,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -31,7 +29,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class UserGroupEntity extends AbstractEntity {
+public class UserGroupEntity extends OrganizationScopedEntity {
 	@Serial
 	private static final long serialVersionUID = -7431399635614803652L;
 
@@ -56,8 +54,4 @@ public class UserGroupEntity extends AbstractEntity {
 	@JsonIgnore
 	@ManyToMany(mappedBy = "userGroupEntityList", fetch = FetchType.LAZY)
 	private List<UserAccountEntity> userAccountEntityList;
-
-	@ManyToOne
-	@JoinColumn(name = "organization_id")
-	private OrganizationEntity organizationEntity;
 }

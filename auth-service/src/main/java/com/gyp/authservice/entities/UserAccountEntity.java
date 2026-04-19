@@ -16,24 +16,23 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import com.gyp.common.enums.auth.RealmTypeEnum;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @Entity
-@SuperBuilder
+@Builder
 @Table(name = "USERACCOUNT")
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserAccountEntity extends AbstractEntity {
+public class UserAccountEntity extends OrganizationScopedEntity {
 	@Serial
 	private static final long serialVersionUID = 5877294560019573626L;
 
@@ -71,8 +70,4 @@ public class UserAccountEntity extends AbstractEntity {
 			inverseJoinColumns = @JoinColumn(name = "user_group_id")
 	)
 	private List<UserGroupEntity> userGroupEntityList;
-
-	@ManyToOne
-	@JoinColumn(name = "organization_id")
-	private OrganizationEntity organizationEntity;
 }
