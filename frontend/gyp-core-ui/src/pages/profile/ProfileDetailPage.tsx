@@ -1,7 +1,8 @@
 import { Button, Form, Input } from "antd";
 import React, { useEffect, useState } from "react";
 import { createErrorNotification, createSuccessNotification } from "../../components/notification/Notification.ts";
-import { UserAccountResponseDto } from "../../models/generated/auth-service-models";
+import { OrganizationResponseDto, UserAccountResponseDto } from "../../models/generated/auth-service-models";
+import { OrganizationService } from "../../services/Auth/OrganizationService.ts";
 import { UserAccountService } from "../../services/Auth/UserAccountService.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
 
@@ -10,9 +11,10 @@ const ProfileDetailPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [data, setData] = useState<UserAccountResponseDto | null>(null);
     const id = localStorage.getItem("userId") || "";
+    const [organization, setOrganization] = useState<OrganizationResponseDto | null>(null);
 
     useEffect(() => {
-        const fetchData = async () => {
+        (async () => {
             setIsLoading(true);
             try {
                 if (id) {
@@ -29,12 +31,30 @@ const ProfileDetailPage: React.FC = () => {
             } finally {
                 setIsLoading(false);
             }
-        };
-        void fetchData();
-    }, []);
+        })();
+    }, [id]);
 
     useEffect(() => {
         if (data) {
+            const organizationId = data.organizationId;
+            (async () => {
+                setIsLoading(true);
+                try {
+                    if (organizationId) {
+                        const response = await OrganizationService.getOrganizationById(organizationId);
+                        if (response) {
+                            setOrganization(response);
+                        }
+                    } else {
+                        createErrorNotification("Error", "Organization ID not found in user profile data.");
+                    }
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                    createErrorNotification("Error", "Failed to fetch organization data. Please try again later.");
+                } finally {
+                    setIsLoading(false);
+                }
+            })();
             form.setFieldsValue({
                 id: data.id,
                 name: data.name,
@@ -52,6 +72,7 @@ const ProfileDetailPage: React.FC = () => {
             const validatedValues = await form.validateFields();
             const adaptedValues = {
                 ...validatedValues,
+                organizationId: organization ? organization.id : null,
                 dob: validatedValues.dob ? DateUtils.toIsoDateTime(validatedValues.dob) : null,
                 userGroupList: []
             };
@@ -118,10 +139,9 @@ const ProfileDetailPage: React.FC = () => {
                         </Form.Item>
 
                         <Form.Item
-                                name="organizationId"
                                 label="Organization"
                                 rules={[{required: true, message: "Please select an organization!"}]}>
-                            <Input disabled={true}/>
+                            <Input disabled={true} value={organization ? organization.name : "Loading..."}/>
                         </Form.Item>
 
                         <div className="flex justify-end items-center gap-1.5">

@@ -6,6 +6,7 @@ const STORAGE_KEYS = {
     USER_ID: "userId",
     NAME: "name",
     REDIRECT: "postLoginRedirect",
+    BOX_OFFICE_MODE: "boxOfficeMode",
 };
 
 const CLIENT_ID = "gyp-core-ui";
@@ -72,6 +73,9 @@ export class IamService {
 
     static getCurrentRedirect = (): string | null =>
             this.getItem(STORAGE_KEYS.REDIRECT);
+
+    static getBoxOfficeMode = (): string | null =>
+            this.getItem(STORAGE_KEYS.BOX_OFFICE_MODE);
 
     // ---- Auth Flow ----
     static redirectToLogin = (): void => {

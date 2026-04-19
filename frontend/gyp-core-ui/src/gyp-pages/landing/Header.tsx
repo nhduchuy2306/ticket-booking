@@ -67,7 +67,7 @@ const Header: React.FC = () => {
                                             <Link to="/gyp/login">Login</Link>
                                         </Button>
                                         <Button>
-                                            <Link to="/gyp/sign-up">Register</Link>
+                                            <Link to="/gyp/register">Register</Link>
                                         </Button>
                                     </div>
                         }

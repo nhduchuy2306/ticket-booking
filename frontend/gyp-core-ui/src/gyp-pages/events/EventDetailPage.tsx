@@ -63,6 +63,13 @@ const EventDetailPage: React.FC = () => {
                                 >
                                     Buy Ticket
                                 </Button>
+                                <Button
+                                        type="default"
+                                        className="w-full !mt-2"
+                                        onClick={() => navigate(`/gyp/events/${event?.id}/waiting-room?eventName=${encodeURIComponent(event?.name || "")}`)}
+                                >
+                                    Join Waiting Room
+                                </Button>
                             </div>
                         </div>
                         <div className="flex-2/3">

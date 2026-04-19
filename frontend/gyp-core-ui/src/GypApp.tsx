@@ -9,6 +9,7 @@ import LandingPage from "./gyp-pages/landing/LandingPage.tsx";
 import EventOrderPage from "./gyp-pages/orders/EventOrderPage.tsx";
 import PaymentFailurePage from "./gyp-pages/orders/payment-status/PaymentFailurePage.tsx";
 import PaymentSuccessPage from "./gyp-pages/orders/payment-status/PaymentSuccessPage.tsx";
+import WaitingRoomPage from "./gyp-pages/waiting-room/WaitingRoomPage.tsx";
 import EventSeatMap from "./gyp-pages/seat-maps/EventSeatMap.tsx";
 import { TicketShopSaleChannelConfigDto } from "./models/generated/sale-channel-service-models";
 import { SaleChannelService } from "./services/SaleChannel/SaleChannelService.ts";
@@ -76,6 +77,14 @@ const GypApp: React.FC = () => {
                 {
                     path: "payment/failure",
                     element: <PaymentFailurePage/>,
+                },
+                {
+                    path: "waiting-room",
+                    element: <WaitingRoomPage/>,
+                },
+                {
+                    path: "events/:id/waiting-room",
+                    element: <WaitingRoomPage/>,
                 },
                 ...routes,
             ]
