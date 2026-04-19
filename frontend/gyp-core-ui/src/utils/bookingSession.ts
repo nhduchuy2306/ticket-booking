@@ -1,6 +1,15 @@
 import { BookingHoldSession } from "../models/booking/SeatHoldModels.ts";
 
 const BOOKING_SESSION_KEY = "gyp:booking-hold-session";
+const WAITING_ROOM_CLEARANCE_KEY = "gyp:waiting-room-clearance";
+const DEFAULT_WAITING_ROOM_CLEARANCE_TTL_MS = 15 * 60 * 1000;
+
+export interface WaitingRoomClearance {
+    eventId: string;
+    nextPath?: string;
+    verifiedAt: string;
+    expiresAt: string;
+}
 
 export const createHoldToken = (): string => {
     if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
@@ -28,19 +37,68 @@ export const loadBookingSession = (): BookingHoldSession | null => {
     }
 };
 
-export const updateBookingSession = (patch: Partial<BookingHoldSession>): BookingHoldSession | null => {
-    const currentSession = loadBookingSession();
-    if (!currentSession) {
+export const clearBookingSession = (): void => {
+    sessionStorage.removeItem(BOOKING_SESSION_KEY);
+};
+
+export const saveWaitingRoomClearance = (eventId: string, nextPath?: string, expiresAtMs?: number): WaitingRoomClearance | null => {
+    if (!eventId) {
         return null;
     }
 
-    const nextSession = {...currentSession, ...patch};
-    saveBookingSession(nextSession);
-    return nextSession;
+    const expiresAt = new Date(expiresAtMs || Date.now() + DEFAULT_WAITING_ROOM_CLEARANCE_TTL_MS).toISOString();
+    const clearance: WaitingRoomClearance = {
+        eventId,
+        nextPath,
+        verifiedAt: new Date().toISOString(),
+        expiresAt,
+    };
+
+    sessionStorage.setItem(WAITING_ROOM_CLEARANCE_KEY, JSON.stringify(clearance));
+    return clearance;
 };
 
-export const clearBookingSession = (): void => {
-    sessionStorage.removeItem(BOOKING_SESSION_KEY);
+export const loadWaitingRoomClearance = (): WaitingRoomClearance | null => {
+    const rawClearance = sessionStorage.getItem(WAITING_ROOM_CLEARANCE_KEY);
+    if (!rawClearance) {
+        return null;
+    }
+
+    try {
+        const parsed = JSON.parse(rawClearance) as WaitingRoomClearance;
+        if (!parsed?.eventId || !parsed?.expiresAt) {
+            sessionStorage.removeItem(WAITING_ROOM_CLEARANCE_KEY);
+            return null;
+        }
+
+        return parsed;
+    } catch {
+        sessionStorage.removeItem(WAITING_ROOM_CLEARANCE_KEY);
+        return null;
+    }
+};
+
+export const clearWaitingRoomClearance = (): void => {
+    sessionStorage.removeItem(WAITING_ROOM_CLEARANCE_KEY);
+};
+
+export const hasValidWaitingRoomClearance = (eventId?: string): boolean => {
+    if (!eventId) {
+        return false;
+    }
+
+    const clearance = loadWaitingRoomClearance();
+    if (!clearance || clearance.eventId !== eventId) {
+        return false;
+    }
+
+    const expiresAtMs = new Date(clearance.expiresAt).getTime();
+    if (Number.isNaN(expiresAtMs) || expiresAtMs <= Date.now()) {
+        clearWaitingRoomClearance();
+        return false;
+    }
+
+    return true;
 };
 
 export const getHoldCountdownSeconds = (expiresAt?: string): number => {

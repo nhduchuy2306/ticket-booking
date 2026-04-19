@@ -40,6 +40,7 @@ const SeatedRowWrapper: React.FC<SeatMapSeatedSectionProps> = ({row, sectionPosi
                                 seat={seat}
                                 rowName={rowData.name}
                                 rowPosition={rowData.position}
+                                row={rowData}
                         />
                 ))}
             </Group>

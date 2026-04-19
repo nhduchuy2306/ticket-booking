@@ -6,18 +6,28 @@ import { useEventData } from "../../hooks/form/useEventData.tsx";
 import { SeatAvailabilityDto } from "../../models/booking/SeatHoldModels.ts";
 import { Row, Seat, SeatConfig, Section } from "../../models/generated/event-service-models";
 import { SeatMapService } from "../../services/Event/SeatMapService.ts";
+import { hasValidWaitingRoomClearance } from "../../utils/bookingSession.ts";
 
 const cloneSeatConfigWithAvailability = (seatConfig: SeatConfig, availabilityMap: Map<string, SeatAvailabilityDto>) => {
     if (!seatConfig?.sections) {
         return seatConfig;
     }
 
-    const patchSeat = (seat: Seat) => {
+    const buildSeatKey = (sectionId?: string, rowId?: string, seatId?: string) => {
+        if (!sectionId || !rowId || !seatId) {
+            return seatId || "";
+        }
+
+        return `${sectionId}-${rowId}-${seatId}`;
+    };
+
+    const patchSeat = (seat: Seat, sectionId?: string, rowId?: string) => {
         if (!seat?.id) {
             return seat;
         }
 
-        const availability = availabilityMap.get(String(seat.id));
+        const availability = availabilityMap.get(buildSeatKey(sectionId, rowId, String(seat.id)))
+                || availabilityMap.get(String(seat.id));
         if (!availability) {
             return seat;
         }
@@ -33,27 +43,42 @@ const cloneSeatConfigWithAvailability = (seatConfig: SeatConfig, availabilityMap
 
     const patchRow = (row: Row) => ({
         ...row,
-        seats: row?.seats?.map((seat: Seat) => patchSeat(seat)) || [],
+        seats: row?.seats?.map((seat: Seat) => patchSeat(seat, undefined, row?.id)) || [],
     });
 
     return {
         ...seatConfig,
         sections: seatConfig.sections.map((section: Section) => ({
             ...section,
-            rows: section?.rows?.map((row: Row) => patchRow(row)) || [],
+            rows: section?.rows?.map((row: Row) => ({
+                ...patchRow(row),
+                seats: row?.seats?.map((seat: Seat) => patchSeat(seat, section?.id, row?.id)) || [],
+            })) || [],
         })),
     };
 };
 
 const EventSeatMap: React.FC = () => {
     const {id} = useParams();
+    const hasClearance = hasValidWaitingRoomClearance(id);
     const {event, seatMap, isLoading} = useEventData({id});
     const navigate = useNavigate();
     const [seatAvailability, setSeatAvailability] = useState<SeatAvailabilityDto[]>([]);
 
     useEffect(() => {
+        if (!id) {
+            navigate("/gyp/", {replace: true});
+            return;
+        }
+
+        if (!hasClearance) {
+            navigate(`/gyp/events/${id}/waiting-room?next=${encodeURIComponent(`/gyp/events/${id}/choose-seats`)}`, {replace: true});
+        }
+    }, [hasClearance, id, navigate]);
+
+    useEffect(() => {
         const loadAvailability = async () => {
-            if (!event?.id) {
+            if (!event?.id || !hasClearance) {
                 return;
             }
 
@@ -66,7 +91,15 @@ const EventSeatMap: React.FC = () => {
         };
 
         void loadAvailability();
-    }, [event?.id]);
+    }, [event?.id, hasClearance]);
+
+    if (!hasClearance) {
+        return (
+                <div className="flex flex-col items-center justify-center w-full h-full">
+                    <Spin size="large" className="!mt-20"/>
+                </div>
+        );
+    }
 
     const mergedVenueMap = useMemo(() => {
         if (!seatMap) {
@@ -75,7 +108,9 @@ const EventSeatMap: React.FC = () => {
 
         const availabilityMap = new Map<string, SeatAvailabilityDto>();
         seatAvailability.forEach((item) => {
-            if (item.seatId) {
+            if (item.seatKey) {
+                availabilityMap.set(String(item.seatKey), item);
+            } else if (item.seatId) {
                 availabilityMap.set(String(item.seatId), item);
             }
         });

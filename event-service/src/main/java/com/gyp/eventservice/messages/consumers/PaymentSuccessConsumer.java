@@ -35,17 +35,17 @@ public class PaymentSuccessConsumer {
 			EventEntity eventEntity = eventRepository.findById(paymentOutcomeEM.getEventId())
 					.orElseThrow(() -> new IllegalArgumentException(
 							"Event not found with id: " + paymentOutcomeEM.getEventId()));
-			var confirmedSeatKeys = seatInventoryService.confirmSeatsForOrder(paymentOutcomeEM.getEventId(),
-					paymentOutcomeEM.getOrderId());
+			String holdToken = resolveHoldToken(paymentOutcomeEM);
+			var confirmedSeatKeys = seatInventoryService.confirmSeatsForOrder(paymentOutcomeEM.getEventId(), holdToken);
 			if(CollectionUtils.isEmpty(confirmedSeatKeys)) {
-				log.info("No active holds found for payment success order ID: {}", paymentOutcomeEM.getOrderId());
+				log.info("No active holds found for payment success token: {}", holdToken);
 				return;
 			}
 			List<SeatInventoryEntity> confirmedSeats = loadConfirmedSeats(paymentOutcomeEM.getEventId(),
 					confirmedSeatKeys);
 			if(confirmedSeats.size() != confirmedSeatKeys.size()) {
 				throw new IllegalStateException("Failed to load full seat metadata for confirmed order: "
-						+ paymentOutcomeEM.getOrderId());
+						+ holdToken);
 			}
 			confirmedSeats.forEach(seatInventoryEntity -> generateTicketPdfAndSendEmailProducer.sendGenerateTicketPdf(
 					eventEntity, seatInventoryEntity, paymentOutcomeEM.getCustomerEmail(),
@@ -57,6 +57,13 @@ public class PaymentSuccessConsumer {
 			log.error("Failed to process payment success event", e);
 			throw new RuntimeException("Failed to process payment success event", e);
 		}
+	}
+
+	private String resolveHoldToken(PaymentOutcomeEM paymentOutcomeEM) {
+		if(paymentOutcomeEM.getHoldToken() != null && !paymentOutcomeEM.getHoldToken().isBlank()) {
+			return paymentOutcomeEM.getHoldToken();
+		}
+		return paymentOutcomeEM.getOrderId();
 	}
 
 	private List<SeatInventoryEntity> loadConfirmedSeats(String eventId, List<String> confirmedSeatKeys) {

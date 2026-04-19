@@ -35,7 +35,7 @@ public class PaymentController {
 			@RequestParam("orderId") String orderId) {
 		try {
 			return ResponseEntity.ok(moMoPaymentService.createMoMoPaymentEndpoint(amount, orderId));
-		} catch(InvalidKeyException | NoSuchAlgorithmException | IOException e) {
+		} catch(InvalidKeyException | NoSuchAlgorithmException e) {
 			throw new RuntimeException(e);
 		}
 	}

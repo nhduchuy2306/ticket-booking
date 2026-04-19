@@ -52,6 +52,9 @@ public class OrderEntity extends AbstractEntity {
 	@Column(name = "total_amount")
 	private Double totalAmount;
 
+	@Column(name = "hold_token")
+	private String holdToken;
+
 	@JsonIgnore
 	@OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL)
 	private List<OrderDetailEntity> orderDetailEntityList;

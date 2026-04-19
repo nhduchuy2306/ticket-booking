@@ -1,39 +1,46 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { createErrorNotification } from "../../../components/notification/Notification.ts";
-import { loadBookingSession, clearBookingSession } from "../../../utils/bookingSession.ts";
+import { loadBookingSession, clearBookingSession, clearWaitingRoomClearance } from "../../../utils/bookingSession.ts";
 import { SeatMapService } from "../../../services/Event/SeatMapService.ts";
 
 const PaymentFailurePage: React.FC = () => {
     const navigate = useNavigate();
     const bookingSession = loadBookingSession();
+    const bookingEventId = bookingSession?.eventId;
+    const bookingHoldToken = bookingSession?.holdToken;
+    const bookingSeatIds = bookingSession?.seatIds;
+    const bookingSeatKeys = bookingSession?.seatKeys;
+    const bookingUserId = bookingSession?.userId;
+    const getWaitingRoomPath = () => bookingEventId ? `/gyp/events/${bookingEventId}/waiting-room?next=${encodeURIComponent(`/gyp/events/${bookingEventId}/choose-seats`)}` : "/gyp/";
 
     React.useEffect(() => {
         const releaseSeats = async () => {
-            if (!bookingSession?.eventId || !bookingSession?.holdToken) {
+            if (!bookingEventId || !bookingHoldToken) {
                 return;
             }
 
             try {
                 await SeatMapService.releaseSeats({
-                    eventId: bookingSession.eventId,
-                    holdToken: bookingSession.holdToken,
-                    seatIds: bookingSession.seatIds,
-                    seatKeys: bookingSession.seatIds,
-                    userId: bookingSession.userId,
+                    eventId: bookingEventId,
+                    holdToken: bookingHoldToken,
+                    seatIds: bookingSeatIds,
+                    seatKeys: bookingSeatKeys || bookingSeatIds,
+                    userId: bookingUserId,
                 });
             } catch (error) {
                 createErrorNotification(
                         "Seat release failed",
-                        (error as any)?.response?.data?.message || "Payment failed and the hold could not be released automatically."
+                        (error instanceof Error ? error.message : "Payment failed and the hold could not be released automatically.")
                 );
             } finally {
                 clearBookingSession();
+                clearWaitingRoomClearance();
             }
         };
 
         void releaseSeats();
-    }, [bookingSession?.eventId, bookingSession?.holdToken]);
+    }, [bookingEventId, bookingHoldToken, bookingSeatIds, bookingSeatKeys, bookingUserId]);
 
     return (
             <div className="flex flex-col items-center justify-center bg-red-100 !p-4 flex-grow">
@@ -43,7 +50,7 @@ const PaymentFailurePage: React.FC = () => {
                         The payment did not complete. Your seat hold has been released, and you can try again.
                     </p>
                     <button
-                            onClick={() => navigate(bookingSession?.eventId ? `/gyp/events/${bookingSession.eventId}/choose-seats` : "/gyp/")}
+                            onClick={() => navigate(getWaitingRoomPath())}
                             className="bg-red-600 !text-white !p-2 rounded hover:bg-red-700 transition cursor-pointer"
                     >
                         Retry Payment

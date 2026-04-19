@@ -14,6 +14,7 @@ import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -21,6 +22,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @ConditionalOnClass(MinioClient.class)
@@ -29,11 +31,16 @@ public class UploadServiceImpl implements UploadService {
 	@Value("${minio.bucket}")
 	private String bucket;
 
+	@Value("${minio.enabled:false}")
+	private Boolean minioEnabled;
+
 	private final MinioClient minioClient;
 
 	@Override
 	public Pair<String, String> upload(MultipartFile file) {
 		try {
+			log.info("Uploading file: {}", file.getOriginalFilename());
+			log.info("MinIO enabled: {}", minioEnabled);
 			boolean exists = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
 			if(!exists) {
 				minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());

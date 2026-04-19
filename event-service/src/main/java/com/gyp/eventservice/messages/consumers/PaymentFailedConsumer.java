@@ -19,11 +19,19 @@ public class PaymentFailedConsumer {
 	public void handlePaymentFailed(String message) {
 		try {
 			PaymentOutcomeEM paymentOutcomeEM = Serialization.deserializeFromString(message, PaymentOutcomeEM.class);
-			seatInventoryService.releaseSeatsForOrder(paymentOutcomeEM.getEventId(), paymentOutcomeEM.getOrderId());
-			log.info("Payment failure processed for order ID: {}", paymentOutcomeEM.getOrderId());
+			String holdToken = resolveHoldToken(paymentOutcomeEM);
+			seatInventoryService.releaseSeatsForOrder(paymentOutcomeEM.getEventId(), holdToken);
+			log.info("Payment failure processed for token: {}", holdToken);
 		} catch(Exception e) {
 			log.error("Failed to process payment failed event", e);
 			throw new RuntimeException("Failed to process payment failed event", e);
 		}
+	}
+
+	private String resolveHoldToken(PaymentOutcomeEM paymentOutcomeEM) {
+		if(paymentOutcomeEM.getHoldToken() != null && !paymentOutcomeEM.getHoldToken().isBlank()) {
+			return paymentOutcomeEM.getHoldToken();
+		}
+		return paymentOutcomeEM.getOrderId();
 	}
 }

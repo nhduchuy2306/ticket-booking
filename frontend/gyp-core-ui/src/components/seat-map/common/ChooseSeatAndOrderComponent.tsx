@@ -4,7 +4,7 @@ import { BsTicketDetailed } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { OrderDetailModel } from "../models/SeatMapModels.ts";
 import { useSeatMapViewerContext } from "../seat-map-viewer/context/SeatMapViewerContext.tsx";
-import { createHoldToken, formatCountdown, getHoldCountdownSeconds, saveBookingSession } from "../../../utils/bookingSession.ts";
+import { clearWaitingRoomClearance, createHoldToken, formatCountdown, getHoldCountdownSeconds, saveBookingSession } from "../../../utils/bookingSession.ts";
 import { SeatMapService } from "../../../services/Event/SeatMapService.ts";
 import { IamService } from "../../../services/Iam/IamService.ts";
 import { createErrorNotification } from "../../notification/Notification.ts";
@@ -43,6 +43,14 @@ const ChooseSeatAndOrderComponent: React.FC = () => {
         }, 0);
     }
 
+    const getSeatKey = (seatId: string, sectionId?: string, rowId?: string) => {
+        if (!sectionId || !rowId) {
+            return seatId;
+        }
+
+        return `${sectionId}-${rowId}-${seatId}`;
+    };
+
     const getCurrentHoldCountdown = () => {
         const holdSession = sessionStorage.getItem("gyp:booking-hold-session");
         if (!holdSession) {
@@ -67,6 +75,7 @@ const ChooseSeatAndOrderComponent: React.FC = () => {
         }
 
         const seatIds = selectedSeats.map((seat) => String(seat.seat.id));
+        const seatKeys = selectedSeats.map((seat) => getSeatKey(String(seat.seat.id), seat.section?.id, seat.row?.id));
         const existingCountdown = getCurrentHoldCountdown();
         if (existingCountdown && existingCountdown > 0) {
             navigate(`/gyp/events/${eventId}/orders`);
@@ -79,7 +88,7 @@ const ChooseSeatAndOrderComponent: React.FC = () => {
             const reservationResponse = await SeatMapService.reserveSeats({
                 eventId,
                 seatIds,
-                seatKeys: seatIds,
+                seatKeys,
                 holdToken: createHoldToken(),
                 userId,
             });
@@ -93,10 +102,13 @@ const ChooseSeatAndOrderComponent: React.FC = () => {
                 holdToken,
                 holdExpiresAt,
                 seatIds,
+                seatKeys,
                 selectedSeats: selectedSeats.map((seat) => ({
                     seatId: String(seat.seat.id),
+                    seatKey: getSeatKey(String(seat.seat.id), seat.section?.id, seat.row?.id),
                     seatName: seat.seat.name,
                     sectionName: seat.section?.name,
+                    rowName: seat.row?.name,
                     ticketTypeId: seat.section?.ticketTypeId,
                     price: getSeatTypeMap.get(seat.section?.ticketTypeId || "") || 0,
                     status: seat.seat.status,
@@ -104,6 +116,7 @@ const ChooseSeatAndOrderComponent: React.FC = () => {
                 totalAmount: getTotalAmount(),
                 userId,
             });
+            clearWaitingRoomClearance();
 
             const orderDetails: OrderDetailModel = {
                 eventId,

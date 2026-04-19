@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import com.gyp.common.controllers.AbstractController;
 import com.gyp.common.dtos.pagination.PaginatedDto;
-import com.gyp.common.enums.event.TicketStatus;
 import com.gyp.ticketservice.dtos.ticketgeneration.TicketGenerationSummaryDto;
 import com.gyp.ticketservice.services.TicketGenerationService;
 import com.gyp.ticketservice.services.TicketService;
@@ -65,12 +64,7 @@ public class TicketController extends AbstractController {
 	@GetMapping(AVAILABLE_TICKET_PATH + "/{" + EVENT_ID_PARAM + "}")
 	public ResponseEntity<?> getAvailableTicketsByEventId(@PathVariable(EVENT_ID_PARAM) String eventId) {
 		String organizationId = getCurrentOrganizationId();
-		TicketSearchCriteria criteria = TicketSearchCriteria.builder()
-				.eventId(eventId)
-				.status(TicketStatus.ON_SALE.name())
-				.organizationId(organizationId)
-				.build();
-		var tickets = ticketService.getAllTickets(criteria, null);
+		var tickets = ticketService.getAvailableTicketsByEventId(eventId, organizationId);
 		if(tickets != null) {
 			return ResponseEntity.ok().body(tickets);
 		}

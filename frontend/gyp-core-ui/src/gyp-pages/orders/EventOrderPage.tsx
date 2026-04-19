@@ -1,5 +1,5 @@
 import { Button, Form, Input, Modal } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { createErrorNotification } from "../../components/notification/Notification.ts";
@@ -15,7 +15,8 @@ import {
     getHoldCountdownSeconds,
     isHoldExpired,
     loadBookingSession,
-    saveBookingSession
+    saveBookingSession,
+    clearWaitingRoomClearance
 } from "../../utils/bookingSession.ts";
 import { DateUtils } from "../../utils/DateUtils.ts";
 
@@ -48,18 +49,37 @@ const EventOrderPage: React.FC = () => {
     const hasShownExpiredModalRef = useRef(false);
     const bookingSeatPriceMap = new Map<string, number>(bookingSession?.selectedSeats?.map((seat) => [seat.seatId, seat.price]) || []);
     const resolvedTotalAmount = totalAmount || bookingSession?.totalAmount || 0;
+    const getWaitingRoomPath = useCallback(() => {
+        return eventId ? `/gyp/events/${eventId}/waiting-room?next=${encodeURIComponent(`/gyp/events/${eventId}/choose-seats`)}` : "/gyp/";
+    }, [eventId]);
+    const getSeatKey = (seatId: string, sectionId?: string, rowId?: string, fallbackSeatKey?: string) => {
+        if (fallbackSeatKey) {
+            return fallbackSeatKey;
+        }
+
+        if (!sectionId || !rowId) {
+            return seatId;
+        }
+
+        return `${sectionId}-${rowId}-${seatId}`;
+    };
 
     const resolvedSeatRows = (selectedSeats && selectedSeats.length > 0)
             ? selectedSeats.map((seat) => ({
                 seatId: String(seat.seat.id),
                 seatName: seat.seat.name || String(seat.seat.id),
                 sectionName: seat.section?.name || "Seat",
+                rowName: seat.row?.name,
                 ticketTypeId: seat.section?.ticketTypeId,
                 price: ticketTypeMap?.get(seat.section?.ticketTypeId || "") || bookingSeatPriceMap.get(String(seat.seat.id)) || 0,
+                seatKey: getSeatKey(String(seat.seat.id), seat.section?.id, seat.row?.id),
             }))
-            : (bookingSession?.selectedSeats || []);
+            : (bookingSession?.selectedSeats || []).map((seat) => ({
+                ...seat,
+                seatKey: getSeatKey(seat.seatId, undefined, undefined, seat.seatKey),
+            }));
 
-    const showSessionExpiredModal = () => {
+    const showSessionExpiredModal = useCallback(() => {
         Modal.confirm({
             title: "Session Expired",
             content: "Your seat hold expired. Please reserve the seats again.",
@@ -67,7 +87,8 @@ const EventOrderPage: React.FC = () => {
             cancelText: "Go Home",
             onOk: async () => {
                 clearBookingSession();
-                navigate(`/gyp/events/${eventId}/choose-seats`, {replace: true});
+                clearWaitingRoomClearance();
+                navigate(getWaitingRoomPath(), {replace: true});
             },
             onCancel: () => {
                 clearBookingSession();
@@ -76,7 +97,7 @@ const EventOrderPage: React.FC = () => {
             maskClosable: false,
             closable: false,
         });
-    };
+    }, [eventId, getWaitingRoomPath, navigate]);
 
     useEffect(() => {
         if (!eventId || !selectedSeats || selectedSeats.length === 0) {
@@ -110,7 +131,7 @@ const EventOrderPage: React.FC = () => {
         if (timeLeft === 0) {
             showSessionExpiredModal();
         }
-    }, [resolvedHoldToken, timeLeft]);
+    }, [resolvedHoldToken, timeLeft, showSessionExpiredModal]);
 
     // Format time as MM:SS
     const formatTime = (seconds: number) => {
@@ -174,6 +195,7 @@ const EventOrderPage: React.FC = () => {
                             eventId: eventId,
                             customerEmail: values.email,
                             totalAmount: resolvedTotalAmount,
+                            holdToken: resolvedHoldToken || bookingSession?.holdToken,
                             orderDetails: resolvedSeatRows.map((seat) => ({
                                 seatId: seat.seatId,
                                 quantity: 1,
@@ -193,8 +215,10 @@ const EventOrderPage: React.FC = () => {
                             const sessionSelectedSeats = (resolvedSeatRows.length > 0)
                                     ? resolvedSeatRows.map((seat) => ({
                                         seatId: seat.seatId,
+                                        seatKey: seat.seatKey,
                                         seatName: seat.seatName,
                                         sectionName: seat.sectionName,
+                                        rowName: seat.rowName,
                                         ticketTypeId: seat.ticketTypeId,
                                         price: seat.price,
                                         holdToken: resolvedHoldToken || bookingSession?.holdToken,
@@ -207,6 +231,7 @@ const EventOrderPage: React.FC = () => {
                                 holdToken: resolvedHoldToken || "",
                                 holdExpiresAt: resolvedHoldExpiresAt || new Date(Date.now() + 15 * 60 * 1000).toISOString(),
                                 seatIds: resolvedSeatRows.map((seat) => seat.seatId),
+                                seatKeys: resolvedSeatRows.map((seat) => seat.seatKey),
                                 selectedSeats: sessionSelectedSeats,
                                 totalAmount: resolvedTotalAmount,
                             };
@@ -241,7 +266,7 @@ const EventOrderPage: React.FC = () => {
                         eventId: bookingSession.eventId,
                         holdToken: resolvedHoldToken || bookingSession.holdToken,
                         seatIds: bookingSession.seatIds,
-                        seatKeys: bookingSession.seatIds,
+                                seatKeys: bookingSession.seatKeys || bookingSession.seatIds,
                         userId: bookingSession.userId,
                     }).finally(() => clearBookingSession());
                 }
@@ -334,13 +359,14 @@ const EventOrderPage: React.FC = () => {
                                                                 eventId: bookingSession.eventId,
                                                                 holdToken: resolvedHoldToken || bookingSession.holdToken,
                                                                 seatIds: bookingSession.seatIds,
-                                                                seatKeys: bookingSession.seatIds,
+                                                                seatKeys: bookingSession.seatKeys || bookingSession.seatIds,
                                                                 userId: bookingSession.userId,
                                                             }).finally(() => clearBookingSession());
                                                         } else {
                                                             clearBookingSession();
                                                         }
-                                                        navigate("/gyp/", {replace: true});
+                                                        clearWaitingRoomClearance();
+                                                        navigate(getWaitingRoomPath(), {replace: true});
                                                     },
                                                     onCancel: () => {
                                                         console.log("User chose to continue order");

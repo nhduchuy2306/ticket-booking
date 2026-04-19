@@ -19,4 +19,5 @@ public class OrderResponseDto extends AbstractDto {
 	private String customerEmail;
 	private OrderStatus status;
 	private Double totalAmount;
+	private String holdToken;
 }

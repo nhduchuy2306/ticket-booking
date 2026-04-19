@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Circle, Group, Text } from "react-konva";
-import { Position, Seat, Section } from "../../../../../models/generated/event-service-models";
+import { Position, Row, Seat, Section } from "../../../../../models/generated/event-service-models";
 import { formatCountdown, getHoldCountdownSeconds } from "../../../../../utils/bookingSession.ts";
 import { SeatSizes } from "../../../constants/SeatMapContants.ts";
 import { SeatUtils } from "../../../utils/SeatUtils.ts";
@@ -12,7 +12,8 @@ export interface SeatMapSeatedSeatProps {
     rowName: string,
     rowPosition?: Position,
     isArcRow?: boolean,
-    section?: Section
+    section?: Section,
+    row?: Row,
 }
 
 const SeatedSeat: React.FC<SeatMapSeatedSeatProps> = (props) => {
@@ -37,7 +38,7 @@ const SeatedSeat: React.FC<SeatMapSeatedSeatProps> = (props) => {
     return (
             <>
                 <Group x={positionX} y={positionY}
-                       onClick={(e) => EventUtils.handleClick(e, seat, isSelected, selectedSeats, setSelectedSeats, props?.section)}
+                       onClick={(e) => EventUtils.handleClick(e, seat, isSelected, selectedSeats, setSelectedSeats, props?.section, props?.row)}
                        onMouseDown={() => EventUtils.handleMouseDown(setDraggable)}
                        onMouseUp={() => EventUtils.handleMouseUp(setDraggable)}
                        onMouseEnter={(e) => EventUtils.handleSeatMouseEnterEvent(e, seat)}

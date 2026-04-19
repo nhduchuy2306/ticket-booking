@@ -14,6 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PaymentOutcomeEM {
 	private String orderId;
+	private String holdToken;
 	private String eventId;
 	private String customerEmail;
 	private Double totalAmount;

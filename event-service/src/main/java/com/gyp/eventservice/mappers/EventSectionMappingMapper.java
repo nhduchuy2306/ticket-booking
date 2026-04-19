@@ -32,6 +32,7 @@ public interface EventSectionMappingMapper {
 	@Mapping(target = "ticketTypeEntity", source = "dto.ticketTypeId", qualifiedByName = "mapTicketTypeIdToEntity")
 	@Mapping(target = "seatMapEntity", source = "dto.seatMapId", qualifiedByName = "mapSeatMapIdToEntity")
 	@Mapping(target = "eventEntity", source = "dto.eventId", qualifiedByName = "mapEventIdToEntity")
+	@Mapping(target = "id", ignore = true)
 	void updateEntityFromDto(EventSectionMappingRequestDto dto, @MappingTarget EventSectionMappingEntity entity);
 
 	@Named("mapTicketTypeIdToEntity")

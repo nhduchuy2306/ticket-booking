@@ -117,44 +117,52 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public EventResponseDto updateEvent(String eventId, EventRequestDto request) {
-		String organizationId = SecurityUtils.getCurrentOrganizationId();
-		EventEntity existingEvent = eventRepository.findById(eventId)
-				.orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + eventId));
-		eventMapper.updateEntityFromDto(request, existingEvent);
-		enrichEventMappings(existingEvent);
-		existingEvent.setOrganizationId(organizationId);
-		EventEntity updatedEvent = eventRepository.save(existingEvent);
-		updateSaleChannels(eventId, request.getSaleChannelIds());
-		eventCacheService.evictBookingLists(organizationId);
-		eventCacheService.evictEvent(eventId);
-		eventCacheService.evictSeatAvailability(eventId);
-		return eventMapper.toResponseDto(updatedEvent);
+		return doUpdateEvent(eventId, request, null);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public EventResponseDto updateEvent(String eventId, EventRequestDto request, MultipartFile file)
 			throws ResourceNotFoundException {
+		return doUpdateEvent(eventId, request, file);
+	}
+
+	private EventResponseDto doUpdateEvent(String eventId, EventRequestDto request, MultipartFile file) {
 		try {
 			String organizationId = SecurityUtils.getCurrentOrganizationId();
+
 			EventEntity existingEvent = eventRepository.findById(eventId)
 					.orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + eventId));
+
 			eventMapper.updateEntityFromDto(request, existingEvent);
+
+			if(request.getTicketTypeIds() != null && !request.getTicketTypeIds().isEmpty()) {
+				List<EventSectionMappingEntity> mappings =
+						eventMapper.ticketTypeIdsToMappings(request.getTicketTypeIds(), eventId);
+				existingEvent.setEventSectionMappingEntityList(mappings);
+				eventSectionMappingRepository.saveAll(mappings);
+			}
+
 			enrichEventMappings(existingEvent);
+
 			if(file != null) {
-				// Delete old logo if it exists
 				if(existingEvent.getLogoUrl() != null) {
 					uploadService.deleteFile(existingEvent.getLogoUrl());
 				}
 				String fileName = uploadService.upload(file).getLeft();
 				existingEvent.setLogoUrl(fileName);
 			}
+
 			existingEvent.setOrganizationId(organizationId);
+
 			EventEntity updatedEvent = eventRepository.save(existingEvent);
+
 			updateSaleChannels(eventId, request.getSaleChannelIds());
+
 			eventCacheService.evictBookingLists(organizationId);
 			eventCacheService.evictEvent(eventId);
 			eventCacheService.evictSeatAvailability(eventId);
+
 			return eventMapper.toResponseDto(updatedEvent);
 		} catch(Exception e) {
 			log.error("Error updating event with id: {}", eventId, e);
@@ -162,6 +170,7 @@ public class EventServiceImpl implements EventService {
 		}
 	}
 
+	@Transactional
 	@Override
 	public EventResponseDto publishEvent(String eventId) {
 		EventEntity eventEntity = eventRepository.findById(eventId)

@@ -59,14 +59,14 @@ const EventDetailPage: React.FC = () => {
                                 <Button
                                         type="primary"
                                         className="w-full !mt-2"
-                                        onClick={() => navigate(`/gyp/events/${event?.id}/choose-seats`)}
+                                        onClick={() => navigate(`/gyp/events/${event?.id}/waiting-room?eventName=${encodeURIComponent(event?.name || "")}&next=${encodeURIComponent(`/gyp/events/${event?.id}/choose-seats`)}`)}
                                 >
                                     Buy Ticket
                                 </Button>
                                 <Button
                                         type="default"
                                         className="w-full !mt-2"
-                                        onClick={() => navigate(`/gyp/events/${event?.id}/waiting-room?eventName=${encodeURIComponent(event?.name || "")}`)}
+                                        onClick={() => navigate(`/gyp/events/${event?.id}/waiting-room?eventName=${encodeURIComponent(event?.name || "")}&next=${encodeURIComponent(`/gyp/events/${event?.id}/choose-seats`)}`)}
                                 >
                                     Join Waiting Room
                                 </Button>

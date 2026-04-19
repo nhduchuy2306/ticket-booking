@@ -2,9 +2,12 @@ import { Button, Steps } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createErrorNotification, createSuccessNotification } from "../../components/notification/Notification.ts";
-import { EventStatus } from "../../models/enums/EventStatus";
 import { Mode } from "../../models/enums/Mode.ts";
-import { EventResponseDto, SeatMapResponseDto, } from "../../models/generated/event-service-models";
+import {
+    EventResponseDto,
+    EventSectionMappingListRequestDto,
+    SeatMapResponseDto,
+} from "../../models/generated/event-service-models";
 import { EventSectionMappingService } from "../../services/Event/EventSectionMappingService.ts";
 import { EventService } from "../../services/Event/EventService.ts";
 import { SeatMapService } from "../../services/Event/SeatMapService.ts";
@@ -83,8 +86,21 @@ const EventAssignForm: React.FC = () => {
                 },
             });
         }
-        next();
+        void persistSeatMap();
     };
+
+    const persistSeatMap = async () => {
+        const body: EventSectionMappingListRequestDto = {
+            eventSectionMappingRequestDtos: Object.entries(sectionAssignments).map(([sectionId, ticketTypeId]) => ({
+                eventId: id,
+                sectionId: sectionId,
+                ticketTypeId: ticketTypeId,
+                seatMapId: draftSeatMap?.id || "",
+            }))
+        };
+        await EventSectionMappingService.updateEventSectionMappings(body);
+        next();
+    }
 
     const handlePublish = async () => {
         if (!savedEvent?.id) {
@@ -94,22 +110,7 @@ const EventAssignForm: React.FC = () => {
 
         try {
             setIsPublishing(true);
-            const payload = {
-                name: savedEvent.name,
-                description: savedEvent.description,
-                status: EventStatus.PUBLISHED.key,
-                startTime: savedEvent.startTime,
-                endTime: savedEvent.endTime,
-                doorOpenTime: savedEvent.doorOpenTime,
-                doorCloseTime: savedEvent.doorCloseTime,
-                venueMapId: savedEvent.venueMap?.id,
-                seasonId: savedEvent.season?.id,
-                categoryIds: savedEvent.categories?.map((category) => category.id) || [],
-                organizationId: savedEvent.organizationId,
-                saleChannelIds: [],
-            };
-
-            await EventService.updateEvent(savedEvent.id, payload);
+            await EventService.publishEvent(savedEvent.id);
             createSuccessNotification("Event", "Event published successfully");
             navigate("/event");
         } catch (error) {

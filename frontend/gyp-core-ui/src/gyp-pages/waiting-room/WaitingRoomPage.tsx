@@ -1,9 +1,9 @@
-import { Button, Progress, Tag } from "antd";
-import React, { useEffect, useState } from "react";
+import { Alert, Button, Input, Progress, Tag } from "antd";
+import React from "react";
 import { FiArrowRight, FiClock, FiRefreshCw, FiShield, FiUsers } from "react-icons/fi";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { CustomerAuthStorage } from "../../services/CustomerAuth/CustomerAuthStorage.ts";
-import { formatCountdown } from "../../utils/bookingSession.ts";
+import { formatCountdown, hasValidWaitingRoomClearance, saveWaitingRoomClearance } from "../../utils/bookingSession.ts";
 import "../auths/auth.scss";
 
 const parsePositiveInteger = (value: string | null): number | null => {
@@ -34,6 +34,17 @@ const resolveDeadlineMs = (releaseAt: string | null, waitMinutes: number | null)
     return null;
 };
 
+const createCaptchaChallenge = () => {
+    const left = 2 + Math.floor(Math.random() * 8);
+    const right = 1 + Math.floor(Math.random() * 8);
+
+    if (Math.random() > 0.45) {
+        return {question: `${left} + ${right}`, answer: left + right};
+    }
+
+    return {question: `${left + right} - ${right}`, answer: left};
+};
+
 const WaitingRoomPage: React.FC = () => {
     const navigate = useNavigate();
     const {id: eventId} = useParams<{ id?: string }>();
@@ -45,16 +56,25 @@ const WaitingRoomPage: React.FC = () => {
     const releaseAt = searchParams.get("releaseAt");
     const nextPath = searchParams.get("next")?.trim() || (eventId ? `/gyp/events/${eventId}/choose-seats` : null);
     const customerName = CustomerAuthStorage.getCustomerName();
-    const [deadlineMs] = useState<number | null>(() => resolveDeadlineMs(releaseAt, waitMinutes));
-    const [secondsLeft, setSecondsLeft] = useState<number>(() => {
+    const [deadlineMs] = React.useState<number | null>(() => resolveDeadlineMs(releaseAt, waitMinutes));
+    const [secondsLeft, setSecondsLeft] = React.useState<number>(() => {
         if (deadlineMs === null) {
             return waitMinutes !== null ? waitMinutes * 60 : 0;
         }
 
         return Math.max(0, Math.floor((deadlineMs - Date.now()) / 1000));
     });
+    const [captchaChallenge, setCaptchaChallenge] = React.useState(createCaptchaChallenge);
+    const [captchaInput, setCaptchaInput] = React.useState("");
+    const [captchaSolved, setCaptchaSolved] = React.useState<boolean>(() => hasValidWaitingRoomClearance(eventId));
+    const [captchaMessage, setCaptchaMessage] = React.useState<string | null>(null);
 
-    useEffect(() => {
+    React.useEffect(() => {
+        setCaptchaChallenge(createCaptchaChallenge());
+        setCaptchaInput("");
+        setCaptchaMessage(null);
+        setCaptchaSolved(hasValidWaitingRoomClearance(eventId));
+
         if (deadlineMs === null) {
             setSecondsLeft(waitMinutes !== null ? waitMinutes * 60 : 0);
             return;
@@ -68,9 +88,10 @@ const WaitingRoomPage: React.FC = () => {
         const timer = window.setInterval(updateCountdown, 1000);
 
         return () => window.clearInterval(timer);
-    }, [deadlineMs, waitMinutes]);
+    }, [deadlineMs, eventId, waitMinutes]);
 
     const isReady = deadlineMs === null || secondsLeft === 0;
+    const canEnterSeatMap = isReady && captchaSolved;
     const progressPercent = queuePosition !== null && queueTotal !== null
             ? Math.max(0, Math.min(100, Math.round(((queueTotal - queuePosition + 1) / queueTotal) * 100)))
             : null;
@@ -84,12 +105,34 @@ const WaitingRoomPage: React.FC = () => {
             : formatCountdown(secondsLeft);
 
     const handleContinue = () => {
-        if (nextPath && isReady) {
+        if (nextPath && canEnterSeatMap) {
             navigate(nextPath);
             return;
         }
 
         navigate(eventId ? `/gyp/events/${eventId}` : "/gyp/");
+    };
+
+    const handleCaptchaSubmit = () => {
+        const parsedAnswer = Number(captchaInput);
+        if (!Number.isFinite(parsedAnswer)) {
+            setCaptchaMessage("Please enter a valid number.");
+            return;
+        }
+
+        if (parsedAnswer !== captchaChallenge.answer) {
+            setCaptchaSolved(false);
+            setCaptchaMessage("Captcha answer is incorrect. Please try again.");
+            setCaptchaChallenge(createCaptchaChallenge());
+            setCaptchaInput("");
+            return;
+        }
+
+        setCaptchaSolved(true);
+        setCaptchaMessage("Captcha verified. You can continue when your queue time is ready.");
+        if (eventId) {
+            saveWaitingRoomClearance(eventId, nextPath || undefined, deadlineMs || undefined);
+        }
     };
 
     const handleRefresh = () => {
@@ -116,15 +159,13 @@ const WaitingRoomPage: React.FC = () => {
                                 <div className="customer-auth-brand-mark">GYP</div>
                                 <div>
                                     <p className="customer-auth-kicker">Waiting room</p>
-                                    <h1>
-                                        {customerName ? `Hi ${customerName}, you are in line for ${eventName}` : `You are in line for ${eventName}`}
-                                    </h1>
+                                    <h1>{customerName ? `Hi ${customerName}, you are in line for ${eventName}` : `You are in line for ${eventName}`}</h1>
                                 </div>
                             </div>
 
                             <p className="customer-auth-hero-copy">
-                                Thousands of fans may try to buy at the same time. Keep this page open and we will
-                                preserve your access path while the queue moves.
+                                Thousands of fans may try to buy at the same time. Keep this page open, solve the captcha,
+                                and we will preserve your access path while the queue moves.
                             </p>
                         </div>
 
@@ -142,7 +183,7 @@ const WaitingRoomPage: React.FC = () => {
                             <div className="customer-auth-stat-card">
                                 <FiShield/>
                                 <span className="text-sm uppercase tracking-[0.16em] text-slate-400">Session state</span>
-                                <strong className="text-2xl text-white">{isReady ? "Ready to enter" : "Held securely"}</strong>
+                                <strong className="text-2xl text-white">{canEnterSeatMap ? "Ready to enter" : "Held securely"}</strong>
                             </div>
                         </div>
 
@@ -157,24 +198,21 @@ const WaitingRoomPage: React.FC = () => {
                             <div className="customer-auth-panel-heading flex items-start justify-between gap-4">
                                 <div>
                                     <p className="customer-auth-kicker">Queue status</p>
-                                    <h2>{isReady ? "Your turn is here" : "Please stay on this page"}</h2>
+                                    <h2>{canEnterSeatMap ? "Your turn is here" : "Please stay on this page"}</h2>
                                 </div>
-                                <Tag color={isReady ? "success" : "gold"}
-                                     className="!m-0 !rounded-full !border-0 !px-3 !py-1 !font-semibold">
-                                    {isReady ? "Ready" : "Waiting"}
+                                <Tag color={canEnterSeatMap ? "success" : "gold"} className="!m-0 !rounded-full !border-0 !px-3 !py-1 !font-semibold">
+                                    {canEnterSeatMap ? "Ready" : "Waiting"}
                                 </Tag>
                             </div>
 
                             <div className="mt-6 rounded-2xl border border-white/10 bg-slate-950/55 p-5">
                                 <div className="flex items-end justify-between gap-4">
                                     <div>
-                                        <p className="text-xs font-bold uppercase tracking-[0.22em] text-slate-400">Spot
-                                            in line</p>
+                                        <p className="text-xs font-bold uppercase tracking-[0.22em] text-slate-400">Spot in line</p>
                                         <div className="mt-1 text-5xl font-black text-white">{queuePosition !== null ? queuePosition.toLocaleString() : "—"}</div>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-xs font-bold uppercase tracking-[0.22em] text-slate-400">Time
-                                            left</p>
+                                        <p className="text-xs font-bold uppercase tracking-[0.22em] text-slate-400">Time left</p>
                                         <div className="mt-1 text-3xl font-black text-amber-400">{isReady ? "00:00" : formatCountdown(secondsLeft)}</div>
                                     </div>
                                 </div>
@@ -195,9 +233,52 @@ const WaitingRoomPage: React.FC = () => {
 
                                 <p className="mt-4 text-sm leading-6 text-slate-300">
                                     {isReady
-                                            ? "Your access window is ready. You can continue to the seat selection flow now."
+                                            ? "Your access window is ready. Solve the captcha to continue to seat selection."
                                             : "Keep this tab active. We will update the timer automatically and keep your booking context ready for the next step."}
                                 </p>
+                            </div>
+
+                            <div className="mt-5 rounded-2xl border border-white/10 bg-slate-950/55 p-5">
+                                <div className="flex items-center justify-between gap-3">
+                                    <div>
+                                        <p className="text-xs font-bold uppercase tracking-[0.22em] text-slate-400">Basic captcha</p>
+                                        <p className="mt-1 text-sm text-slate-200">Solve this simple math check before entering seat selection.</p>
+                                    </div>
+                                    <Tag color={captchaSolved ? "success" : "gold"} className="!m-0 !rounded-full !border-0 !px-3 !py-1 !font-semibold">
+                                        {captchaSolved ? "Verified" : "Required"}
+                                    </Tag>
+                                </div>
+
+                                <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                                    <div className="flex min-h-12 flex-1 items-center rounded-xl border border-slate-600/30 bg-slate-900/92 px-4 text-lg font-semibold text-white">
+                                        {captchaChallenge.question} = ?
+                                    </div>
+                                    <Input
+                                            value={captchaInput}
+                                            onChange={(e) => setCaptchaInput(e.target.value)}
+                                            onPressEnter={handleCaptchaSubmit}
+                                            placeholder="Your answer"
+                                            inputMode="numeric"
+                                            className="h-12 rounded-xl border-slate-600/30 bg-slate-900/92 text-slate-50 placeholder:text-slate-500"
+                                    />
+                                    <Button
+                                            type="primary"
+                                            className="h-12 rounded-xl border-0 bg-gradient-to-r from-sky-400 to-cyan-500 font-bold text-slate-950"
+                                            onClick={handleCaptchaSubmit}
+                                    >
+                                        Verify
+                                    </Button>
+                                </div>
+
+                                {captchaMessage && (
+                                        <Alert
+                                                className="mt-4 rounded-xl border border-white/10 bg-slate-900/85 text-slate-50 shadow-lg [&_.ant-alert-message]:text-slate-50 [&_.ant-alert-description]:text-slate-200"
+                                                type={captchaSolved ? "success" : "error"}
+                                                message={captchaSolved ? "Captcha passed" : "Captcha notice"}
+                                                description={captchaMessage}
+                                                showIcon
+                                        />
+                                )}
                             </div>
 
                             <div className="mt-5 grid gap-3">
@@ -206,20 +287,18 @@ const WaitingRoomPage: React.FC = () => {
                                         htmlType="button"
                                         className="h-12 rounded-xl border-0 bg-gradient-to-r from-amber-400 to-amber-500 font-extrabold tracking-wide text-slate-950 shadow-lg shadow-amber-500/20 hover:from-amber-300 hover:to-amber-500 hover:text-slate-950"
                                         onClick={handleContinue}
-                                        disabled={!isReady && deadlineMs !== null}
+                                        disabled={!canEnterSeatMap}
                                         icon={<FiArrowRight/>}
                                         block
                                 >
-                                    {isReady ? (nextPath ? "Continue to ticket selection" : "Back to event") : `Available in ${formatCountdown(secondsLeft)}`}
+                                    {!captchaSolved
+                                            ? "Verify captcha first"
+                                            : !isReady
+                                                    ? `Available in ${formatCountdown(secondsLeft)}`
+                                                    : (nextPath ? "Continue to ticket selection" : "Back to event")}
                                 </Button>
 
-                                <Button
-                                        htmlType="button"
-                                        className="customer-google-button"
-                                        onClick={handleRefresh}
-                                        icon={<FiRefreshCw/>}
-                                        block
-                                >
+                                <Button htmlType="button" className="customer-google-button" onClick={handleRefresh} icon={<FiRefreshCw/>} block>
                                     Refresh status
                                 </Button>
 
@@ -243,7 +322,7 @@ const WaitingRoomPage: React.FC = () => {
                             </div>
 
                             <div className="customer-auth-meta mt-5 rounded-2xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-slate-300/85">
-                                <span>When your slot opens, you will be able to continue without logging in again.</span>
+                                <span>When your slot opens and captcha is verified, you can continue without logging in again.</span>
                                 <span>{eventId ? `Event ID: ${eventId}` : "Queue access is shown in generic mode"}</span>
                             </div>
                         </div>
@@ -254,5 +333,4 @@ const WaitingRoomPage: React.FC = () => {
 };
 
 export default WaitingRoomPage;
-
 

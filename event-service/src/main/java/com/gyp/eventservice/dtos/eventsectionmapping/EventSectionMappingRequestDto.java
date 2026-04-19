@@ -12,7 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventSectionMappingRequestDto {
-	private String id;
 	private String eventId;
 	private String ticketTypeId;
 	private String seatMapId;

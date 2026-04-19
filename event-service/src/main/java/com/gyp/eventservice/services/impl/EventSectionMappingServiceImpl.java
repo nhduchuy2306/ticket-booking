@@ -1,5 +1,6 @@
 package com.gyp.eventservice.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gyp.eventservice.dtos.eventsectionmapping.EventSectionMappingRequestDto;
@@ -49,14 +50,21 @@ public class EventSectionMappingServiceImpl implements EventSectionMappingServic
 	@Override
 	public List<EventSectionMappingResponseDto> updateEventSectionMappingsForEvent(
 			List<EventSectionMappingRequestDto> eventSectionMappingRequestDto) {
-		return eventSectionMappingRequestDto.stream()
-				.map(requestDto -> {
-					var existingMapping = eventSectionMappingRepository.findById(requestDto.getId()).orElseThrow(
-							() -> new RuntimeException("EventSectionMapping not found with id: " + requestDto.getId()));
-					eventSectionMappingMapper.updateEntityFromDto(requestDto, existingMapping);
-					return eventSectionMappingMapper.toResponseDto(existingMapping);
-				})
-				.toList();
+		List<EventSectionMappingResponseDto> res = new ArrayList<>();
+		for(EventSectionMappingRequestDto requestDto : eventSectionMappingRequestDto) {
+			var existingMapping = eventSectionMappingRepository.findByTicketTypeEntity_IdAndEventEntity_Id(
+					requestDto.getTicketTypeId(), requestDto.getEventId());
+			if(existingMapping.isPresent()) {
+				eventSectionMappingMapper.updateEntityFromDto(requestDto, existingMapping.get());
+				eventSectionMappingRepository.save(existingMapping.get());
+				res.add(eventSectionMappingMapper.toResponseDto(existingMapping.get()));
+			} else {
+				var entity = eventSectionMappingMapper.toEntity(requestDto);
+				var savedMapping = eventSectionMappingRepository.save(entity);
+				res.add(eventSectionMappingMapper.toResponseDto(savedMapping));
+			}
+		}
+		return res;
 	}
 
 	private boolean checkEventSectionMapping(EventSectionMappingRequestDto eventSectionMappingRequestDto,

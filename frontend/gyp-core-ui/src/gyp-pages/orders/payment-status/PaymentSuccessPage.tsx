@@ -1,10 +1,15 @@
 import React from "react";
-import { loadBookingSession } from "../../../utils/bookingSession.ts";
+import { clearBookingSession, clearWaitingRoomClearance, loadBookingSession } from "../../../utils/bookingSession.ts";
 
 const PaymentSuccessPage: React.FC = () => {
     const {orderId, message} = Object.fromEntries(new URLSearchParams(window.location.search));
     const bookingSession = loadBookingSession();
     const ticketRows = bookingSession?.selectedSeats || [];
+
+    React.useEffect(() => {
+        clearBookingSession();
+        clearWaitingRoomClearance();
+    }, []);
 
     return (
             <div className="flex flex-col items-center justify-center bg-green-100 !p-4 flex-grow">

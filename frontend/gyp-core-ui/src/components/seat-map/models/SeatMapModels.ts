@@ -1,13 +1,10 @@
-import { RowLabelPosition, Seat, Section, SectionType } from "../../../models/generated/event-service-models";
+import { Row, RowLabelPosition, Seat, Section, SectionType } from "../../../models/generated/event-service-models";
 
-export interface SelectedTypeModel {
-    type: string;
-    data: Section | Seat | undefined;
-}
 
 export interface SelectedSeatModel {
     seat: Seat;
     section?: Section;
+    row?: Row;
     holdToken?: string;
     holdExpiresAt?: string;
 }

@@ -18,5 +18,6 @@ public class OrderRequestDto {
 	private String eventId;
 	private String customerEmail;
 	private Double totalAmount;
+	private String holdToken;
 	private List<OrderDetailRequestDto> orderDetails;
 }

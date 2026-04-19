@@ -37,4 +37,8 @@ public interface EventCacheService {
 	void evictSeatAvailability(String eventId);
 
 	void evictBookingLists(String organizationId);
+
+	String getTicketTypeId(String eventId, String sectionId);
+
+	void cacheTicketTypeId(String eventId, String sectionId, String ticketTypeId);
 }

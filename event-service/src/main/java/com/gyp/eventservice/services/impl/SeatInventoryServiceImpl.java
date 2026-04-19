@@ -16,6 +16,7 @@ import com.gyp.common.converters.Serialization;
 import com.gyp.common.enums.event.SeatHoldStatus;
 import com.gyp.common.enums.event.SeatInventoryStatus;
 import com.gyp.common.exceptions.ResourceNotFoundException;
+import com.gyp.common.utils.HashUtils;
 import com.gyp.eventservice.dtos.seatmap.Row;
 import com.gyp.eventservice.dtos.seatmap.Seat;
 import com.gyp.eventservice.dtos.seatmap.SeatAvailability;
@@ -30,6 +31,7 @@ import com.gyp.eventservice.entities.SeatInventoryEntity;
 import com.gyp.eventservice.entities.SeatMapEntity;
 import com.gyp.eventservice.entities.VenueMapEntity;
 import com.gyp.eventservice.repositories.EventRepository;
+import com.gyp.eventservice.repositories.EventSectionMappingRepository;
 import com.gyp.eventservice.repositories.SeatHoldRepository;
 import com.gyp.eventservice.repositories.SeatInventoryRepository;
 import com.gyp.eventservice.repositories.TicketTypeRepository;
@@ -48,9 +50,9 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 	private final SeatInventoryRepository seatInventoryRepository;
 	private final SeatHoldRepository seatHoldRepository;
 	private final TicketTypeRepository ticketTypeRepository;
+	private final EventSectionMappingRepository eventSectionMappingRepository;
 	private final EventCacheService eventCacheService;
 
-	@Transactional
 	@Override
 	public List<SeatAvailability> getSeatAvailability(String eventId) {
 		List<SeatAvailability> cachedSeatAvailability = eventCacheService.getSeatAvailability(eventId);
@@ -117,7 +119,16 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 		List<SeatInventoryEntity> seats = new ArrayList<>();
 
 		for(Section section : seatConfig.getSections()) {
-			String ticketTypeId = section.getTicketTypeId();
+			String ticketTypeId = eventCacheService.getTicketTypeId(eventId, section.getId());
+			if(ticketTypeId == null) {
+				var eventSectionMappingEntity = eventSectionMappingRepository.findByEventEntity_IdAndSectionId(
+						eventId, section.getId());
+				ticketTypeId = eventSectionMappingEntity.map(sectionMappingEntity ->
+						sectionMappingEntity.getTicketTypeEntity().getId()).orElse(null);
+				if(ticketTypeId != null) {
+					eventCacheService.cacheTicketTypeId(eventId, section.getId(), ticketTypeId);
+				}
+			}
 			if(Objects.equals(section.getType(), SectionType.SEATED)) {
 				for(Row row : section.getRows()) {
 					for(Seat seat : row.getSeats()) {
@@ -255,8 +266,7 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 	}
 
 	private SeatInventoryEntity buildSeat(String eventId, Section section, String containerId, String containerName,
-			Seat seat,
-			String ticketTypeId) {
+			Seat seat, String ticketTypeId) {
 		String seatKey = buildSeatKey(section, containerId, seat.getId());
 		return SeatInventoryEntity.builder()
 				.eventId(eventId)
@@ -270,7 +280,8 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 	}
 
 	private String buildSeatKey(Section section, String containerId, String seatId) {
-		return section.getId() + "-" + containerId + "-" + seatId;
+		String key = section.getId() + "-" + containerId + "-" + seatId;
+		return HashUtils.hashSha256(key);
 	}
 
 	private String buildSeatLabel(Section section, String containerName, Seat seat) {
@@ -291,11 +302,7 @@ public class SeatInventoryServiceImpl implements SeatInventoryService {
 		if(seatMapEntity == null) {
 			throw new ResourceNotFoundException("Seat map not found for event: " + eventEntity.getId());
 		}
-		try {
-			return Serialization.deserializeFromString(seatMapEntity.getSeatConfigRaw(), SeatConfig.class);
-		} catch(Exception e) {
-			throw new IllegalStateException("Failed to parse seat map for event: " + eventEntity.getId(), e);
-		}
+		return Serialization.deserializeFromString(seatMapEntity.getSeatConfigRaw(), SeatConfig.class);
 	}
 
 	private SeatAvailability toAvailability(SeatInventoryEntity seat, SeatHoldEntity hold,

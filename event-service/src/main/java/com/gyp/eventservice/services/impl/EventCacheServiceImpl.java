@@ -17,11 +17,13 @@ public class EventCacheServiceImpl implements EventCacheService {
 	private static final Duration EVENT_TTL = Duration.ofMinutes(10);
 	private static final Duration EVENT_LIST_TTL = Duration.ofMinutes(5);
 	private static final Duration SEAT_AVAILABILITY_TTL = Duration.ofSeconds(60);
+	private static final Duration TICKET_TYPE_AVAILABILITY_TTL = Duration.ofSeconds(60);
 	private static final String EVENT_KEY_PREFIX = "event:details:";
 	private static final String EVENT_ON_SALE_KEY = "event:list:on-sale";
 	private static final String EVENT_COMING_KEY = "event:list:coming";
 	private static final String EVENT_ACTIVE_KEY_PREFIX = "event:list:active:";
 	private static final String SEAT_AVAILABILITY_KEY_PREFIX = "seat:availability:";
+	private static final String TICKET_TYPE_KEY_PREFIX = "ticket:type:id:";
 
 	private final RedisTemplate<String, Object> redisTemplate;
 	private final ObjectMapper objectMapper;
@@ -125,6 +127,25 @@ public class EventCacheServiceImpl implements EventCacheService {
 		evictEventsOnSale();
 		evictComingEvents();
 		evictActiveEvents(organizationId);
+	}
+
+	@Override
+	public String getTicketTypeId(String eventId, String sectionId) {
+		Object value = redisTemplate.opsForValue().get(TICKET_TYPE_KEY_PREFIX + eventId + ":" + sectionId);
+		if(value == null) {
+			return null;
+		}
+		return value.toString();
+	}
+
+	@Override
+	public void cacheTicketTypeId(String eventId, String sectionId, String ticketTypeId) {
+		if(eventId == null || eventId.isBlank() || sectionId == null || sectionId.isBlank() || ticketTypeId == null
+				|| ticketTypeId.isBlank()) {
+			return;
+		}
+		redisTemplate.opsForValue().set(
+				TICKET_TYPE_KEY_PREFIX + eventId + ":" + sectionId, ticketTypeId, TICKET_TYPE_AVAILABILITY_TTL);
 	}
 
 	private String eventKey(String eventId) {

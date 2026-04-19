@@ -31,8 +31,10 @@ export interface SeatHoldResponseDto {
 
 export interface BookingSeatSummary {
     seatId: string;
+    seatKey?: string;
     seatName?: string;
     sectionName?: string;
+    rowName?: string;
     ticketTypeId?: string;
     price: number;
     status?: SeatInventoryStatus;
@@ -48,6 +50,7 @@ export interface BookingHoldSession {
     holdToken: string;
     holdExpiresAt: string;
     seatIds: string[];
+    seatKeys?: string[];
     selectedSeats: BookingSeatSummary[];
     totalAmount: number;
     customerEmail?: string;

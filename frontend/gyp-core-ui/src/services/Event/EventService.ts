@@ -9,6 +9,7 @@ const ACTIVE_PATH = "active";
 const WITH_UPLOAD_PATH = "with-upload";
 const ON_SALE_PATH = "on-sale";
 const COMING_EVENTS_PATH = "/coming-events";
+const PUBLISH_EVENTS_PATH = "publish";
 
 export class EventService {
     static getAllEvents = async (): Promise<EventResponseDto[]> => {
@@ -64,6 +65,11 @@ export class EventService {
                 'Content-Type': 'multipart/form-data'
             }
         });
+        return response.data;
+    }
+
+    static publishEvent = async (id: string): Promise<EventResponseDto> => {
+        const response = await apiClient.post(`${EVENT_SERVICE_PATH}/${EVENTS_PATH}/${id}/${PUBLISH_EVENTS_PATH}`);
         return response.data;
     }
 

@@ -1,10 +1,8 @@
 package com.gyp.orderservice.services.impl;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +36,7 @@ public class MoMoPaymentServiceImpl implements MoMoPaymentService {
 
 	@Override
 	public Object createMoMoPaymentEndpoint(Long amount, String orderId)
-			throws InvalidKeyException, NoSuchAlgorithmException, IOException {
+			throws InvalidKeyException, NoSuchAlgorithmException {
 		String orderInfo = "PAY WITH MOMO";
 		String requestId = UUID.randomUUID().toString();
 		String requestType = "captureWallet";
@@ -126,6 +124,7 @@ public class MoMoPaymentServiceImpl implements MoMoPaymentService {
 			orderService.updateOrderStatus(orderId, OrderStatus.DONE);
 			orderPaymentEventProducer.sendPaymentOutcome(PaymentOutcomeEM.builder()
 					.orderId(orderId)
+					.holdToken(orderEntity.getHoldToken())
 					.eventId(orderEntity.getEventId())
 					.customerEmail(orderEntity.getCustomerEmail())
 					.totalAmount(orderEntity.getTotalAmount())
@@ -138,6 +137,7 @@ public class MoMoPaymentServiceImpl implements MoMoPaymentService {
 		orderService.updateOrderStatus(orderId, OrderStatus.CANCELLED);
 		orderPaymentEventProducer.sendPaymentOutcome(PaymentOutcomeEM.builder()
 				.orderId(orderId)
+				.holdToken(orderEntity.getHoldToken())
 				.eventId(orderEntity.getEventId())
 				.customerEmail(orderEntity.getCustomerEmail())
 				.totalAmount(orderEntity.getTotalAmount())

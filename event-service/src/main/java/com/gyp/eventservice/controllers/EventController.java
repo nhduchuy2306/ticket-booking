@@ -34,6 +34,7 @@ public class EventController extends AbstractController {
 	private static final String WITH_UPLOAD_PATH = "/with-upload";
 	private static final String ON_SALE_PATH = "/on-sale";
 	private static final String COMING_EVENTS_PATH = "/coming-events";
+	private static final String PUBLISH_EVENTS_PATH = "/publish";
 
 	private final EventService eventService;
 
@@ -108,6 +109,12 @@ public class EventController extends AbstractController {
 	public ResponseEntity<?> deleteEvent(@PathVariable(ID_PARAM) String id) {
 		eventService.deleteEvent(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	@PostMapping("/{" + ID_PARAM + "}" + PUBLISH_EVENTS_PATH)
+	@PreAuthorize("@permissionEvaluator.hasPermission(authentication, #AppPerm.EVENT, #ActionPerm.UPDATE)")
+	public ResponseEntity<?> publishEvent(@PathVariable(ID_PARAM) String id) {
+		return ResponseEntity.ok(eventService.publishEvent(id));
 	}
 
 	@GetMapping(ON_SALE_PATH)

@@ -16,6 +16,7 @@ import com.gyp.ticketservice.entities.ProcessedKafkaEventEntity;
 import com.gyp.ticketservice.entities.TicketEntity;
 import com.gyp.ticketservice.repositories.ProcessedKafkaEventRepository;
 import com.gyp.ticketservice.repositories.TicketRepository;
+import com.gyp.ticketservice.services.TicketCacheRedisService;
 import com.gyp.ticketservice.services.PDFService;
 import com.gyp.ticketservice.services.TicketDeliveryService;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +30,19 @@ import org.springframework.kafka.annotation.KafkaListener;
 public class GenerateTicketPdfAndSendEmailConsumer {
 	private static final String PDF_CONSUMER_NAME = "ticket.pdf.consumer";
 	private static final String EMAIL_CONSUMER_NAME = "ticket.email.consumer";
+	private static final String TICKET_BY_ID_PREFIX = "ticket:id:";
+	private static final String TICKET_CODE_PREFIX = "ticket:code:";
+	private static final String TICKET_GENERATION_PREFIX = "ticket:generation:";
+	private static final String TICKETS_BY_EVENT_PREFIX = "ticket:event:";
+	private static final String AVAILABLE_TICKETS_PREFIX = "ticket:available:event:";
+	private static final String SEARCH_TICKETS_PREFIX = "ticket:search:";
 
 	private final PDFService pdfService;
 	private final TicketRepository ticketRepository;
 	private final ProcessedKafkaEventRepository processedKafkaEventRepository;
 	private final UploadService uploadService;
 	private final TicketDeliveryService ticketDeliveryService;
+	private final TicketCacheRedisService ticketCacheRedisService;
 
 	@KafkaListener(topics = TopicConstants.GENERATE_TICKET_PDF_EVENT)
 	public void generateTicketPdf(String message) {
@@ -62,6 +70,7 @@ public class GenerateTicketPdfAndSendEmailConsumer {
 		ticketEntity.setAttendeeName(eventGenerationPdfEM.getCustomerEmail());
 		ticketEntity.setReservedDateTime(LocalDateTime.now());
 		ticketRepository.save(ticketEntity);
+		evictTicketCaches(eventGenerationPdfEM.getId(), List.of(ticketEntity));
 		processedKafkaEventRepository.save(ProcessedKafkaEventEntity.builder()
 				.consumerName(PDF_CONSUMER_NAME)
 				.eventKey(eventKey)
@@ -93,12 +102,14 @@ public class GenerateTicketPdfAndSendEmailConsumer {
 
 		List<byte[]> pdfs = new ArrayList<>();
 		List<String> ticketIds = new ArrayList<>();
+		List<TicketEntity> ticketEntities = new ArrayList<>();
 		List<String> seatIds = eventGenerationPdfEM.getSeatIds();
 		List<TicketGenerationResponseDto> ticketGenerationResponseDtoList = new ArrayList<>();
 		for(int index = 0; index < seatIds.size(); index++) {
 			String seatId = seatIds.get(index);
 			TicketEntity ticketEntity = ticketRepository.findBySeatId(seatId)
 					.orElseThrow(() -> new RuntimeException("Ticket not found for seatId: " + seatId));
+			ticketEntities.add(ticketEntity);
 			ticketIds.add(ticketEntity.getId());
 
 			TicketGenerationResponseDto ticketGenerationResponseDto = toTicketGenerationResponseDto(ticketEntity,
@@ -117,6 +128,7 @@ public class GenerateTicketPdfAndSendEmailConsumer {
 
 		ticketDeliveryService.sendByEmailWithAttachment(ticketMailConfirmRequestDto, pdfs,
 				ticketGenerationResponseDtoList);
+		evictTicketCaches(eventGenerationPdfEM.getId(), ticketEntities);
 		processedKafkaEventRepository.save(ProcessedKafkaEventEntity.builder()
 				.consumerName(EMAIL_CONSUMER_NAME)
 				.eventKey(eventKey)
@@ -205,5 +217,20 @@ public class GenerateTicketPdfAndSendEmailConsumer {
 			return String.join(",", seatIds.stream().sorted().toList());
 		}
 		return "legacy-message";
+	}
+
+	private void evictTicketCaches(String eventId, List<TicketEntity> tickets) {
+		ticketCacheRedisService.evictByPrefix(TICKETS_BY_EVENT_PREFIX + eventId);
+		ticketCacheRedisService.evictByPrefix(AVAILABLE_TICKETS_PREFIX + eventId + ":");
+		ticketCacheRedisService.evictByPrefix(SEARCH_TICKETS_PREFIX);
+		if(tickets == null) {
+			return;
+		}
+
+		for(TicketEntity ticket : tickets) {
+			ticketCacheRedisService.evict(TICKET_BY_ID_PREFIX + ticket.getId());
+			ticketCacheRedisService.evict(TICKET_GENERATION_PREFIX + ticket.getId());
+			ticketCacheRedisService.evict(TICKET_CODE_PREFIX + ticket.getTicketCode());
+		}
 	}
 }

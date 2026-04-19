@@ -20,6 +20,8 @@ public interface TicketRepository extends JpaRepository<TicketEntity, String>, J
 
 	Optional<TicketEntity> findByEventIdAndSeatId(String eventId, String seatId);
 
+	Optional<TicketEntity> findByTicketCode(String ticketCode);
+
 	@Modifying
 	@Query("""
 			UPDATE TicketEntity t

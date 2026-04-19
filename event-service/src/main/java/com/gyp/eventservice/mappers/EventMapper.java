@@ -165,6 +165,20 @@ public interface EventMapper extends AbstractMapper {
 				.collect(Collectors.toList());
 	}
 
+	default List<EventSectionMappingEntity> ticketTypeIdsToMappings(List<String> ticketTypeIds, String eventId) {
+		if(ticketTypeIds == null) {
+			return new ArrayList<>();
+		}
+		return ticketTypeIds.stream()
+				.filter(StringUtils::isNotBlank)
+				.distinct()
+				.map(id -> EventSectionMappingEntity.builder()
+						.ticketTypeEntity(TicketTypeEntity.builder().id(id).build())
+						.eventEntity(EventEntity.builder().id(eventId).build())
+						.build())
+				.collect(Collectors.toList());
+	}
+
 	@Named("mapToTicketType")
 	default TicketTypeEntity map(EventSectionMappingEntity mapping) {
 		return mapping.getTicketTypeEntity();

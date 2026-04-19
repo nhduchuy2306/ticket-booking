@@ -1,6 +1,6 @@
 import Konva from "konva";
 import { Dispatch, SetStateAction } from "react";
-import { Seat, Section } from "../../../../models/generated/event-service-models";
+import { Row, Seat, Section } from "../../../../models/generated/event-service-models";
 import { SelectedSeatModel } from "../../models/SeatMapModels.ts";
 
 export class EventUtils {
@@ -65,6 +65,7 @@ export class EventUtils {
             selectedSeats: SelectedSeatModel[],
             setSelectedSeats: Dispatch<SetStateAction<SelectedSeatModel[]>>,
             section?: Section,
+            row?: Row,
     ) => {
         e.evt.preventDefault();
         e.evt.stopPropagation();
@@ -75,6 +76,7 @@ export class EventUtils {
             } else {
                 setSelectedSeats([...selectedSeats, {
                     section: section,
+                    row: row,
                     seat: seat
                 }]);
             }
