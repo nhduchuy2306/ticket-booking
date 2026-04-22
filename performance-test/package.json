@@ -1,0 +1,19 @@
+{
+  "name": "ticket-booking-performance-test",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "K6 performance test suite for the ticket-booking platform",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "smoke": "npm run build && k6 run dist/scripts/event-on-sale.smoke.js",
+    "load": "npm run build && k6 run dist/scripts/event-on-sale.load.js",
+    "stress": "npm run build && k6 run dist/scripts/event-on-sale.stress.js",
+    "spike": "npm run build && k6 run dist/scripts/event-on-sale.spike.js"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
+

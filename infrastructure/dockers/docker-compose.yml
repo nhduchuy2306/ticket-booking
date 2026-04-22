@@ -312,6 +312,38 @@ services:
     networks:
       - gyp-net
 
+  k6:
+    build:
+      context: ../../performance-test
+      dockerfile: Dockerfile
+    container_name: k6
+    profiles:
+      - performance
+    command: ["run", "dist/scripts/event-on-sale.load.js"]
+    environment:
+      BASE_URL: http://api-gateway:9999
+      AUTH_ENABLED: ${K6_AUTH_ENABLED:-false}
+      AUTH_LOGIN_EMAIL: ${K6_AUTH_LOGIN_EMAIL:-}
+      AUTH_LOGIN_PASSWORD: ${K6_AUTH_LOGIN_PASSWORD:-}
+      AUTH_LOGIN_PATH: /auths/customer/auth/login
+      AUTH_REFRESH_PATH: /auths/customer/auth/refresh-token
+      AUTH_REFRESH_THRESHOLD_SECONDS: 30
+      BROWSE_COMING_EVENTS: true
+      THINK_TIME: 1
+      VUS: ${K6_VUS:-10000}
+      DURATION: ${K6_DURATION:-15m}
+    env_file:
+      - ../../.env
+    volumes:
+      - ../../performance-test/reports:/tests/reports
+    depends_on:
+      - discovery-service
+      - api-gateway
+      - auth-service
+      - event-service
+    networks:
+      - gyp-net
+
 networks:
   gyp-net:
     driver: bridge
