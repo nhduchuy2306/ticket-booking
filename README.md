@@ -48,6 +48,7 @@ This project is a **multi-module Maven** system built with **Spring Boot 3.4.5**
 ### 2.2 `event-service`
 - Event CRUD
 - Filtering by location, time, and category
+- Setup event details, including date, time, venue, and description
 - Seat map configuration
 - Business events related to ticket generation
 
@@ -69,6 +70,7 @@ This project is a **multi-module Maven** system built with **Spring Boot 3.4.5**
 - Online and offline sales channel configuration
 - Box office, online channel, and distribution partner management
 - Synchronization of sales channel state with events
+- Setup customize domain and branding for the sales channel (TODO)
 
 ### 2.6 `notification-service`
 - Sending booking confirmation emails

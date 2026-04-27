@@ -1,5 +1,7 @@
 package com.gyp.authservice.services;
 
+import java.util.List;
+
 import com.gyp.authservice.dtos.customer.CustomerAuthResponseDto;
 import com.gyp.authservice.dtos.customer.CustomerLoginRequestDto;
 import com.gyp.authservice.dtos.customer.CustomerRefreshTokenRequestDto;
@@ -18,4 +20,6 @@ public interface CustomerAuthService {
 	CustomerAuthResponseDto issueTokens(CustomerEntity customerEntity);
 
 	CustomerResponseDto getCurrentCustomer();
+
+	List<CustomerResponseDto> getAllCustomers();
 }

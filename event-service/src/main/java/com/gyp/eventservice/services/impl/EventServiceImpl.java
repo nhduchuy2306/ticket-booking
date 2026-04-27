@@ -1,5 +1,7 @@
 package com.gyp.eventservice.services.impl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -260,6 +262,38 @@ public class EventServiceImpl implements EventService {
 				.toList();
 		eventCacheService.cacheComingEvents(events);
 		return events;
+	}
+
+	@Override
+	public List<EventResponseDto> getEventsCreatedSince(java.time.LocalDateTime since) {
+		// Notification-service polls this endpoint to announce newly created events.
+		if(since == null) {
+			return List.of();
+		}
+		return eventRepository.findAllByCreateTimestampAfterOrderByCreateTimestampAsc(since)
+				.stream()
+				.map(item -> {
+					var event = eventMapper.toResponseDto(item);
+					setImageUrl(item, event);
+					return event;
+				})
+				.toList();
+	}
+
+	@Override
+	public List<EventResponseDto> getTomorrowEvents() {
+		LocalDate tomorrow = LocalDate.now().plusDays(1);
+		LocalDateTime startOfTomorrow = tomorrow.atStartOfDay();
+		LocalDateTime startOfDayAfterTomorrow = tomorrow.plusDays(1).atStartOfDay();
+		return eventRepository.findAllByTimeStartTimeBetweenOrderByTimeStartTimeAsc(startOfTomorrow,
+				startOfDayAfterTomorrow)
+				.stream()
+				.map(item -> {
+					var event = eventMapper.toResponseDto(item);
+					setImageUrl(item, event);
+					return event;
+				})
+				.toList();
 	}
 
 	@Override

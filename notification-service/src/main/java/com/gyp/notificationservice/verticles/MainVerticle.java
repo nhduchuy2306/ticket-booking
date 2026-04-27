@@ -46,7 +46,7 @@ public class MainVerticle extends AbstractVerticle {
   private Router createRouter() {
     Router router = Router.router(vertx);
 
-    RouterRegistry routerRegistry = new RouterRegistry(router);
+    RouterRegistry routerRegistry = new RouterRegistry(router, vertx);
     routerRegistry.createAllRouter();
 
     return router;

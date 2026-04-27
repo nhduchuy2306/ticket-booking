@@ -43,4 +43,9 @@ public interface EventRepository extends JpaRepository<EventEntity, String>, Jpa
 			ORDER BY e.time.startTime ASC
 			""")
 	List<EventEntity> findAllPublishedEventsReadyToSell(@Param("now") LocalDateTime now);
+
+	List<EventEntity> findAllByCreateTimestampAfterOrderByCreateTimestampAsc(LocalDateTime createTimestamp);
+
+	List<EventEntity> findAllByTimeStartTimeBetweenOrderByTimeStartTimeAsc(LocalDateTime startTime,
+			LocalDateTime endTime);
 }

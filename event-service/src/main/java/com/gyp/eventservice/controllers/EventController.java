@@ -1,5 +1,6 @@
 package com.gyp.eventservice.controllers;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import jakarta.validation.Valid;
@@ -34,6 +35,8 @@ public class EventController extends AbstractController {
 	private static final String WITH_UPLOAD_PATH = "/with-upload";
 	private static final String ON_SALE_PATH = "/on-sale";
 	private static final String COMING_EVENTS_PATH = "/coming-events";
+	private static final String CREATED_SINCE_PATH = "/created-since";
+	private static final String TOMORROW_PATH = "/tomorrow";
 
 	private final EventService eventService;
 
@@ -118,5 +121,15 @@ public class EventController extends AbstractController {
 	@GetMapping(COMING_EVENTS_PATH)
 	public ResponseEntity<?> getAllComingEvents() {
 		return ResponseEntity.ok(eventService.getAllComingEvents());
+	}
+
+	@GetMapping(CREATED_SINCE_PATH)
+	public ResponseEntity<?> getEventsCreatedSince(@RequestParam("since") LocalDateTime since) {
+		return ResponseEntity.ok(eventService.getEventsCreatedSince(since));
+	}
+
+	@GetMapping(TOMORROW_PATH)
+	public ResponseEntity<?> getTomorrowEvents() {
+		return ResponseEntity.ok(eventService.getTomorrowEvents());
 	}
 }

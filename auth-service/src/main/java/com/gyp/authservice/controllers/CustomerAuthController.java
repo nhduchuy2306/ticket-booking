@@ -1,10 +1,13 @@
 package com.gyp.authservice.controllers;
 
+import java.util.List;
+
 import jakarta.validation.Valid;
 
 import com.gyp.authservice.dtos.customer.CustomerLoginRequestDto;
 import com.gyp.authservice.dtos.customer.CustomerRefreshTokenRequestDto;
 import com.gyp.authservice.dtos.customer.CustomerRegisterRequestDto;
+import com.gyp.authservice.dtos.customerauth.CustomerResponseDto;
 import com.gyp.authservice.services.CustomerAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,5 +44,10 @@ public class CustomerAuthController {
 	@GetMapping("/me")
 	public ResponseEntity<?> me() {
 		return ResponseEntity.ok(customerAuthService.getCurrentCustomer());
+	}
+
+	@GetMapping("/customers")
+	public ResponseEntity<List<CustomerResponseDto>> getAllCustomers() {
+		return ResponseEntity.ok(customerAuthService.getAllCustomers());
 	}
 }

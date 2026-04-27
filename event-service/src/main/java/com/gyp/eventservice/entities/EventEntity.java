@@ -51,6 +51,9 @@ public class EventEntity extends AbstractEntity {
 	@Column(name = "description")
 	private String description;
 
+	@Column(name = "note", columnDefinition = "TEXT")
+	private String note;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
 	private EventStatus status;

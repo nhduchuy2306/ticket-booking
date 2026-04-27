@@ -2,6 +2,7 @@ package com.gyp.authservice.services.impl;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import com.gyp.authservice.dtos.customer.CustomerAuthResponseDto;
@@ -165,6 +166,21 @@ public class CustomerAuthServiceImpl implements CustomerAuthService {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public List<CustomerResponseDto> getAllCustomers() {
+		return customerRepository.findAll().stream()
+				.map(customer -> CustomerResponseDto.builder()
+						.id(customer.getId())
+						.name(customer.getName())
+						.email(customer.getEmail())
+						.phoneNumber(customer.getPhoneNumber())
+						.dob(customer.getDob())
+						.provider(customer.getProvider())
+						.providerId(customer.getProviderId())
+						.build())
+				.toList();
 	}
 
 	private String customerCurrentKey(String email) {

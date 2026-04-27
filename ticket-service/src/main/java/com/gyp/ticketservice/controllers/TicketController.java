@@ -26,6 +26,7 @@ public class TicketController extends AbstractController {
 	private static final String VALIDATE_TICKET_PATH = "validateticket";
 	private static final String START_SALE_TICKET_PATH = "startsaleticket";
 	private static final String AVAILABLE_TICKET_PATH = "availabletickets";
+	private static final String BY_EVENT_PATH = "by-event";
 
 	private static final String TICKET_NUMBER_PARAM = "ticketnumber";
 	private static final String EVENT_ID_PARAM = "eventId";
@@ -73,6 +74,15 @@ public class TicketController extends AbstractController {
 		var tickets = ticketService.getAllTickets(criteria, null);
 		if(tickets != null) {
 			return ResponseEntity.ok().body(tickets);
+		}
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
+	@GetMapping(BY_EVENT_PATH + "/{" + EVENT_ID_PARAM + "}")
+	public ResponseEntity<?> getTicketsByEventId(@PathVariable(EVENT_ID_PARAM) String eventId) {
+		var tickets = ticketService.getTicketByEventId(eventId);
+		if(tickets != null) {
+			return ResponseEntity.ok(tickets);
 		}
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}

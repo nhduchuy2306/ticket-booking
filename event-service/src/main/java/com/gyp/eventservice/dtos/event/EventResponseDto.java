@@ -26,6 +26,7 @@ public class EventResponseDto extends AbstractDto {
 	private String id;
 	private String name;
 	private String description;
+	private String note;
 	private EventStatus status;
 	private Boolean isGenerated;
 	private String logoUrl;

@@ -26,6 +26,8 @@ public class EventRequestDto implements Request {
 	@Length(min = 10, max = 500)
 	private String description;
 
+	private String note;
+
 	@NotNull
 	private EventStatus status;
 

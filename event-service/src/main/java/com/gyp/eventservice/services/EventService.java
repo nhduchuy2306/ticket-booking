@@ -1,5 +1,6 @@
 package com.gyp.eventservice.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.gyp.common.dtos.pagination.PaginatedDto;
@@ -39,4 +40,12 @@ public interface EventService extends Validatable {
 	List<EventResponseDto> getAllEventsOnSale();
 
 	List<EventResponseDto> getAllComingEvents();
+
+	default List<EventResponseDto> getEventsCreatedSince(LocalDateTime since) {
+		return List.of();
+	}
+
+	default List<EventResponseDto> getTomorrowEvents() {
+		return List.of();
+	}
 }
