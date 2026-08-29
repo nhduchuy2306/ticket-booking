@@ -1,12 +1,6 @@
-# ===============================
-# notification-service Configuration
-# ===============================
 server:
   port: 9005
 
-# ===============================
-# Polling Intervals (milliseconds)
-# ===============================
 notification:
   polling:
     new-event-interval-ms: 300000

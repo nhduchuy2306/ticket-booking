@@ -1,9 +1,3 @@
-# ===============================
-# Shared Kafka Configuration
-# ===============================
-# Used by services that include 'kafka' in spring.cloud.config.name
-# Bootstrap servers are in kafka-dev.yml / kafka-prod.yml
-
 spring:
   kafka:
     producer:

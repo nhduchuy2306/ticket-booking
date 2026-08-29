@@ -1,6 +1,3 @@
-# ===============================
-# Prod Cache (Redis Sentinel) Configuration
-# ===============================
 spring:
   data:
     redis:

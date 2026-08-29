@@ -1,6 +1,3 @@
-# ===============================
-# auth-service Prod Configuration
-# ===============================
 keycloak:
   admin:
     url: http://keycloak:8080
@@ -21,7 +18,6 @@ spring:
             issuer-uri: http://keycloak:8080/realms/gyp
             jwk-set-uri: http://keycloak:8080/realms/gyp/protocol/openid-connect/certs
 
-# Logging
 logging:
   level:
     root: INFO

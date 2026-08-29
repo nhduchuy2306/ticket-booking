@@ -1,6 +1,3 @@
-# ===============================
-# auth-service Dev Configuration
-# ===============================
 keycloak:
   admin:
     url: http://localhost:18080
@@ -21,9 +18,6 @@ spring:
             issuer-uri: http://localhost:18080/realms/gyp
             jwk-set-uri: http://localhost:18080/realms/gyp/protocol/openid-connect/certs
 
-# ===============================
-# Logging
-# ===============================
 logging:
   level:
     root: INFO

@@ -1,6 +1,3 @@
-# ===============================
-# ticket-service Configuration
-# ===============================
 server:
   port: 9002
 
@@ -17,7 +14,6 @@ spring:
     hibernate:
       ddl-auto: update
 
-# Service-specific database schema
 service:
   database:
     schema: ticket_service

@@ -1,8 +1,3 @@
-# ===============================
-# event-service Prod Configuration
-# ===============================
-
-# MINIO
 minio:
   url: http://minio:9000
   access-key: minioadmin

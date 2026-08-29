@@ -1,6 +1,3 @@
-# ===============================
-# api-gateway Configuration
-# ===============================
 server:
   port: 9999
 
@@ -63,9 +60,6 @@ spring:
           filters:
             - RewritePath=/notifications(?<segment>/?.*), ${segment}
 
-# ===============================
-# Swagger Configuration
-# ===============================
 springdoc:
   api-docs:
     groups:

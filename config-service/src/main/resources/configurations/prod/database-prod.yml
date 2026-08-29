@@ -1,6 +1,3 @@
-# ===============================
-# Prod Database Configuration
-# ===============================
 spring:
   datasource:
     url: jdbc:mysql://mysql:3306/${service.database.schema}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true

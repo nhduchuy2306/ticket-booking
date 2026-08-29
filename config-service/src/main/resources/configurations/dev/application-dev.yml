@@ -1,8 +1,3 @@
-# ===============================
-# Shared Dev Configuration
-# ===============================
-
-# Eureka Discovery
 eureka:
   client:
     service-url:

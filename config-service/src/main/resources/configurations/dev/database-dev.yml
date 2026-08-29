@@ -1,6 +1,3 @@
-# ===============================
-# Dev Database Configuration
-# ===============================
 spring:
   datasource:
     url: jdbc:mysql://localhost:13306/${service.database.schema}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
