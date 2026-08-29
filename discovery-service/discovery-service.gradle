@@ -1,0 +1,26 @@
+// =============================================
+// discovery-service - Eureka Server
+// =============================================
+
+plugins {
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    // Eureka Server
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-server:${eurekaServerVersion}"
+
+    // Actuator & Monitoring
+    implementation "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    // Test
+    testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+}

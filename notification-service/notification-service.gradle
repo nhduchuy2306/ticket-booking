@@ -1,0 +1,33 @@
+// =============================================
+// notification-service - Notification Service (Spring Boot)
+// =============================================
+
+plugins {
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    // Spring Boot Starters
+    implementation "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-mail"
+
+    // Monitoring
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    // Eureka Client
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${eurekaClientVersion}"
+
+    // Local dependency
+    implementation project(':common-service')
+
+    // Test
+    testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+}
