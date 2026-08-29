@@ -76,14 +76,17 @@ public class EventEntity extends AbstractEntity {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "eventEntity", cascade = CascadeType.ALL)
+	@Builder.Default
 	private List<EventSectionMappingEntity> eventSectionMappingEntityList = new ArrayList<>();
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "eventEntity", cascade = CascadeType.ALL)
+	@Builder.Default
 	private List<EventPromotionEntity> eventPromotionEntityList = new ArrayList<>();
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "eventEntity", cascade = CascadeType.ALL)
+	@Builder.Default
 	private List<EventApprovalEntity> eventApprovalEntityList = new ArrayList<>();
 
 	@ManyToMany
@@ -92,6 +95,7 @@ public class EventEntity extends AbstractEntity {
 			joinColumns = @JoinColumn(name = "event_id"),
 			inverseJoinColumns = @JoinColumn(name = "category_id")
 	)
+	@Builder.Default
 	private List<CategoryEntity> categoryEntityList = new ArrayList<>();
 
 	@ManyToOne
@@ -100,5 +104,6 @@ public class EventEntity extends AbstractEntity {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "eventEntity", fetch = FetchType.LAZY)
+	@Builder.Default
 	private List<EventImageEntity> eventImageEntityList = new ArrayList<>();
 }

@@ -15,6 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MobileAppSaleChannelConfigDto extends BaseSaleChannelConfigDto {
+	@Builder.Default
 	private SaleChannelType type = SaleChannelType.MOBILE_APP;
 	private String appName;
 	private String appLogoUrl;

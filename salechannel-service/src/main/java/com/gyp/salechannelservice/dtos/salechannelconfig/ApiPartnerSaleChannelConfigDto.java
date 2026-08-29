@@ -15,6 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApiPartnerSaleChannelConfigDto extends BaseSaleChannelConfigDto {
+	@Builder.Default
 	private SaleChannelType type = SaleChannelType.API_PARTNER;
 	private String apiKey;
 	private String apiSecret;

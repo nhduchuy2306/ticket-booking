@@ -53,6 +53,7 @@ public class SeatMapEntity extends AbstractEntity {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "seatMapEntity", fetch = FetchType.LAZY)
+	@Builder.Default
 	private List<VenueMapEntity> venueMapEntityList = new ArrayList<>();
 
 	@JsonIgnore

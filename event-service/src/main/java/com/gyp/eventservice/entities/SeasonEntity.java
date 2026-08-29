@@ -55,5 +55,6 @@ public class SeasonEntity extends AbstractEntity {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "seasonEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@Builder.Default
 	private List<EventEntity> eventEntityList = new ArrayList<>();
 }

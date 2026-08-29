@@ -15,8 +15,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingInheritanceStrategy;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring",
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
 		mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG,
 		uses = { EventMapper.class, VenueMapper.class })
 public interface SeatMapMapper extends AbstractMapper {
@@ -28,6 +29,7 @@ public interface SeatMapMapper extends AbstractMapper {
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "venueMapEntityList", ignore = true)
+	@Mapping(target = "eventSectionMappingEntityList", ignore = true)
 	@Mapping(target = "seatConfigRaw", expression = "java(serializeSeatConfig(dto.getSeatConfig()))")
 	@Mapping(target = "stageConfigRaw", expression = "java(serializeStageConfig(dto.getStageConfig()))")
 	SeatMapEntity toEntity(SeatMapRequestDto dto);

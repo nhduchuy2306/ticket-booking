@@ -15,6 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TicketShopSaleChannelConfigDto extends BaseSaleChannelConfigDto {
+	@Builder.Default
 	private SaleChannelType type = SaleChannelType.TICKET_SHOP;
 	private String siteUrl;
 	private String siteTitle;

@@ -7,8 +7,9 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface OrganizationMapper extends AbstractMapper {
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "userAccountEntityList", ignore = true)

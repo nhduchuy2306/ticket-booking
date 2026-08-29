@@ -70,5 +70,6 @@ public class TicketTypeEntity extends AbstractEntity {
 
 	@OneToMany(mappedBy = "ticketTypeEntity", fetch = FetchType.LAZY)
 	@JsonIgnore
+	@Builder.Default
 	private List<TicketEntity> ticketEntityList = new ArrayList<>();
 }

@@ -60,6 +60,7 @@ public class VenueMapEntity extends AbstractEntity {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "venueMapEntity", fetch = FetchType.LAZY)
+	@Builder.Default
 	private List<EventEntity> eventEntityList = new ArrayList<>();
 
 }

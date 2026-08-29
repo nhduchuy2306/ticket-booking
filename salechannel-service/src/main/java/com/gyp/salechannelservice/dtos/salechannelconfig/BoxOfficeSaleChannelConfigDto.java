@@ -15,6 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoxOfficeSaleChannelConfigDto extends BaseSaleChannelConfigDto {
+	@Builder.Default
 	private SaleChannelType type = SaleChannelType.BOX_OFFICE;
 	private boolean enableCashPayment;
 	private boolean enableCardPayment;

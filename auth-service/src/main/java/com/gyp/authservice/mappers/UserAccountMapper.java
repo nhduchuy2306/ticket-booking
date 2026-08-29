@@ -12,8 +12,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", uses = { UserGroupMapper.class })
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = { UserGroupMapper.class })
 public interface UserAccountMapper extends AbstractMapper {
 	@Mapping(target = "organizationEntity", source = "organizationId", qualifiedByName = "toOrganizationEntity")
 	@Mapping(target = "realmType", ignore = true)
@@ -31,11 +32,13 @@ public interface UserAccountMapper extends AbstractMapper {
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "organizationEntity", ignore = true)
 	@Mapping(target = "userGroupEntityList", ignore = true)
+	@Mapping(target = "realmType", ignore = true)
 	UserAccountEntity toEntity(RegisterRequestDto dto);
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "userGroupEntityList", ignore = true)
 	@Mapping(target = "organizationEntity", ignore = true)
+	@Mapping(target = "realmType", ignore = true)
 	void updateEntityFromDto(UserAccountRequestDto dto, @MappingTarget UserAccountEntity entity);
 
 	@AfterMapping

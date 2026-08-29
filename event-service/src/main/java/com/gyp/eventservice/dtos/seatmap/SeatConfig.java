@@ -20,5 +20,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SeatConfig {
+	@Builder.Default
 	private List<Section> sections = new ArrayList<>();
 }

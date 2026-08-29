@@ -22,18 +22,16 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingInheritanceStrategy;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
+		mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG)
 public interface SaleChannelMapper extends AbstractMapper {
 	@Mapping(target = "saleChannelConfig", source = "saleChannelConfig", qualifiedByName = "mapSaleChannelConfigToDto")
 	SaleChannelResponseDto toResponseDto(SaleChannelEntity entity);
 
 	@Mapping(target = "organizationId", ignore = true)
 	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "createUser", ignore = true)
-	@Mapping(target = "createTimestamp", ignore = true)
-	@Mapping(target = "changeUser", ignore = true)
-	@Mapping(target = "changeTimestamp", ignore = true)
 	@Mapping(target = "saleChannelEventEntityList", ignore = true)
 	@Mapping(target = "saleChannelConfig", source = "saleChannelConfig", qualifiedByName = "mapSaleChannelConfigToJson")
 	SaleChannelEntity toEntity(SaleChannelRequestDto dto);
@@ -42,10 +40,6 @@ public interface SaleChannelMapper extends AbstractMapper {
 
 	@Mapping(target = "organizationId", ignore = true)
 	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "createUser", ignore = true)
-	@Mapping(target = "createTimestamp", ignore = true)
-	@Mapping(target = "changeUser", ignore = true)
-	@Mapping(target = "changeTimestamp", ignore = true)
 	@Mapping(target = "saleChannelEventEntityList", ignore = true)
 	@Mapping(target = "saleChannelConfig", source = "saleChannelConfig", qualifiedByName = "mapSaleChannelConfigToJson")
 	void updateEntityFromDto(SaleChannelRequestDto dto, @MappingTarget SaleChannelEntity entity);

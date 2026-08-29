@@ -47,9 +47,11 @@ public class OrganizationEntity extends AbstractEntity {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "organizationEntity", fetch = FetchType.LAZY)
+	@Builder.Default
 	private List<UserAccountEntity> userAccountEntityList = new ArrayList<>();
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "organizationEntity", fetch = FetchType.LAZY)
+	@Builder.Default
 	private List<UserGroupEntity> userGroupEntityList = new ArrayList<>();
 }

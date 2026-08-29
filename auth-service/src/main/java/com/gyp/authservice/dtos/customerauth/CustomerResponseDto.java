@@ -23,6 +23,7 @@ public class CustomerResponseDto extends AbstractDto {
 	private String email;
 	private String phoneNumber;
 	private LocalDateTime dob;
+	@Builder.Default
 	private String provider = "local";
 	private String providerId;
 }

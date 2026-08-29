@@ -12,7 +12,6 @@ FileTree buildFiles = fileTree(rootDir) {
     include '**/*.gradle'
     exclude 'build', '**/gradle', '**/settings.gradle', 'buildSrc', '/build.gradle', '.*', 'out', 'stringer', 'libs', '**/bin'
     exclude '**/grails3'
-    exclude 'job/**'
     exclude 'frontend/**'
     exclude 'infrastructure/**'
     exclude 'performance-test/**'

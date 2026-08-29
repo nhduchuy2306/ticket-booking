@@ -22,6 +22,8 @@ public class SeatHoldResponseDto {
 	private String eventId;
 	private String holdToken;
 	private LocalDateTime holdExpiresAt;
+	@Builder.Default
 	private List<String> seatIds = new ArrayList<>();
+	@Builder.Default
 	private List<SeatAvailability> seats = new ArrayList<>();
 }

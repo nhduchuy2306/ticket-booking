@@ -22,6 +22,8 @@ public class SeatHoldRequestDto {
 	private String eventId;
 	private String holdToken;
 	private String userId;
+	@Builder.Default
 	private List<String> seatIds = new ArrayList<>();
+	@Builder.Default
 	private List<String> seatKeys = new ArrayList<>();
 }
