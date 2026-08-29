@@ -1,7 +1,3 @@
-// =============================================
-// common-logging - Request Logging & Tracing
-// =============================================
-
 plugins {
     id 'java-library'
 }

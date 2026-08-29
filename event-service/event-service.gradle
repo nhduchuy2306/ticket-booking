@@ -1,7 +1,3 @@
-// =============================================
-// event-service - Event Management Service
-// =============================================
-
 plugins {
     id 'org.springframework.boot'
     id 'io.spring.dependency-management'

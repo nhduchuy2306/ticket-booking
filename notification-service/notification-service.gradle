@@ -1,7 +1,3 @@
-// =============================================
-// notification-service - Notification Service (Spring Boot)
-// =============================================
-
 plugins {
     id 'org.springframework.boot'
     id 'io.spring.dependency-management'

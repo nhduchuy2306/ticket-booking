@@ -1,7 +1,3 @@
-// =============================================
-// order-service - Order Management Service
-// =============================================
-
 plugins {
     id 'org.springframework.boot'
     id 'io.spring.dependency-management'

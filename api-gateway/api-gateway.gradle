@@ -1,7 +1,3 @@
-// =============================================
-// api-gateway - API Gateway Service
-// =============================================
-
 plugins {
     id 'org.springframework.boot'
     id 'io.spring.dependency-management'

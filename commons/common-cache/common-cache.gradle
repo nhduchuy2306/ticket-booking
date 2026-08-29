@@ -1,7 +1,3 @@
-// =============================================
-// common-cache - Redis Cache Auto-Configuration
-// =============================================
-
 plugins {
     id 'java-library'
 }

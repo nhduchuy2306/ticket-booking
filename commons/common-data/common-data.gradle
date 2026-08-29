@@ -1,7 +1,3 @@
-// =============================================
-// common-data - JPA/Database Support Library
-// =============================================
-
 plugins {
     id 'java-library'
 }
