@@ -3,6 +3,7 @@ package com.gyp.ticketservice.controllers;
 import java.util.Optional;
 
 import com.gyp.common.controllers.AbstractController;
+import com.gyp.common.utils.SecurityUtils;
 import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.enums.event.TicketStatus;
 import com.gyp.ticketservice.dtos.ticketgeneration.TicketGenerationSummaryDto;
@@ -49,7 +50,7 @@ public class TicketController extends AbstractController {
 			@RequestParam(value = "ticketId", required = false) String ticketId,
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
 			@RequestParam(value = "size", required = false) Optional<Integer> size) {
-		String organizationId = getCurrentOrganizationId();
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		TicketSearchCriteria criteria = TicketSearchCriteria.builder()
 				.eventId(eventId)
 				.ticketId(ticketId)
@@ -65,7 +66,7 @@ public class TicketController extends AbstractController {
 
 	@GetMapping(AVAILABLE_TICKET_PATH + "/{" + EVENT_ID_PARAM + "}")
 	public ResponseEntity<?> getAvailableTicketsByEventId(@PathVariable(EVENT_ID_PARAM) String eventId) {
-		String organizationId = getCurrentOrganizationId();
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		TicketSearchCriteria criteria = TicketSearchCriteria.builder()
 				.eventId(eventId)
 				.status(TicketStatus.ON_SALE.name())

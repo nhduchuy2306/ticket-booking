@@ -1,0 +1,18 @@
+// =============================================
+// common-mail - Email & Template Support
+// =============================================
+
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // Common Base
+    api project(':common-base')
+
+    // Spring Boot Mail
+    api "org.springframework.boot:spring-boot-starter-mail:${springBootVersion}"
+
+    // Thymeleaf Template Engine
+    api "org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}"
+}

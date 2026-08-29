@@ -20,6 +20,9 @@ dependencies {
     // Eureka Client
     implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${eurekaClientVersion}"
 
+    // Config Client
+    implementation "org.springframework.cloud:spring-cloud-starter-config:${configVersion}"
+
     // Actuator & Monitoring
     implementation "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
     implementation 'io.micrometer:micrometer-registry-prometheus'
@@ -27,12 +30,12 @@ dependencies {
     // Documentation (WebFlux-based for Gateway)
     implementation "org.springdoc:springdoc-openapi-starter-webflux-ui:${springdocWebfluxVersion}"
 
-    // Local dependency - with exclusions since Gateway is WebFlux-based
-    implementation(project(':common-service')) {
+    // Commons modules — Gateway is WebFlux-based, so exclude servlet dependencies
+    implementation(project(':common-base')) {
         exclude group: 'org.springframework.boot', module: 'spring-boot-starter-web'
-        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-oauth2-resource-server'
         exclude group: 'org.springframework.boot', module: 'spring-boot-starter-data-jpa'
     }
+    implementation project(':common-logging')
 
     // Test
     testImplementation "org.springframework.boot:spring-boot-starter-test"

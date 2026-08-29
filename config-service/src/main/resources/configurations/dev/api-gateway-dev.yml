@@ -1,0 +1,11 @@
+# ===============================
+# api-gateway Dev Configuration
+# ===============================
+
+# Logging
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory: DEBUG

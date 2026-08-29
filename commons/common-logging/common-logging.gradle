@@ -1,0 +1,22 @@
+// =============================================
+// common-logging - Request Logging & Tracing
+// =============================================
+
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // Common Base
+    api project(':common-base')
+
+    // Servlet support (optional - for MVC services)
+    compileOnly "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+
+    // WebFlux support (optional - for Gateway)
+    compileOnly "org.springframework.boot:spring-boot-starter-webflux:${springBootVersion}"
+
+    // Spring Boot auto-configuration
+    api "org.springframework.boot:spring-boot-autoconfigure:${springBootVersion}"
+    annotationProcessor "org.springframework.boot:spring-boot-autoconfigure-processor:${springBootVersion}"
+}

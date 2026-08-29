@@ -1,0 +1,24 @@
+# ===============================
+# event-service Dev Configuration
+# ===============================
+
+# MINIO
+minio:
+  url: http://localhost:19000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket: event-service
+  enabled: true
+
+# Logging
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.web.servlet: ERROR
+    org.springframework.boot.autoconfigure.web: ERROR
+    org.springframework.http.server.reactive: ERROR
+    reactor.netty.http.server: ERROR
+    org.springframework.web.reactive: ERROR
+    org.springframework: ERROR

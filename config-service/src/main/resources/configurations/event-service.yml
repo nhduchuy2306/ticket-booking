@@ -1,0 +1,23 @@
+# ===============================
+# event-service Configuration
+# ===============================
+server:
+  port: 9001
+
+jwt:
+  secret:
+    token: ${JWT_SECRET_TOKEN}
+
+spring:
+  kafka:
+    consumer:
+      group-id: event-service-group
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+# Service-specific database schema
+service:
+  database:
+    schema: event_service

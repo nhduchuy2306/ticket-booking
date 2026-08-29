@@ -17,7 +17,6 @@ dependencies {
     // Spring Boot Starters
     implementation "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
     implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
-    implementation "org.springframework.boot:spring-boot-starter-mail"
 
     // Monitoring
     implementation 'io.micrometer:micrometer-registry-prometheus'
@@ -25,8 +24,13 @@ dependencies {
     // Eureka Client
     implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${eurekaClientVersion}"
 
-    // Local dependency
-    implementation project(':common-service')
+    // Config Client
+    implementation "org.springframework.cloud:spring-cloud-starter-config:${configVersion}"
+
+    // Commons modules
+    implementation project(':common-base')
+    implementation project(':common-logging')
+    implementation project(':common-mail')
 
     // Test
     testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"

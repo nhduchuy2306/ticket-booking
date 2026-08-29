@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.gyp.common.controllers.AbstractController;
+import com.gyp.common.utils.SecurityUtils;
 import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.eventservice.dtos.tickettype.TicketTypeRequestDto;
 import com.gyp.eventservice.services.TicketTypeService;
@@ -37,7 +38,7 @@ public class TicketTypeController extends AbstractController {
 	public ResponseEntity<?> getTicketTypes(
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
 			@RequestParam(value = "size", required = false) Optional<Integer> size) {
-		String organizationId = getCurrentOrganizationId();
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		TicketTypeSearchCriteria criteria = TicketTypeSearchCriteria.builder()
 				.organizationId(organizationId)
 				.build();

@@ -1,0 +1,37 @@
+# ===============================
+# auth-service Dev Configuration
+# ===============================
+keycloak:
+  admin:
+    url: http://localhost:18080
+  login:
+    form:
+      url: ${API_GATEWAY_URL:http://localhost:9999}/auths/oidc/oauth2/authorize/keycloak
+
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            authorization-uri: http://localhost:18080/realms/gyp/protocol/openid-connect/auth
+            token-uri: http://localhost:18080/realms/gyp/protocol/openid-connect/token
+            user-info-uri: http://localhost:18080/realms/gyp/protocol/openid-connect/userinfo
+            user-name-attribute: sub
+            issuer-uri: http://localhost:18080/realms/gyp
+            jwk-set-uri: http://localhost:18080/realms/gyp/protocol/openid-connect/certs
+
+# ===============================
+# Logging
+# ===============================
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: ERROR
+    org.springframework.web.servlet: ERROR
+    org.springframework.boot.autoconfigure.web: ERROR
+    org.springframework.http.server.reactive: ERROR
+    reactor.netty.http.server: ERROR
+    org.springframework.web.reactive: ERROR
+    org.springframework: ERROR

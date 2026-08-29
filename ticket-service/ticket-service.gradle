@@ -31,6 +31,9 @@ dependencies {
     // Eureka Client
     implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${eurekaClientVersion}"
 
+    // Config Client
+    implementation "org.springframework.cloud:spring-cloud-starter-config:${configVersion}"
+
     // Kafka
     implementation "org.springframework.kafka:spring-kafka:${kafkaVersion}"
 
@@ -54,8 +57,13 @@ dependencies {
     // MinIO
     implementation "io.minio:minio:${minioVersion}"
 
-    // Local dependency
-    implementation project(':common-service')
+    // Commons modules
+    implementation project(':common-base')
+    implementation project(':common-data')
+    implementation project(':common-auth')
+    implementation project(':common-cache')
+    implementation project(':common-logging')
+    implementation project(':common-mail')
 
     // TypeScript Generator
     tsGenerator "cz.habarta.typescript-generator:typescript-generator-core:${typescriptGeneratorVersion}"

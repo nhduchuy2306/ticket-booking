@@ -1,0 +1,11 @@
+# ===============================
+# event-service Prod Configuration
+# ===============================
+
+# MINIO
+minio:
+  url: http://minio:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket: event-service
+  enabled: true

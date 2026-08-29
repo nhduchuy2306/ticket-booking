@@ -1,0 +1,15 @@
+# ===============================
+# Shared Kafka Configuration
+# ===============================
+# Used by services that include 'kafka' in spring.cloud.config.name
+# Bootstrap servers are in kafka-dev.yml / kafka-prod.yml
+
+spring:
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer

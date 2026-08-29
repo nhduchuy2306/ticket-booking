@@ -1,0 +1,6 @@
+# ===============================
+# order-service Dev Configuration
+# ===============================
+# No additional dev-specific overrides needed.
+# Database config comes from database-dev.yml
+# Eureka, Kafka, Redis come from application-dev.yml

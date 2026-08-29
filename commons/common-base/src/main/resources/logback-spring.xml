@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- ============================== -->
+    <!-- Properties                      -->
+    <!-- ============================== -->
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="application"/>
+
+    <!-- Log directory: ../logs/{service-name}/ (sibling of ticket-booking project) -->
+    <property name="LOG_DIR" value="../logs/${APP_NAME}"/>
+    <property name="LOG_FILE" value="${LOG_DIR}/log.info"/>
+
+    <!-- Log patterns — no service name needed since each service has its own log folder -->
+    <property name="CONSOLE_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [%yellow(%X{requestId:--})] [%thread] %cyan(%logger{36}) - %msg%n"/>
+    <property name="FILE_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{requestId:--}] [%X{correlationId:--}] [%thread] %logger{60} - %msg%n"/>
+
+    <!-- ============================== -->
+    <!-- Console Appender                -->
+    <!-- ============================== -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- ============================== -->
+    <!-- Rolling File Appender           -->
+    <!-- ============================== -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}</file>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- Archived into date folders: ../logs/{service}/2026-08-29/log.info.0.gz -->
+            <fileNamePattern>${LOG_DIR}/%d{yyyy-MM-dd}/log.info.%i.gz</fileNamePattern>
+            <maxFileSize>50MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- ============================== -->
+    <!-- Async Appender (for production) -->
+    <!-- ============================== -->
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>false</includeCallerData>
+        <appender-ref ref="FILE"/>
+    </appender>
+
+    <!-- ============================== -->
+    <!-- Logger Levels                   -->
+    <!-- ============================== -->
+
+    <!-- GYP Application -->
+    <logger name="com.gyp" level="INFO"/>
+
+    <!-- Spring Framework -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.springframework.boot.autoconfigure" level="WARN"/>
+    <logger name="org.springframework.web" level="WARN"/>
+    <logger name="org.springframework.security" level="WARN"/>
+    <logger name="org.springframework.cloud" level="WARN"/>
+
+    <!-- Hibernate / JPA -->
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.hibernate.SQL" level="WARN"/>
+    <logger name="org.hibernate.type.descriptor.sql" level="WARN"/>
+
+    <!-- Kafka -->
+    <logger name="org.apache.kafka" level="WARN"/>
+    <logger name="org.springframework.kafka" level="WARN"/>
+
+    <!-- Eureka -->
+    <logger name="com.netflix" level="WARN"/>
+
+    <!-- MinIO -->
+    <logger name="io.minio" level="WARN"/>
+
+    <!-- Feign -->
+    <logger name="feign" level="WARN"/>
+
+    <!-- Netty (for WebFlux / Gateway) -->
+    <logger name="io.netty" level="WARN"/>
+    <logger name="reactor.netty" level="WARN"/>
+
+    <!-- ============================== -->
+    <!-- Profile: dev                    -->
+    <!-- ============================== -->
+    <springProfile name="dev | default">
+        <logger name="com.gyp" level="DEBUG"/>
+        <logger name="org.hibernate.SQL" level="DEBUG"/>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <!-- ============================== -->
+    <!-- Profile: prod                   -->
+    <!-- ============================== -->
+    <springProfile name="prod">
+        <logger name="com.gyp" level="INFO"/>
+
+        <root level="WARN">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC_FILE"/>
+        </root>
+    </springProfile>
+
+</configuration>

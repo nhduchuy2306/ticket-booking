@@ -1,0 +1,44 @@
+# ===============================
+# Server Configuration
+# ===============================
+server:
+  port: 9006
+
+spring:
+  application:
+    name: config-service
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations:
+            - classpath:configurations/
+            - classpath:configurations/{profile}/
+
+# ===============================
+# Eureka Discovery
+# ===============================
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
+    instance-id: ${spring.application.name}:${server.port}
+
+# ===============================
+# Actuator
+# ===============================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always

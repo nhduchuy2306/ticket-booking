@@ -1,0 +1,5 @@
+# ===============================
+# Shared Cache (Redis) Configuration
+# ===============================
+# Used by services that include 'cache' in spring.cloud.config.name
+# Connection details are in cache-dev.yml / cache-prod.yml

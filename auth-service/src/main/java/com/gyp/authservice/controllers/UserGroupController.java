@@ -41,7 +41,7 @@ public class UserGroupController extends AbstractController {
 			@RequestParam(value = "sortBy", required = false) String sortBy,
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
 			@RequestParam(value = "size", required = false) Optional<Integer> size) {
-		String organizationId = getCurrentOrganizationId();
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		UserGroupSearchCriteria userGroupSearchCriteria = UserGroupSearchCriteria.builder()
 				.organizationId(organizationId)
 				.sortBy(sortBy)

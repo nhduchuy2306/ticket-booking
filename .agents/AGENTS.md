@@ -7,6 +7,7 @@ This is a Spring Boot 3.4.5 multi-module microservices system (Java 21) for tick
 | Service | Port | Description |
 |---------|------|-------------|
 | discovery-service | 9761 | Eureka Service Registry |
+| config-service | 9006 | Spring Cloud Config Server (native backend) |
 | api-gateway | 9999 | Spring Cloud Gateway |
 | auth-service | 9000 | JWT/Keycloak auth, permissions |
 | event-service | 9001 | Event CRUD, seat mapping, Kafka events |
@@ -14,7 +15,6 @@ This is a Spring Boot 3.4.5 multi-module microservices system (Java 21) for tick
 | order-service | 9003 | Cart, checkout, MoMo payment |
 | salechannel-service | 9004 | Online/offline channel config |
 | notification-service | 9005 | Email notifications (Spring Boot) |
-| bff-service | 9010 | BFF aggregator (WebClient @LoadBalanced) |
 
 ## Build System
 - **Gradle** multi-module project
@@ -57,6 +57,14 @@ This is a Spring Boot 3.4.5 multi-module microservices system (Java 21) for tick
 - **Eureka**: Service discovery for sync calls
 - **Feign/WebClient**: REST service-to-service calls
 
+### Centralized Config (Spring Cloud Config Server)
+- **Config Server**: `config-service` serves all config via native filesystem backend
+- **Config Location**: `config-service/src/main/resources/configurations/`
+- **Structure**: `{service}.yml` (shared), `dev/{service}-dev.yml`, `prod/{service}-prod.yml`
+- **Shared configs**: `application.yml` (all services), `database.yml` (DB services via `spring.cloud.config.name`)
+- **Startup order**: `discovery-service` → `config-service` → all other services
+- Each service bootstrap: `spring.config.import=optional:configserver:http://localhost:9006`
+
 ## Database
 - MySQL per-service schemas (dev: localhost:13306)
 - Flyway migrations in `src/main/resources/db/migration/`
@@ -64,5 +72,6 @@ This is a Spring Boot 3.4.5 multi-module microservices system (Java 21) for tick
 
 ## Infrastructure
 - Docker Compose in `infrastructure/dockers/docker-compose.yml`
-- Keycloak (18080), MinIO (19000), Redis (6379), Kafka (9092)
+- Keycloak (18080), MinIO (19000), Kafka (9092)
+- **Redis Sentinel**: master (6379) + slave (6380) + 3 sentinels (26379-26381), master name: `mymaster`
 - Profiles: `dev` (default), `prod` (Docker), `no-kafka`, `no-cache`

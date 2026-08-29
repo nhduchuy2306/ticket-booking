@@ -1,0 +1,30 @@
+# ===============================
+# ticket-service Dev Configuration
+# ===============================
+
+# MailDev
+spring:
+  mail:
+    host: localhost
+    port: 1025
+    username: no-reply@gmail.com
+    properties:
+      mail:
+        smtp:
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+# MINIO
+minio:
+  url: http://localhost:19000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket: ticket-service
+
+# Logging
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: DEBUG

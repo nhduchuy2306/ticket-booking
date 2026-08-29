@@ -1,0 +1,10 @@
+# ===============================
+# Dev Cache (Redis Sentinel) Configuration
+# ===============================
+spring:
+  data:
+    redis:
+      password: 12345
+      sentinel:
+        master: mymaster
+        nodes: localhost:26379,localhost:26380,localhost:26381

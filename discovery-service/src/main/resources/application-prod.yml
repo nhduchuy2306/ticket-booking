@@ -1,0 +1,6 @@
+# ===============================
+# Discovery Service Production Overrides
+# ===============================
+eureka:
+  instance:
+    hostname: discovery-service

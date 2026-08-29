@@ -31,6 +31,9 @@ dependencies {
     // Eureka Client
     implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${eurekaClientVersion}"
 
+    // Config Client
+    implementation "org.springframework.cloud:spring-cloud-starter-config:${configVersion}"
+
     // Kafka
     implementation "org.springframework.kafka:spring-kafka:${kafkaVersion}"
 
@@ -44,8 +47,12 @@ dependencies {
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
     annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
 
-    // Local dependency
-    implementation project(':common-service')
+    // Commons modules
+    implementation project(':common-base')
+    implementation project(':common-data')
+    implementation project(':common-auth')
+    implementation project(':common-cache')
+    implementation project(':common-logging')
 
     // TypeScript Generator
     tsGenerator "cz.habarta.typescript-generator:typescript-generator-core:${typescriptGeneratorVersion}"

@@ -1,0 +1,13 @@
+# ===============================
+# Bootstrap Configuration
+# All other config is served by Config Server
+# ===============================
+spring:
+  application:
+    name: event-service
+  config:
+    import: optional:configserver:http://localhost:9006
+  cloud:
+    config:
+      fail-fast: false
+      name: event-service,database,cache,kafka

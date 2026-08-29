@@ -1,0 +1,14 @@
+# ===============================
+# salechannel-service Dev Configuration
+# ===============================
+
+spring:
+  kafka:
+    consumer:
+      enable-auto-commit: true
+      properties:
+        request.timeout.ms: 30000
+        retry.backoff.ms: 1000
+    producer:
+      properties:
+        request.timeout.ms: 30000

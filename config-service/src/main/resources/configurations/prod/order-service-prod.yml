@@ -1,0 +1,6 @@
+# ===============================
+# order-service Prod Configuration
+# ===============================
+# No additional prod-specific overrides needed.
+# Database config comes from database-prod.yml
+# Eureka, Kafka, Redis come from application-prod.yml

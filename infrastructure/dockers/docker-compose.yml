@@ -63,16 +63,93 @@ services:
     networks:
       - gyp-net
 
-  redis:
+  #  -----------------------------------------------------
+  #  Redis Sentinel Cluster
+  #  -----------------------------------------------------
+  redis-master:
     image: bitnami/redis:latest
-    container_name: redis
+    container_name: redis-master
     ports:
       - "6379:6379"
     environment:
+      - REDIS_REPLICATION_MODE=master
       - REDIS_PASSWORD=12345
       - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
     volumes:
-      - ./redis_data:/bitnami/redis/data
+      - ./redis_master_data:/bitnami/redis/data
+    restart: unless-stopped
+    networks:
+      - gyp-net
+
+  redis-slave:
+    image: bitnami/redis:latest
+    container_name: redis-slave
+    ports:
+      - "6380:6379"
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis-master
+      - REDIS_MASTER_PASSWORD=12345
+      - REDIS_PASSWORD=12345
+    depends_on:
+      - redis-master
+    restart: unless-stopped
+    networks:
+      - gyp-net
+
+  redis-sentinel-1:
+    image: bitnami/redis-sentinel:latest
+    container_name: redis-sentinel-1
+    ports:
+      - "26379:26379"
+    environment:
+      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=5000
+      - REDIS_MASTER_HOST=redis-master
+      - REDIS_MASTER_PORT_NUMBER=6379
+      - REDIS_MASTER_PASSWORD=12345
+      - REDIS_SENTINEL_QUORUM=2
+      - REDIS_SENTINEL_RESOLVE_HOSTNAMES=yes
+    depends_on:
+      - redis-master
+      - redis-slave
+    restart: unless-stopped
+    networks:
+      - gyp-net
+
+  redis-sentinel-2:
+    image: bitnami/redis-sentinel:latest
+    container_name: redis-sentinel-2
+    ports:
+      - "26380:26379"
+    environment:
+      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=5000
+      - REDIS_MASTER_HOST=redis-master
+      - REDIS_MASTER_PORT_NUMBER=6379
+      - REDIS_MASTER_PASSWORD=12345
+      - REDIS_SENTINEL_QUORUM=2
+      - REDIS_SENTINEL_RESOLVE_HOSTNAMES=yes
+    depends_on:
+      - redis-master
+      - redis-slave
+    restart: unless-stopped
+    networks:
+      - gyp-net
+
+  redis-sentinel-3:
+    image: bitnami/redis-sentinel:latest
+    container_name: redis-sentinel-3
+    ports:
+      - "26381:26379"
+    environment:
+      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=5000
+      - REDIS_MASTER_HOST=redis-master
+      - REDIS_MASTER_PORT_NUMBER=6379
+      - REDIS_MASTER_PASSWORD=12345
+      - REDIS_SENTINEL_QUORUM=2
+      - REDIS_SENTINEL_RESOLVE_HOSTNAMES=yes
+    depends_on:
+      - redis-master
+      - redis-slave
     restart: unless-stopped
     networks:
       - gyp-net
@@ -199,6 +276,18 @@ services:
     networks:
       - gyp-net
 
+  config-service:
+    build: ../../config-service
+    container_name: config-service
+    ports:
+      - "9006:9006"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    depends_on:
+      - discovery-service
+    networks:
+      - gyp-net
+
   api-gateway:
     build: ../../api-gateway
     container_name: api-gateway
@@ -206,11 +295,13 @@ services:
       - "9999:9999"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-service:9006
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://discovery-service:9761/eureka/
       - EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
       - EUREKA_INSTANCE_HOSTNAME=api-gateway
     depends_on:
       - discovery-service
+      - config-service
     networks:
       - gyp-net
 
@@ -221,13 +312,12 @@ services:
       - "9000:9000"
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/auth_service?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 12345
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:9006
     env_file:
       - ../../.env
     depends_on:
       - discovery-service
+      - config-service
       - mysql
       - kafka
     networks:
@@ -240,10 +330,12 @@ services:
       - "9001:9001"
     environment:
       SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:9006
     env_file:
       - ../../.env
     depends_on:
       - discovery-service
+      - config-service
       - mysql
       - kafka
     networks:
@@ -256,10 +348,12 @@ services:
       - "9002:9002"
     environment:
       SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:9006
     env_file:
       - ../../.env
     depends_on:
       - discovery-service
+      - config-service
       - mysql
     networks:
       - gyp-net
@@ -271,10 +365,12 @@ services:
       - "9004:9004"
     environment:
       SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:9006
     env_file:
       - ../../.env
     depends_on:
       - discovery-service
+      - config-service
       - mysql
       - kafka
     networks:
@@ -287,13 +383,29 @@ services:
       - "9003:9003"
     environment:
       SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:9006
     env_file:
       - ../../.env
     depends_on:
       - discovery-service
+      - config-service
       - mysql
       - kafka
-      - redis
+      - redis-master
+    networks:
+      - gyp-net
+
+  notification-service:
+    build: ../../notification-service
+    container_name: notification-service
+    ports:
+      - "9005:9005"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-service:9006
+    depends_on:
+      - discovery-service
+      - config-service
     networks:
       - gyp-net
 

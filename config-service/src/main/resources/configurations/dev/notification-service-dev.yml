@@ -1,0 +1,19 @@
+# ===============================
+# notification-service Dev Configuration
+# ===============================
+
+# MailDev (local development)
+spring:
+  mail:
+    host: localhost
+    port: 1025
+    username: no-reply@gmail.com
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000

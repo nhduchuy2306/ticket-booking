@@ -1,0 +1,18 @@
+// =============================================
+// common-data - JPA/Database Support Library
+// =============================================
+
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // Common Base
+    api project(':common-base')
+
+    // Spring Boot Data JPA
+    api "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
+
+    // MinIO
+    api "io.minio:minio:${minioVersion}"
+}

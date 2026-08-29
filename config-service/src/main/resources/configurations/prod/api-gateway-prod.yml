@@ -1,0 +1,9 @@
+# ===============================
+# api-gateway Prod Configuration
+# ===============================
+
+# Logging
+logging:
+  level:
+    root: WARN
+    org.springframework.cloud.gateway: INFO

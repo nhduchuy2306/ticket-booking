@@ -1,0 +1,47 @@
+# ===============================
+# Discovery Service Configuration (Local - NOT a Config Client)
+# ===============================
+server:
+  port: 9761
+
+spring:
+  application:
+    name: discovery-service
+  cloud:
+    config:
+      enabled: false
+
+# ===============================
+# Actuator / Metrics
+# ===============================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      service: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        http.client.requests: true
+        spring.cloud.gateway.requests: true
+
+# ===============================
+# Eureka Server
+# ===============================
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/

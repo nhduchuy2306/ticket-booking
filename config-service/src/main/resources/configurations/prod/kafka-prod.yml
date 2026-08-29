@@ -1,0 +1,6 @@
+# ===============================
+# Prod Kafka Configuration
+# ===============================
+spring:
+  kafka:
+    bootstrap-servers: kafka:29092

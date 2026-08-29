@@ -1,0 +1,16 @@
+// =============================================
+// common-cache - Redis Cache Auto-Configuration
+// =============================================
+
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // Common Base
+    api project(':common-base')
+
+    // Spring Boot Cache + Redis
+    api "org.springframework.boot:spring-boot-starter-cache:${springBootVersion}"
+    api "org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}"
+}

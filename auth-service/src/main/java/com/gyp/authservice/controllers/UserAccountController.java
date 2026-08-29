@@ -7,6 +7,7 @@ import com.gyp.authservice.messages.producers.UserAccountProducer;
 import com.gyp.authservice.services.UserAccountService;
 import com.gyp.authservice.services.criteria.UserAccountSearchCriteria;
 import com.gyp.common.controllers.AbstractController;
+import com.gyp.common.utils.SecurityUtils;
 import com.gyp.common.dtos.pagination.PaginatedDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +45,7 @@ public class UserAccountController extends AbstractController {
 			@RequestParam(value = "sortBy", required = false) String sortBy,
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
 			@RequestParam(value = "size", required = false) Optional<Integer> size) {
-		String organizationId = getCurrentOrganizationId();
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		UserAccountSearchCriteria userGroupSearchCriteria = UserAccountSearchCriteria.builder()
 				.sortBy(sortBy)
 				.build();

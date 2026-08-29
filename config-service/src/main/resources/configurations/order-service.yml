@@ -1,0 +1,42 @@
+# ===============================
+# order-service Configuration
+# ===============================
+server:
+  port: 9003
+
+jwt:
+  secret:
+    token: ${JWT_SECRET_TOKEN}
+
+spring:
+  kafka:
+    consumer:
+      group-id: order-service-group
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+# ===============================
+# MOMO Payment Configuration
+# ===============================
+momo:
+  partner-code: ${MOMO_PARTNER_CODE}
+  access-key: ${MOMO_ACCESS_KEY}
+  secret-key: ${MOMO_SECRET_KEY}
+  endpoint: https://test-payment.momo.vn/v2/gateway/api/create
+  return-url: http://localhost:9999/orders/payments/paymentinfo
+  notify-url: http://localhost:9999/orders/payments/paymentnotify
+  frontend-success-url: http://localhost:3000/gyp/payment/success
+  frontend-failure-url: http://localhost:3000/gyp/payment/failure
+
+# ===============================
+# MINIO Configuration
+# ===============================
+minio:
+  enabled: false
+
+# Service-specific database schema
+service:
+  database:
+    schema: order_service

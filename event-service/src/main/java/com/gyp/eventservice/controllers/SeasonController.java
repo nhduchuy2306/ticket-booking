@@ -3,6 +3,7 @@ package com.gyp.eventservice.controllers;
 import java.util.Optional;
 
 import com.gyp.common.controllers.AbstractController;
+import com.gyp.common.utils.SecurityUtils;
 import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.eventservice.dtos.season.SeasonRequestDto;
 import com.gyp.eventservice.services.SeasonService;
@@ -33,7 +34,7 @@ public class SeasonController extends AbstractController {
 	public ResponseEntity<?> getAllSeasons(
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
 			@RequestParam(value = "size", required = false) Optional<Integer> size) {
-		String organizationId = getCurrentOrganizationId();
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		SeasonSearchCriteria criteria = SeasonSearchCriteria.builder()
 				.organizationId(organizationId)
 				.build();

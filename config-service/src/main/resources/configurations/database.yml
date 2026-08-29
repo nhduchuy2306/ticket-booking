@@ -1,0 +1,11 @@
+# ===============================
+# Shared Database Configuration
+# ===============================
+# Used by services that include 'database' in spring.cloud.config.name
+# Each service defines its own 'service.database.schema' property
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  flyway:
+    enabled: true

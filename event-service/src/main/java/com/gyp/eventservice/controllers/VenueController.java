@@ -3,6 +3,7 @@ package com.gyp.eventservice.controllers;
 import java.util.Optional;
 
 import com.gyp.common.controllers.AbstractController;
+import com.gyp.common.utils.SecurityUtils;
 import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.common.services.DataIntegrityService;
 import com.gyp.eventservice.dtos.venue.VenueRequestDto;
@@ -36,7 +37,7 @@ public class VenueController extends AbstractController {
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
 			@RequestParam(value = "size", required = false) Optional<Integer> size) {
 		try {
-			String organizationId = getCurrentOrganizationId();
+			String organizationId = SecurityUtils.getCurrentOrganizationId();
 			VenueSearchCriteria criteria = VenueSearchCriteria.builder()
 					.organizationId(organizationId)
 					.build();

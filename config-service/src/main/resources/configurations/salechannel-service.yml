@@ -1,0 +1,29 @@
+# ===============================
+# salechannel-service Configuration
+# ===============================
+server:
+  port: 9004
+
+jwt:
+  secret:
+    token: ${JWT_SECRET_TOKEN}
+
+spring:
+  kafka:
+    consumer:
+      group-id: new-sale-channel-service-group
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+# ===============================
+# MINIO Configuration
+# ===============================
+minio:
+  enabled: false
+
+# Service-specific database schema
+service:
+  database:
+    schema: salechannel_service

@@ -1,0 +1,30 @@
+# ===============================
+# auth-service Prod Configuration
+# ===============================
+keycloak:
+  admin:
+    url: http://keycloak:8080
+  login:
+    form:
+      url: ${API_GATEWAY_URL:http://localhost:9999}/auths/oidc/oauth2/authorize/keycloak
+
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            authorization-uri: http://keycloak:8080/realms/gyp/protocol/openid-connect/auth
+            token-uri: http://keycloak:8080/realms/gyp/protocol/openid-connect/token
+            user-info-uri: http://keycloak:8080/realms/gyp/protocol/openid-connect/userinfo
+            user-name-attribute: sub
+            issuer-uri: http://keycloak:8080/realms/gyp
+            jwk-set-uri: http://keycloak:8080/realms/gyp/protocol/openid-connect/certs
+
+# Logging
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+    org.springframework.web: INFO
+    com.gyp.authservice.AuthServiceApplication: DEBUG

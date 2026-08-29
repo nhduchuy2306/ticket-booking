@@ -6,6 +6,7 @@ import java.util.Optional;
 import jakarta.validation.Valid;
 
 import com.gyp.common.controllers.AbstractController;
+import com.gyp.common.utils.SecurityUtils;
 import com.gyp.common.dtos.pagination.PaginatedDto;
 import com.gyp.eventservice.dtos.event.EventRequestDto;
 import com.gyp.eventservice.services.EventService;
@@ -45,7 +46,7 @@ public class EventController extends AbstractController {
 	public ResponseEntity<?> getAllEvents(
 			@RequestParam(value = "page", required = false) Optional<Integer> page,
 			@RequestParam(value = "size", required = false) Optional<Integer> size) {
-		String organizationId = getCurrentOrganizationId();
+		String organizationId = SecurityUtils.getCurrentOrganizationId();
 		EventSearchCriteria criteria = EventSearchCriteria.builder()
 				.organizationId(organizationId)
 				.build();

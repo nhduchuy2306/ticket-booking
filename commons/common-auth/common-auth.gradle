@@ -1,0 +1,18 @@
+// =============================================
+// common-auth - OAuth2/Security Library
+// =============================================
+
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // Common Base
+    api project(':common-base')
+
+    // Spring Boot OAuth2 Resource Server
+    api "org.springframework.boot:spring-boot-starter-oauth2-resource-server:${springBootVersion}"
+
+    // JWT
+    api "com.nimbusds:nimbus-jose-jwt:${nimbusJoseJwtVersion}"
+}

@@ -1,0 +1,23 @@
+# ===============================
+# ticket-service Configuration
+# ===============================
+server:
+  port: 9002
+
+jwt:
+  secret:
+    token: ${JWT_SECRET_TOKEN}
+
+spring:
+  kafka:
+    consumer:
+      group-id: ticket-service-group
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+# Service-specific database schema
+service:
+  database:
+    schema: ticket_service
