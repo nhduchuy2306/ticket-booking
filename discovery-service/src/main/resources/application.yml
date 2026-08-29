@@ -1,6 +1,3 @@
-# ===============================
-# Discovery Service Configuration (Local - NOT a Config Client)
-# ===============================
 server:
   port: 9761
 
@@ -11,9 +8,6 @@ spring:
     config:
       enabled: false
 
-# ===============================
-# Actuator / Metrics
-# ===============================
 management:
   endpoints:
     web:
@@ -34,9 +28,6 @@ management:
         http.client.requests: true
         spring.cloud.gateway.requests: true
 
-# ===============================
-# Eureka Server
-# ===============================
 eureka:
   instance:
     hostname: localhost

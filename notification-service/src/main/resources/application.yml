@@ -1,7 +1,3 @@
-# ===============================
-# Bootstrap Configuration
-# All other config is served by Config Server
-# ===============================
 spring:
   application:
     name: notification-service
