@@ -9,7 +9,7 @@ import java.util.Objects;
 import com.gyp.common.exceptions.QRLogoImageNotFoundException;
 import com.gyp.ticketservice.dtos.mail.TicketMailConfirmRequestDto;
 import com.gyp.ticketservice.dtos.ticketgeneration.TicketGenerationResponseDto;
-import com.gyp.ticketservice.services.MailService;
+import com.gyp.commonmail.services.MailService;
 import com.gyp.ticketservice.services.QRCodeService;
 import com.gyp.ticketservice.services.TicketDeliveryService;
 import com.gyp.ticketservice.services.TicketGenerationService;

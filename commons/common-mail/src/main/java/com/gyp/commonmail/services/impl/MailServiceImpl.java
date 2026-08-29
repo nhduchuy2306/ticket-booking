@@ -1,4 +1,4 @@
-package com.gyp.ticketservice.services.impl;
+package com.gyp.commonmail.services.impl;
 
 import java.util.Locale;
 import java.util.Map;
@@ -6,12 +6,13 @@ import java.util.Map;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
-import com.gyp.ticketservice.services.MailService;
+import com.gyp.commonmail.services.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -26,12 +27,27 @@ public class MailServiceImpl implements MailService {
 	private final TemplateEngine templateEngine;
 
 	@Override
+	public void sendEmail(String to, String subject, String text) {
+		try {
+			SimpleMailMessage message = new SimpleMailMessage();
+			message.setTo(to);
+			message.setSubject(subject);
+			message.setText(text);
+
+			mailSender.send(message);
+			log.info("Email sent to: {}", to);
+		} catch (Exception e) {
+			log.error("Failed to send email to: {}", to, e);
+		}
+	}
+
+	@Override
 	public void sendEmail(String to, String subject, Map<String, Object> model, String templateName) {
 		try {
 			MimeMessage message = mailSender.createMimeMessage();
 			createMimeMessageHelper(message, to, subject, model, templateName);
 			mailSender.send(message);
-		} catch(MessagingException e) {
+		} catch (MessagingException e) {
 			log.error("Failed to send email", e);
 		}
 	}
@@ -42,9 +58,9 @@ public class MailServiceImpl implements MailService {
 		try {
 			MimeMessage message = mailSender.createMimeMessage();
 			MimeMessageHelper helper = createMimeMessageHelper(message, to, subject, model, templateName);
-			addPDFAttachment(helper, attachmentBytes, fileName);
+			addAttachment(helper, attachmentBytes, fileName, MediaType.APPLICATION_PDF_VALUE);
 			mailSender.send(message);
-		} catch(MessagingException e) {
+		} catch (MessagingException e) {
 			log.error("Failed to send email with attachment", e);
 		}
 	}
@@ -56,8 +72,8 @@ public class MailServiceImpl implements MailService {
 			MimeMessage message = mailSender.createMimeMessage();
 			MimeMessageHelper helper = createMimeMessageHelper(message, to, subject, model, templateName);
 
-			if(attachments != null && !attachments.isEmpty()) {
-				for(Map.Entry<String, Pair<byte[], String>> entry : attachments.entrySet()) {
+			if (attachments != null && !attachments.isEmpty()) {
+				for (Map.Entry<String, Pair<byte[], String>> entry : attachments.entrySet()) {
 					String fileName = entry.getKey();
 					byte[] fileBytes = entry.getValue().getLeft();
 					String contentType = entry.getValue().getRight();
@@ -67,27 +83,8 @@ public class MailServiceImpl implements MailService {
 			}
 
 			mailSender.send(message);
-		} catch(MessagingException e) {
+		} catch (MessagingException e) {
 			log.error("Failed to send email with multiple attachments", e);
-		}
-	}
-
-	private void addAttachment(MimeMessageHelper helper, byte[] attachmentBytes,
-			String fileName, String contentType) throws MessagingException {
-		if(attachmentBytes != null && attachmentBytes.length > 0) {
-			try {
-				ByteArrayResource resource = new ByteArrayResource(attachmentBytes) {
-					@Override
-					public String getFilename() {
-						return fileName;
-					}
-				};
-				helper.addAttachment(fileName, resource, contentType);
-				log.debug("Attachment added successfully: {} (type: {})", fileName, contentType);
-			} catch(MessagingException e) {
-				log.error("Error adding attachment: {}", fileName, e);
-				throw e;
-			}
 		}
 	}
 
@@ -103,19 +100,19 @@ public class MailServiceImpl implements MailService {
 		return helper;
 	}
 
-	private void addPDFAttachment(MimeMessageHelper helper, byte[] attachmentBytes, String fileName)
-			throws MessagingException {
-		if(attachmentBytes != null && attachmentBytes.length > 0) {
+	private void addAttachment(MimeMessageHelper helper, byte[] attachmentBytes,
+			String fileName, String contentType) throws MessagingException {
+		if (attachmentBytes != null && attachmentBytes.length > 0) {
 			try {
-				ByteArrayResource dataSource = new ByteArrayResource(attachmentBytes) {
+				ByteArrayResource resource = new ByteArrayResource(attachmentBytes) {
 					@Override
 					public String getFilename() {
 						return fileName;
 					}
 				};
-				helper.addAttachment(fileName, dataSource, MediaType.APPLICATION_PDF_VALUE);
-				log.debug("Attachment added successfully: {}", fileName);
-			} catch(MessagingException e) {
+				helper.addAttachment(fileName, resource, contentType);
+				log.debug("Attachment added successfully: {} (type: {})", fileName, contentType);
+			} catch (MessagingException e) {
 				log.error("Error adding attachment: {}", fileName, e);
 				throw e;
 			}

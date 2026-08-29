@@ -1,5 +1,6 @@
 package com.gyp.notificationservice.services;
 
+import com.gyp.commonmail.services.MailService;
 import com.gyp.notificationservice.configurations.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class NotificationPollingService {
 
-	private final EmailService emailService;
+	private final MailService mailService;
 	private final RestTemplate restTemplate;
 
 	private final Set<String> sentNewEventKeys = ConcurrentHashMap.newKeySet();
@@ -67,7 +68,7 @@ public class NotificationPollingService {
 			for (Map<String, Object> event : pendingEvents) {
 				for (String customerEmail : customerEmails) {
 					String eventName = getStringValue(event, "name", "an upcoming event");
-					emailService.sendEmail(
+					mailService.sendEmail(
 							customerEmail,
 							"New event coming soon: " + eventName,
 							buildNewEventBody(event)
@@ -120,7 +121,7 @@ public class NotificationPollingService {
 
 				String eventName = getStringValue(event, "name", "your event");
 				for (String recipient : recipients) {
-					emailService.sendEmail(
+					mailService.sendEmail(
 							recipient,
 							"Reminder: " + eventName + " is tomorrow",
 							buildTomorrowBody(event)

@@ -1,6 +1,6 @@
 package com.gyp.notificationservice.controllers;
 
-import com.gyp.notificationservice.services.EmailService;
+import com.gyp.commonmail.services.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.util.Map;
 @Slf4j
 public class NotificationController {
 
-	private final EmailService emailService;
+	private final MailService mailService;
 
 	@PostMapping("/send-email")
 	public ResponseEntity<String> sendEmail(@RequestBody Map<String, String> payload) {
@@ -29,7 +29,7 @@ public class NotificationController {
 		String text = payload.getOrDefault("text", "This is a notification email.");
 
 		try {
-			emailService.sendEmail(to, subject, text);
+			mailService.sendEmail(to, subject, text);
 			return ResponseEntity.ok("Email sent successfully");
 		} catch (Exception e) {
 			log.error("Failed to send email", e);
